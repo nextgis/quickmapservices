@@ -19,7 +19,7 @@ tags=service, internet
 homepage=
 tracker=https://github.com/nextgis/mapservices/issues
 repository=https://github.com/nextgis/mapservices
-icon=icon.png
+icon=icons/mapservices.png
 # experimental flag
 experimental=False
 

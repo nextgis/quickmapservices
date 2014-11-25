@@ -84,12 +84,13 @@ class MapServices:
 
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
-        icon_path = self.plugin_dir + '/icon.png'
+        icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
+        icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
         self.menu = QMenu(self.tr(u'Map Services'))
         self.menu.setIcon(QIcon(icon_path))
 
         # temporary
-        settings_act = QAction(QIcon(icon_path), self.tr('Settings'), self.iface.mainWindow())
+        settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
         #settings_act.on("click")
         tmenu = QMenu('OSM')
 
