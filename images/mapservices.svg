@@ -16,9 +16,9 @@
    version="1.1"
    inkscape:version="0.48.5 r10040"
    sodipodi:docname="mapservices.svg"
-   inkscape:export-filename="/media/home1/robert/svn/graphics/trunk/toolbar-icons/32x32/layer-vector.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/yellow/GIT_NEXTGIS/mapservices/images/mapservices.png"
+   inkscape:export-xdpi="120"
+   inkscape:export-ydpi="120">
   <title
      id="title2829">GIS icon theme 0.2</title>
   <defs
@@ -411,7 +411,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="4"
      inkscape:cx="10.618602"
-     inkscape:cy="13.296058"
+     inkscape:cy="11.171058"
      inkscape:current-layer="layer2"
      showgrid="true"
      inkscape:grid-bbox="true"

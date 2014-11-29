@@ -21,4 +21,15 @@
  ***************************************************************************/
 """
 
+class DataSource():
 
+    def __init__(self):
+        self.id = None
+        self.type = None
+        self.is_contrib = None
+        self.group = None
+        self.alias = None
+        self.icon = None
+        self.lic_name = None
+        self.lic_link = None
+        self.terms_of_use = None
