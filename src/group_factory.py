@@ -61,9 +61,9 @@ class GroupFactory():
         if group_id in self.groups:
             return self.groups[group_id]
         else:
-            m = QMenu(group_id)
-            self.groups[group_id] = m
-            return m
+            menu = QMenu(group_id)
+            self.groups[group_id] = menu
+            return menu
 
 
     # noinspection PyMethodMayBeStatic

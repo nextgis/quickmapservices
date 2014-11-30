@@ -29,6 +29,7 @@ from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu
 from map_services_settings_dialog import MapServicesSettingsDialog
 import os.path
 from iniparse import configparser
+from group_factory import GroupFactory
 
 
 class MapServices:
@@ -97,7 +98,13 @@ class MapServices:
         self.actions.append(tmenu)
         self.actions.append(settings_act)
 
-        self.menu.addMenu(tmenu)
+        import pydevd
+        pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
+
+        self.gr_factory = GroupFactory()
+
+        for gr_menu in self.gr_factory.groups.values():
+            self.menu.addMenu(gr_menu)
         self.menu.addAction(settings_act)
         #end temporary
 
