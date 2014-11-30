@@ -24,6 +24,7 @@ import os
 from ConfigParser import ConfigParser
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMenu, QIcon
+from qgis.core import QgsMessageLog
 
 CURR_PATH = os.path.dirname(__file__)
 GROUP_PATHS = [
@@ -54,17 +55,17 @@ class GroupFactory():
             group_icon_path = os.path.join(root, parser.get('ui', 'icon'))
             self.groups[group_id] = QMenu(self.tr(group_alias))
             self.groups[group_id].setIcon(QIcon(group_icon_path))
-        except:
-            pass
+        except Exception, e:
+            error_message = 'Group INI file can\'t be parsed: ' + e.message
+            QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
 
-    def get_group(self, group_id):
+    def get_group_menu(self, group_id):
         if group_id in self.groups:
             return self.groups[group_id]
         else:
             menu = QMenu(group_id)
             self.groups[group_id] = menu
             return menu
-
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):

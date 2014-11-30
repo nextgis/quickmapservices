@@ -25,11 +25,13 @@ from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
+from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry
+from qgis.gui import QgsMessageBar
 
 from map_services_settings_dialog import MapServicesSettingsDialog
 import os.path
-from iniparse import configparser
 from group_factory import GroupFactory
+from data_source_factory import DataSourceFactory
 
 
 class MapServices:
@@ -67,7 +69,8 @@ class MapServices:
         self.dlg = MapServicesSettingsDialog()
 
         # Declare instance attributes
-        self.actions = []
+        self.service_actions = []
+
 
 
     def add_translations(self, path):
@@ -85,33 +88,40 @@ class MapServices:
 
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
+        # Main Menu
         icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
-        icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
         self.menu = QMenu(self.tr(u'Map Services'))
         self.menu.setIcon(QIcon(icon_path))
 
-        # temporary
-        settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
-        #settings_act.on("click")
-        tmenu = QMenu('OSM')
-
-        self.actions.append(tmenu)
-        self.actions.append(settings_act)
-
-        import pydevd
-        pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
+        # DataSources Actions
+        #import pydevd
+        #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
         self.gr_factory = GroupFactory()
+        self.ds_factory = DataSourceFactory()
 
-        for gr_menu in self.gr_factory.groups.values():
-            self.menu.addMenu(gr_menu)
-        self.menu.addAction(settings_act)
-        #end temporary
+        for ds in self.ds_factory.data_sources.values():
+            ds.action.triggered.connect(self.insert_layer)
+            gr_menu = self.gr_factory.get_group_menu(ds.group)
+            gr_menu.addAction(ds.action)
+            if gr_menu not in self.menu.children():
+                self.menu.addMenu(gr_menu)
 
-        #menu
+
+        # Settings and About actions
+        icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
+        settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
+        info_act = QAction(QIcon(icon_settings_path), self.tr('About'), self.iface.mainWindow())
+        self.service_actions.append(settings_act)
+        self.service_actions.append(info_act)
+
+        #self.menu.addAction(settings_act)
+        #self.menu.addAction(info_act)
+
+        #add to QGIS menu
         self.iface.webMenu().addMenu(self.menu)
 
-        #toolbar
+        #add to QGIS toolbar
         toolbutton = QToolButton()
         toolbutton.setPopupMode(QToolButton.InstantPopup)
         toolbutton.setMenu(self.menu)
@@ -119,6 +129,21 @@ class MapServices:
         toolbutton.setText(self.menu.title())
         toolbutton.setToolTip(self.menu.title())
         self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
+
+    def insert_layer(self):
+        action = self.menu.sender()
+        ds = action.data()
+        layer = QgsRasterLayer(ds.source_file, ds.alias)
+        if not layer.isValid():
+            error_message = self.tr('Layer %s can\'t be added to the map!') % ds.alias
+            self.iface.messageBar().pushMessage(self.tr('Error'),
+                                                error_message,
+                                                level=QgsMessageBar.CRITICAL)
+            QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
+        else:
+            layer.setAttribution(ds.copyright_text)
+            layer.setAttributionUrl(ds.copyright_link)
+            QgsMapLayerRegistry.instance().addMapLayer(layer)
 
     def unload(self):
         # remove menu
@@ -128,7 +153,9 @@ class MapServices:
         # clean vars
         self.menu = None
         self.toolbutton = None
-        self.actions = None
+        self.service_actions = None
+        self.ds_factory = None
+        self.gr_factory = None
 
     def run(self):
         """Run method that performs all the real work"""
