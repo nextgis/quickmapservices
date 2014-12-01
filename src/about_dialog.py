@@ -8,7 +8,7 @@
         begin                : 2014-11-21
         git sha              : $Format:%H$
         copyright            : (C) 2014 by NextGIS
-        email                : info@nextgis.org
+        email                : info@nextgis.com
  ***************************************************************************/
 
 /***************************************************************************
@@ -53,6 +53,6 @@ class AboutDialog(QDialog, FORM_CLASS):
     def getAboutText(self):
         return self.tr('<p>Collection of internet map services</p>'
                        '<p><strong>Developers:</strong> <a href="http://nextgis.org">NextGIS</a></p>'
-                       '<p><strong>Issue tracker:</strong> <a href="https://github.com/nextgis/mapservices/issues">On GitHub</a></p>'
-                       '<p><strong>Source code:</strong> <a href="https://github.com/nextgis/mapservices">On GitHub</a></p>')
+                       '<p><strong>Issue tracker:</strong> <a href="https://github.com/nextgis/mapservices/issues">GitHub</a></p>'
+                       '<p><strong>Source code:</strong> <a href="https://github.com/nextgis/mapservices">GitHub</a></p>')
 
