@@ -32,6 +32,7 @@ from map_services_settings_dialog import MapServicesSettingsDialog
 import os.path
 from group_factory import GroupFactory
 from data_source_factory import DataSourceFactory
+from about_dialog import AboutDialog
 
 
 class MapServices:
@@ -66,7 +67,8 @@ class MapServices:
 
 
         # Create the dialog (after translation) and keep reference
-        self.dlg = MapServicesSettingsDialog()
+        self.settings_dlg = MapServicesSettingsDialog()
+        self.info_dlg = AboutDialog()
 
         # Declare instance attributes
         self.service_actions = []
@@ -107,21 +109,22 @@ class MapServices:
             if gr_menu not in self.menu.children():
                 self.menu.addMenu(gr_menu)
 
-
         # Settings and About actions
         icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
         settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
-        info_act = QAction(QIcon(icon_settings_path), self.tr('About'), self.iface.mainWindow())
         self.service_actions.append(settings_act)
-        self.service_actions.append(info_act)
-
         #self.menu.addAction(settings_act)
-        #self.menu.addAction(info_act)
 
-        #add to QGIS menu
+        icon_about_path = self.plugin_dir + '/icons/mActionAbout.png'
+        info_act = QAction(QIcon(icon_about_path), self.tr('About'), self.iface.mainWindow())
+        self.service_actions.append(info_act)
+        info_act.triggered.connect(self.info_dlg.show)
+        self.menu.addAction(info_act)
+
+        # add to QGIS menu
         self.iface.webMenu().addMenu(self.menu)
 
-        #add to QGIS toolbar
+        # add to QGIS toolbar
         toolbutton = QToolButton()
         toolbutton.setPopupMode(QToolButton.InstantPopup)
         toolbutton.setMenu(self.menu)
@@ -160,15 +163,3 @@ class MapServices:
         self.service_actions = None
         self.ds_factory = None
         self.gr_factory = None
-
-    def run(self):
-        """Run method that performs all the real work"""
-        # show the dialog
-        self.dlg.show()
-        # Run the dialog event loop
-        result = self.dlg.exec_()
-        # See if OK was pressed
-        if result:
-            # Do something useful here - delete the line containing pass and
-            # substitute with your code.
-            pass
