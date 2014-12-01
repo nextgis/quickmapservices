@@ -17,4 +17,5 @@
   <BlockSizeY>256</BlockSizeY>
   <BandsCount>3</BandsCount>
   <Cache/>
+  <MaxConnections>5</MaxConnections>
 </GDAL_WMS>
