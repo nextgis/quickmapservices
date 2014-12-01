@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from ConfigParser import ConfigParser
+import codecs
 import os
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMenu, QIcon, QAction
@@ -46,10 +47,12 @@ class DataSourceFactory():
                 for ini_file in [f for f in files if f.endswith('.ini')]:
                     self._read_ini_file(root, ini_file)
 
-    def _read_ini_file(self, root, ini_file):
+    def _read_ini_file(self, root, ini_file_path):
         try:
+            ini_file = codecs.open(os.path.join(root, ini_file_path), 'r', 'utf-8')
+
             parser = ConfigParser()
-            parser.read(os.path.join(root, ini_file))
+            parser.readfp(ini_file)
 
             ds = DataSource()
 

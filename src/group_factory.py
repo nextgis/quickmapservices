@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+import codecs
 import os
 from ConfigParser import ConfigParser
 from PyQt4.QtCore import QCoreApplication
@@ -46,10 +47,11 @@ class GroupFactory():
                 for ini_file in [f for f in files if f.endswith('.ini')]:
                     self._read_ini_file(root, ini_file)
 
-    def _read_ini_file(self, root, ini_file):
+    def _read_ini_file(self, root, ini_file_path):
         try:
             parser = ConfigParser()
-            parser.read(os.path.join(root, ini_file))
+            ini_file = codecs.open(os.path.join(root, ini_file_path), 'r', 'utf-8')
+            parser.readfp(ini_file)
             group_id = parser.get('general', 'id')
             group_alias = parser.get('ui', 'alias')
             group_icon_path = os.path.join(root, parser.get('ui', 'icon'))
