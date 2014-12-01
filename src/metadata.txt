@@ -2,7 +2,7 @@
 name=Map Services
 qgisMinimumVersion=2.4
 description=Collection of internet map services
-version=0.1
+version=0.2
 author=NextGIS
 email=info@nextgis.org
 
