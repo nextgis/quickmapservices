@@ -25,7 +25,7 @@ from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
-from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry
+from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject
 from qgis.gui import QgsMessageBar
 
 from map_services_settings_dialog import MapServicesSettingsDialog
@@ -141,9 +141,13 @@ class MapServices:
                                                 level=QgsMessageBar.CRITICAL)
             QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
         else:
+            # Set attribs
             layer.setAttribution(ds.copyright_text)
             layer.setAttributionUrl(ds.copyright_link)
-            QgsMapLayerRegistry.instance().addMapLayer(layer)
+            # Insert to bottom
+            QgsMapLayerRegistry.instance().addMapLayer(layer, False)
+            toc_root = QgsProject.instance().layerTreeRoot()
+            toc_root.insertLayer(len(toc_root.children()), layer)
 
     def unload(self):
         # remove menu
