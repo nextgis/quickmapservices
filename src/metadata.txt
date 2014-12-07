@@ -4,7 +4,7 @@ qgisMinimumVersion=2.4
 description=Collection of internet map services
 version=0.2
 author=NextGIS
-email=info@nextgis.org
+email=info@nextgis.com
 
 # End of mandatory metadata
 

@@ -7,7 +7,7 @@
                              -------------------
         begin                : 2014-11-21
         copyright            : (C) 2014 by NextGIS
-        email                : info@nextgis.org
+        email                : info@nextgis.com
         git sha              : $Format:%H$
  ***************************************************************************/
 
