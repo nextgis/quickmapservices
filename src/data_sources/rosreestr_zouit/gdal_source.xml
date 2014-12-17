@@ -1,0 +1,24 @@
+<GDAL_WMS>
+    <Service name="AGS">
+        <ServerUrl>http://maps.rosreestr.ru/ags/rest/services/Cadastre/ZOUIT/MapServer</ServerUrl>
+        <ImageFormat>png</ImageFormat>
+        <Transparent>true</Transparent>
+        <ImageSR>102100</ImageSR>
+        <Layers>1</Layers>
+        <BBoxOrder> xyXY </BBoxOrder>
+    </Service>
+    <DataWindow>
+        <UpperLeftX>-2.0037507067199707E7</UpperLeftX>
+        <UpperLeftY>1.6979753644836426E7</UpperLeftY>
+        <LowerRightX>2.0037507067382812E7</LowerRightX>
+        <LowerRightY>5039694.577209473</LowerRightY>
+  
+        <SizeX>40075014</SizeX>
+        <SizeY>11940059</SizeY>
+    </DataWindow>
+    <BlockSizeX>256</BlockSizeX>
+    <BlockSizeY>256</BlockSizeY>
+    <Projection>EPSG:3857</Projection>
+    <BandsCount>4</BandsCount>
+    <ClampRequests>false</ClampRequests>
+</GDAL_WMS>
