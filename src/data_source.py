@@ -27,7 +27,6 @@ class DataSource():
         self.id = None
         self.type = None
         self.is_contrib = None
-        self.source_file = None
 
         self.group = None
         self.alias = None
@@ -40,3 +39,9 @@ class DataSource():
         self.terms_of_use = None
 
         self.action = None
+
+        self.tms_url = None
+
+        self.wms_url = None
+
+        self.gdal_source_file = None

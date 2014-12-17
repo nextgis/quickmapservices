@@ -20,12 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication
+from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
-from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject
+from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject, QgsPluginLayerRegistry, QGis
 from qgis.gui import QgsMessageBar
 
 from map_services_settings_dialog import MapServicesSettingsDialog
@@ -33,6 +33,9 @@ import os.path
 from group_factory import GroupFactory
 from data_source_factory import DataSourceFactory
 from about_dialog import AboutDialog
+from py_tiled_layer.tilelayer import TileLayer, TileLayerType
+from py_tiled_layer.tiles import TileServiceInfo
+from supported_drivers import KNOWN_DRIVERS
 
 
 class MapServices:
@@ -72,6 +75,15 @@ class MapServices:
 
         # Declare instance attributes
         self.service_actions = []
+        self.service_layers = []  # TODO: id and smart remove
+
+        # TileLayer assets
+        self.crs3857 = None
+        self.apiChanged23 = QGis.QGIS_VERSION_INT >= 20300
+        self.downloadTimeout = 30  # TODO: settings
+        self.navigationMessagesEnabled = Qt.Checked  # TODO: settings
+        self.pluginName = 'MapServices'
+
 
 
 
@@ -96,6 +108,11 @@ class MapServices:
         self.menu.setIcon(QIcon(icon_path))
 
         # DataSources Actions
+
+        # Register plugin layer type
+        self.tileLayerType = TileLayerType(self)
+        QgsPluginLayerRegistry.instance().addPluginLayerType(self.tileLayerType)
+
         #import pydevd
         #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
@@ -134,9 +151,18 @@ class MapServices:
         self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
 
     def insert_layer(self):
+        #TODO: need factory!
         action = self.menu.sender()
         ds = action.data()
-        layer = QgsRasterLayer(ds.source_file, ds.alias)
+        if ds.type == KNOWN_DRIVERS.TMS:
+            service_info = TileServiceInfo(ds.alias, ds.copyright_text, ds.tms_url)
+            layer = TileLayer(self, service_info, False)
+        if ds.type == KNOWN_DRIVERS.GDAL:
+            layer = QgsRasterLayer(ds.gdal_source_file, ds.alias)
+        if ds.type == KNOWN_DRIVERS.WMS:
+            print ds.wms_url
+            layer = QgsRasterLayer('url=%s' % ds.wms_url, ds.alias, KNOWN_DRIVERS.WMS.lower())
+
         if not layer.isValid():
             error_message = self.tr('Layer %s can\'t be added to the map!') % ds.alias
             self.iface.messageBar().pushMessage(self.tr('Error'),
@@ -151,6 +177,9 @@ class MapServices:
             QgsMapLayerRegistry.instance().addMapLayer(layer, False)
             toc_root = QgsProject.instance().layerTreeRoot()
             toc_root.insertLayer(len(toc_root.children()), layer)
+            # Link safe
+            self.service_layers.append(layer)
+
 
     def unload(self):
         # remove menu
@@ -163,3 +192,6 @@ class MapServices:
         self.service_actions = None
         self.ds_factory = None
         self.gr_factory = None
+        self.service_layers = None
+        # Unregister plugin layer type
+        QgsPluginLayerRegistry.instance().removePluginLayerType(TileLayer.LAYER_TYPE)

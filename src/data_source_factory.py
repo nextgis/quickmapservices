@@ -24,7 +24,7 @@ from ConfigParser import ConfigParser
 import codecs
 import os
 from PyQt4.QtCore import QCoreApplication
-from PyQt4.QtGui import QMenu, QIcon, QAction
+from PyQt4.QtGui import QIcon, QAction
 from qgis.core import QgsMessageLog
 from data_source import DataSource
 
@@ -59,7 +59,6 @@ class DataSourceFactory():
             ds.id = parser.get('general', 'id')
             ds.type = parser.get('general', 'type')
             ds.is_contrib = parser.get('general', 'is_contrib')
-            ds.source_file = os.path.join(root, parser.get('general', 'source_file'))
 
             ds.group = parser.get('ui', 'group')
             ds.alias = parser.get('ui', 'alias')
@@ -71,11 +70,17 @@ class DataSourceFactory():
             ds.copyright_link = parser.get('license', 'copyright_link')
             ds.terms_of_use = parser.get('license', 'terms_of_use')
 
+            ds.tms_url = parser.get('tms', 'url')
+
+            ds.wms_url = parser.get('wms', 'url')
+
+
+            ds.gdal_source_file = os.path.join(root, parser.get('gdal', 'source_file'))
+
             #action
             ds.icon_path = os.path.join(root, ds.icon)
             ds.action = QAction(QIcon(ds.icon_path), self.tr(ds.alias), None)
             ds.action.setData(ds)
-            #ds.action
 
             self.data_sources[ds.id] = ds
 

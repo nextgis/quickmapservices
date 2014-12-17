@@ -21,11 +21,21 @@
  ***************************************************************************/
 """
 
-KNOWN_DRIVERS = [
-    'TMS',
-    'WMS',
-    'TiledWMS',
-    'VirtualEarth',
-    'WorldWind',
-    # 'AGS'
-]
+
+
+class KNOWN_DRIVERS():
+    WMS = 'WMS'
+    TMS = 'TMS'
+    GDAL = 'GDAL'
+
+    ALL_DRIVERS = [
+        WMS,
+        TMS,
+        GDAL
+    ]
+
+    #'TiledWMS',
+    #'VirtualEarth',
+    #'WorldWind',
+    #'AGS'
+

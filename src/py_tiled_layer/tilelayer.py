@@ -47,7 +47,7 @@ class LayerDefaultSettings:
 
 class TileLayer(QgsPluginLayer):
 
-  LAYER_TYPE = "TileLayer"
+  LAYER_TYPE = "PyTiledLayer"
   MAX_TILE_COUNT = 256
 
   def __init__(self, plugin, layerDef, creditVisibility=1):
@@ -59,7 +59,7 @@ class TileLayer(QgsPluginLayer):
 
     # set custom properties
     self.setCustomProperty("title", layerDef.title)
-    self.setCustomProperty("credit", layerDef.credit)
+    self.setCustomProperty("credit", layerDef.credit)  # TODO: need to remove
     self.setCustomProperty("serviceUrl", layerDef.serviceUrl)
     self.setCustomProperty("yOriginTop", layerDef.yOriginTop)
     self.setCustomProperty("zmin", layerDef.zmin)
@@ -85,7 +85,7 @@ class TileLayer(QgsPluginLayer):
     self.setSmoothRender(LayerDefaultSettings.SMOOTH_RENDER)
 
     self.downloader = Downloader(self)
-    self.downloader.userAgent = "QGIS/{0} TileLayerPlugin/{1}".format(QGis.QGIS_VERSION, self.plugin.VERSION) # not written since QGIS 2.2
+    self.downloader.userAgent = "QGIS/{0} MapServices Plugin".format(QGis.QGIS_VERSION) #, self.plugin.VERSION) # not written since QGIS 2.2
     self.downloader.DEFAULT_CACHE_EXPIRATION = QSettings().value("/qgis/defaultTileExpiry", 24, type=int)
     QObject.connect(self.downloader, SIGNAL("replyFinished(QString, int, int)"), self.networkReplyFinished)
 
