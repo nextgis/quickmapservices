@@ -20,77 +20,56 @@
  *                                                                         *
  ***************************************************************************/
 """
-from ConfigParser import ConfigParser
 import codecs
 import os
+from ConfigParser import ConfigParser
 from PyQt4.QtCore import QCoreApplication
-from PyQt4.QtGui import QIcon, QAction
+from PyQt4.QtGui import QMenu, QIcon
 from qgis.core import QgsMessageLog
-from data_source import DataSource
 
 CURR_PATH = os.path.dirname(__file__)
-DS_PATHS = [
-    os.path.join(CURR_PATH, 'data_sources'),
-    os.path.join(CURR_PATH, 'data_sources_contrib'),
+GROUP_PATHS = [
+    os.path.join(CURR_PATH, 'groups'),
+    os.path.join(CURR_PATH, 'groups_contrib'),
 ]
 
 
-class DataSourceFactory():
-    def __init__(self):
-        self.data_sources = {}
-        self._fill_data_sources_list()
+class DsGroupsList():
 
-    def _fill_data_sources_list(self):
-        self.data_sources = {}
-        for ds_path in DS_PATHS:
-            for root, dirs, files in os.walk(ds_path):
+    def __init__(self):
+        self.groups = {}
+        self._fill_groups_list()
+
+    def _fill_groups_list(self):
+        self.groups = {}
+        for gr_path in GROUP_PATHS:
+            for root, dirs, files in os.walk(gr_path):
                 for ini_file in [f for f in files if f.endswith('.ini')]:
                     self._read_ini_file(root, ini_file)
 
     def _read_ini_file(self, root, ini_file_path):
         try:
-            ini_file = codecs.open(os.path.join(root, ini_file_path), 'r', 'utf-8')
-
             parser = ConfigParser()
+            ini_file = codecs.open(os.path.join(root, ini_file_path), 'r', 'utf-8')
             parser.readfp(ini_file)
-
-            ds = DataSource()
-
-            ds.id = parser.get('general', 'id')
-            ds.type = parser.get('general', 'type')
-            ds.is_contrib = parser.get('general', 'is_contrib')
-
-            ds.group = parser.get('ui', 'group')
-            ds.alias = parser.get('ui', 'alias')
-            ds.icon = parser.get('ui', 'icon')
-
-            ds.lic_name = parser.get('license', 'name')
-            ds.lic_link = parser.get('license', 'link')
-            ds.copyright_text = parser.get('license', 'copyright_text')
-            ds.copyright_link = parser.get('license', 'copyright_link')
-            ds.terms_of_use = parser.get('license', 'terms_of_use')
-
-            ds.tms_url = parser.get('tms', 'url')
-
-            ds.wms_url = parser.get('wms', 'url')
-
-
-            ds.gdal_source_file = os.path.join(root, parser.get('gdal', 'source_file'))
-
-            #action
-            ds.icon_path = os.path.join(root, ds.icon)
-            ds.action = QAction(QIcon(ds.icon_path), self.tr(ds.alias), None)
-            ds.action.setData(ds)
-
-            self.data_sources[ds.id] = ds
-
+            group_id = parser.get('general', 'id')
+            group_alias = parser.get('ui', 'alias')
+            group_icon_path = os.path.join(root, parser.get('ui', 'icon'))
+            self.groups[group_id] = QMenu(self.tr(group_alias))
+            self.groups[group_id].setIcon(QIcon(group_icon_path))
         except Exception, e:
-            error_message = 'INI file can\'t be parsed: ' + e.message
+            error_message = 'Group INI file can\'t be parsed: ' + e.message
             QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
 
+    def get_group_menu(self, group_id):
+        if group_id in self.groups:
+            return self.groups[group_id]
+        else:
+            menu = QMenu(group_id)
+            self.groups[group_id] = menu
+            return menu
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('MapServices', message)
-

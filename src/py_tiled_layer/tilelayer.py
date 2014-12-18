@@ -122,7 +122,7 @@ class TileLayer(QgsPluginLayer):
             qDebug("Drawing is skipped because map extent is empty or inf.")
             return True
 
-        mapSettings = self.iface.mapCanvas().mapSettings() if self.plugin.apiChanged23 else self.iface.mapCanvas().mapRenderer()
+        mapSettings = self.iface.mapCanvas().mapSettings()
         painter = renderContext.painter()
         isDpiEqualToCanvas = painter.device().logicalDpiX() == mapSettings.outputDpi()
         if isDpiEqualToCanvas or not self.useLastZoomForPrint:
@@ -225,10 +225,7 @@ class TileLayer(QgsPluginLayer):
             self.tiles = tiles
             if len(urls) > 0:
                 # fetch tile data
-                if self.plugin.apiChanged23:
-                    files = self.fetchFiles(urls)
-                else:
-                    files = self.downloader.fetchFiles(urls, self.plugin.downloadTimeout)
+                files = self.fetchFiles(urls)
 
                 for url in files.keys():
                     self.tiles.setImageData(url, files[url])
@@ -419,7 +416,7 @@ class TileLayer(QgsPluginLayer):
 
     def drawInfo(self, renderContext, zoom, xmin, ymin, xmax, ymax):
         # debug information
-        mapSettings = self.iface.mapCanvas().mapSettings() if self.plugin.apiChanged23 else self.iface.mapCanvas().mapRenderer()
+        mapSettings = self.iface.mapCanvas().mapSettings()
         lines = []
         lines.append("TileLayer")
         lines.append(" zoom: %d, tile matrix extent: (%d, %d) - (%d, %d), tile count: %d * %d" % (
@@ -471,7 +468,7 @@ class TileLayer(QgsPluginLayer):
         painter.drawText(rect, Qt.AlignBottom | Qt.AlignRight, credit)
 
     def getScaleToVisibleExtent(self, renderContext):
-        mapSettings = self.iface.mapCanvas().mapSettings() if self.plugin.apiChanged23 else self.iface.mapCanvas().mapRenderer()
+        mapSettings = self.iface.mapCanvas().mapSettings()
         painter = renderContext.painter()
         if painter.device().logicalDpiX() == mapSettings.outputDpi():
             return 1.0, 1.0  # scale should be 1.0 in rendering on map canvas
@@ -511,7 +508,7 @@ class TileLayer(QgsPluginLayer):
                           QPointF(bottomRight.x() * sdx, bottomRight.y() * sdy))
 
     def isProjectCrsWebMercator(self):
-        mapSettings = self.iface.mapCanvas().mapSettings() if self.plugin.apiChanged23 else self.iface.mapCanvas().mapRenderer()
+        mapSettings = self.iface.mapCanvas().mapSettings()
         return mapSettings.destinationCrs().postgisSrid() == 3857
 
     def networkReplyFinished(self, url, error, isFromCache):

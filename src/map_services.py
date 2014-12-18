@@ -30,11 +30,11 @@ from qgis.gui import QgsMessageBar
 
 from map_services_settings_dialog import MapServicesSettingsDialog
 import os.path
-from group_factory import GroupFactory
-from data_source_factory import DataSourceFactory
 from about_dialog import AboutDialog
 from py_tiled_layer.tilelayer import TileLayer, TileLayerType
 from py_tiled_layer.tiles import TileServiceInfo
+from data_sources_list import DataSourcesList
+from ds_groups_list import DsGroupsList
 from supported_drivers import KNOWN_DRIVERS
 
 
@@ -79,7 +79,6 @@ class MapServices:
 
         # TileLayer assets
         self.crs3857 = None
-        self.apiChanged23 = QGis.QGIS_VERSION_INT >= 20300
         self.downloadTimeout = 30  # TODO: settings
         self.navigationMessagesEnabled = Qt.Checked  # TODO: settings
         self.pluginName = 'MapServices'
@@ -116,12 +115,12 @@ class MapServices:
         #import pydevd
         #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
-        self.gr_factory = GroupFactory()
-        self.ds_factory = DataSourceFactory()
+        self.groups_list = DsGroupsList()
+        self.ds_list = DataSourcesList()
 
-        for ds in self.ds_factory.data_sources.values():
+        for ds in self.ds_list.data_sources.values():
             ds.action.triggered.connect(self.insert_layer)
-            gr_menu = self.gr_factory.get_group_menu(ds.group)
+            gr_menu = self.groups_list.get_group_menu(ds.group)
             gr_menu.addAction(ds.action)
             if gr_menu not in self.menu.children():
                 self.menu.addMenu(gr_menu)
@@ -177,7 +176,7 @@ class MapServices:
             QgsMapLayerRegistry.instance().addMapLayer(layer, False)
             toc_root = QgsProject.instance().layerTreeRoot()
             toc_root.insertLayer(len(toc_root.children()), layer)
-            # Link safe
+            # Save link
             self.service_layers.append(layer)
 
 
@@ -190,8 +189,8 @@ class MapServices:
         self.menu = None
         self.toolbutton = None
         self.service_actions = None
-        self.ds_factory = None
-        self.gr_factory = None
+        self.ds_list = None
+        self.groups_list = None
         self.service_layers = None
         # Unregister plugin layer type
         QgsPluginLayerRegistry.instance().removePluginLayerType(TileLayer.LAYER_TYPE)
