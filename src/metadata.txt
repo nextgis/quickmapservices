@@ -2,7 +2,7 @@
 name=Map Services
 qgisMinimumVersion=2.4
 description=Collection of internet map services
-version=0.2
+version=0.3
 author=NextGIS
 email=info@nextgis.com
 
@@ -14,7 +14,7 @@ email=info@nextgis.com
 # changelog=
 
 # Tags are comma separated with spaces allowed
-tags=service, internet
+tags=service, internet, tms, wms
 
 homepage=
 tracker=https://github.com/nextgis/mapservices/issues
