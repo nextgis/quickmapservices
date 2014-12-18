@@ -30,8 +30,8 @@ debug_mode = 0
 
 class Downloader(QObject):
 
-  MAX_CONNECTION = 10
-  DEFAULT_CACHE_EXPIRATION = 24   # hours
+  MAX_CONNECTION = 4
+  DEFAULT_CACHE_EXPIRATION = 96   # hours
 
   NOT_FOUND = 0
 
