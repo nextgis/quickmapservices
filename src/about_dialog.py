@@ -22,8 +22,10 @@
 """
 import ConfigParser
 import os
+
 from PyQt4 import uic
-from PyQt4.QtGui import QDialog, QDialogButtonBox, QPixmap, QTextDocument
+from PyQt4.QtGui import QDialog, QDialogButtonBox, QPixmap
+
 
 CURR_PATH = os.path.dirname(__file__)
 
@@ -45,14 +47,27 @@ class AboutDialog(QDialog, FORM_CLASS):
         version = cfg.get('general', 'version')
 
         self.lblVersion.setText(self.tr('Version: %s') % (version))
-        doc = QTextDocument()
-        doc.setHtml(self.getAboutText())
-        self.textBrowser.setDocument(doc)
-        self.textBrowser.setOpenExternalLinks(True)
 
-    def getAboutText(self):
+        self.tbInfo.setHtml(self.get_about_text())
+        self.tbInfo.setOpenExternalLinks(True)
+
+        self.tbLicense.setPlainText(self.get_license_text())
+
+        self.tb3rd.setHtml(self.get_3rd_text())
+        self.tb3rd.setOpenExternalLinks(True)
+
+    def get_about_text(self):
         return self.tr('<p>Collection of internet map services</p>'
                        '<p><strong>Developers:</strong> <a href="http://nextgis.org">NextGIS</a></p>'
                        '<p><strong>Issue tracker:</strong> <a href="https://github.com/nextgis/mapservices/issues">GitHub</a></p>'
                        '<p><strong>Source code:</strong> <a href="https://github.com/nextgis/mapservices">GitHub</a></p>')
+
+    def get_license_text(self):
+        with open(os.path.join(CURR_PATH, 'LICENSE')) as f:
+            return f.read()
+
+    def get_3rd_text(self):
+        return self.tr('<p><strong>Python tile layer:</strong> <a href="https://github.com/minorua/TileLayerPlugin">TileLayer Plugin by Minoru Akagi</a></p>'
+                       '<p><strong>Some icons from QGIS:</strong> <a href="https://github.com/qgis/QGIS">QGIS GitHub</a></p>')
+
 
