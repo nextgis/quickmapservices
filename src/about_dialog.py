@@ -49,12 +49,9 @@ class AboutDialog(QDialog, FORM_CLASS):
         self.lblVersion.setText(self.tr('Version: %s') % (version))
 
         self.tbInfo.setHtml(self.get_about_text())
-        self.tbInfo.setOpenExternalLinks(True)
-
         self.tbLicense.setPlainText(self.get_license_text())
-
         self.tb3rd.setHtml(self.get_3rd_text())
-        self.tb3rd.setOpenExternalLinks(True)
+
 
     def get_about_text(self):
         return self.tr('<p>Collection of internet map services</p>'
