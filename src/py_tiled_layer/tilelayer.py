@@ -49,6 +49,7 @@ class LayerDefaultSettings:
 class TileLayer(QgsPluginLayer):
     LAYER_TYPE = "PyTiledLayer"
     MAX_TILE_COUNT = 256
+    CHANGE_SCALE_VALUE = 0.30
 
     def __init__(self, plugin, layerDef, creditVisibility=1):
         QgsPluginLayer.__init__(self, TileLayer.LAYER_TYPE, layerDef.title)
@@ -116,6 +117,10 @@ class TileLayer(QgsPluginLayer):
         self.setCustomProperty("creditVisibility", 1 if visible else 0)
 
     def draw(self, renderContext):
+
+        import pydevd
+        pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
+
         self.renderContext = renderContext
         extent = renderContext.extent()
         if extent.isEmpty() or extent.width() == float("inf"):
@@ -129,7 +134,8 @@ class TileLayer(QgsPluginLayer):
             # calculate zoom level
             tile_mpp1 = self.layerDef.TSIZE1 / self.layerDef.TILE_SIZE
             viewport_mpp = extent.width() / painter.viewport().width()
-            zoom = int(math.ceil(math.log(tile_mpp1 / viewport_mpp, 2) + 1))
+            lg = math.log(float(tile_mpp1) / float(viewport_mpp), 2)
+            zoom = int(math.modf(lg)[1]) + 1*(math.modf(lg)[0] > self.CHANGE_SCALE_VALUE) + 1
             zoom = max(0, min(zoom, self.layerDef.zmax))
             # zoom = max(self.layerDef.zmin, zoom)
         else:
