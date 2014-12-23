@@ -118,8 +118,8 @@ class TileLayer(QgsPluginLayer):
 
     def draw(self, renderContext):
 
-        import pydevd
-        pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
+        #import pydevd
+        #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
         self.renderContext = renderContext
         extent = renderContext.extent()
