@@ -30,6 +30,7 @@ from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox
 # Import the code for the dialog
 from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject, QgsPluginLayerRegistry
 from qgis.gui import QgsMessageBar
+import sys
 
 from map_services_settings_dialog import MapServicesSettingsDialog
 from about_dialog import AboutDialog
@@ -78,6 +79,7 @@ class MapServices:
         # Declare instance attributes
         self.service_actions = []
         self.service_layers = []  # TODO: id and smart remove
+        self._scales_list = None
 
         # TileLayer assets
         self.crs3857 = None
@@ -128,6 +130,12 @@ class MapServices:
                 self.menu.addMenu(gr_menu)
 
         # Scales, Settings and About actions
+        icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
+        set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'), self.iface.mainWindow())
+        set_nearest_scale_act.triggered.connect(self.set_nearest_scale)
+        self.menu.addAction(set_nearest_scale_act)  # TODO: uncomment after fix
+        self.service_actions.append(set_nearest_scale_act)
+
         icon_scales_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
         scales_act = QAction(QIcon(icon_scales_path), self.tr('Set SlippyMap scales'), self.iface.mainWindow())
         scales_act.triggered.connect(self.set_tms_scales)
@@ -158,6 +166,37 @@ class MapServices:
         self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
 
 
+    def _load_scales_list(self):
+        scales_filename = os.path.join(self.plugin_dir, 'scales.xml')
+        scales_list = []
+        # TODO: remake when fix: http://hub.qgis.org/issues/11915
+        # QgsScaleUtils.loadScaleList(scales_filename, scales_list, importer_message)
+        xml_root = ET.parse(scales_filename).getroot()
+        for scale_el in xml_root.findall('scale'):
+            scales_list.append(scale_el.get('value'))
+        return scales_list
+
+    @property
+    def scales_list(self):
+        if not self._scales_list:
+            self._scales_list = self._load_scales_list()
+        return self._scales_list
+
+    def set_nearest_scale(self):
+        #get current scale
+        curr_scale = self.iface.mapCanvas().scale()
+        #find nearest
+        nearest_scale = sys.maxint
+        for scale_str in self.scales_list:
+            scale = scale_str.split(':')[1]
+            scale_int = int(scale)
+            if abs(scale_int-curr_scale) < abs(nearest_scale - curr_scale):
+                nearest_scale = scale_int
+
+        #set new scale
+        if nearest_scale != sys.maxint:
+            self.iface.mapCanvas().zoomScale(nearest_scale)
+
     def set_tms_scales(self):
         res = QMessageBox.question(
             self.iface.mainWindow(),
@@ -165,17 +204,8 @@ class MapServices:
             self.tr('Set SlippyMap scales for current project? \nThe previous settings will be overwritten!'),
             QMessageBox.Yes | QMessageBox.No)
         if res == QMessageBox.Yes:
-            #read scales
-            scales_filename = os.path.join(self.plugin_dir, 'scales.xml')
-            scales_list = []
-            # TODO: remake when fix: http://hub.qgis.org/issues/11915
-            # QgsScaleUtils.loadScaleList(scales_filename, scales_list, importer_message)
-            xml_root = ET.parse(scales_filename).getroot()
-            for scale_el in xml_root.findall('scale'):
-                scales_list.append(scale_el.get('value'))
-
             # set scales
-            QgsProject.instance().writeEntry('Scales', '/ScalesList', scales_list)
+            QgsProject.instance().writeEntry('Scales', '/ScalesList', self.scales_list)
             # activate
             QgsProject.instance().writeEntry('Scales', '/useProjectScales', True)
             # update in main window
