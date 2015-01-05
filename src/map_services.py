@@ -65,7 +65,7 @@ class MapServices:
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
-            'MapServices_{}.qm'.format(locale))
+            'mapservices_{}.qm'.format(locale))
         self.add_translations(locale_path)
         #TODO Add translations from data_sources
         #TODO Add translations from data_sources_contribute
