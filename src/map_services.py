@@ -28,6 +28,7 @@ from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
+from mercurial.commandserver import server
 from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject, QgsPluginLayerRegistry
 from qgis.gui import QgsMessageBar
 import sys
@@ -218,6 +219,7 @@ class MapServices:
         ds = action.data()
         if ds.type == KNOWN_DRIVERS.TMS:
             service_info = TileServiceInfo(ds.alias, ds.copyright_text, ds.tms_url)
+            #service_info.zmax = 19  #TODO: from config
             layer = TileLayer(self, service_info, False)
         if ds.type == KNOWN_DRIVERS.GDAL:
             layer = QgsRasterLayer(ds.gdal_source_file, ds.alias)
