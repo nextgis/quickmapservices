@@ -22,8 +22,8 @@
 import os
 
 from PyQt4 import uic
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import QObject, SIGNAL
+from PyQt4.QtGui import QDialog, QDialogButtonBox, QPainter
 
 
 CURR_PATH = os.path.dirname(__file__)

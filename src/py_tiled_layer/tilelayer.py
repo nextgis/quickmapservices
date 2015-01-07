@@ -22,8 +22,10 @@
 # Import the PyQt and QGIS libraries
 import os
 import threading
-
-from qgis.core import *
+from PyQt4.QtCore import QObject, QSettings, qDebug, Qt, QFile, QRectF, QPointF, QPoint, QTimer, QEventLoop
+from PyQt4.QtCore import SIGNAL
+from PyQt4.QtGui import QFont, QColor, QBrush
+from qgis.core import QgsPluginLayer, QgsCoordinateReferenceSystem, QGis, QgsPluginLayerType
 from qgis.gui import QgsMessageBar
 
 from tiles import *

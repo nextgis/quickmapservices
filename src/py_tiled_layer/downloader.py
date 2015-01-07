@@ -20,10 +20,9 @@
  ***************************************************************************/
 """
 import threading
-
-from PyQt4.QtCore import *
+from PyQt4.QtCore import QObject, QTimer, QEventLoop, QDateTime, qDebug, SIGNAL, QUrl
 from PyQt4.QtNetwork import QNetworkRequest, QNetworkReply
-from qgis.core import *
+from qgis.core import QgsNetworkAccessManager
 
 
 debug_mode = 0

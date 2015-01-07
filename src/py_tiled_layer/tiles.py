@@ -21,9 +21,8 @@
 """
 # Import the PyQt and QGIS libraries
 import math
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import QRect
+from PyQt4.QtGui import QImage, QPainter
 from qgis.core import QgsRectangle
 
 
