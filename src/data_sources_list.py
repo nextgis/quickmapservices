@@ -27,6 +27,7 @@ from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QIcon, QAction
 from qgis.core import QgsMessageLog
 from data_source_info import DataSourceInfo
+from supported_drivers import KNOWN_DRIVERS
 
 CURR_PATH = os.path.dirname(__file__)
 DS_PATHS = [
@@ -57,29 +58,31 @@ class DataSourcesList():
             ds = DataSourceInfo()
 
             # Required
-            ds.id = parser.get('general', 'id')
-            ds.type = parser.get('general', 'type')
-            ds.is_contrib = parser.get('general', 'is_contrib')
+            ds.id = self.try_read_config(parser, 'general', 'id', reraise=True)
+            ds.type = self.try_read_config(parser, 'general', 'type', reraise=True)
+            ds.is_contrib = self.try_read_config(parser, 'general', 'is_contrib', reraise=True)
 
-            ds.group = parser.get('ui', 'group')
-            ds.alias = parser.get('ui', 'alias')
-            ds.icon = parser.get('ui', 'icon')
+            ds.group = self.try_read_config(parser, 'ui', 'group', reraise=True)
+            ds.alias = self.try_read_config(parser, 'ui', 'alias', reraise=True)
+            ds.icon = self.try_read_config(parser, 'ui', 'icon', reraise=True)
 
             # Lic & Terms
-            ds.lic_name = parser.get('license', 'name')
-            ds.lic_link = parser.get('license', 'link')
-            ds.copyright_text = parser.get('license', 'copyright_text')
-            ds.copyright_link = parser.get('license', 'copyright_link')
-            ds.terms_of_use = parser.get('license', 'terms_of_use')
+            ds.lic_name = self.try_read_config(parser, 'license', 'name')
+            ds.lic_link = self.try_read_config(parser, 'license', 'link')
+            ds.copyright_text = self.try_read_config(parser, 'license', 'copyright_text')
+            ds.copyright_link = self.try_read_config(parser, 'license', 'copyright_link')
+            ds.terms_of_use = self.try_read_config(parser, 'license', 'terms_of_use')
 
             #TMS
-            ds.tms_url = parser.get('tms', 'url')
+            ds.tms_url = self.try_read_config(parser, 'tms', 'url', reraise=(ds.type == KNOWN_DRIVERS.TMS))
 
             #WMS
-            ds.wms_url = parser.get('wms', 'url')
+            ds.wms_url = self.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))
 
             #GDAL
-            ds.gdal_source_file = os.path.join(root, parser.get('gdal', 'source_file'))
+            if ds.type == KNOWN_DRIVERS.GDAL:
+                gdal_conf = self.try_read_config(parser, 'gdal', 'source_file', reraise=(ds.type == KNOWN_DRIVERS.GDAL))
+                ds.gdal_source_file = os.path.join(root, gdal_conf)
 
             #Action stuff
             ds.icon_path = os.path.join(root, ds.icon)
@@ -97,4 +100,15 @@ class DataSourcesList():
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('MapServices', message)
+
+    def try_read_config(self, parser, section, param, reraise=False):
+        try:
+            val = parser.get(section, param)
+        except:
+            if reraise:
+                raise
+            else:
+                val = None
+        return val
+
 
