@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- MapServices
+ QuickMapServices
                                  A QGIS plugin
  Collection of internet map services
                               -------------------
@@ -33,7 +33,7 @@ from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsPro
 from qgis.gui import QgsMessageBar
 import sys
 
-from map_services_settings_dialog import MapServicesSettingsDialog
+from settings_dialog import SettingsDialog
 from about_dialog import AboutDialog
 from py_tiled_layer.tilelayer import TileLayer, TileLayerType
 from py_tiled_layer.tiles import TileServiceInfo
@@ -42,7 +42,7 @@ from ds_groups_list import DsGroupsList
 from supported_drivers import KNOWN_DRIVERS
 
 
-class MapServices:
+class QuickMapServices:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
@@ -65,7 +65,7 @@ class MapServices:
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
-            'mapservices_{}.qm'.format(locale))
+            'QuickMapServices_{}.qm'.format(locale))
         self.add_translations(locale_path)
         #TODO Add translations from data_sources
         #TODO Add translations from data_sources_contribute
@@ -74,7 +74,7 @@ class MapServices:
 
 
         # Create the dialog (after translation) and keep reference
-        self.settings_dlg = MapServicesSettingsDialog()
+        self.settings_dlg = SettingsDialog()
         self.info_dlg = AboutDialog()
 
         # Declare instance attributes
@@ -86,7 +86,7 @@ class MapServices:
         self.crs3857 = None
         self.downloadTimeout = 30  # TODO: settings
         self.navigationMessagesEnabled = Qt.Checked  # TODO: settings
-        self.pluginName = 'MapServices'
+        self.pluginName = 'QuickMapServices'
 
 
 
@@ -101,7 +101,7 @@ class MapServices:
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('MapServices', message)
+        return QCoreApplication.translate('QuickMapServices', message)
 
 
     def initGui(self):
@@ -111,7 +111,7 @@ class MapServices:
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
         # Main Menu
         icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
-        self.menu = QMenu(self.tr(u'Map Services'))
+        self.menu = QMenu(self.tr(u'QuickMapServices'))
         self.menu.setIcon(QIcon(icon_path))
 
         # DataSources Actions
@@ -201,7 +201,7 @@ class MapServices:
     def set_tms_scales(self):
         res = QMessageBox.question(
             self.iface.mainWindow(),
-            self.tr('MapServices'),
+            self.tr('QuickMapServices'),
             self.tr('Set SlippyMap scales for current project? \nThe previous settings will be overwritten!'),
             QMessageBox.Yes | QMessageBox.No)
         if res == QMessageBox.Yes:

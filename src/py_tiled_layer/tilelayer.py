@@ -88,7 +88,7 @@ class TileLayer(QgsPluginLayer):
         self.setSmoothRender(LayerDefaultSettings.SMOOTH_RENDER)
 
         self.downloader = Downloader(self)
-        self.downloader.userAgent = "QGIS/{0} MapServices Plugin".format(
+        self.downloader.userAgent = "QGIS/{0} QuickMapServices Plugin".format(
             QGis.QGIS_VERSION)  # , self.plugin.VERSION) # not written since QGIS 2.2
         self.downloader.DEFAULT_CACHE_EXPIRATION = QSettings().value("/qgis/defaultTileExpiry", 24, type=int)
         QObject.connect(self.downloader, SIGNAL("replyFinished(QString, int, int)"), self.networkReplyFinished)

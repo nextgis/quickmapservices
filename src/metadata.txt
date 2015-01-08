@@ -1,5 +1,5 @@
 [general]
-name=Map Services
+name=QuickMapServices
 qgisMinimumVersion=2.4
 description=Collection of internet map services
 version=0.4
@@ -17,8 +17,8 @@ email=info@nextgis.com
 tags=service, internet, tms, wms
 
 homepage=
-tracker=https://github.com/nextgis/mapservices/issues
-repository=https://github.com/nextgis/mapservices
+tracker=https://github.com/nextgis/quickmapservices/issues
+repository=https://github.com/nextgis/quickmapservices
 icon=icons/mapservices.png
 # experimental flag
 experimental=False

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- MapServices
+ QuickMapServices
                                  A QGIS plugin
  Collection of internet map services
                               -------------------

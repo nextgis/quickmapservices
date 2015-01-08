@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- MapServices
+ QuickMapServices
                                  A QGIS plugin
  Collection of internet map services
                              -------------------
@@ -25,11 +25,11 @@
 
 # noinspection PyPep8Naming
 def classFactory(iface):  # pylint: disable=invalid-name
-    """Load MapServices class from file MapServices.
+    """Load QuickMapServices class from file QuickMapServices.
 
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
     #
-    from .map_services import MapServices
-    return MapServices(iface)
+    from .quick_map_services import QuickMapServices
+    return QuickMapServices(iface)

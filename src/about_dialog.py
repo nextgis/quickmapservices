@@ -56,8 +56,8 @@ class AboutDialog(QDialog, FORM_CLASS):
     def get_about_text(self):
         return self.tr('<p>Collection of internet map services</p>'
                        '<p><strong>Developers:</strong> <a href="http://nextgis.org">NextGIS</a></p>'
-                       '<p><strong>Issue tracker:</strong> <a href="https://github.com/nextgis/mapservices/issues">GitHub</a></p>'
-                       '<p><strong>Source code:</strong> <a href="https://github.com/nextgis/mapservices">GitHub</a></p>')
+                       '<p><strong>Issue tracker:</strong> <a href="https://github.com/nextgis/quickmapservices/issues">GitHub</a></p>'
+                       '<p><strong>Source code:</strong> <a href="https://github.com/nextgis/quickmapservices">GitHub</a></p>')
 
     def get_license_text(self):
         with open(os.path.join(CURR_PATH, 'LICENSE')) as f:

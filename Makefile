@@ -1,5 +1,5 @@
 #/***************************************************************************
-# MapServices
+# QuickMapServices
 #
 # Collection of internet map services
 #							 -------------------
@@ -32,7 +32,7 @@ SOURCES = \
 	src/map_services.py \
 	src/map_services_dialog.py
 
-PLUGINNAME = MapServices
+PLUGINNAME = QuickMapServices
 
 PY_FILES = \
 	src/map_services.py \

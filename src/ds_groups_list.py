@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
- MapServices
+ QuickMapServices
                                  A QGIS plugin
  Collection of internet map services
                               -------------------
@@ -72,4 +72,4 @@ class DsGroupsList():
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('MapServices', message)
+        return QCoreApplication.translate('QuickMapServices', message)
