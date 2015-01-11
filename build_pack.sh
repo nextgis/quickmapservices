@@ -2,7 +2,7 @@
 
 #Build zip packet
 BUILD_DIR=/tmp/build_plugin
-PLUGIN_NAME=map_services
+PLUGIN_NAME=quick_map_services
 
 #Create if need
 mkdir $BUILD_DIR
