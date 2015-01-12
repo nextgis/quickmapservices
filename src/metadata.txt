@@ -2,7 +2,7 @@
 name=QuickMapServices
 qgisMinimumVersion=2.4
 description=Collection of internet map services
-version=0.5
+version=0.6
 author=NextGIS
 email=info@nextgis.com
 
@@ -11,7 +11,7 @@ email=info@nextgis.com
 # Optional items:
 
 # Uncomment the following line and add your changelog:
-# changelog=
+changelog=0.6 Fix imports
 
 # Tags are comma separated with spaces allowed
 tags=service, internet, tms, wms

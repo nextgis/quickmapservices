@@ -28,7 +28,6 @@ from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
-from mercurial.commandserver import server
 from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject, QgsPluginLayerRegistry
 from qgis.gui import QgsMessageBar
 import sys
