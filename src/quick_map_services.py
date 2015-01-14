@@ -218,7 +218,8 @@ class QuickMapServices:
         ds = action.data()
         if ds.type == KNOWN_DRIVERS.TMS:
             service_info = TileServiceInfo(ds.alias, ds.copyright_text, ds.tms_url)
-            #service_info.zmax = 19  #TODO: from config
+            service_info.zmin = ds.tms_zmin or service_info.zmin
+            service_info.zmax = ds.tms_zmax or service_info.zmax
             layer = TileLayer(self, service_info, False)
         if ds.type == KNOWN_DRIVERS.GDAL:
             layer = QgsRasterLayer(ds.gdal_source_file, ds.alias)

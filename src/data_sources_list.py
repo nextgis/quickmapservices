@@ -75,9 +75,11 @@ class DataSourcesList():
 
             #TMS
             ds.tms_url = self.try_read_config(parser, 'tms', 'url', reraise=(ds.type == KNOWN_DRIVERS.TMS))
+            ds.tms_zmin = self.try_read_config_int(parser, 'tms', 'zmin')
+            ds.tms_zmax = self.try_read_config_int(parser, 'tms', 'zmax')
 
             #WMS
-            ds.wms_url = self.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))
+            ds.wms_url = self.try_read_config(parser, 'tms', 'url')
 
             #GDAL
             if ds.type == KNOWN_DRIVERS.GDAL:
@@ -111,4 +113,12 @@ class DataSourcesList():
                 val = None
         return val
 
-
+    def try_read_config_int(self, parser, section, param, reraise=False):
+        try:
+            val = parser.getint(section, param)
+        except:
+            if reraise:
+                raise
+            else:
+                val = None
+        return val

@@ -42,6 +42,8 @@ class DataSourceInfo():
         self.action = None
 
         self.tms_url = None
+        self.tms_zmin = None
+        self.tms_zmax = None
 
         self.wms_url = None
 
