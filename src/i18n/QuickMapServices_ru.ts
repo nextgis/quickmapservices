@@ -16,7 +16,7 @@
     <message>
         <location filename="about_dialog.py" line="67"/>
         <source>&lt;p&gt;&lt;strong&gt;Python tile layer:&lt;/strong&gt; &lt;a href=&quot;https://github.com/minorua/TileLayerPlugin&quot;&gt;TileLayer Plugin by Minoru Akagi&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Some icons from QGIS:&lt;/strong&gt; &lt;a href=&quot;https://github.com/qgis/QGIS&quot;&gt;QGIS GitHub&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;strong&gt;Талированный слой на Python:&lt;/strong&gt; &lt;a href=&quot;https://github.com/minorua/TileLayerPlugin&quot;&gt;TileLayer Plugin от Minoru Akagi&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Иконки QGIS:&lt;/strong&gt; &lt;a href=&quot;https://github.com/qgis/QGIS&quot;&gt;QGIS GitHub&lt;/a&gt;&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;&lt;strong&gt;Провайдер тайлового слоя (Python):&lt;/strong&gt; &lt;a href=&quot;https://github.com/minorua/TileLayerPlugin&quot;&gt;TileLayer Plugin от Minoru Akagi&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Иконки QGIS:&lt;/strong&gt; &lt;a href=&quot;https://github.com/qgis/QGIS&quot;&gt;QGIS GitHub&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -79,7 +79,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="settings_dialog_base.ui" line="29"/>
         <source>Tiled layers</source>
-        <translation>Талированные слои</translation>
+        <translation>Тайловые слои</translation>
     </message>
     <message>
         <location filename="settings_dialog_base.ui" line="34"/>
