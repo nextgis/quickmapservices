@@ -122,7 +122,10 @@ class QuickMapServices:
         self.groups_list = DsGroupsList()
         self.ds_list = DataSourcesList()
 
-        for ds in self.ds_list.data_sources.values():
+        data_sources = self.ds_list.data_sources.values()
+        data_sources.sort(key=lambda x: x.alias or x.id)
+
+        for ds in data_sources:
             ds.action.triggered.connect(self.insert_layer)
             gr_menu = self.groups_list.get_group_menu(ds.group)
             gr_menu.addAction(ds.action)
