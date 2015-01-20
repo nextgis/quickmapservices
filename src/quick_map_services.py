@@ -157,7 +157,9 @@ class QuickMapServices:
         self.menu.addAction(info_act)
 
         # add to QGIS menu
+        self.iface.addPluginToWebMenu("_tmp", info_act)
         self.iface.webMenu().addMenu(self.menu)
+        self.iface.removePluginWebMenu("_tmp", info_act)
 
         # add to QGIS toolbar
         toolbutton = QToolButton()
