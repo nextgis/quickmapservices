@@ -2,7 +2,7 @@
 name=QuickMapServices
 qgisMinimumVersion=2.4
 description=Collection of internet map services
-version=0.9
+version=0.10
 author=NextGIS
 email=info@nextgis.com
 
@@ -11,7 +11,10 @@ email=info@nextgis.com
 # Optional items:
 
 # Uncomment the following line and add your changelog:
-changelog= 0.9:
+changelog= 0.10:
+        * Refactor WMS provider
+        * Add NASA WMS layers
+      0.9:
         * Fix #7 "Web" menu disapeared
       0.8:
         * Sort menu items in groups
