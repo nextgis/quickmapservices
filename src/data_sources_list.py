@@ -79,7 +79,9 @@ class DataSourcesList():
             ds.tms_zmax = self.try_read_config_int(parser, 'tms', 'zmax')
 
             #WMS
-            ds.wms_url = self.try_read_config(parser, 'tms', 'url')
+            ds.wms_url = self.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))
+            ds.wms_params = self.try_read_config(parser, 'wms', 'params')
+            ds.wms_layers = self.try_read_config(parser, 'wms', 'layers')
 
             #GDAL
             if ds.type == KNOWN_DRIVERS.GDAL:

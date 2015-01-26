@@ -46,5 +46,7 @@ class DataSourceInfo():
         self.tms_zmax = None
 
         self.wms_url = None
+        self.wms_params = None
+        self.wms_layers = None
 
         self.gdal_source_file = None

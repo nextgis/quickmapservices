@@ -229,8 +229,15 @@ class QuickMapServices:
         if ds.type == KNOWN_DRIVERS.GDAL:
             layer = QgsRasterLayer(ds.gdal_source_file, ds.alias)
         if ds.type == KNOWN_DRIVERS.WMS:
-            print ds.wms_url
-            layer = QgsRasterLayer('url=%s' % ds.wms_url, ds.alias, KNOWN_DRIVERS.WMS.lower())
+            qgis_wms_uri = u''
+            if ds.wms_params:
+                qgis_wms_uri += ds.wms_params
+            if ds.wms_layers:
+                layers = ds.wms_layers.split(',')
+                if layers:
+                    qgis_wms_uri += '&layers='+'&layers='.join(layers)+'&styles='*len(layers)
+            qgis_wms_uri += '&url=' + ds.wms_url
+            layer = QgsRasterLayer(qgis_wms_uri, ds.alias, KNOWN_DRIVERS.WMS.lower())
 
         if not layer.isValid():
             error_message = self.tr('Layer %s can\'t be added to the map!') % ds.alias
