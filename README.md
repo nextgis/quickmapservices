@@ -15,3 +15,5 @@ QGIS plugins: http://plugins.qgis.org/plugins/quick_map_services
 Announcement: http://nextgis.ru/en/blog/quickmapservices
 
 Discussion (Russian): http://gis-lab.info/forum/viewtopic.php?f=27&t=18464
+
+Overview (Russian): http://gis-lab.info/qa/quickmapservices.html
