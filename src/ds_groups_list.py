@@ -36,7 +36,9 @@ GROUP_PATHS = [
 
 class DsGroupsList():
 
-    def __init__(self):
+    def __init__(self, locale, custom_translator):
+        self.locale = locale  # for translation
+        self.translator = custom_translator
         self.groups = {}
         self._fill_groups_list()
 
@@ -52,9 +54,17 @@ class DsGroupsList():
             parser = ConfigParser()
             ini_file = codecs.open(os.path.join(root, ini_file_path), 'r', 'utf-8')
             parser.readfp(ini_file)
+            #read config
             group_id = parser.get('general', 'id')
             group_alias = parser.get('ui', 'alias')
             group_icon_path = os.path.join(root, parser.get('ui', 'icon'))
+            #try read translations
+            posible_trans = parser.items('ui')
+            for key, val in posible_trans:
+                if type(key) is unicode and key == 'alias[%s]' % self.locale:
+                    self.translator.append(group_alias, val)
+                    break
+            #append to groups
             self.groups[group_id] = QMenu(self.tr(group_alias))
             self.groups[group_id].setIcon(QIcon(group_icon_path))
         except Exception, e:

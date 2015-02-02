@@ -38,6 +38,7 @@ from py_tiled_layer.tilelayer import TileLayer, TileLayerType
 from py_tiled_layer.tiles import TileServiceInfo
 from data_sources_list import DataSourcesList
 from ds_groups_list import DsGroupsList
+from custom_translator import CustomTranslator
 from supported_drivers import KNOWN_DRIVERS
 
 
@@ -60,16 +61,18 @@ class QuickMapServices:
         # initialize locale
         self.translator = QTranslator()
 
-        locale = QSettings().value('locale/userLocale')[0:2]
+        self.locale = QSettings().value('locale/userLocale')[0:2]
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
-            'QuickMapServices_{}.qm'.format(locale))
-        self.add_translations(locale_path)
-        #TODO Add translations from data_sources
-        #TODO Add translations from data_sources_contribute
-        #TODO Add translations from groups
-        #TODO Add translations from groups_contribute
+            'QuickMapServices_{}.qm'.format(self.locale))
+        if os.path.exists(locale_path):
+            self.translator.load(locale_path)
+            if qVersion() > '4.3.3':
+                QCoreApplication.installTranslator(self.translator)
+
+        self.custom_translator = CustomTranslator()
+        QCoreApplication.installTranslator(self.custom_translator)
 
 
         # Create the dialog (after translation) and keep reference
@@ -87,15 +90,6 @@ class QuickMapServices:
         self.navigationMessagesEnabled = Qt.Checked  # TODO: settings
         self.pluginName = 'QuickMapServices'
 
-
-
-
-    def add_translations(self, path):
-        if os.path.exists(path):
-            self.translator.load(path)
-
-            if qVersion() > '4.3.3':
-                QCoreApplication.installTranslator(self.translator)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -119,8 +113,8 @@ class QuickMapServices:
         self.tileLayerType = TileLayerType(self)
         QgsPluginLayerRegistry.instance().addPluginLayerType(self.tileLayerType)
 
-        self.groups_list = DsGroupsList()
-        self.ds_list = DataSourcesList()
+        self.groups_list = DsGroupsList(self.locale, self.custom_translator)
+        self.ds_list = DataSourcesList(self.locale, self.custom_translator)
 
         data_sources = self.ds_list.data_sources.values()
         data_sources.sort(key=lambda x: x.alias or x.id)
@@ -222,12 +216,12 @@ class QuickMapServices:
         action = self.menu.sender()
         ds = action.data()
         if ds.type == KNOWN_DRIVERS.TMS:
-            service_info = TileServiceInfo(ds.alias, ds.copyright_text, ds.tms_url)
+            service_info = TileServiceInfo(self.tr(ds.alias), ds.copyright_text, ds.tms_url)
             service_info.zmin = ds.tms_zmin or service_info.zmin
             service_info.zmax = ds.tms_zmax or service_info.zmax
             layer = TileLayer(self, service_info, False)
         if ds.type == KNOWN_DRIVERS.GDAL:
-            layer = QgsRasterLayer(ds.gdal_source_file, ds.alias)
+            layer = QgsRasterLayer(ds.gdal_source_file, self.tr(ds.alias))
         if ds.type == KNOWN_DRIVERS.WMS:
             qgis_wms_uri = u''
             if ds.wms_params:
@@ -237,7 +231,7 @@ class QuickMapServices:
                 if layers:
                     qgis_wms_uri += '&layers='+'&layers='.join(layers)+'&styles='*len(layers)
             qgis_wms_uri += '&url=' + ds.wms_url
-            layer = QgsRasterLayer(qgis_wms_uri, ds.alias, KNOWN_DRIVERS.WMS.lower())
+            layer = QgsRasterLayer(qgis_wms_uri, self.tr(ds.alias), KNOWN_DRIVERS.WMS.lower())
 
         if not layer.isValid():
             error_message = self.tr('Layer %s can\'t be added to the map!') % ds.alias

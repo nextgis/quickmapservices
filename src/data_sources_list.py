@@ -37,7 +37,9 @@ DS_PATHS = [
 
 
 class DataSourcesList():
-    def __init__(self):
+    def __init__(self, locale, custom_translator):
+        self.locale = locale  # for translation
+        self.translator = custom_translator
         self.data_sources = {}
         self._fill_data_sources_list()
 
@@ -88,11 +90,19 @@ class DataSourcesList():
                 gdal_conf = self.try_read_config(parser, 'gdal', 'source_file', reraise=(ds.type == KNOWN_DRIVERS.GDAL))
                 ds.gdal_source_file = os.path.join(root, gdal_conf)
 
+            #try read translations
+            posible_trans = parser.items('ui')
+            for key, val in posible_trans:
+                if type(key) is unicode and key == 'alias[%s]' % self.locale:
+                    self.translator.append(ds.alias, val)
+                    break
+
             #Action stuff
             ds.icon_path = os.path.join(root, ds.icon)
             ds.action = QAction(QIcon(ds.icon_path), self.tr(ds.alias), None)
             ds.action.setData(ds)
 
+            #append to array
             self.data_sources[ds.id] = ds
 
         except Exception, e:
