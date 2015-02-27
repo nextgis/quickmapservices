@@ -48,5 +48,6 @@ class DataSourceInfo():
         self.wms_url = None
         self.wms_params = None
         self.wms_layers = None
+        self.wms_turn_over = None
 
         self.gdal_source_file = None

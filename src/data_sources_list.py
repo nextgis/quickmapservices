@@ -84,6 +84,7 @@ class DataSourcesList():
             ds.wms_url = self.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))
             ds.wms_params = self.try_read_config(parser, 'wms', 'params')
             ds.wms_layers = self.try_read_config(parser, 'wms', 'layers')
+            ds.wms_turn_over = self.try_read_config_bool(parser, 'wms', 'turn_over')
 
             #GDAL
             if ds.type == KNOWN_DRIVERS.GDAL:
@@ -128,6 +129,16 @@ class DataSourcesList():
     def try_read_config_int(self, parser, section, param, reraise=False):
         try:
             val = parser.getint(section, param)
+        except:
+            if reraise:
+                raise
+            else:
+                val = None
+        return val
+
+    def try_read_config_bool(self, parser, section, param, reraise=False):
+        try:
+            val = parser.getboolean(section, param)
         except:
             if reraise:
                 raise
