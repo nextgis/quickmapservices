@@ -84,13 +84,6 @@ class QuickMapServices:
         self.service_layers = []  # TODO: id and smart remove
         self._scales_list = None
 
-        # TileLayer assets
-        self.crs3857 = None
-        self.downloadTimeout = 30  # TODO: settings
-        self.navigationMessagesEnabled = Qt.Checked  # TODO: settings
-        self.pluginName = 'QuickMapServices'
-
-
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
@@ -127,6 +120,7 @@ class QuickMapServices:
                 self.menu.addMenu(gr_menu)
 
         # Scales, Settings and About actions
+        self.menu.addSeparator()
         icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
         set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'), self.iface.mainWindow())
         set_nearest_scale_act.triggered.connect(self.set_nearest_scale)
@@ -142,7 +136,8 @@ class QuickMapServices:
         icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
         settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
         self.service_actions.append(settings_act)
-        #self.menu.addAction(settings_act)
+        settings_act.triggered.connect(self.settings_dlg.show)
+        self.menu.addAction(settings_act)
 
         icon_about_path = self.plugin_dir + '/icons/mActionAbout.png'
         info_act = QAction(QIcon(icon_about_path), self.tr('About'), self.iface.mainWindow())
@@ -249,7 +244,6 @@ class QuickMapServices:
             toc_root.insertLayer(len(toc_root.children()), layer)
             # Save link
             self.service_layers.append(layer)
-
 
     def unload(self):
         # remove menu
