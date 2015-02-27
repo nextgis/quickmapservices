@@ -229,6 +229,8 @@ class QuickMapServices:
             if ds.wms_layers:
                 layers = ds.wms_layers.split(',')
                 if layers:
+                    if ds.wms_turn_over:
+                        layers.reverse()
                     qgis_wms_uri += '&layers='+'&layers='.join(layers)+'&styles='*len(layers)
             qgis_wms_uri += '&url=' + ds.wms_url
             layer = QgsRasterLayer(qgis_wms_uri, self.tr(ds.alias), KNOWN_DRIVERS.WMS.lower())
