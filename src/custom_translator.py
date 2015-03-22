@@ -37,6 +37,8 @@ class CustomTranslator(QTranslator):
         self.__translates.clear()
 
     def translate(self, context, text, disambiguation):
-        if isinstance(text, str) and text in self.__translates.keys():
-            return self.__translates[text]
-        return ''
+        try:
+            if isinstance(text, str) and text in self.__translates.keys():
+                return self.__translates[text]
+        except:
+            return ''
