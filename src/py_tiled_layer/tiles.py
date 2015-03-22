@@ -138,8 +138,24 @@ class TileServiceInfo:
     def tileUrl(self, zoom, x, y):
         if not self.yOriginTop:
             y = (2 ** zoom - 1) - y
-
-        return self.serviceUrl.replace("{z}", str(zoom)).replace("{x}", str(x)).replace("{y}", str(y))
+        # Added the form to obtain the quadkey and remplace to use.
+        # With the following change using the quadkey allowed, take the variable {q} to represent quadkey field.
+        # Source and credits of procedure https://github.com/buckheroux/QuadKey/blob/master/quadkey/tile_system.py
+        # Adapting code Nelson Ugalde Araya nugaldea@gmail.com
+        tilex = x
+        tiley = y
+        tilez = zoom
+        quadkey = ''
+        for i in xrange(tilez):
+            bit = tilez - i
+            digit = ord('0')
+            mask = 1 << (bit - 1)  # if (bit - 1) > 0 else 1 >> (bit - 1)
+            if (tilex & mask) is not 0:
+                digit += 1
+            if (tiley & mask) is not 0:
+                digit += 2
+            quadkey += chr(digit)
+        return self.serviceUrl.replace("{z}", str(zoom)).replace("{x}", str(x)).replace("{y}", str(y)).replace("{q}", str(quadkey))
 
     def getTileRect(self, zoom, x, y):
         size = self.TSIZE1 / 2 ** (zoom - 1)
