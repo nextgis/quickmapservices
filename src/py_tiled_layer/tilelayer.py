@@ -72,9 +72,12 @@ class TileLayer(QgsPluginLayer):
         self.setCustomProperty("creditVisibility", self.creditVisibility)
 
         # create a QgsCoordinateReferenceSystem instance if plugin has no instance yet
-        if plugin.crs3857 is None:
-            plugin.crs3857 = QgsCoordinateReferenceSystem(3857)
-        self.setCrs(plugin.crs3857)
+        if layerDef.proj is not None:
+            customcrs = QgsCoordinateReferenceSystem()
+            customcrs.createFromProj4(layerDef.proj)
+        else:
+            customcrs = QgsCoordinateReferenceSystem(layerDef.crs)
+        self.setCrs(customcrs)
         if layerDef.bbox:
             self.setExtent(BoundingBox.degreesToMercatorMeters(layerDef.bbox).toQgsRectangle())
         else:
@@ -263,7 +266,8 @@ class TileLayer(QgsPluginLayer):
                 painter.setRenderHint(QPainter.SmoothPixmapTransform)
 
             # draw tiles
-            if isWebMercator:
+            # if isWebMercator:
+            if False:
                 # no need to reproject tiles
                 self.drawTiles(renderContext, self.tiles)
                 # self.drawTilesDirectly(renderContext, self.tiles)

@@ -85,7 +85,6 @@ class QuickMapServices:
         self._scales_list = None
 
         # TileLayer assets
-        self.crs3857 = None
         self.downloadTimeout = 30  # TODO: settings
         self.navigationMessagesEnabled = Qt.Checked  # TODO: settings
         self.pluginName = 'QuickMapServices'
@@ -219,6 +218,8 @@ class QuickMapServices:
             service_info = TileServiceInfo(self.tr(ds.alias), ds.copyright_text, ds.tms_url)
             service_info.zmin = ds.tms_zmin or service_info.zmin
             service_info.zmax = ds.tms_zmax or service_info.zmax
+            service_info.crs = ds.tms_crs or service_info.crs
+            service_info.proj = ds.tms_proj or service_info.proj
             layer = TileLayer(self, service_info, False)
         if ds.type == KNOWN_DRIVERS.GDAL:
             layer = QgsRasterLayer(ds.gdal_source_file, self.tr(ds.alias))
