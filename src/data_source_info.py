@@ -44,6 +44,8 @@ class DataSourceInfo():
         self.tms_url = None
         self.tms_zmin = None
         self.tms_zmax = None
+        self.tms_crs = None
+        self.tms_proj = None
 
         self.wms_url = None
         self.wms_params = None
