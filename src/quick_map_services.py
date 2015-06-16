@@ -233,6 +233,10 @@ class QuickMapServices:
             toc_root.insertLayer(len(toc_root.children()), layer)
             # Save link
             self.service_layers.append(layer)
+            # Set OTF CRS Transform for map
+            if PluginSettings.enable_otf_3857() and ds.type == KNOWN_DRIVERS.TMS:
+                self.iface.mapCanvas().setCrsTransformEnabled(True)
+                self.iface.mapCanvas().setDestinationCrs(TileLayer.CRS_3857)
 
     def unload(self):
         # remove menu/
@@ -249,11 +253,11 @@ class QuickMapServices:
         QgsPluginLayerRegistry.instance().removePluginLayerType(TileLayer.LAYER_TYPE)
 
     def remove_menu_buttons(self):
-        '''
+        """
         Remove menus/buttons from all toolbars and main submenu
         :return:
         None
-        '''
+        """
         # remove menu
         if self.menu:
             self.iface.webMenu().removeAction(self.menu.menuAction())
@@ -264,7 +268,10 @@ class QuickMapServices:
             self.iface.layerToolBar().removeAction(self.tb_action)
 
     def append_menu_buttons(self):
-
+        """
+        Append menus and buttons to appropriate toolbar
+        :return:
+        """
         # add to QGIS menu
         if PluginSettings.move_to_layers_menu():
             self.iface.addLayerMenu().addMenu(self.menu)
