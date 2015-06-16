@@ -25,6 +25,7 @@ import os
 
 from PyQt4 import QtGui, uic
 from plugin_settings import PluginSettings
+from qgis_settings import QGISSettings
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'settings_dialog_base.ui'))
@@ -49,7 +50,9 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
         self.chkShowMessagesInBar.setChecked(PluginSettings.show_messages_in_bar())
         # tiled layers
         self.spnConnCount.setValue(PluginSettings.default_tile_layer_conn_count())
-        #contrib pack
+        self.spnCacheExp.setValue(QGISSettings.get_default_tile_expiry())
+        self.spnNetworkTimeout.setValue(QGISSettings.get_default_network_timeout())
+        # contrib pack
 
     def save_settings(self):
         # common
@@ -58,7 +61,9 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
         PluginSettings.set_show_messages_in_bar(self.chkShowMessagesInBar.isChecked())
         # tiled layers
         PluginSettings.set_default_tile_layer_conn_count(self.spnConnCount.value())
-        #contrib pack
+        QGISSettings.set_default_tile_expiry(self.spnCacheExp.value())
+        QGISSettings.set_default_network_timeout(self.spnNetworkTimeout.value())
+        # contrib pack
 
     def apply_settings(self):
         pass

@@ -34,9 +34,27 @@ class QGISSettings():
         return QGISSettings.get_settings().value('/qgis/defaultTileExpiry', def_value, type=int)
 
     @classmethod
+    def set_default_tile_expiry(self, int_value):
+        if not isinstance(int_value, int) or int_value < 0 or int_value > 100000000:
+            raise ValueError(int_value)
+        return QGISSettings.get_settings().setValue('/qgis/defaultTileExpiry', int_value)
+
+    @classmethod
     def get_default_user_agent(self, def_value='Mozilla/5.0'):
         return QGISSettings.get_settings().value('/qgis/networkAndProxy/userAgent', def_value, type=str)
 
     @classmethod
+    def set_default_user_agent(self, str_value):
+        if not str_value:
+            raise ValueError(str_value)
+        return QGISSettings.get_settings().setValue('/qgis/networkAndProxy/userAgent', str_value)
+
+    @classmethod
     def get_default_network_timeout(self, def_value=60000):
         return QGISSettings.get_settings().value('/qgis/networkAndProxy/networkTimeout', def_value, type=int)
+
+    @classmethod
+    def set_default_network_timeout(self, int_value):
+        if not isinstance(int_value, int) or int_value < 1 or int_value > 100000000:
+            raise ValueError(int_value)
+        return QGISSettings.get_settings().setValue('/qgis/networkAndProxy/networkTimeout', int_value)
