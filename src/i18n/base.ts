@@ -88,7 +88,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="settings_dialog_base.ui" line="30"/>
-        <source>Move plugin to &quot;Layers&quot; menu/panel:</source>
+        <source>Move plugin to &quot;Manage Layers&quot; menu/panel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
