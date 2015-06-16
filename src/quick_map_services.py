@@ -31,6 +31,7 @@ from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog
 from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject, QgsPluginLayerRegistry
 from qgis.gui import QgsMessageBar
 import sys
+from extra_sources import ExtraSources
 from plugin_settings import PluginSettings
 
 from settings_dialog import SettingsDialog
@@ -75,9 +76,19 @@ class QuickMapServices:
         self.custom_translator = CustomTranslator()
         QCoreApplication.installTranslator(self.custom_translator)
 
-
         # Create the dialog (after translation) and keep reference
         self.info_dlg = AboutDialog()
+
+        # Check Contrib and User dirs
+        try:
+            ExtraSources.check_extra_dirs()
+        except:
+            error_message = self.tr('Extra dirs for %s can\'t be created: %s %s') % (PluginSettings.product_name(),
+                                                                                      sys.exc_type,
+                                                                                      sys.exc_value)
+            self.iface.messageBar().pushMessage(self.tr('Error'),
+                                                error_message,
+                                                level=QgsMessageBar.CRITICAL)
 
         # Declare instance attributes
         self.service_actions = []
@@ -88,7 +99,6 @@ class QuickMapServices:
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('QuickMapServices', message)
-
 
     def initGui(self):
         #import pydevd
