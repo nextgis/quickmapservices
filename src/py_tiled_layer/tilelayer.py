@@ -22,11 +22,13 @@
 # Import the PyQt and QGIS libraries
 import os
 import threading
-from PyQt4.QtCore import QObject, QSettings, qDebug, Qt, QFile, QRectF, QPointF, QPoint, QTimer, QEventLoop
+from PyQt4.QtCore import QObject, qDebug, Qt, QFile, QRectF, QPointF, QPoint, QTimer, QEventLoop
 from PyQt4.QtCore import SIGNAL
 from PyQt4.QtGui import QFont, QColor, QBrush
-from qgis.core import QgsPluginLayer, QgsCoordinateReferenceSystem, QGis, QgsPluginLayerType
+from qgis.core import QgsPluginLayer, QgsCoordinateReferenceSystem, QgsPluginLayerType
 from qgis.gui import QgsMessageBar
+from ..plugin_settings import PluginSettings
+from ..qgis_settings import QGISSettings
 
 from tiles import *
 from downloader import Downloader
@@ -49,6 +51,9 @@ class LayerDefaultSettings:
 
 
 class TileLayer(QgsPluginLayer):
+
+    CRS_3857 = QgsCoordinateReferenceSystem(3857)
+
     LAYER_TYPE = "PyTiledLayer"
     MAX_TILE_COUNT = 256
     CHANGE_SCALE_VALUE = 0.30
@@ -71,10 +76,7 @@ class TileLayer(QgsPluginLayer):
             self.setCustomProperty("bbox", layerDef.bbox.toString())
         self.setCustomProperty("creditVisibility", self.creditVisibility)
 
-        # create a QgsCoordinateReferenceSystem instance if plugin has no instance yet
-        if plugin.crs3857 is None:
-            plugin.crs3857 = QgsCoordinateReferenceSystem(3857)
-        self.setCrs(plugin.crs3857)
+        self.setCrs(self.CRS_3857)
         if layerDef.bbox:
             self.setExtent(BoundingBox.degreesToMercatorMeters(layerDef.bbox).toQgsRectangle())
         else:
@@ -87,11 +89,15 @@ class TileLayer(QgsPluginLayer):
         self.setBlendModeByName(LayerDefaultSettings.BLEND_MODE)
         self.setSmoothRender(LayerDefaultSettings.SMOOTH_RENDER)
 
+        # downloader
         self.downloader = Downloader(self)
-        self.downloader.userAgent = "QGIS/{0} QuickMapServices Plugin".format(
-            QGis.QGIS_VERSION)  # , self.plugin.VERSION) # not written since QGIS 2.2
-        self.downloader.DEFAULT_CACHE_EXPIRATION = QSettings().value("/qgis/defaultTileExpiry", 24, type=int)
+        self.downloader.userAgent = QGISSettings.get_default_user_agent()
+        self.downloader.default_cache_expiration = QGISSettings.get_default_tile_expiry()
+        self.downloader.max_connection = PluginSettings.default_tile_layer_conn_count()  #TODO: Move to INI files
         QObject.connect(self.downloader, SIGNAL("replyFinished(QString, int, int)"), self.networkReplyFinished)
+
+        #network
+        self.downloadTimeout = QGISSettings.get_default_network_timeout()
 
         # multi-thread rendering
         self.eventLoop = None
@@ -146,11 +152,10 @@ class TileLayer(QgsPluginLayer):
 
         # zoom limit
         if zoom < self.layerDef.zmin:
-            if self.plugin.navigationMessagesEnabled:
-                msg = self.tr("Current zoom level ({0}) is smaller than zmin ({1}): {2}").format(zoom,
-                                                                                                 self.layerDef.zmin,
-                                                                                                 self.layerDef.title)
-                self.showBarMessage(msg, QgsMessageBar.INFO, 2)
+            msg = self.tr("Current zoom level ({0}) is smaller than zmin ({1}): {2}").format(zoom,
+                                                                                             self.layerDef.zmin,
+                                                                                             self.layerDef.title)
+            self.showBarMessage(msg, QgsMessageBar.INFO, 2)
             return True
 
         while True:
@@ -611,7 +616,7 @@ class TileLayer(QgsPluginLayer):
         # wait for the fetch to finish
         tick = 0
         interval = 500
-        timeoutTick = self.plugin.downloadTimeout * 1000 / interval
+        timeoutTick = self.downloadTimeout / interval
         watchTimer.start(interval)
         while tick < timeoutTick:
             # run event loop for 0.5 seconds at maximum
@@ -641,7 +646,7 @@ class TileLayer(QgsPluginLayer):
 
     def fetchRequest(self, urls):
         self.logT("TileLayer.fetchRequest()")
-        self.downloader.fetchFilesAsync(urls, self.plugin.downloadTimeout)
+        self.downloader.fetchFilesAsync(urls, self.downloadTimeout)
 
     def showStatusMessage(self, msg, timeout=0):
         self.emit(SIGNAL("showMessage(QString, int)"), msg, timeout)
@@ -650,9 +655,10 @@ class TileLayer(QgsPluginLayer):
         self.iface.mainWindow().statusBar().showMessage(msg, timeout)
 
     def showBarMessage(self, text, level=QgsMessageBar.INFO, duration=0, title=None):
-        if title is None:
-            title = self.plugin.pluginName
-        self.emit(SIGNAL("showBarMessage(QString, QString, int, int)"), title, text, level, duration)
+        if PluginSettings.show_messages_in_bar():
+            if title is None:
+                title = PluginSettings.product_name()
+            self.emit(SIGNAL("showBarMessage(QString, QString, int, int)"), title, text, level, duration)
 
     def showBarMessageSlot(self, title, text, level, duration):
         self.iface.messageBar().pushMessage(title, text, level, duration)

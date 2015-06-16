@@ -24,18 +24,49 @@
 import os
 
 from PyQt4 import QtGui, uic
+from plugin_settings import PluginSettings
+from qgis_settings import QGISSettings
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'settings_dialog_base.ui'))
 
 
 class SettingsDialog(QtGui.QDialog, FORM_CLASS):
+
     def __init__(self, parent=None):
         """Constructor."""
         super(SettingsDialog, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        # init form
+        self.fill_pages()
+        # signals
+        self.btnGetContribPack.clicked.connect(self.get_contrib)
+        self.accepted.connect(self.save_settings)
+
+    def fill_pages(self):
+        # common
+        self.chkMoveToLayersMenu.setChecked(PluginSettings.move_to_layers_menu())
+        self.chkEnableOTF3857.setChecked(PluginSettings.enable_otf_3857())
+        self.chkShowMessagesInBar.setChecked(PluginSettings.show_messages_in_bar())
+        # tiled layers
+        self.spnConnCount.setValue(PluginSettings.default_tile_layer_conn_count())
+        self.spnCacheExp.setValue(QGISSettings.get_default_tile_expiry())
+        self.spnNetworkTimeout.setValue(QGISSettings.get_default_network_timeout())
+        # contrib pack
+
+    def save_settings(self):
+        # common
+        PluginSettings.set_move_to_layers_menu(self.chkMoveToLayersMenu.isChecked())
+        PluginSettings.set_enable_otf_3857(self.chkEnableOTF3857.isChecked())
+        PluginSettings.set_show_messages_in_bar(self.chkShowMessagesInBar.isChecked())
+        # tiled layers
+        PluginSettings.set_default_tile_layer_conn_count(self.spnConnCount.value())
+        QGISSettings.set_default_tile_expiry(self.spnCacheExp.value())
+        QGISSettings.set_default_network_timeout(self.spnNetworkTimeout.value())
+        # contrib pack
+
+    def apply_settings(self):
+        pass
+
+    def get_contrib(self):
+        pass
