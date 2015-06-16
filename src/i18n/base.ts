@@ -128,7 +128,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="settings_dialog_base.ui" line="186"/>
-        <source>Contribute services</source>
+        <source>Contributed services</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -139,7 +139,7 @@ Use at your own risk!</source>
     </message>
     <message>
         <location filename="settings_dialog_base.ui" line="300"/>
-        <source>Get contribute pack</source>
+        <source>Get contributed pack</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
