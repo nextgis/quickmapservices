@@ -180,7 +180,7 @@
      </widget>
      <widget class="QWidget" name="tabExtraServices">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <attribute name="title">
        <string>Contribute services</string>

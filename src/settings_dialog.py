@@ -24,6 +24,11 @@
 import os
 
 from PyQt4 import QtGui, uic
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QMessageBox, QCursor
+import sys
+from qgis.core import QgsApplication
+from extra_sources import ExtraSources
 from plugin_settings import PluginSettings
 from qgis_settings import QGISSettings
 
@@ -69,4 +74,15 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
         pass
 
     def get_contrib(self):
-        pass
+        QgsApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+
+        try:
+            ExtraSources.load_contrib_pack()
+            info_message = self.tr('Last version of contrib pack was downloaded!')
+            QMessageBox.information(self, PluginSettings.product_name(), info_message)
+        except:
+            error_message = self.tr('Error on getting contrib pack: %s %s') % (sys.exc_type, sys.exc_value)
+            QMessageBox.critical(self, PluginSettings.product_name(), error_message)
+
+        QgsApplication.restoreOverrideCursor()
+

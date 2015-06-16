@@ -20,8 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+import json
 import os
+import tempfile
+import urllib2
+from zipfile import ZipFile
 from qgis.core import QgsApplication
+import shutil
 from plugin_settings import PluginSettings
 
 LOCAL_SETTINGS_PATH = os.path.dirname(QgsApplication.qgisUserDbFilePath())
@@ -32,6 +37,8 @@ USER_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, 'User')
 
 DATA_SOURCES_DIR_NAME = 'data_sources'
 GROUPS_DIR_NAME = 'groups'
+
+CONTRIBUTE_REPO_URL = 'https://api.github.com/repos/nextgis/quickmapservices_contrib'
 
 
 class ExtraSources:
@@ -56,4 +63,55 @@ class ExtraSources:
     @classmethod
     def load_contrib_pack(cls):
         cls.check_extra_dirs()
-        pass
+
+        # get info
+        latest_release_info = cls._get_latest_release_info()
+        name = latest_release_info['name']
+        zip_url = latest_release_info['zipball_url']
+
+        # create temp dir
+        tmp_dir = tempfile.mkdtemp()
+
+        # download zip file
+        zip_file_path = os.path.join(tmp_dir, 'contrib.zip')
+        cls._download_file(zip_url, zip_file_path)
+
+        # extract zip to tmp dir
+        tmp_extract_dir = os.path.join(tmp_dir, 'contrib')
+        cls._extract_zip(zip_file_path, tmp_extract_dir)
+
+        #first dir - our content
+        src_dir_name = os.listdir(tmp_extract_dir)[0]
+        src_dir = os.path.join(tmp_extract_dir, src_dir_name)
+
+        # clear dst dir and copy
+        shutil.rmtree(CONTRIBUTE_DIR_PATH, ignore_errors=True)
+        shutil.copytree(src_dir, CONTRIBUTE_DIR_PATH)
+
+        # remove tmp dir
+        shutil.rmtree(tmp_dir, ignore_errors=True)
+
+
+    @classmethod
+    def _get_releases_info(cls):
+        response = urllib2.urlopen('%s/%s' % (CONTRIBUTE_REPO_URL, 'releases'))
+        releases_info = json.loads(response.read().decode('utf-8'))
+        return releases_info
+
+    @classmethod
+    def _get_latest_release_info(cls):
+        response = urllib2.urlopen('%s/%s/%s' % (CONTRIBUTE_REPO_URL, 'releases', 'latest'))
+        latest_release_info = json.loads(response.read().decode('utf-8'))
+        return latest_release_info
+
+    @classmethod
+    def _download_file(cls, url, out_path):
+        response = urllib2.urlopen(url)
+        with open(out_path, "wb") as local_file:
+            local_file.write(response.read())
+
+    @classmethod
+    def _extract_zip(cls, zip_path, out_path):
+        zf = ZipFile(zip_path)
+        zf.extractall(out_path)
+
