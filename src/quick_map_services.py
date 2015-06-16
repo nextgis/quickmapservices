@@ -24,7 +24,7 @@ import os.path
 import xml.etree.ElementTree as ET
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
-from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox
+from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
@@ -77,7 +77,6 @@ class QuickMapServices:
 
 
         # Create the dialog (after translation) and keep reference
-        self.settings_dlg = SettingsDialog()
         self.info_dlg = AboutDialog()
 
         # Declare instance attributes
@@ -92,8 +91,8 @@ class QuickMapServices:
 
 
     def initGui(self):
-        import pydevd
-        pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
+        #import pydevd
+        #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
         # Main Menu
@@ -137,7 +136,7 @@ class QuickMapServices:
         icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
         settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
         self.service_actions.append(settings_act)
-        settings_act.triggered.connect(self.settings_dlg.show)
+        settings_act.triggered.connect(self.show_settings_dialog)
         self.menu.addAction(settings_act)
 
         icon_about_path = self.plugin_dir + '/icons/mActionAbout.png'
@@ -193,7 +192,6 @@ class QuickMapServices:
             QgsProject.instance().writeEntry('Scales', '/useProjectScales', True)
             # update in main window
             # ???? no way to update: http://hub.qgis.org/issues/11917
-
 
     def insert_layer(self):
         #TODO: need factory!
@@ -293,5 +291,14 @@ class QuickMapServices:
             self.tb_action = self.iface.layerToolBar().addWidget(toolbutton)
         else:
             self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
+
+    def show_settings_dialog(self):
+        settings_dlg = SettingsDialog()
+
+        if settings_dlg.exec_() == QDialog.Accepted:
+            # apply settings
+            self.remove_menu_buttons()
+            self.append_menu_buttons()
+
 
 

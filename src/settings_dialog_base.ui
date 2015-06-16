@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>355</width>
+    <width>382</width>
     <height>331</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabCommon">
       <attribute name="title">
@@ -38,17 +38,17 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QCheckBox" name="chkEnableOTF3857">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>Enable OTF EPSG:3857 on tiled layer add:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="chkEnableOTF3857">
+         <property name="text">
+          <string/>
          </property>
         </widget>
        </item>
@@ -165,7 +165,10 @@
           </font>
          </property>
          <property name="text">
-          <string>Settings will be applyed for new added layers!</string>
+          <string>Settings will be applied for newly added layers</string>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
