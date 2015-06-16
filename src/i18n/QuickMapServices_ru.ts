@@ -98,7 +98,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="settings_dialog_base.ui" line="44"/>
         <source>Enable OTF EPSG:3857 on tiled layer add:</source>
-        <translation>Вкл. перепроицирование при доб. тайлового слоя:</translation>
+        <translation>Вкл. перепроецирование при доб. тайлового слоя:</translation>
     </message>
     <message>
         <location filename="settings_dialog_base.ui" line="58"/>
@@ -132,8 +132,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="settings_dialog_base.ui" line="186"/>
-        <source>Contribute services</source>
-        <translation>Сервисы сообщества</translation>
+        <source>Contributed services</source>
+        <translation>Дополнительные сервисы</translation>
     </message>
     <message>
         <location filename="settings_dialog_base.ui" line="273"/>
@@ -143,8 +143,8 @@ Use at your own risk!</source>
     </message>
     <message>
         <location filename="settings_dialog_base.ui" line="300"/>
-        <source>Get contribute pack</source>
-        <translation>Получить источники данных сообщества</translation>
+        <source>Get contributed pack</source>
+        <translation>Получить дополнительные источники данных</translation>
     </message>
 </context>
 <context>
