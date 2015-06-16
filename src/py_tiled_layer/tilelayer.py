@@ -64,7 +64,6 @@ class TileLayer(QgsPluginLayer):
         self.iface = plugin.iface
         self.layerDef = layerDef
         self.creditVisibility = 1 if creditVisibility else 0
-        self.show_messages_in_bar = PluginSettings.show_messages_in_bar()
 
         # set custom properties
         self.setCustomProperty("title", layerDef.title)
@@ -153,11 +152,10 @@ class TileLayer(QgsPluginLayer):
 
         # zoom limit
         if zoom < self.layerDef.zmin:
-            if self.show_messages_in_bar:
-                msg = self.tr("Current zoom level ({0}) is smaller than zmin ({1}): {2}").format(zoom,
-                                                                                                 self.layerDef.zmin,
-                                                                                                 self.layerDef.title)
-                self.showBarMessage(msg, QgsMessageBar.INFO, 2)
+            msg = self.tr("Current zoom level ({0}) is smaller than zmin ({1}): {2}").format(zoom,
+                                                                                             self.layerDef.zmin,
+                                                                                             self.layerDef.title)
+            self.showBarMessage(msg, QgsMessageBar.INFO, 2)
             return True
 
         while True:
@@ -657,9 +655,10 @@ class TileLayer(QgsPluginLayer):
         self.iface.mainWindow().statusBar().showMessage(msg, timeout)
 
     def showBarMessage(self, text, level=QgsMessageBar.INFO, duration=0, title=None):
-        if title is None:
-            title = PluginSettings.product_name()
-        self.emit(SIGNAL("showBarMessage(QString, QString, int, int)"), title, text, level, duration)
+        if PluginSettings.show_messages_in_bar():
+            if title is None:
+                title = PluginSettings.product_name()
+            self.emit(SIGNAL("showBarMessage(QString, QString, int, int)"), title, text, level, duration)
 
     def showBarMessageSlot(self, title, text, level, duration):
         self.iface.messageBar().pushMessage(title, text, level, duration)
