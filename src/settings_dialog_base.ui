@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>382</width>
+    <width>362</width>
     <height>331</height>
    </rect>
   </property>
@@ -297,7 +297,7 @@ Use at your own risk!</string>
        <item>
         <widget class="QPushButton" name="btnGetContribPack">
          <property name="text">
-          <string>Get contibute pack</string>
+          <string>Get contribute pack</string>
          </property>
         </widget>
        </item>
