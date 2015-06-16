@@ -50,7 +50,7 @@ class PluginSettings():
 
     @classmethod
     def set_show_messages_in_bar(cls, bool_val):
-        return cls.get_settings().value('show_messages_in_bar', bool_val)
+        return cls.get_settings().setValue('show_messages_in_bar', bool_val)
 
     @classmethod
     def move_to_layers_menu(cls):
@@ -58,7 +58,7 @@ class PluginSettings():
 
     @classmethod
     def set_move_to_layers_menu(cls, bool_val):
-        return cls.get_settings().value('move_to_layers_menu', bool_val)
+        return cls.get_settings().setValue('move_to_layers_menu', bool_val)
 
     @classmethod
     def enable_otf_3857(cls):
@@ -66,4 +66,4 @@ class PluginSettings():
 
     @classmethod
     def set_enable_otf_3857(cls, bool_val):
-        return cls.get_settings().value('enable_otf_3857', bool_val)
+        return cls.get_settings().setValue('enable_otf_3857', bool_val)

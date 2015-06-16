@@ -31,6 +31,7 @@ from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox
 from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject, QgsPluginLayerRegistry
 from qgis.gui import QgsMessageBar
 import sys
+from plugin_settings import PluginSettings
 
 from settings_dialog import SettingsDialog
 from about_dialog import AboutDialog
@@ -91,8 +92,8 @@ class QuickMapServices:
 
 
     def initGui(self):
-        #import pydevd
-        #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
+        import pydevd
+        pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
         # Main Menu
@@ -145,20 +146,8 @@ class QuickMapServices:
         info_act.triggered.connect(self.info_dlg.show)
         self.menu.addAction(info_act)
 
-        # add to QGIS menu
-        self.iface.addPluginToWebMenu("_tmp", info_act)
-        self.iface.webMenu().addMenu(self.menu)
-        self.iface.removePluginWebMenu("_tmp", info_act)
-
-        # add to QGIS toolbar
-        toolbutton = QToolButton()
-        toolbutton.setPopupMode(QToolButton.InstantPopup)
-        toolbutton.setMenu(self.menu)
-        toolbutton.setIcon(self.menu.icon())
-        toolbutton.setText(self.menu.title())
-        toolbutton.setToolTip(self.menu.title())
-        self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
-
+        # add to QGIS menu/toolbars
+        self.append_menu_buttons()
 
     def _load_scales_list(self):
         scales_filename = os.path.join(self.plugin_dir, 'scales.xml')
@@ -246,10 +235,9 @@ class QuickMapServices:
             self.service_layers.append(layer)
 
     def unload(self):
-        # remove menu
-        self.iface.webMenu().removeAction(self.menu.menuAction())
-        # remove toolbar button
-        self.iface.webToolBar().removeAction(self.tb_action)
+        # remove menu/
+        self.remove_menu_buttons()
+
         # clean vars
         self.menu = None
         self.toolbutton = None
@@ -259,3 +247,44 @@ class QuickMapServices:
         self.service_layers = None
         # Unregister plugin layer type
         QgsPluginLayerRegistry.instance().removePluginLayerType(TileLayer.LAYER_TYPE)
+
+    def remove_menu_buttons(self):
+        '''
+        Remove menus/buttons from all toolbars and main submenu
+        :return:
+        None
+        '''
+        # remove menu
+        if self.menu:
+            self.iface.webMenu().removeAction(self.menu.menuAction())
+            self.iface.addLayerMenu().removeAction(self.menu.menuAction())
+        # remove toolbar button
+        if self.tb_action:
+            self.iface.webToolBar().removeAction(self.tb_action)
+            self.iface.layerToolBar().removeAction(self.tb_action)
+
+    def append_menu_buttons(self):
+
+        # add to QGIS menu
+        if PluginSettings.move_to_layers_menu():
+            self.iface.addLayerMenu().addMenu(self.menu)
+        else:
+            # need workaround for WebMenu
+            _temp_act = QAction('temp', self.iface.mainWindow())
+            self.iface.addPluginToWebMenu("_tmp", _temp_act)
+            self.iface.webMenu().addMenu(self.menu)
+            self.iface.removePluginWebMenu("_tmp", _temp_act)
+
+        # add to QGIS toolbar
+        toolbutton = QToolButton()
+        toolbutton.setPopupMode(QToolButton.InstantPopup)
+        toolbutton.setMenu(self.menu)
+        toolbutton.setIcon(self.menu.icon())
+        toolbutton.setText(self.menu.title())
+        toolbutton.setToolTip(self.menu.title())
+        if PluginSettings.move_to_layers_menu():
+            self.tb_action = self.iface.layerToolBar().addWidget(toolbutton)
+        else:
+            self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
+
+
