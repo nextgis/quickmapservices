@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="ru">
+<!DOCTYPE TS><TS version="2.0" language="ru" sourcelanguage="">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -151,46 +150,64 @@ Use at your own risk!</source>
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="quick_map_services.py" line="183"/>
+        <location filename="quick_map_services.py" line="224"/>
         <source>QuickMapServices</source>
         <translation>QuickMapServices</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="125"/>
+        <location filename="quick_map_services.py" line="243"/>
         <source>Set proper scale</source>
         <translation>Ближайший масштаб</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="131"/>
+        <location filename="quick_map_services.py" line="249"/>
         <source>Set SlippyMap scales</source>
         <translation>Установить масштабы SlippyMap</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="137"/>
+        <location filename="quick_map_services.py" line="255"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="143"/>
+        <location filename="quick_map_services.py" line="261"/>
         <source>About</source>
         <translation>Инфо</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="183"/>
+        <location filename="quick_map_services.py" line="149"/>
         <source>Set SlippyMap scales for current project? 
 The previous settings will be overwritten!</source>
         <translation>Установить масштабный ряд SlippyMap для текущего проекта?
 Предыдущие настройки будут перезаписаны!</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="219"/>
+        <location filename="quick_map_services.py" line="187"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation>Слой %s невозможно добавить на карту!</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="220"/>
+        <location filename="quick_map_services.py" line="188"/>
         <source>Error</source>
         <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="quick_map_services.py" line="86"/>
+        <source>Extra dirs for %s can&apos;t be created: %s %s</source>
+        <translation>Невозможно создать дополнительные директории для  %s: %s %s</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <location filename="settings_dialog.py" line="82"/>
+        <source>Last version of contrib pack was downloaded!</source>
+        <translation>Последняя версия пакета с источниками данных была успешно загружена!</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog.py" line="86"/>
+        <source>Error on getting contrib pack: %s %s</source>
+        <translation>Ошибка при получении пакета: %s %s</translation>
     </message>
 </context>
 </TS>

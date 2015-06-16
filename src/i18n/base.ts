@@ -146,44 +146,62 @@ Use at your own risk!</source>
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="quick_map_services.py" line="183"/>
+        <location filename="quick_map_services.py" line="224"/>
         <source>QuickMapServices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="125"/>
+        <location filename="quick_map_services.py" line="243"/>
         <source>Set proper scale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="131"/>
+        <location filename="quick_map_services.py" line="249"/>
         <source>Set SlippyMap scales</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="137"/>
+        <location filename="quick_map_services.py" line="255"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="143"/>
+        <location filename="quick_map_services.py" line="261"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="183"/>
+        <location filename="quick_map_services.py" line="149"/>
         <source>Set SlippyMap scales for current project? 
 The previous settings will be overwritten!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="219"/>
+        <location filename="quick_map_services.py" line="187"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="220"/>
+        <location filename="quick_map_services.py" line="188"/>
         <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="quick_map_services.py" line="86"/>
+        <source>Extra dirs for %s can&apos;t be created: %s %s</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <location filename="settings_dialog.py" line="82"/>
+        <source>Last version of contrib pack was downloaded!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="settings_dialog.py" line="86"/>
+        <source>Error on getting contrib pack: %s %s</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

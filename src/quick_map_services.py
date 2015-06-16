@@ -104,56 +104,12 @@ class QuickMapServices:
         #import pydevd
         #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
-        """Create the menu entries and toolbar icons inside the QGIS GUI."""
-        # Main Menu
-        icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
-        self.menu = QMenu(self.tr(u'QuickMapServices'))
-        self.menu.setIcon(QIcon(icon_path))
-
-        # DataSources Actions
-
         # Register plugin layer type
         self.tileLayerType = TileLayerType(self)
         QgsPluginLayerRegistry.instance().addPluginLayerType(self.tileLayerType)
 
-        self.groups_list = DsGroupsList(self.locale, self.custom_translator)
-        self.ds_list = DataSourcesList(self.locale, self.custom_translator)
-
-        data_sources = self.ds_list.data_sources.values()
-        data_sources.sort(key=lambda x: x.alias or x.id)
-
-        for ds in data_sources:
-            ds.action.triggered.connect(self.insert_layer)
-            gr_menu = self.groups_list.get_group_menu(ds.group)
-            gr_menu.addAction(ds.action)
-            if gr_menu not in self.menu.children():
-                self.menu.addMenu(gr_menu)
-
-        # Scales, Settings and About actions
-        self.menu.addSeparator()
-        icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
-        set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'), self.iface.mainWindow())
-        set_nearest_scale_act.triggered.connect(self.set_nearest_scale)
-        self.menu.addAction(set_nearest_scale_act)  # TODO: uncomment after fix
-        self.service_actions.append(set_nearest_scale_act)
-
-        icon_scales_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
-        scales_act = QAction(QIcon(icon_scales_path), self.tr('Set SlippyMap scales'), self.iface.mainWindow())
-        scales_act.triggered.connect(self.set_tms_scales)
-        #self.menu.addAction(scales_act)  # TODO: uncomment after fix
-        self.service_actions.append(scales_act)
-
-        icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
-        settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
-        self.service_actions.append(settings_act)
-        settings_act.triggered.connect(self.show_settings_dialog)
-        self.menu.addAction(settings_act)
-
-        icon_about_path = self.plugin_dir + '/icons/mActionAbout.png'
-        info_act = QAction(QIcon(icon_about_path), self.tr('About'), self.iface.mainWindow())
-        self.service_actions.append(info_act)
-        info_act.triggered.connect(self.info_dlg.show)
-        self.menu.addAction(info_act)
+        # Create menu
+        self.build_menu_tree()
 
         # add to QGIS menu/toolbars
         self.append_menu_buttons()
@@ -262,6 +218,52 @@ class QuickMapServices:
         # Unregister plugin layer type
         QgsPluginLayerRegistry.instance().removePluginLayerType(TileLayer.LAYER_TYPE)
 
+    def build_menu_tree(self):
+        # Main Menu
+        icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
+        self.menu = QMenu(self.tr(u'QuickMapServices'))
+        self.menu.setIcon(QIcon(icon_path))
+
+        self.groups_list = DsGroupsList(self.locale, self.custom_translator)
+        self.ds_list = DataSourcesList(self.locale, self.custom_translator)
+
+        data_sources = self.ds_list.data_sources.values()
+        data_sources.sort(key=lambda x: x.alias or x.id)
+
+        for ds in data_sources:
+            ds.action.triggered.connect(self.insert_layer)
+            gr_menu = self.groups_list.get_group_menu(ds.group)
+            gr_menu.addAction(ds.action)
+            if gr_menu not in self.menu.children():
+                self.menu.addMenu(gr_menu)
+
+        # Scales, Settings and About actions
+        self.menu.addSeparator()
+        icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
+        set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'), self.iface.mainWindow())
+        set_nearest_scale_act.triggered.connect(self.set_nearest_scale)
+        self.menu.addAction(set_nearest_scale_act)  # TODO: uncomment after fix
+        self.service_actions.append(set_nearest_scale_act)
+
+        icon_scales_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
+        scales_act = QAction(QIcon(icon_scales_path), self.tr('Set SlippyMap scales'), self.iface.mainWindow())
+        scales_act.triggered.connect(self.set_tms_scales)
+        #self.menu.addAction(scales_act)  # TODO: uncomment after fix
+        self.service_actions.append(scales_act)
+
+        icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
+        settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
+        self.service_actions.append(settings_act)
+        settings_act.triggered.connect(self.show_settings_dialog)
+        self.menu.addAction(settings_act)
+
+        icon_about_path = self.plugin_dir + '/icons/mActionAbout.png'
+        info_act = QAction(QIcon(icon_about_path), self.tr('About'), self.iface.mainWindow())
+        self.service_actions.append(info_act)
+        info_act.triggered.connect(self.info_dlg.show)
+        self.menu.addAction(info_act)
+
+
     def remove_menu_buttons(self):
         """
         Remove menus/buttons from all toolbars and main submenu
@@ -307,10 +309,11 @@ class QuickMapServices:
     def show_settings_dialog(self):
         settings_dlg = SettingsDialog()
 
-        if settings_dlg.exec_() == QDialog.Accepted:
-            # apply settings
-            self.remove_menu_buttons()
-            self.append_menu_buttons()
+        settings_dlg.exec_()
+        # apply settings
+        self.remove_menu_buttons()
+        self.build_menu_tree()
+        self.append_menu_buttons()
 
 
 

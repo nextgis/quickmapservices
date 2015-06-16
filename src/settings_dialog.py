@@ -78,11 +78,10 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
 
         try:
             ExtraSources.load_contrib_pack()
+            QgsApplication.restoreOverrideCursor()
             info_message = self.tr('Last version of contrib pack was downloaded!')
             QMessageBox.information(self, PluginSettings.product_name(), info_message)
         except:
+            QgsApplication.restoreOverrideCursor()
             error_message = self.tr('Error on getting contrib pack: %s %s') % (sys.exc_type, sys.exc_value)
             QMessageBox.critical(self, PluginSettings.product_name(), error_message)
-
-        QgsApplication.restoreOverrideCursor()
-
