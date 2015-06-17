@@ -83,6 +83,7 @@ class DataSourcesList:
             ds.tms_url = self.try_read_config(parser, 'tms', 'url', reraise=(ds.type == KNOWN_DRIVERS.TMS))
             ds.tms_zmin = self.try_read_config_int(parser, 'tms', 'zmin')
             ds.tms_zmax = self.try_read_config_int(parser, 'tms', 'zmax')
+            ds.tms_y_origin_top = self.try_read_config_int(parser, 'tms', 'y_origin_top')
 
             #WMS
             ds.wms_url = self.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))
