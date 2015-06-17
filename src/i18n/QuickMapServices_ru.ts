@@ -150,27 +150,27 @@ Use at your own risk!</source>
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="quick_map_services.py" line="224"/>
+        <location filename="quick_map_services.py" line="226"/>
         <source>QuickMapServices</source>
         <translation>QuickMapServices</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="243"/>
+        <location filename="quick_map_services.py" line="245"/>
         <source>Set proper scale</source>
         <translation>Ближайший масштаб</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="249"/>
+        <location filename="quick_map_services.py" line="251"/>
         <source>Set SlippyMap scales</source>
         <translation>Установить масштабы SlippyMap</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="255"/>
+        <location filename="quick_map_services.py" line="257"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="261"/>
+        <location filename="quick_map_services.py" line="263"/>
         <source>About</source>
         <translation>Инфо</translation>
     </message>
@@ -182,12 +182,12 @@ The previous settings will be overwritten!</source>
 Предыдущие настройки будут перезаписаны!</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="187"/>
+        <location filename="quick_map_services.py" line="189"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation>Слой %s невозможно добавить на карту!</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="188"/>
+        <location filename="quick_map_services.py" line="190"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>

@@ -146,27 +146,27 @@ Use at your own risk!</source>
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="quick_map_services.py" line="224"/>
+        <location filename="quick_map_services.py" line="226"/>
         <source>QuickMapServices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="243"/>
+        <location filename="quick_map_services.py" line="245"/>
         <source>Set proper scale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="249"/>
+        <location filename="quick_map_services.py" line="251"/>
         <source>Set SlippyMap scales</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="255"/>
+        <location filename="quick_map_services.py" line="257"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="261"/>
+        <location filename="quick_map_services.py" line="263"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
@@ -177,12 +177,12 @@ The previous settings will be overwritten!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="187"/>
+        <location filename="quick_map_services.py" line="189"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="188"/>
+        <location filename="quick_map_services.py" line="190"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
