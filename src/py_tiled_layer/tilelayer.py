@@ -267,7 +267,7 @@ class TileLayer(QgsPluginLayer):
 
             # draw tiles
             # if isWebMercator:
-            if False:
+            if not renderContext.coordinateTransform():
                 # no need to reproject tiles
                 self.drawTiles(renderContext, self.tiles)
                 # self.drawTilesDirectly(renderContext, self.tiles)
