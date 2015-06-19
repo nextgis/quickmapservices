@@ -260,7 +260,7 @@
           </font>
          </property>
          <property name="text">
-          <string>Attention !!!</string>
+          <string>Attention!</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -270,8 +270,7 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Contributed data sources definitions are 'as is' and not validated by plugin authors!
-Use at your own risk!</string>
+          <string>Contributed services definitions are provided 'as is' and are not validated by plugin authors. These are proof-of-concept and for testing only. Visit https://github.com/nextgis/quickmapservices_contrib to add new services. Use at your own risk!</string>
          </property>
          <property name="textFormat">
           <enum>Qt::AutoText</enum>
