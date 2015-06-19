@@ -3,7 +3,7 @@ QuickMapServices
 
 QGIS plugin for easy adding various map services as baselayers in one click.
 
-Please leave feedback in issues, please contribute new services!
+Please leave feedback in issues or let us know directly: http://nextgis.ru/en/contact 
 
 Resources:
 
