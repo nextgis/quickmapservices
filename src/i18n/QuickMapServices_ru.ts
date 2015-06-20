@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="ru">
+<!DOCTYPE TS><TS version="2.0" language="ru" sourcelanguage="">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -77,74 +76,138 @@ p, li { white-space: pre-wrap; }
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="29"/>
+        <location filename="settings_dialog_base.ui" line="73"/>
         <source>Tiled layers</source>
         <translation>Тайловые слои</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="34"/>
-        <source>Extra services</source>
-        <translation>Дополнительные сервисы</translation>
-    </message>
-    <message>
-        <location filename="settings_dialog_base.ui" line="117"/>
+        <location filename="settings_dialog_base.ui" line="263"/>
         <source>Attention !!!</source>
         <translation>Внимание !!!</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="133"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;All &lt;/p&gt;&lt;p&gt;services&lt;/p&gt;&lt;p&gt;is&lt;/p&gt;&lt;p&gt;bad!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;All &lt;/p&gt;&lt;p&gt;services&lt;/p&gt;&lt;p&gt;is&lt;/p&gt;&lt;p&gt;bad!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <location filename="settings_dialog_base.ui" line="14"/>
+        <source>QuickMapServices Settings</source>
+        <translation>Настройки QuickMapServices</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="14"/>
-        <source>Map Services Settings</source>
-        <translation>Настройки QuickMapServices</translation>
+        <location filename="settings_dialog_base.ui" line="30"/>
+        <source>Move plugin to &quot;Manage Layers&quot; menu/panel:</source>
+        <translation>Показывать в меню/панели &quot;Управление слоями&quot;:</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="44"/>
+        <source>Enable OTF EPSG:3857 on tiled layer add:</source>
+        <translation>Вкл. перепроецирование при доб. тайлового слоя:</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="58"/>
+        <source>Show info/error in message bar:</source>
+        <translation>Показывать инфо/ошибки в панели сообщений:</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="88"/>
+        <source>Max connection count:</source>
+        <translation>Макс кол-во соединений:</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="102"/>
+        <source>Cache expiration (hours)*:</source>
+        <translation>Срок хранения кэша (часов)*:</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="116"/>
+        <source>Tiles download timeout (ms)*:</source>
+        <translation>Таймаут загрузки тайлов (мc)*:</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="154"/>
+        <source>*: Common QGIS settings</source>
+        <translation>*: Общие настройки QGIS</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="168"/>
+        <source>Settings will be applied for newly added layers</source>
+        <translation>Настройки будут применяться для вновь добавленных слоев</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="186"/>
+        <source>Contributed services</source>
+        <translation>Дополнительные сервисы</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="273"/>
+        <source>Contributed data sources definitions are &apos;as is&apos; and not validated by plugin authors!
+Use at your own risk!</source>
+        <translation>Источники данных, подготовленные сообществом, предоставляются &apos;как есть&apos; и не проверены авторами плагина!</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="300"/>
+        <source>Get contributed pack</source>
+        <translation>Получить дополнительные источники данных</translation>
     </message>
 </context>
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="quick_map_services.py" line="202"/>
+        <location filename="quick_map_services.py" line="226"/>
         <source>QuickMapServices</source>
         <translation>QuickMapServices</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="135"/>
+        <location filename="quick_map_services.py" line="245"/>
         <source>Set proper scale</source>
         <translation>Ближайший масштаб</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="141"/>
+        <location filename="quick_map_services.py" line="251"/>
         <source>Set SlippyMap scales</source>
         <translation>Установить масштабы SlippyMap</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="147"/>
+        <location filename="quick_map_services.py" line="257"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="152"/>
+        <location filename="quick_map_services.py" line="263"/>
         <source>About</source>
         <translation>Инфо</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="202"/>
+        <location filename="quick_map_services.py" line="149"/>
         <source>Set SlippyMap scales for current project? 
 The previous settings will be overwritten!</source>
         <translation>Установить масштабный ряд SlippyMap для текущего проекта?
 Предыдущие настройки будут перезаписаны!</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="231"/>
+        <location filename="quick_map_services.py" line="189"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation>Слой %s невозможно добавить на карту!</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="232"/>
+        <location filename="quick_map_services.py" line="190"/>
         <source>Error</source>
         <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="quick_map_services.py" line="86"/>
+        <source>Extra dirs for %s can&apos;t be created: %s %s</source>
+        <translation>Невозможно создать дополнительные директории для  %s: %s %s</translation>
+    </message>
+</context>
+<context>
+    <name>SettingsDialog</name>
+    <message>
+        <location filename="settings_dialog.py" line="82"/>
+        <source>Last version of contrib pack was downloaded!</source>
+        <translation>Последняя версия пакета с источниками данных была успешно загружена!</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog.py" line="86"/>
+        <source>Error on getting contrib pack: %s %s</source>
+        <translation>Ошибка при получении пакета: %s %s</translation>
     </message>
 </context>
 </TS>

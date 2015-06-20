@@ -26,15 +26,17 @@ from ConfigParser import ConfigParser
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMenu, QIcon
 from qgis.core import QgsMessageLog
+import extra_sources
 
 CURR_PATH = os.path.dirname(__file__)
 GROUP_PATHS = [
-    os.path.join(CURR_PATH, 'groups'),
-    os.path.join(CURR_PATH, 'groups_contrib'),
+    os.path.join(CURR_PATH, extra_sources.GROUPS_DIR_NAME),
+    os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.GROUPS_DIR_NAME),
+    os.path.join(extra_sources.USER_DIR_PATH, extra_sources.GROUPS_DIR_NAME),
 ]
 
 
-class DsGroupsList():
+class DsGroupsList:
 
     def __init__(self, locale, custom_translator):
         self.locale = locale  # for translation

@@ -24,13 +24,15 @@ import os.path
 import xml.etree.ElementTree as ET
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
-from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox
+from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
 from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject, QgsPluginLayerRegistry
 from qgis.gui import QgsMessageBar
 import sys
+from extra_sources import ExtraSources
+from plugin_settings import PluginSettings
 
 from settings_dialog import SettingsDialog
 from about_dialog import AboutDialog
@@ -74,95 +76,43 @@ class QuickMapServices:
         self.custom_translator = CustomTranslator()
         QCoreApplication.installTranslator(self.custom_translator)
 
-
         # Create the dialog (after translation) and keep reference
-        self.settings_dlg = SettingsDialog()
         self.info_dlg = AboutDialog()
+
+        # Check Contrib and User dirs
+        try:
+            ExtraSources.check_extra_dirs()
+        except:
+            error_message = self.tr('Extra dirs for %s can\'t be created: %s %s') % (PluginSettings.product_name(),
+                                                                                      sys.exc_type,
+                                                                                      sys.exc_value)
+            self.iface.messageBar().pushMessage(self.tr('Error'),
+                                                error_message,
+                                                level=QgsMessageBar.CRITICAL)
 
         # Declare instance attributes
         self.service_actions = []
         self.service_layers = []  # TODO: id and smart remove
         self._scales_list = None
 
-        # TileLayer assets
-        self.downloadTimeout = 30  # TODO: settings
-        self.navigationMessagesEnabled = Qt.Checked  # TODO: settings
-        self.pluginName = 'QuickMapServices'
-
-
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('QuickMapServices', message)
 
-
     def initGui(self):
         #import pydevd
         #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
-
-        """Create the menu entries and toolbar icons inside the QGIS GUI."""
-        # Main Menu
-        icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
-        self.menu = QMenu(self.tr(u'QuickMapServices'))
-        self.menu.setIcon(QIcon(icon_path))
-
-        # DataSources Actions
 
         # Register plugin layer type
         self.tileLayerType = TileLayerType(self)
         QgsPluginLayerRegistry.instance().addPluginLayerType(self.tileLayerType)
 
-        self.groups_list = DsGroupsList(self.locale, self.custom_translator)
-        self.ds_list = DataSourcesList(self.locale, self.custom_translator)
+        # Create menu
+        self.build_menu_tree()
 
-        data_sources = self.ds_list.data_sources.values()
-        data_sources.sort(key=lambda x: x.alias or x.id)
-
-        for ds in data_sources:
-            ds.action.triggered.connect(self.insert_layer)
-            gr_menu = self.groups_list.get_group_menu(ds.group)
-            gr_menu.addAction(ds.action)
-            if gr_menu not in self.menu.children():
-                self.menu.addMenu(gr_menu)
-
-        # Scales, Settings and About actions
-        icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
-        set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'), self.iface.mainWindow())
-        set_nearest_scale_act.triggered.connect(self.set_nearest_scale)
-        self.menu.addAction(set_nearest_scale_act)  # TODO: uncomment after fix
-        self.service_actions.append(set_nearest_scale_act)
-
-        icon_scales_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
-        scales_act = QAction(QIcon(icon_scales_path), self.tr('Set SlippyMap scales'), self.iface.mainWindow())
-        scales_act.triggered.connect(self.set_tms_scales)
-        #self.menu.addAction(scales_act)  # TODO: uncomment after fix
-        self.service_actions.append(scales_act)
-
-        icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
-        settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
-        self.service_actions.append(settings_act)
-        #self.menu.addAction(settings_act)
-
-        icon_about_path = self.plugin_dir + '/icons/mActionAbout.png'
-        info_act = QAction(QIcon(icon_about_path), self.tr('About'), self.iface.mainWindow())
-        self.service_actions.append(info_act)
-        info_act.triggered.connect(self.info_dlg.show)
-        self.menu.addAction(info_act)
-
-        # add to QGIS menu
-        self.iface.addPluginToWebMenu("_tmp", info_act)
-        self.iface.webMenu().addMenu(self.menu)
-        self.iface.removePluginWebMenu("_tmp", info_act)
-
-        # add to QGIS toolbar
-        toolbutton = QToolButton()
-        toolbutton.setPopupMode(QToolButton.InstantPopup)
-        toolbutton.setMenu(self.menu)
-        toolbutton.setIcon(self.menu.icon())
-        toolbutton.setText(self.menu.title())
-        toolbutton.setToolTip(self.menu.title())
-        self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
-
+        # add to QGIS menu/toolbars
+        self.append_menu_buttons()
 
     def _load_scales_list(self):
         scales_filename = os.path.join(self.plugin_dir, 'scales.xml')
@@ -209,7 +159,6 @@ class QuickMapServices:
             # update in main window
             # ???? no way to update: http://hub.qgis.org/issues/11917
 
-
     def insert_layer(self):
         #TODO: need factory!
         action = self.menu.sender()
@@ -220,6 +169,8 @@ class QuickMapServices:
             service_info.zmax = ds.tms_zmax or service_info.zmax
             service_info.crs = ds.tms_crs or service_info.crs
             service_info.proj = ds.tms_proj or service_info.proj
+            if  ds.tms_y_origin_top is not None:
+                service_info.yOriginTop = ds.tms_y_origin_top
             layer = TileLayer(self, service_info, False)
         if ds.type == KNOWN_DRIVERS.GDAL:
             layer = QgsRasterLayer(ds.gdal_source_file, self.tr(ds.alias))
@@ -252,13 +203,15 @@ class QuickMapServices:
             toc_root.insertLayer(len(toc_root.children()), layer)
             # Save link
             self.service_layers.append(layer)
-
+            # Set OTF CRS Transform for map
+            if PluginSettings.enable_otf_3857() and ds.type == KNOWN_DRIVERS.TMS:
+                self.iface.mapCanvas().setCrsTransformEnabled(True)
+                self.iface.mapCanvas().setDestinationCrs(TileLayer.CRS_3857)
 
     def unload(self):
-        # remove menu
-        self.iface.webMenu().removeAction(self.menu.menuAction())
-        # remove toolbar button
-        self.iface.webToolBar().removeAction(self.tb_action)
+        # remove menu/
+        self.remove_menu_buttons()
+
         # clean vars
         self.menu = None
         self.toolbutton = None
@@ -268,3 +221,103 @@ class QuickMapServices:
         self.service_layers = None
         # Unregister plugin layer type
         QgsPluginLayerRegistry.instance().removePluginLayerType(TileLayer.LAYER_TYPE)
+
+    def build_menu_tree(self):
+        # Main Menu
+        icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
+        self.menu = QMenu(self.tr(u'QuickMapServices'))
+        self.menu.setIcon(QIcon(icon_path))
+
+        self.groups_list = DsGroupsList(self.locale, self.custom_translator)
+        self.ds_list = DataSourcesList(self.locale, self.custom_translator)
+
+        data_sources = self.ds_list.data_sources.values()
+        data_sources.sort(key=lambda x: x.alias or x.id)
+
+        for ds in data_sources:
+            ds.action.triggered.connect(self.insert_layer)
+            gr_menu = self.groups_list.get_group_menu(ds.group)
+            gr_menu.addAction(ds.action)
+            if gr_menu not in self.menu.children():
+                self.menu.addMenu(gr_menu)
+
+        # Scales, Settings and About actions
+        self.menu.addSeparator()
+        icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
+        set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'), self.iface.mainWindow())
+        set_nearest_scale_act.triggered.connect(self.set_nearest_scale)
+        self.menu.addAction(set_nearest_scale_act)  # TODO: uncomment after fix
+        self.service_actions.append(set_nearest_scale_act)
+
+        icon_scales_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
+        scales_act = QAction(QIcon(icon_scales_path), self.tr('Set SlippyMap scales'), self.iface.mainWindow())
+        scales_act.triggered.connect(self.set_tms_scales)
+        #self.menu.addAction(scales_act)  # TODO: uncomment after fix
+        self.service_actions.append(scales_act)
+
+        icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
+        settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
+        self.service_actions.append(settings_act)
+        settings_act.triggered.connect(self.show_settings_dialog)
+        self.menu.addAction(settings_act)
+
+        icon_about_path = self.plugin_dir + '/icons/mActionAbout.png'
+        info_act = QAction(QIcon(icon_about_path), self.tr('About'), self.iface.mainWindow())
+        self.service_actions.append(info_act)
+        info_act.triggered.connect(self.info_dlg.show)
+        self.menu.addAction(info_act)
+
+
+    def remove_menu_buttons(self):
+        """
+        Remove menus/buttons from all toolbars and main submenu
+        :return:
+        None
+        """
+        # remove menu
+        if self.menu:
+            self.iface.webMenu().removeAction(self.menu.menuAction())
+            self.iface.addLayerMenu().removeAction(self.menu.menuAction())
+        # remove toolbar button
+        if self.tb_action:
+            self.iface.webToolBar().removeAction(self.tb_action)
+            self.iface.layerToolBar().removeAction(self.tb_action)
+
+    def append_menu_buttons(self):
+        """
+        Append menus and buttons to appropriate toolbar
+        :return:
+        """
+        # add to QGIS menu
+        if PluginSettings.move_to_layers_menu():
+            self.iface.addLayerMenu().addMenu(self.menu)
+        else:
+            # need workaround for WebMenu
+            _temp_act = QAction('temp', self.iface.mainWindow())
+            self.iface.addPluginToWebMenu("_tmp", _temp_act)
+            self.iface.webMenu().addMenu(self.menu)
+            self.iface.removePluginWebMenu("_tmp", _temp_act)
+
+        # add to QGIS toolbar
+        toolbutton = QToolButton()
+        toolbutton.setPopupMode(QToolButton.InstantPopup)
+        toolbutton.setMenu(self.menu)
+        toolbutton.setIcon(self.menu.icon())
+        toolbutton.setText(self.menu.title())
+        toolbutton.setToolTip(self.menu.title())
+        if PluginSettings.move_to_layers_menu():
+            self.tb_action = self.iface.layerToolBar().addWidget(toolbutton)
+        else:
+            self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
+
+    def show_settings_dialog(self):
+        settings_dlg = SettingsDialog()
+
+        settings_dlg.exec_()
+        # apply settings
+        self.remove_menu_buttons()
+        self.build_menu_tree()
+        self.append_menu_buttons()
+
+
+

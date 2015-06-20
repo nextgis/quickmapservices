@@ -2,16 +2,32 @@
 name=QuickMapServices
 qgisMinimumVersion=2.4
 description=Collection of internet map services
-version=0.12
+version=0.13
 author=NextGIS
 email=info@nextgis.com
+about=QGIS plugin for convenient way to add various map services in one click.
+      Please leave feedback in issues, please contribute new services!
+      Important notes:
+            1. Adding copyrights of particular service providers to your map outputs is currently the sole responsibility of the user.
+      QGIS plugin: http://plugins.qgis.org/plugins/quick_map_services
+      Contrib repo: https://github.com/nextgis/quickmapservices
+      Announcement: http://nextgis.ru/en/blog/quickmapservices
+      Discussion (Russian): http://gis-lab.info/forum/viewtopic.php?f=27&t=18464
+      Overview (Russian): http://gis-lab.info/qa/quickmapservices.html
+
+
 
 # End of mandatory metadata
 
 # Optional items:
 
 # Uncomment the following line and add your changelog:
-changelog= 0.12:
+changelog= 0.13:
+        * yOriginTop settings for TMS layers
+        * Contrib pack of data sources
+        * Settings form
+        * Adding quadkeys possibility of using, as variables in the url
+      0.12:
         * WMS layers order fix
       0.11:
         * Config files translation support added
@@ -33,7 +49,7 @@ changelog= 0.12:
         * Fix imports
 
 # Tags are comma separated with spaces allowed
-tags=service, internet, tms, wms
+tags=service, internet, tms, wms, qms
 
 homepage=
 tracker=https://github.com/nextgis/quickmapservices/issues

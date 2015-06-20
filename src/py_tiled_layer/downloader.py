@@ -29,11 +29,8 @@ debug_mode = 0
 
 
 class Downloader(QObject):
-    MAX_CONNECTION = 4
-    DEFAULT_CACHE_EXPIRATION = 96  # hours
 
     NOT_FOUND = 0
-
     NO_ERROR = 0
     TIMEOUT_ERROR = 4
     UNKNOWN_ERROR = -1
@@ -53,7 +50,10 @@ class Downloader(QObject):
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.fetchTimedOut)
 
+        # network settings
         self.userAgent = "Mozilla/5.0"
+        self.max_connection = 4
+        self.default_cache_expiration = 24
         self.errorStatus = Downloader.NO_ERROR
 
     def clearCounts(self):
@@ -96,10 +96,10 @@ class Downloader(QObject):
                     # self.log("Expiration date: " + metadata.expirationDate().toString().encode("utf-8"))
                     if metadata.expirationDate().isNull():
                         metadata.setExpirationDate(
-                            QDateTime.currentDateTime().addSecs(self.DEFAULT_CACHE_EXPIRATION * 60 * 60))
+                            QDateTime.currentDateTime().addSecs(self.default_cache_expiration * 60 * 60))
                         cache.updateMetaData(metadata)
                         self.log(
-                            "Default expiration date has been set: %s (%d h)" % (url, self.DEFAULT_CACHE_EXPIRATION))
+                            "Default expiration date has been set: %s (%d h)" % (url, self.default_cache_expiration))
 
             if reply.isReadable():
                 data = reply.readAll()
@@ -145,7 +145,7 @@ class Downloader(QObject):
         self.replies.append(reply)
         return reply
 
-    def fetchFiles(self, urlList, timeoutSec=0):
+    def fetchFiles(self, urlList, timeout_ms=0):
         self.log("fetchFiles()")
         self.sync = True
         self.queue = []
@@ -159,17 +159,17 @@ class Downloader(QObject):
         for url in urlList:
             self.addToQueue(url)
 
-        for i in range(self.MAX_CONNECTION):
+        for i in range(self.max_connection):
             self.fetchNext()
 
-        if timeoutSec > 0:
-            self.timer.setInterval(timeoutSec * 1000)
+        if timeout_ms > 0:
+            self.timer.setInterval(timeout_ms)
             self.timer.start()
 
         self.logT("eventLoop.exec_(): " + str(self.eventLoop))
         self.eventLoop.exec_()
         self.log("fetchFiles() End: %d" % self.errorStatus)
-        if timeoutSec > 0:
+        if timeout_ms > 0:
             self.timer.stop()
         return self.fetchedFiles
 
@@ -196,7 +196,7 @@ class Downloader(QObject):
         if debug_mode:
             qDebug("%s: %s" % (str(threading.current_thread()), msg))
 
-    def fetchFilesAsync(self, urlList, timeoutSec=0):
+    def fetchFilesAsync(self, urlList, timeout_ms=0):
         self.log("fetchFilesAsync()")
         self.sync = False
         self.queue = []
@@ -210,9 +210,9 @@ class Downloader(QObject):
         for url in urlList:
             self.addToQueue(url)
 
-        for i in range(self.MAX_CONNECTION):
+        for i in range(self.max_connection):
             self.fetchNext()
 
-        if timeoutSec > 0:
-            self.timer.setInterval(timeoutSec * 1000)
+        if timeout_ms > 0:
+            self.timer.setInterval(timeout_ms)
             self.timer.start()

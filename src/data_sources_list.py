@@ -27,16 +27,20 @@ from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QIcon, QAction
 from qgis.core import QgsMessageLog
 from data_source_info import DataSourceInfo
+import extra_sources
 from supported_drivers import KNOWN_DRIVERS
 
 CURR_PATH = os.path.dirname(__file__)
+
 DS_PATHS = [
-    os.path.join(CURR_PATH, 'data_sources'),
-    os.path.join(CURR_PATH, 'data_sources_contrib'),
+    os.path.join(CURR_PATH, extra_sources.DATA_SOURCES_DIR_NAME),
+    os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME),
+    os.path.join(extra_sources.USER_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME),
 ]
 
 
-class DataSourcesList():
+class DataSourcesList:
+
     def __init__(self, locale, custom_translator):
         self.locale = locale  # for translation
         self.translator = custom_translator
@@ -81,6 +85,7 @@ class DataSourcesList():
             ds.tms_zmax = self.try_read_config_int(parser, 'tms', 'zmax')
             ds.tms_crs = self.try_read_config_int(parser, 'tms', 'crs')
             ds.tms_proj = self.try_read_config(parser, 'tms', 'proj')
+            ds.tms_y_origin_top = self.try_read_config_int(parser, 'tms', 'y_origin_top')
 
             #WMS
             ds.wms_url = self.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))
