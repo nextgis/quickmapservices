@@ -77,7 +77,7 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
         QgsApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
         try:
-            ExtraSources.load_contrib_pack()
+            ExtraSources().load_contrib_pack()
             QgsApplication.restoreOverrideCursor()
             info_message = self.tr('Last version of contrib pack was downloaded!')
             QMessageBox.information(self, PluginSettings.product_name(), info_message)

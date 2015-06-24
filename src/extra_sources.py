@@ -25,8 +25,12 @@ import os
 import tempfile
 import urllib2
 from zipfile import ZipFile
-from qgis.core import QgsApplication
 import shutil
+
+from PyQt4.QtCore import QUrl, QEventLoop, QFile, QIODevice
+from PyQt4.QtNetwork import QNetworkRequest, QNetworkReply
+from qgis.core import QgsApplication, QgsNetworkAccessManager
+
 from plugin_settings import PluginSettings
 
 LOCAL_SETTINGS_PATH = os.path.dirname(QgsApplication.qgisUserDbFilePath())
@@ -41,7 +45,9 @@ GROUPS_DIR_NAME = 'groups'
 CONTRIBUTE_REPO_URL = 'https://api.github.com/repos/nextgis/quickmapservices_contrib'
 
 
-class ExtraSources:
+class ExtraSources():
+
+    __replies = []
 
     @classmethod
     def check_extra_dirs(cls):
@@ -60,12 +66,11 @@ class ExtraSources:
             if not os.path.exists(groups_folder):
                 os.mkdir(groups_folder)
 
-    @classmethod
-    def load_contrib_pack(cls):
-        cls.check_extra_dirs()
+    def load_contrib_pack(self):
+        self.check_extra_dirs()
 
         # get info
-        latest_release_info = cls._get_latest_release_info()
+        latest_release_info = self._get_latest_release_info()
         name = latest_release_info['name']
         zip_url = latest_release_info['zipball_url']
 
@@ -74,11 +79,11 @@ class ExtraSources:
 
         # download zip file
         zip_file_path = os.path.join(tmp_dir, 'contrib.zip')
-        cls._download_file(zip_url, zip_file_path)
+        self._download_file(zip_url, zip_file_path)
 
         # extract zip to tmp dir
         tmp_extract_dir = os.path.join(tmp_dir, 'contrib')
-        cls._extract_zip(zip_file_path, tmp_extract_dir)
+        self._extract_zip(zip_file_path, tmp_extract_dir)
 
         #first dir - our content
         src_dir_name = os.listdir(tmp_extract_dir)[0]
@@ -91,27 +96,55 @@ class ExtraSources:
         # remove tmp dir
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
-
-    @classmethod
-    def _get_releases_info(cls):
+    def _get_releases_info(self):
         response = urllib2.urlopen('%s/%s' % (CONTRIBUTE_REPO_URL, 'releases'))
         releases_info = json.loads(response.read().decode('utf-8'))
         return releases_info
 
-    @classmethod
-    def _get_latest_release_info(cls):
-        response = urllib2.urlopen('%s/%s/%s' % (CONTRIBUTE_REPO_URL, 'releases', 'latest'))
-        latest_release_info = json.loads(response.read().decode('utf-8'))
+    def _get_latest_release_info(self):
+        url = '%s/%s/%s' % (CONTRIBUTE_REPO_URL, 'releases', 'latest')
+        reply = self.__sync_request(url)
+        latest_release_info = json.loads(reply.data())
         return latest_release_info
 
-    @classmethod
-    def _download_file(cls, url, out_path):
-        response = urllib2.urlopen(url)
-        with open(out_path, "wb") as local_file:
-            local_file.write(response.read())
+    def _download_file(self, url, out_path):
+        reply = self.__sync_request(url)
+        local_file = QFile(out_path)
+        local_file.open(QIODevice.WriteOnly)
+        local_file.write(reply)
+        local_file.close()
 
-    @classmethod
-    def _extract_zip(cls, zip_path, out_path):
+    def _extract_zip(self, zip_path, out_path):
         zf = ZipFile(zip_path)
         zf.extractall(out_path)
+
+    def __sync_request(self, url):
+        _url = QUrl(url)
+        _request = QNetworkRequest(_url)
+        self.__replies.append(_request)
+        _reply = QgsNetworkAccessManager.instance().get(_request)
+
+        # wait
+        loop = QEventLoop()
+        _reply.finished.connect(loop.quit)
+        loop.exec_()
+        _reply.finished.disconnect(loop.quit)
+        loop = None
+
+        error = _reply.error()
+        if error != QNetworkReply.NoError:
+            raise Exception(error)
+
+        result_code = _reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)
+
+        result = _reply.readAll()
+        self.__replies.append(_reply)
+        _reply.deleteLater()
+
+        if result_code in [301, 302, 307]:
+            redirect_url = _reply.attribute(QNetworkRequest.RedirectionTargetAttribute)
+            return self.__sync_request(redirect_url)
+        else:
+            return result
+
 
