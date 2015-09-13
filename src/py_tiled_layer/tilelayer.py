@@ -51,9 +51,6 @@ class LayerDefaultSettings:
 
 
 class TileLayer(QgsPluginLayer):
-
-    CRS_3857 = QgsCoordinateReferenceSystem(3857)
-
     LAYER_TYPE = "PyTiledLayer"
     MAX_TILE_COUNT = 256
     CHANGE_SCALE_VALUE = 0.30
@@ -76,7 +73,13 @@ class TileLayer(QgsPluginLayer):
             self.setCustomProperty("bbox", layerDef.bbox.toString())
         self.setCustomProperty("creditVisibility", self.creditVisibility)
 
-        self.setCrs(self.CRS_3857)
+        # create a QgsCoordinateReferenceSystem instance if plugin has no instance yet
+        if layerDef.proj is not None:
+            customcrs = QgsCoordinateReferenceSystem()
+            customcrs.createFromProj4(layerDef.proj)
+        else:
+            customcrs = QgsCoordinateReferenceSystem(layerDef.crs)
+        self.setCrs(customcrs)
         if layerDef.bbox:
             self.setExtent(BoundingBox.degreesToMercatorMeters(layerDef.bbox).toQgsRectangle())
         else:
@@ -268,7 +271,8 @@ class TileLayer(QgsPluginLayer):
                 painter.setRenderHint(QPainter.SmoothPixmapTransform)
 
             # draw tiles
-            if isWebMercator:
+            # if isWebMercator:
+            if not renderContext.coordinateTransform():
                 # no need to reproject tiles
                 self.drawTiles(renderContext, self.tiles)
                 # self.drawTilesDirectly(renderContext, self.tiles)

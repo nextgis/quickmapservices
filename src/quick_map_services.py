@@ -167,6 +167,8 @@ class QuickMapServices:
             service_info = TileServiceInfo(self.tr(ds.alias), ds.copyright_text, ds.tms_url)
             service_info.zmin = ds.tms_zmin or service_info.zmin
             service_info.zmax = ds.tms_zmax or service_info.zmax
+            service_info.crs = ds.tms_crs or service_info.crs
+            service_info.proj = ds.tms_proj or service_info.proj
             if  ds.tms_y_origin_top is not None:
                 service_info.yOriginTop = ds.tms_y_origin_top
             layer = TileLayer(self, service_info, False)

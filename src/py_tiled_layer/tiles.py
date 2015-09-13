@@ -32,6 +32,7 @@ R = 6378137
 class TileDefaultSettings:
     ZMIN = 0
     ZMAX = 18
+    CRS = 3857
 
 
 def degreesToMercatorMeters(lon, lat):
@@ -125,7 +126,7 @@ class TileServiceInfo:
     TSIZE1 = 20037508.342789244
 
     def __init__(self, title, credit, serviceUrl, yOriginTop=1, zmin=TileDefaultSettings.ZMIN,
-                 zmax=TileDefaultSettings.ZMAX, bbox=None):
+                 zmax=TileDefaultSettings.ZMAX, bbox=None, crs=TileDefaultSettings.CRS, proj=None):
         self.title = title
         self.credit = credit
         self.serviceUrl = serviceUrl
@@ -133,6 +134,8 @@ class TileServiceInfo:
         self.zmin = max(zmin, 0)
         self.zmax = zmax
         self.bbox = bbox
+        self.crs = crs
+        self.proj = proj
 
 
     def tileUrl(self, zoom, x, y):
