@@ -38,7 +38,7 @@ USER_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, 'User')
 DATA_SOURCES_DIR_NAME = 'data_sources'
 GROUPS_DIR_NAME = 'groups'
 
-CONTRIBUTE_REPO_URL = 'https://api.github.com/repos/nextgis/quickmapservices_contrib'
+CONTRIBUTE_REPO_URL = 'https://api.github.com/repos/ANAT01/map-list-servers'
 
 
 class ExtraSources:
@@ -67,7 +67,7 @@ class ExtraSources:
         # get info
         latest_release_info = cls._get_latest_release_info()
         name = latest_release_info['name']
-        zip_url = latest_release_info['zipball_url']
+        zip_url = latest_release_info['assets'][0]['browser_download_url']
 
         # create temp dir
         tmp_dir = tempfile.mkdtemp()
