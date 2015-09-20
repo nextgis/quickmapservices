@@ -84,6 +84,9 @@ class DataSourcesList:
             ds.tms_zmin = self.try_read_config_int(parser, 'tms', 'zmin')
             ds.tms_zmax = self.try_read_config_int(parser, 'tms', 'zmax')
             ds.tms_y_origin_top = self.try_read_config_int(parser, 'tms', 'y_origin_top')
+            ds.tms_epsg_crs_id = self.try_read_config_int(parser, 'tms', 'epsg_crs_id')
+            ds.tms_postgis_crs_id = self.try_read_config_int(parser, 'tms', 'postgis_crs_id')
+            ds.tms_custom_proj = self.try_read_config(parser, 'tms', 'custom_proj')
 
             #WMS
             ds.wms_url = self.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))

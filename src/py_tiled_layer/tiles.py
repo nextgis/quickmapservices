@@ -125,7 +125,7 @@ class TileServiceInfo:
     TSIZE1 = 20037508.342789244
 
     def __init__(self, title, credit, serviceUrl, yOriginTop=1, zmin=TileDefaultSettings.ZMIN,
-                 zmax=TileDefaultSettings.ZMAX, bbox=None):
+                 zmax=TileDefaultSettings.ZMAX, bbox=None, epsg_crs_id=None, postgis_crs_id=None, custom_proj=None):
         self.title = title
         self.credit = credit
         self.serviceUrl = serviceUrl
@@ -133,7 +133,9 @@ class TileServiceInfo:
         self.zmin = max(zmin, 0)
         self.zmax = zmax
         self.bbox = bbox
-
+        self.epsg_crs_id = epsg_crs_id
+        self.postgis_crs_id = postgis_crs_id
+        self.custom_proj = custom_proj
 
     def tileUrl(self, zoom, x, y):
         if not self.yOriginTop:

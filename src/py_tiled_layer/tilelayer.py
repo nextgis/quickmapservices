@@ -76,7 +76,37 @@ class TileLayer(QgsPluginLayer):
             self.setCustomProperty("bbox", layerDef.bbox.toString())
         self.setCustomProperty("creditVisibility", self.creditVisibility)
 
+        # set standard/custom crs
         self.setCrs(self.CRS_3857)
+        try:
+            crs = None
+            if layerDef.epsg_crs_id is not None:
+                crs = QgsCoordinateReferenceSystem(layerDef.epsg_crs_id, QgsCoordinateReferenceSystem.EpsgCrsId)
+            if layerDef.postgis_crs_id is not None:
+                crs = QgsCoordinateReferenceSystem(layerDef.postgis_crs_id, QgsCoordinateReferenceSystem.PostgisCrsId)
+            if layerDef.custom_proj is not None:
+                # create form proj4 str
+                custom_crs = QgsCoordinateReferenceSystem()
+                custom_crs.createFromProj4(layerDef.custom_proj)
+                # try to search in db
+                searched = custom_crs.findMatchingProj()
+                if searched:
+                    crs = QgsCoordinateReferenceSystem(searched, QgsCoordinateReferenceSystem.InternalCrsId)
+                else:
+                    # create custom and use it
+                    custom_crs.saveAsUserCRS('quickmapservices %s' % layerDef.title)
+                    searched = custom_crs.findMatchingProj()
+                    if searched:
+                        crs = QgsCoordinateReferenceSystem(searched, QgsCoordinateReferenceSystem.InternalCrsId)
+                    else:
+                        crs = custom_crs
+
+            if crs:
+                self.setCrs(crs)
+        except:
+            msg = self.tr("Custom crs can't be set for layer {0}!").format(layerDef.title)
+            self.showBarMessage(msg, QgsMessageBar.WARNING, 4)
+
         if layerDef.bbox:
             self.setExtent(BoundingBox.degreesToMercatorMeters(layerDef.bbox).toQgsRectangle())
         else:
@@ -125,9 +155,6 @@ class TileLayer(QgsPluginLayer):
         self.setCustomProperty("creditVisibility", 1 if visible else 0)
 
     def draw(self, renderContext):
-
-        #import pydevd
-        #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
         self.renderContext = renderContext
         extent = renderContext.extent()
@@ -194,15 +221,6 @@ class TileLayer(QgsPluginLayer):
             # zoom level has been determined
             break
 
-
-        # frame isn't drawn not in web mercator
-        isWebMercator = self.isProjectCrsWebMercator()
-        if not isWebMercator and self.layerDef.serviceUrl[0] == ":":
-            if "frame" in self.layerDef.serviceUrl:  # or "number" in self.layerDef.serviceUrl:
-                msg = self.tr("Frame layer is drawn only in EPSG:3857")
-                self.showBarMessage(msg, QgsMessageBar.INFO, 2)
-                return True
-
         self.logT("TileLayer.draw: {0} {1} {2} {3} {4}".format(zoom, ulx, uly, lrx, lry))
 
         # save painter state
@@ -268,7 +286,7 @@ class TileLayer(QgsPluginLayer):
                 painter.setRenderHint(QPainter.SmoothPixmapTransform)
 
             # draw tiles
-            if isWebMercator:
+            if not renderContext.coordinateTransform():
                 # no need to reproject tiles
                 self.drawTiles(renderContext, self.tiles)
                 # self.drawTilesDirectly(renderContext, self.tiles)
@@ -297,12 +315,6 @@ class TileLayer(QgsPluginLayer):
                                textRect.height() + 2 * paddingV)
                 painter.fillRect(bgRect, QColor(240, 240, 240, 150))  # 197, 234, 243, 150))
                 painter.drawText(rect, Qt.AlignBottom | Qt.AlignRight, self.layerDef.credit)
-
-        if 0:  # debug_mode:
-            # draw plugin icon
-            image = QImage(os.path.join(os.path.dirname(QFile.decodeName(__file__)), "icon_old.png"))
-            painter.drawImage(5, 5, image)
-            self.logT("TileLayer.draw() ends")
 
         # restore painter state
         painter.restore()
