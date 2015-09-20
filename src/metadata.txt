@@ -1,19 +1,12 @@
 [general]
 name=QuickMapServices
 qgisMinimumVersion=2.4
-description=Collection of internet map services
+description=Collection of easy to add basemaps
 version=0.13
 author=NextGIS
 email=info@nextgis.com
-about=QGIS plugin for convenient way to add various map services in one click.
+about=QGIS plugin for convenient way to add various map services (basemaps) in one click.
       Please leave feedback in issues, please contribute new services!
-      Important notes:
-            1. Adding copyrights of particular service providers to your map outputs is currently the sole responsibility of the user.
-      QGIS plugin: http://plugins.qgis.org/plugins/quick_map_services
-      Contrib repo: https://github.com/nextgis/quickmapservices
-      Announcement: http://nextgis.ru/en/blog/quickmapservices
-      Discussion (Russian): http://gis-lab.info/forum/viewtopic.php?f=27&t=18464
-      Overview (Russian): http://gis-lab.info/qa/quickmapservices.html
 
 
 
@@ -49,7 +42,7 @@ changelog= 0.13:
         * Fix imports
 
 # Tags are comma separated with spaces allowed
-tags=service, internet, tms, wms, qms
+tags=service, internet, tms, wms, qms, google, openstreetmap, osm, basemap, mapquest, mapsurfer
 
 homepage=
 tracker=https://github.com/nextgis/quickmapservices/issues
