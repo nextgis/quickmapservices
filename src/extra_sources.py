@@ -122,6 +122,9 @@ class ExtraSources():
         _url = QUrl(url)
         _request = QNetworkRequest(_url)
         self.__replies.append(_request)
+
+        QgsNetworkAccessManager.instance().sslErrors.connect(self.__supress_ssl_errors)
+
         _reply = QgsNetworkAccessManager.instance().get(_request)
 
         # wait
@@ -129,6 +132,7 @@ class ExtraSources():
         _reply.finished.connect(loop.quit)
         loop.exec_()
         _reply.finished.disconnect(loop.quit)
+        QgsNetworkAccessManager.instance().sslErrors.disconnect(self.__supress_ssl_errors)
         loop = None
 
         error = _reply.error()
@@ -147,4 +151,6 @@ class ExtraSources():
         else:
             return result
 
+    def __supress_ssl_errors(self, reply, errors):
+        reply.ignoreSslErrors()
 
