@@ -77,11 +77,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="263"/>
-        <source>Attention !!!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="settings_dialog_base.ui" line="14"/>
         <source>QuickMapServices Settings</source>
         <translation type="unfinished"></translation>
@@ -132,41 +127,45 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="273"/>
-        <source>Contributed data sources definitions are &apos;as is&apos; and not validated by plugin authors!
-Use at your own risk!</source>
+        <location filename="settings_dialog_base.ui" line="299"/>
+        <source>Get contributed pack</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="300"/>
-        <source>Get contributed pack</source>
+        <location filename="settings_dialog_base.ui" line="263"/>
+        <source>Attention!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="273"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Contributed services definitions are provided &apos;as is&apos; and are not validated by plugin authors. These are proof-of-concept and for testing only. Visit &lt;a href=&quot;https://github.com/nextgis/quickmapservices_contrib&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://github.com/nextgis/quickmapservices_contrib&lt;/span&gt;&lt;/a&gt; to add new services. Use at your own risk!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="quick_map_services.py" line="226"/>
+        <location filename="quick_map_services.py" line="230"/>
         <source>QuickMapServices</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="245"/>
+        <location filename="quick_map_services.py" line="249"/>
         <source>Set proper scale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="251"/>
+        <location filename="quick_map_services.py" line="255"/>
         <source>Set SlippyMap scales</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="257"/>
+        <location filename="quick_map_services.py" line="261"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="263"/>
+        <location filename="quick_map_services.py" line="267"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
@@ -177,12 +176,12 @@ The previous settings will be overwritten!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="189"/>
+        <location filename="quick_map_services.py" line="193"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="190"/>
+        <location filename="quick_map_services.py" line="194"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
