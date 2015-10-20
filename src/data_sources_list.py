@@ -26,6 +26,7 @@ import os
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QIcon, QAction
 from qgis.core import QgsMessageLog
+from config_reader_helper import ConfigReaderHelper
 from data_source_info import DataSourceInfo
 import extra_sources
 from supported_drivers import KNOWN_DRIVERS
@@ -64,39 +65,39 @@ class DataSourcesList:
             ds = DataSourceInfo()
 
             # Required
-            ds.id = self.try_read_config(parser, 'general', 'id', reraise=True)
-            ds.type = self.try_read_config(parser, 'general', 'type', reraise=True)
-            ds.is_contrib = self.try_read_config(parser, 'general', 'is_contrib', reraise=True)
+            ds.id = ConfigReaderHelper.try_read_config(parser, 'general', 'id', reraise=True)
+            ds.type = ConfigReaderHelper.try_read_config(parser, 'general', 'type', reraise=True)
+            ds.is_contrib = ConfigReaderHelper.try_read_config(parser, 'general', 'is_contrib', reraise=True)
 
-            ds.group = self.try_read_config(parser, 'ui', 'group', reraise=True)
-            ds.alias = self.try_read_config(parser, 'ui', 'alias', reraise=True)
-            ds.icon = self.try_read_config(parser, 'ui', 'icon', reraise=True)
+            ds.group = ConfigReaderHelper.try_read_config(parser, 'ui', 'group', reraise=True)
+            ds.alias = ConfigReaderHelper.try_read_config(parser, 'ui', 'alias', reraise=True)
+            ds.icon = ConfigReaderHelper.try_read_config(parser, 'ui', 'icon')
 
             # Lic & Terms
-            ds.lic_name = self.try_read_config(parser, 'license', 'name')
-            ds.lic_link = self.try_read_config(parser, 'license', 'link')
-            ds.copyright_text = self.try_read_config(parser, 'license', 'copyright_text')
-            ds.copyright_link = self.try_read_config(parser, 'license', 'copyright_link')
-            ds.terms_of_use = self.try_read_config(parser, 'license', 'terms_of_use')
+            ds.lic_name = ConfigReaderHelper.try_read_config(parser, 'license', 'name')
+            ds.lic_link = ConfigReaderHelper.try_read_config(parser, 'license', 'link')
+            ds.copyright_text = ConfigReaderHelper.try_read_config(parser, 'license', 'copyright_text')
+            ds.copyright_link = ConfigReaderHelper.try_read_config(parser, 'license', 'copyright_link')
+            ds.terms_of_use = ConfigReaderHelper.try_read_config(parser, 'license', 'terms_of_use')
 
             #TMS
-            ds.tms_url = self.try_read_config(parser, 'tms', 'url', reraise=(ds.type == KNOWN_DRIVERS.TMS))
-            ds.tms_zmin = self.try_read_config_int(parser, 'tms', 'zmin')
-            ds.tms_zmax = self.try_read_config_int(parser, 'tms', 'zmax')
-            ds.tms_y_origin_top = self.try_read_config_int(parser, 'tms', 'y_origin_top')
-            ds.tms_epsg_crs_id = self.try_read_config_int(parser, 'tms', 'epsg_crs_id')
-            ds.tms_postgis_crs_id = self.try_read_config_int(parser, 'tms', 'postgis_crs_id')
-            ds.tms_custom_proj = self.try_read_config(parser, 'tms', 'custom_proj')
+            ds.tms_url = ConfigReaderHelper.try_read_config(parser, 'tms', 'url', reraise=(ds.type == KNOWN_DRIVERS.TMS))
+            ds.tms_zmin = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'zmin')
+            ds.tms_zmax = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'zmax')
+            ds.tms_y_origin_top = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'y_origin_top')
+            ds.tms_epsg_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'epsg_crs_id')
+            ds.tms_postgis_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'postgis_crs_id')
+            ds.tms_custom_proj = ConfigReaderHelper.try_read_config(parser, 'tms', 'custom_proj')
 
             #WMS
-            ds.wms_url = self.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))
-            ds.wms_params = self.try_read_config(parser, 'wms', 'params')
-            ds.wms_layers = self.try_read_config(parser, 'wms', 'layers')
-            ds.wms_turn_over = self.try_read_config_bool(parser, 'wms', 'turn_over')
+            ds.wms_url = ConfigReaderHelper.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))
+            ds.wms_params = ConfigReaderHelper.try_read_config(parser, 'wms', 'params')
+            ds.wms_layers = ConfigReaderHelper.try_read_config(parser, 'wms', 'layers')
+            ds.wms_turn_over = ConfigReaderHelper.try_read_config_bool(parser, 'wms', 'turn_over')
 
             #GDAL
             if ds.type == KNOWN_DRIVERS.GDAL:
-                gdal_conf = self.try_read_config(parser, 'gdal', 'source_file', reraise=(ds.type == KNOWN_DRIVERS.GDAL))
+                gdal_conf = ConfigReaderHelper.try_read_config(parser, 'gdal', 'source_file', reraise=(ds.type == KNOWN_DRIVERS.GDAL))
                 ds.gdal_source_file = os.path.join(root, gdal_conf)
 
             #try read translations
@@ -107,7 +108,7 @@ class DataSourcesList:
                     break
 
             #Action stuff
-            ds.icon_path = os.path.join(root, ds.icon)
+            ds.icon_path = os.path.join(root, ds.icon) if ds.icon else None
             ds.action = QAction(QIcon(ds.icon_path), self.tr(ds.alias), None)
             ds.action.setData(ds)
 
@@ -124,32 +125,3 @@ class DataSourcesList:
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('QuickMapServices', message)
 
-    def try_read_config(self, parser, section, param, reraise=False):
-        try:
-            val = parser.get(section, param)
-        except:
-            if reraise:
-                raise
-            else:
-                val = None
-        return val
-
-    def try_read_config_int(self, parser, section, param, reraise=False):
-        try:
-            val = parser.getint(section, param)
-        except:
-            if reraise:
-                raise
-            else:
-                val = None
-        return val
-
-    def try_read_config_bool(self, parser, section, param, reraise=False):
-        try:
-            val = parser.getboolean(section, param)
-        except:
-            if reraise:
-                raise
-            else:
-                val = None
-        return val
