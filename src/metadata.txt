@@ -2,7 +2,7 @@
 name=QuickMapServices
 qgisMinimumVersion=2.4
 description=Collection of easy to add basemaps
-version=0.14
+version=0.15
 author=NextGIS
 email=info@nextgis.com
 about=QGIS plugin for convenient way to add various map services (basemaps) in one click.
@@ -15,7 +15,11 @@ about=QGIS plugin for convenient way to add various map services (basemaps) in o
 # Optional items:
 
 # Uncomment the following line and add your changelog:
-changelog= 0.14:
+changelog= 0.15: * Grayscale mode for tile layers
+        * Brightness setting for tile layers
+        * Contrast setting for tile layers
+        * Icon for data source and groups is not required now
+      0.14:
         * CRS for tiled layers (epsg, postgis or custom proj)
         * Fix contrib pack with proxy
       0.13:
