@@ -16,4 +16,4 @@ Resources:
 Important notes:
 
 1. Adding copyrights of particular service providers to your map outputs is currently the sole responsibility of the user.
-2. If you want to add your own service - send pull-requests here: https://github.com/nextgis/quickmapservices_contrib
+2. If you want to add your own service - send pull-requests here: https://github.com/nextgis/quickmapservices_contrib, you can also read the instruction on how to do it: https://github.com/nextgis/quickmapservices/wiki/Adding-data-source
