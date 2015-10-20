@@ -39,24 +39,29 @@ class PropertiesDialog(QDialog):
         self.setWindowTitle(u"%s - %s" % (self.tr("Layer Properties"), layer.name()))
 
         self.layer = layer
-        self.initBlendingCombo()
-        self.ui.horizontalSlider_Transparency.valueChanged.connect(self.sliderChanged)
-        self.ui.spinBox_Transparency.valueChanged.connect(self.spinBoxChanged)
+        # signals
+        self.ui.horizontalSlider_Transparency.valueChanged.connect(self.ui.spinBox_Transparency.setValue)
+        self.ui.spinBox_Transparency.valueChanged.connect(self.ui.horizontalSlider_Transparency.setValue)
+        self.ui.horizontalSlider_Brightness.valueChanged.connect(self.ui.spinBox_Brightness.setValue)
+        self.ui.spinBox_Brightness.valueChanged.connect(self.ui.horizontalSlider_Brightness.setValue)
+        self.ui.horizontalSlider_Contrast.valueChanged.connect(lambda x: self.ui.doubleSpinBox_Contrast.setValue(x/100.0))
+        self.ui.doubleSpinBox_Contrast.valueChanged.connect(lambda x: self.ui.horizontalSlider_Contrast.setValue(x*100))
+
         QObject.connect(self.ui.buttonBox.button(QDialogButtonBox.Apply), SIGNAL("clicked()"), self,
                         SIGNAL("applyClicked()"))
-
+        # set init values
+        self.initBlendingCombo()
         self.ui.textEdit_Properties.setText(layer.metadata())
         self.ui.spinBox_Transparency.setValue(layer.transparency)
+        self.ui.spinBox_Brightness.setValue(layer.brigthness)
+        self.ui.doubleSpinBox_Contrast.setValue(layer.contrast)
         i = self.ui.comboBox_BlendingMode.findText(layer.blendModeName)
         if i != -1:
             self.ui.comboBox_BlendingMode.setCurrentIndex(i)
 
-        if layer.layerDef.serviceUrl[0] == ":":
-            self.ui.checkBox_SmoothRender.setEnabled(False)
-            self.ui.checkBox_CreditVisibility.setEnabled(False)
-        else:
-            self.ui.checkBox_SmoothRender.setChecked(layer.smoothRender)
-            self.ui.checkBox_CreditVisibility.setChecked(layer.creditVisibility)
+        self.ui.checkBox_SmoothRender.setChecked(layer.smoothRender)
+        self.ui.checkBox_CreditVisibility.setChecked(layer.creditVisibility)
+        self.ui.checkBox_Grayscale.setChecked(layer.grayscaleRender)
 
     def initBlendingCombo(self):
         attrs = dir(QPainter)
@@ -64,14 +69,4 @@ class PropertiesDialog(QDialog):
             if attr.startswith("CompositionMode_"):
                 self.ui.comboBox_BlendingMode.addItem(attr[16:])
 
-    def sliderChanged(self, val):
-        s = self.ui.spinBox_Transparency
-        s.blockSignals(True)
-        s.setValue(val)
-        s.blockSignals(False)
 
-    def spinBoxChanged(self, val):
-        s = self.ui.horizontalSlider_Transparency
-        s.blockSignals(True)
-        s.setValue(val)
-        s.blockSignals(False)

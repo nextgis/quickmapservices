@@ -25,7 +25,7 @@ import threading
 from PyQt4.QtCore import QObject, qDebug, Qt, QFile, QRectF, QPointF, QPoint, QTimer, QEventLoop
 from PyQt4.QtCore import SIGNAL
 from PyQt4.QtGui import QFont, QColor, QBrush
-from qgis.core import QgsPluginLayer, QgsCoordinateReferenceSystem, QgsPluginLayerType
+from qgis.core import QgsPluginLayer, QgsCoordinateReferenceSystem, QgsPluginLayerType, QgsImageOperation
 from qgis.gui import QgsMessageBar
 from ..plugin_settings import PluginSettings
 from ..qgis_settings import QGISSettings
@@ -48,6 +48,9 @@ class LayerDefaultSettings:
     TRANSPARENCY = 0
     BLEND_MODE = "SourceOver"
     SMOOTH_RENDER = True
+    GRAYSCALE_RENDER = False
+    BRIGTNESS = 0
+    CONTRAST = 1.0
 
 
 class TileLayer(QgsPluginLayer):
@@ -118,6 +121,9 @@ class TileLayer(QgsPluginLayer):
         self.setTransparency(LayerDefaultSettings.TRANSPARENCY)
         self.setBlendModeByName(LayerDefaultSettings.BLEND_MODE)
         self.setSmoothRender(LayerDefaultSettings.SMOOTH_RENDER)
+        self.setGrayscaleRender(LayerDefaultSettings.GRAYSCALE_RENDER)
+        self.setBrigthness(LayerDefaultSettings.BRIGTNESS)
+        self.setContrast(LayerDefaultSettings.CONTRAST)
 
         # downloader
         self.downloader = Downloader(self)
@@ -153,6 +159,19 @@ class TileLayer(QgsPluginLayer):
     def setCreditVisibility(self, visible):
         self.creditVisibility = visible
         self.setCustomProperty("creditVisibility", 1 if visible else 0)
+
+    def setGrayscaleRender(self, isGrayscale):
+        self.grayscaleRender = isGrayscale
+        self.setCustomProperty("grayscaleRender", 1 if isGrayscale else 0)
+
+    def setBrigthness(self, brigthness):
+        self.brigthness = brigthness
+        self.setCustomProperty("brigthness", brigthness)
+
+    def setContrast(self, contrast):
+        self.contrast = contrast
+        self.setCustomProperty("contrast", contrast)
+
 
     def draw(self, renderContext):
 
@@ -327,6 +346,10 @@ class TileLayer(QgsPluginLayer):
     def drawTiles(self, renderContext, tiles, sdx=1.0, sdy=1.0):
         # create an image that has the same resolution as the tiles
         image = tiles.image()
+        if self.grayscaleRender:
+            QgsImageOperation.convertToGrayscale(image)
+        if self.brigthness != LayerDefaultSettings.BRIGTNESS or self.contrast != LayerDefaultSettings.CONTRAST:
+            QgsImageOperation.adjustBrightnessContrast(image, self.brigthness, self.contrast)
 
         # tile extent to pixel
         map2pixel = renderContext.mapToPixel()
@@ -354,6 +377,10 @@ class TileLayer(QgsPluginLayer):
 
         # create an image that has the same resolution as the tiles
         image = tiles.image()
+        if self.grayscaleRender:
+            QgsImageOperation.convertToGrayscale(image)
+        if self.brigthness != LayerDefaultSettings.BRIGTNESS or self.contrast != LayerDefaultSettings.CONTRAST:
+            QgsImageOperation.adjustBrightnessContrast(image, self.brigthness, self.contrast)
 
         # tile extent
         extent = tiles.extent()
@@ -569,6 +596,10 @@ class TileLayer(QgsPluginLayer):
         self.setBlendModeByName(self.customProperty("blendMode", LayerDefaultSettings.BLEND_MODE))
         self.setSmoothRender(int(self.customProperty("smoothRender", LayerDefaultSettings.SMOOTH_RENDER)))
         self.creditVisibility = int(self.customProperty("creditVisibility", 1))
+        self.setGrayscaleRender(int(self.customProperty("grascaleRender", LayerDefaultSettings.GRAYSCALE_RENDER)))
+        self.setBrigthness(int(self.customProperty("brigthness", LayerDefaultSettings.BRIGTNESS)))
+        self.setContrast(float(self.customProperty("contrast", LayerDefaultSettings.CONTRAST)))
+
         return True
 
     def writeXml(self, node, doc):
@@ -709,4 +740,7 @@ class TileLayerType(QgsPluginLayerType):
         layer.setBlendModeByName(dialog.ui.comboBox_BlendingMode.currentText())
         layer.setSmoothRender(dialog.ui.checkBox_SmoothRender.isChecked())
         layer.setCreditVisibility(dialog.ui.checkBox_CreditVisibility.isChecked())
+        layer.setGrayscaleRender(dialog.ui.checkBox_Grayscale.isChecked())
+        layer.setBrigthness(dialog.ui.spinBox_Brightness.value())
+        layer.setContrast(dialog.ui.doubleSpinBox_Contrast.value())
         layer.emit(SIGNAL("repaintRequested()"))
