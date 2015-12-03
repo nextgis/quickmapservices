@@ -52,7 +52,7 @@ changelog= 0.15:
 # Tags are comma separated with spaces allowed
 tags=service, internet, tms, wms, qms, google, openstreetmap, osm, basemap, mapquest, mapsurfer
 
-homepage=
+homepage=http://nextgis.ru/en/blog/quickmapservices/
 tracker=https://github.com/nextgis/quickmapservices/issues
 repository=https://github.com/nextgis/quickmapservices
 icon=icons/mapservices.png
