@@ -67,3 +67,11 @@ class PluginSettings():
     @classmethod
     def set_enable_otf_3857(cls, bool_val):
         return cls.get_settings().setValue('enable_otf_3857', bool_val)
+
+    @classmethod
+    def set_hide_ds_id_list(cls, ds_id_list):
+        cls.get_settings().setValue('hide_ds_id_list', ds_id_list)
+
+    @classmethod
+    def get_hide_ds_id_list(cls):
+        return cls.get_settings().value('hide_ds_id_list', [])
