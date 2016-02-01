@@ -20,26 +20,17 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QTranslator
-from singleton import Singleton
 
 
-class CustomTranslator(QTranslator, Singleton):
+class GroupInfo:
 
-    def __init__(self):
-        super(QTranslator, self).__init__()
-        self.__translates = {}
+    def __init__(self, group_id=None, alias=None, icon=None, file_path=None, menu=None):
+        # general
+        self.id = group_id
+        # ui
+        self.alias = alias
+        self.icon = icon
 
-    def append(self, text, translation):
-        if text and translation:
-            self.__translates[text] = translation
-
-    def clear_translations(self):
-        self.__translates.clear()
-
-    def translate(self, context, text, disambiguation):
-        try:
-            if isinstance(text, str) and text in self.__translates.keys():
-                return self.__translates[text]
-        except:
-            return ''
+        # internal
+        self.file_path = file_path
+        self.menu = menu

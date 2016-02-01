@@ -20,26 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QTranslator
-from singleton import Singleton
 
+class Singleton():
+    _instances = {}
 
-class CustomTranslator(QTranslator, Singleton):
-
-    def __init__(self):
-        super(QTranslator, self).__init__()
-        self.__translates = {}
-
-    def append(self, text, translation):
-        if text and translation:
-            self.__translates[text] = translation
-
-    def clear_translations(self):
-        self.__translates.clear()
-
-    def translate(self, context, text, disambiguation):
-        try:
-            if isinstance(text, str) and text in self.__translates.keys():
-                return self.__translates[text]
-        except:
-            return ''
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]

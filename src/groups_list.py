@@ -28,34 +28,40 @@ from PyQt4.QtGui import QMenu, QIcon
 from qgis.core import QgsMessageLog
 from config_reader_helper import ConfigReaderHelper
 import extra_sources
+from custom_translator import CustomTranslator
+from group_info import GroupInfo
+from locale import Locale
 
 CURR_PATH = os.path.dirname(__file__)
-GROUP_PATHS = [
-    os.path.join(CURR_PATH, extra_sources.GROUPS_DIR_NAME),
-    os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.GROUPS_DIR_NAME),
-    os.path.join(extra_sources.USER_DIR_PATH, extra_sources.GROUPS_DIR_NAME),
-]
+
+INTERNAL_GROUP_PATHS = [os.path.join(CURR_PATH, extra_sources.GROUPS_DIR_NAME), ]
+CONTRIBUTE_GROUP_PATHS = [os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.GROUPS_DIR_NAME), ]
+USER_GROUP_PATHS = [os.path.join(extra_sources.USER_DIR_PATH, extra_sources.GROUPS_DIR_NAME), ]
+
+ALL_GROUP_PATHS = INTERNAL_GROUP_PATHS + CONTRIBUTE_GROUP_PATHS + USER_GROUP_PATHS
 
 
-class DsGroupsList:
+class GroupsList:
 
-    def __init__(self, locale, custom_translator):
-        self.locale = locale  # for translation
-        self.translator = custom_translator
+    def __init__(self, group_paths=ALL_GROUP_PATHS):
+        self.locale = Locale.get_locale()
+        self.translator = CustomTranslator()
+        self.paths = group_paths
         self.groups = {}
         self._fill_groups_list()
 
     def _fill_groups_list(self):
         self.groups = {}
-        for gr_path in GROUP_PATHS:
+        for gr_path in self.paths:
             for root, dirs, files in os.walk(gr_path):
                 for ini_file in [f for f in files if f.endswith('.ini')]:
                     self._read_ini_file(root, ini_file)
 
     def _read_ini_file(self, root, ini_file_path):
         try:
+            ini_full_path = os.path.join(root, ini_file_path)
             parser = ConfigParser()
-            ini_file = codecs.open(os.path.join(root, ini_file_path), 'r', 'utf-8')
+            ini_file = codecs.open(ini_full_path, 'r', 'utf-8')
             parser.readfp(ini_file)
             #read config
             group_id = parser.get('general', 'id')
@@ -68,20 +74,22 @@ class DsGroupsList:
                 if type(key) is unicode and key == 'alias[%s]' % self.locale:
                     self.translator.append(group_alias, val)
                     break
-            #append to groups
-            self.groups[group_id] = QMenu(self.tr(group_alias))
-            self.groups[group_id].setIcon(QIcon(group_icon_path))
+            #create menu
+            group_menu = QMenu(self.tr(group_alias))
+            group_menu.setIcon(QIcon(group_icon_path))
+            #append to all groups
+            self.groups[group_id] = GroupInfo(group_id, group_alias, group_icon_path, ini_full_path, group_menu)
         except Exception, e:
-            error_message = 'Group INI file can\'t be parsed: ' + e.message
+            error_message = self.tr('Group INI file can\'t be parsed: ') + e.message
             QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
 
     def get_group_menu(self, group_id):
         if group_id in self.groups:
-            return self.groups[group_id]
+            return self.groups[group_id].menu
         else:
-            menu = QMenu(group_id)
-            self.groups[group_id] = menu
-            return menu
+            info = GroupInfo(group_id=group_id, menu=QMenu(group_id))
+            self.groups[group_id] = info
+            return info.menu
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):

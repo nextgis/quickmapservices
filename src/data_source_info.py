@@ -39,8 +39,6 @@ class DataSourceInfo():
         self.copyright_link = None
         self.terms_of_use = None
 
-        self.action = None
-
         self.tms_url = None
         self.tms_zmin = None
         self.tms_zmax = None
@@ -49,11 +47,14 @@ class DataSourceInfo():
         self.tms_postgis_crs_id = None
         self.tms_custom_proj = None
 
-
-
         self.wms_url = None
         self.wms_params = None
         self.wms_layers = None
         self.wms_turn_over = None
 
         self.gdal_source_file = None
+
+        # internal
+        self.file_path = None
+        self.icon_path = None
+        self.action = None

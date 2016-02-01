@@ -27,37 +27,42 @@ from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QIcon, QAction
 from qgis.core import QgsMessageLog
 from config_reader_helper import ConfigReaderHelper
+from custom_translator import CustomTranslator
 from data_source_info import DataSourceInfo
 import extra_sources
+from locale import Locale
 from supported_drivers import KNOWN_DRIVERS
 
 CURR_PATH = os.path.dirname(__file__)
 
-DS_PATHS = [
-    os.path.join(CURR_PATH, extra_sources.DATA_SOURCES_DIR_NAME),
-    os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME),
-    os.path.join(extra_sources.USER_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME),
-]
+INTERNAL_DS_PATHS = [os.path.join(CURR_PATH, extra_sources.DATA_SOURCES_DIR_NAME), ]
+CONTRIBUTE_DS_PATHS = [os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME), ]
+USER_DS_PATHS = [os.path.join(extra_sources.USER_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME), ]
+
+
+ALL_DS_PATHS = INTERNAL_DS_PATHS + CONTRIBUTE_DS_PATHS + USER_DS_PATHS
 
 
 class DataSourcesList:
 
-    def __init__(self, locale, custom_translator):
-        self.locale = locale  # for translation
-        self.translator = custom_translator
+    def __init__(self, ds_paths=ALL_DS_PATHS):
+        self.locale = Locale.get_locale()
+        self.translator = CustomTranslator()
         self.data_sources = {}
+        self.ds_paths = ds_paths
         self._fill_data_sources_list()
 
     def _fill_data_sources_list(self):
         self.data_sources = {}
-        for ds_path in DS_PATHS:
+        for ds_path in self.ds_paths:
             for root, dirs, files in os.walk(ds_path):
                 for ini_file in [f for f in files if f.endswith('.ini')]:
                     self._read_ini_file(root, ini_file)
 
     def _read_ini_file(self, root, ini_file_path):
         try:
-            ini_file = codecs.open(os.path.join(root, ini_file_path), 'r', 'utf-8')
+            ini_full_path = os.path.join(root, ini_file_path)
+            ini_file = codecs.open(ini_full_path, 'r', 'utf-8')
 
             parser = ConfigParser()
             parser.readfp(ini_file)
@@ -107,7 +112,8 @@ class DataSourcesList:
                     self.translator.append(ds.alias, val)
                     break
 
-            #Action stuff
+            #Action and internal stuff
+            ds.file_path = ini_full_path
             ds.icon_path = os.path.join(root, ds.icon) if ds.icon else None
             ds.action = QAction(QIcon(ds.icon_path), self.tr(ds.alias), None)
             ds.action.setData(ds)

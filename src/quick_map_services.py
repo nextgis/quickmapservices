@@ -32,6 +32,7 @@ from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsPro
 from qgis.gui import QgsMessageBar
 import sys
 from extra_sources import ExtraSources
+from locale import Locale
 from plugin_settings import PluginSettings
 
 from settings_dialog import SettingsDialog
@@ -39,7 +40,7 @@ from about_dialog import AboutDialog
 from py_tiled_layer.tilelayer import TileLayer, TileLayerType
 from py_tiled_layer.tiles import TileServiceInfo
 from data_sources_list import DataSourcesList
-from ds_groups_list import DsGroupsList
+from groups_list import GroupsList
 from custom_translator import CustomTranslator
 from supported_drivers import KNOWN_DRIVERS
 
@@ -63,7 +64,7 @@ class QuickMapServices:
         # initialize locale
         self.translator = QTranslator()
 
-        self.locale = QSettings().value('locale/userLocale')[0:2]
+        self.locale = Locale.get_locale()
         locale_path = os.path.join(
             self.plugin_dir,
             'i18n',
@@ -101,8 +102,8 @@ class QuickMapServices:
         return QCoreApplication.translate('QuickMapServices', message)
 
     def initGui(self):
-        # import pydevd
-        # pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
+        #import pydevd
+        #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
         # Register plugin layer type
         self.tileLayerType = TileLayerType(self)
@@ -229,8 +230,8 @@ class QuickMapServices:
         self.menu = QMenu(self.tr(u'QuickMapServices'))
         self.menu.setIcon(QIcon(icon_path))
 
-        self.groups_list = DsGroupsList(self.locale, self.custom_translator)
-        self.ds_list = DataSourcesList(self.locale, self.custom_translator)
+        self.groups_list = GroupsList()
+        self.ds_list = DataSourcesList()
 
         data_sources = self.ds_list.data_sources.values()
         data_sources.sort(key=lambda x: x.alias or x.id)

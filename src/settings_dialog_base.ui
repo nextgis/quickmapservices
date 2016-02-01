@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>363</width>
+    <width>401</width>
     <height>331</height>
    </rect>
   </property>
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="QTabWidget" name="tabUserServices">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -178,6 +178,28 @@
       <zorder>formLayout</zorder>
       <zorder>label_10</zorder>
      </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>User services</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="UserGroupsBox" name="groupBox">
+         <property name="title">
+          <string>User groups</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="UserServicesBox" name="groupBox_2">
+         <property name="title">
+          <string>User services</string>
+         </property>
+         <zorder>groupBox</zorder>
+        </widget>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tabExtraServices">
       <property name="enabled">
        <bool>true</bool>
@@ -319,6 +341,20 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>UserGroupsBox</class>
+   <extends>QGroupBox</extends>
+   <header>quick_map_services.user_groups_box</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>UserServicesBox</class>
+   <extends>QGroupBox</extends>
+   <header>quick_map_services.user_services_box</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

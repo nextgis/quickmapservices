@@ -33,8 +33,7 @@ from plugin_settings import PluginSettings
 from qgis_settings import QGISSettings
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'settings_dialog_base.ui'))
-
+    os.path.dirname(__file__), 'settings_dialog_base.ui'), from_imports=False)
 
 class SettingsDialog(QtGui.QDialog, FORM_CLASS):
 

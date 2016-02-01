@@ -20,26 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QTranslator
-from singleton import Singleton
+from PyQt4.QtCore import QSettings
 
 
-class CustomTranslator(QTranslator, Singleton):
+class Locale(object):
 
-    def __init__(self):
-        super(QTranslator, self).__init__()
-        self.__translates = {}
-
-    def append(self, text, translation):
-        if text and translation:
-            self.__translates[text] = translation
-
-    def clear_translations(self):
-        self.__translates.clear()
-
-    def translate(self, context, text, disambiguation):
-        try:
-            if isinstance(text, str) and text in self.__translates.keys():
-                return self.__translates[text]
-        except:
-            return ''
+    @classmethod
+    def get_locale(cls):
+        return QSettings().value('locale/userLocale')[0:2]
