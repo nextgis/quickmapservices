@@ -1,7 +1,7 @@
 import os
 
 from PyQt4 import uic
-from PyQt4.QtGui import QWidget, QIntValidator, QMessageBox
+from PyQt4.QtGui import QWidget, QIntValidator, QMessageBox, QApplication
 
 from .line_edit_color_validator import LineEditColorValidator
 
@@ -17,9 +17,21 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
         self.wms_validator = LineEditColorValidator(self.txtUrl, 'http[s]?://.+', error_tooltip='http{s}://any_text/{z}/{x}/{y}/')
         self.txtCrsId.setValidator(QIntValidator())
         self.txtPostgisCrsId.setValidator(QIntValidator())
-        #self.txtCrsId.clicked.connect(lambda: self.rbnCrsId.setChecked(True))
-        #self.txtPostgisCrsId.clicked.connect(lambda: self.rbPostgisCrsId.setChecked(True))
-        #self.spnCustomProj.clicked.connect(lambda: self.rbCustomProj.setChecked(True))
+
+        QApplication.instance().focusChanged.connect(self.focus_changed)
+
+
+    def focus_changed(self, old_w, new_w):
+        remap = {
+            self.txtCrsId: self.rbCrsId,
+            self.txtPostgisCrsId: self.rbPostgisCrsId,
+            self.spnCustomProj: self.rbCustomProj
+        }
+
+        for cont, rb in remap.iteritems():
+            if new_w == cont:
+                rb.setChecked(True)
+
 
     def feel_form(self, ds_info):
         self.ds_info = ds_info
@@ -32,12 +44,19 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
         if self.ds_info.tms_epsg_crs_id:
             self.txtCrsId.setText(str(self.ds_info.tms_epsg_crs_id))
             self.rbCrsId.setChecked(True)
+            return
         if self.ds_info.tms_postgis_crs_id:
             self.txtPostgisCrsId.setText(str(self.ds_info.tms_postgis_crs_id))
             self.rbPostgisCrsId.setChecked(True)
+            return
         if self.ds_info.tms_custom_proj:
             self.txtCustomProj.setText(self.ds_info.tms_custom_proj)
             self.rbCustomProj.setChecked(True)
+            return
+        # not setted. set default
+        self.txtCrsId.setText(str(3857))
+        self.rbCrsId.setChecked(True)
+
 
 
     def feel_ds_info(self, ds_info):
@@ -49,14 +68,16 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
         if self.rbCrsId.isChecked():
             try:
                 code = int(self.txtCrsId.text())
-                ds_info.tms_epsg_crs_id = code
+                if code != 3857:
+                    ds_info.tms_epsg_crs_id = code
             except:
                 pass
             return
         if self.rbPostgisCrsId.isChecked():
             try:
                 code = int(self.txtPostgisCrsId.text())
-                ds_info.tms_postgis_crs_id = code
+                if code != 3857:
+                    ds_info.tms_postgis_crs_id = code
             except:
                 pass
             return
