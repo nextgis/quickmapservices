@@ -21,20 +21,14 @@
  ***************************************************************************/
 """
 from PyQt4.QtCore import QTranslator
-from singleton import Singleton
+from singleton import singleton
 
 
+@singleton
 class CustomTranslator(QTranslator):
 
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(CustomTranslator, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
-
     def __init__(self):
-        super(CustomTranslator, self).__init__()
+        QTranslator.__init__(self)
         self.__translates = {}
 
 
