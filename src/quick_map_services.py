@@ -102,8 +102,8 @@ class QuickMapServices:
         return QCoreApplication.translate('QuickMapServices', message)
 
     def initGui(self):
-        import pydevd
-        pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
+        #import pydevd
+        #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
         # Register plugin layer type
         self.tileLayerType = TileLayerType(self)
