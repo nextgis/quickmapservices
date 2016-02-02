@@ -24,11 +24,19 @@ from PyQt4.QtCore import QTranslator
 from singleton import Singleton
 
 
-class CustomTranslator(QTranslator, Singleton):
+class CustomTranslator(QTranslator):
+
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(CustomTranslator, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
 
     def __init__(self):
-        super(QTranslator, self).__init__()
+        super(CustomTranslator, self).__init__()
         self.__translates = {}
+
 
     def append(self, text, translation):
         if text and translation:
