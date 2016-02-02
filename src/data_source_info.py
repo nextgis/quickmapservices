@@ -22,12 +22,19 @@
 """
 
 
-class DataSourceInfo():
+class DataSourceCategory:
+    BASE = 'base'
+    CONTRIB = 'contrib'
+    USER = 'user'
+
+    all = [BASE, CONTRIB, USER]
+
+
+class DataSourceInfo:
 
     def __init__(self):
         self.id = None
         self.type = None
-        self.is_contrib = None
 
         self.group = None
         self.alias = None
@@ -58,3 +65,4 @@ class DataSourceInfo():
         self.file_path = None
         self.icon_path = None
         self.action = None
+        self.category = None

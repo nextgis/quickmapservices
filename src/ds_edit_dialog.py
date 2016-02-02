@@ -1,9 +1,14 @@
+import ConfigParser
+import codecs
 import os
+import shutil
 
 from PyQt4 import uic
 from PyQt4.QtGui import QDialog, QIcon, QMessageBox
+from os import path
 
 from data_source_info import DataSourceInfo
+from data_sources_list import DataSourcesList
 from group_info import GroupInfo
 from groups_list import GroupsList
 from supported_drivers import KNOWN_DRIVERS
@@ -115,16 +120,44 @@ class DsEditDialog(QDialog, FORM_CLASS):
             return
 
         if self.init_with_existing:
-            res = self.save_existing()
+            res = self.save_existing(new_ds_info)
         else:
-            res = self.create_new()
+            res = self.create_new(new_ds_info)
         if res:
             super(DsEditDialog, self).accept()
 
-    def save_existing(self):
+
+    def save_existing(self, ds_info):
+        if ds_info.id != self.ds_info.id and not self.check_existing_id(ds_info.id):
+            return False
+
+        if ds_info == self.ds_info:
+            return True
+
+        # # replace icon if need
+        # if ds_info.icon_path != self.ds_info.icon_path:
+        #     os.remove(self.ds_info.icon_path)
+        #
+        #     dir_path = os.path.abspath(os.path.join(self.ds_info.file_path, os.path.pardir))
+        #
+        #     ico_file_name = path.basename(ds_info.icon_path)
+        #     ico_path = path.join(dir_path, ico_file_name)
+        #
+        #     shutil.copy(ds_info.icon_path, ico_path)
+        #
+        # self.write_config_file(ds_info, self.ds_info.file_path)
+
         return True
 
     def create_new(self):
+        return True
+
+    def check_existing_id(self, ds_id):
+        gl = DataSourcesList()
+        if ds_id in gl.data_sources.keys():
+            QMessageBox.critical(self, self.tr('Error on save group'),
+                                 self.tr('Data source with such id already exists! Select new id for data source!'))
+            return False
         return True
 
     def feel_ds_info(self, ds_info):
