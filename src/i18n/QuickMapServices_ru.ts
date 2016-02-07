@@ -20,6 +20,19 @@
     </message>
 </context>
 <context>
+    <name>DataSourceManager</name>
+    <message>
+        <location filename="settings_dialog.py" line="71"/>
+        <source>DS name</source>
+        <translation>Имя подложками</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog.py" line="71"/>
+        <source>Visible</source>
+        <translation>Видимость</translation>
+    </message>
+</context>
+<context>
     <name>Dialog</name>
     <message>
         <location filename="about_dialog_base.ui" line="14"/>
@@ -177,24 +190,29 @@ p, li { white-space: pre-wrap; }
         <translation>Настройки будут применяться для вновь добавленных слоев</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="186"/>
+        <location filename="settings_dialog_base.ui" line="199"/>
         <source>Contributed services</source>
         <translation>Дополнительные сервисы</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="302"/>
+        <location filename="settings_dialog_base.ui" line="315"/>
         <source>Get contributed pack</source>
         <translation>Получить дополнительные источники данных</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="263"/>
+        <location filename="settings_dialog_base.ui" line="276"/>
         <source>Attention!</source>
         <translation>Внимание!</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="273"/>
+        <location filename="settings_dialog_base.ui" line="286"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Contributed services definitions are provided &apos;as is&apos; and are not validated by plugin authors. These are proof-of-concept and for testing only. Visit &lt;a href=&quot;https://github.com/nextgis/quickmapservices_contrib&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://github.com/nextgis/quickmapservices_contrib&lt;/span&gt;&lt;/a&gt; to add new services. Use at your own risk!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Эти сервисы предоставляются &quot;как есть&quot;, только для целей тестирования. Используйте на свой страх и риск. Добавить новые сервисы можно по ссылке: &lt;a href=&quot;https://github.com/nextgis/quickmapservices_contrib&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://github.com/nextgis/quickmapservices_contrib&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="183"/>
+        <source>Datasource manage</source>
+        <translation>Управление подложками</translation>
     </message>
 </context>
 <context>
@@ -213,22 +231,22 @@ p, li { white-space: pre-wrap; }
         <translation>QuickMapServices</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="249"/>
+        <location filename="quick_map_services.py" line="253"/>
         <source>Set proper scale</source>
         <translation>Ближайший масштаб</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="255"/>
+        <location filename="quick_map_services.py" line="259"/>
         <source>Set SlippyMap scales</source>
         <translation>Установить масштабы SlippyMap</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="261"/>
+        <location filename="quick_map_services.py" line="265"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="267"/>
+        <location filename="quick_map_services.py" line="271"/>
         <source>About</source>
         <translation>Инфо</translation>
     </message>
@@ -258,12 +276,12 @@ The previous settings will be overwritten!</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="settings_dialog.py" line="82"/>
+        <location filename="settings_dialog.py" line="186"/>
         <source>Last version of contrib pack was downloaded!</source>
         <translation>Последняя версия пакета с источниками данных была успешно загружена!</translation>
     </message>
     <message>
-        <location filename="settings_dialog.py" line="86"/>
+        <location filename="settings_dialog.py" line="190"/>
         <source>Error on getting contrib pack: %s %s</source>
         <translation>Ошибка при получении пакета: %s %s</translation>
     </message>

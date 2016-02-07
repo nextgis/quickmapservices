@@ -36,6 +36,7 @@ from locale import Locale
 from plugin_settings import PluginSettings
 
 from settings_dialog import SettingsDialog
+from settings_ds_manager import DataSourceManager
 from about_dialog import AboutDialog
 from py_tiled_layer.tilelayer import TileLayer, TileLayerType
 from py_tiled_layer.tiles import TileServiceInfo
@@ -236,7 +237,11 @@ class QuickMapServices:
         data_sources = self.ds_list.data_sources.values()
         data_sources.sort(key=lambda x: x.alias or x.id)
 
+        ds_hide_list = PluginSettings.get_hide_ds_id_list()
+        
         for ds in data_sources:
+            if ds.id in ds_hide_list:
+                continue
             ds.action.triggered.connect(self.insert_layer)
             gr_menu = self.groups_list.get_group_menu(ds.group)
             gr_menu.addAction(ds.action)
@@ -262,6 +267,12 @@ class QuickMapServices:
         self.service_actions.append(settings_act)
         settings_act.triggered.connect(self.show_settings_dialog)
         self.menu.addAction(settings_act)
+
+        icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
+        ds_manager_act = QAction(QIcon(icon_settings_path), self.tr('Substrate manage'), self.iface.mainWindow())
+        self.service_actions.append(ds_manager_act)
+        ds_manager_act.triggered.connect(self.show_ds_manager)
+        self.menu.addAction(ds_manager_act)
 
         icon_about_path = self.plugin_dir + '/icons/mActionAbout.png'
         info_act = QAction(QIcon(icon_about_path), self.tr('About'), self.iface.mainWindow())
@@ -314,12 +325,20 @@ class QuickMapServices:
 
     def show_settings_dialog(self):
         settings_dlg = SettingsDialog()
-
         settings_dlg.exec_()
         # apply settings
         self.remove_menu_buttons()
         self.build_menu_tree()
         self.append_menu_buttons()
 
+    def show_ds_manager(self):
+        data_sources = self.ds_list.data_sources.values()
+        self.dataSourceManager = DataSourceManager(data_sources)
+        self.dataSourceManager.exec_()
+        # self.dsManagerContainer.addWidget(self.dataSourceManager)
 
+        # apply settings
+        self.remove_menu_buttons()
+        self.build_menu_tree()
+        self.append_menu_buttons()
 
