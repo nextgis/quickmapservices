@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>401</width>
+    <width>562</width>
     <height>331</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabUserServices">
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tabCommon">
       <attribute name="title">
@@ -195,7 +195,51 @@
          <property name="title">
           <string>User services</string>
          </property>
-         <zorder>groupBox</zorder>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabServicesVisibility">
+      <attribute name="title">
+       <string>Services visibility</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vLayoutTabServicesVisibility">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <property name="margin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QTreeView" name="treeViewForDS">
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <attribute name="headerCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="headerShowSortIndicator" stdset="0">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="headerStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolBar" name="toolBarForDSTreeView">
+         <property name="layoutDirection">
+          <enum>Qt::RightToLeft</enum>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonFollowStyle</enum>
+         </property>
         </widget>
        </item>
       </layout>

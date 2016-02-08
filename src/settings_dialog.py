@@ -31,18 +31,37 @@ from qgis.core import QgsApplication
 from extra_sources import ExtraSources
 from plugin_settings import PluginSettings
 from qgis_settings import QGISSettings
-
+from data_sources_model import DSManagerModel
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'settings_dialog_base.ui'), from_imports=False)
 
 class SettingsDialog(QtGui.QDialog, FORM_CLASS):
 
-    def __init__(self, parent=None):
+    def __init__(self, ds_list, parent=None):
         """Constructor."""
         super(SettingsDialog, self).__init__(parent)
         self.setupUi(self)
         # init form
         self.fill_pages()
+        # init services visibility tab
+        # layout = QtGui.QVBoxLayout(self.tabServicesVisibility)
+        # self.tabServicesVisibility.setLayout(layout)
+        # self.dsManager = DataSourceManager(ds_list, self.tabServicesVisibility)
+        # layout.addWidget(self.dsManager)
+        self.dsManagerViewModel = DSManagerModel(ds_list)
+        self.treeViewForDS.setModel(self.dsManagerViewModel)
+        self.treeViewForDS.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
+        showAllAction = self.toolBarForDSTreeView.addAction(
+            QtGui.QIcon(":/images/themes/default/mActionShowAllLayers.png"),
+            self.tr("Show all")
+        )
+        showAllAction.triggered.connect(self.dsManagerViewModel.checkAll)
+
+        hideAllAction = self.toolBarForDSTreeView.addAction(
+            QtGui.QIcon(":images/themes/default/mActionHideAllLayers.png"),
+            self.tr("Hide all")
+        )
+        hideAllAction.triggered.connect(self.dsManagerViewModel.uncheckAll)
         # signals
         self.btnGetContribPack.clicked.connect(self.get_contrib)
         self.accepted.connect(self.save_settings)
@@ -68,6 +87,9 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
         QGISSettings.set_default_tile_expiry(self.spnCacheExp.value())
         QGISSettings.set_default_network_timeout(self.spnNetworkTimeout.value())
         # contrib pack
+
+        # ds visibility
+        self.dsManagerViewModel.saveSettings()
 
     def apply_settings(self):
         pass
