@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="ru" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.0" language="ru">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -28,7 +29,7 @@
     <message>
         <location filename="data_sources_model.py" line="32"/>
         <source>Group/DS</source>
-        <translation>Группа\Подолжка</translation>
+        <translation>Группа\Подложка</translation>
     </message>
 </context>
 <context>
