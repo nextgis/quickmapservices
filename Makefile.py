@@ -6,6 +6,8 @@ import shutil
 import pprint
 import zipfile
 
+skript_dir = os.path.dirname(sys.argv[0])
+
 args = sys.argv[1:]
 plugin_name = args[0]
 plugin_dir = args[1]
@@ -98,9 +100,9 @@ def install_plugin():
 
 def make_zip():
     print "make zip ..."
-    zipFile = zipfile.ZipFile(os.path.join(plugin_dir, plugin_name.lower() + ".zip"), 'w')
+    zipFile = zipfile.ZipFile(os.path.join(skript_dir, plugin_name.lower() + ".zip"), 'w')
 
-    src_dir = os.path.join(plugin_dir, "src")
+    src_dir = os.path.join(plugin_dir)
 
     for root, dirs, files in os.walk(src_dir):
         if root.find('.git') != -1:

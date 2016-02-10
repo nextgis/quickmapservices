@@ -37,18 +37,14 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class SettingsDialog(QtGui.QDialog, FORM_CLASS):
 
-    def __init__(self, ds_list, parent=None):
+    def __init__(self, parent=None):
         """Constructor."""
         super(SettingsDialog, self).__init__(parent)
         self.setupUi(self)
         # init form
         self.fill_pages()
         # init services visibility tab
-        # layout = QtGui.QVBoxLayout(self.tabServicesVisibility)
-        # self.tabServicesVisibility.setLayout(layout)
-        # self.dsManager = DataSourceManager(ds_list, self.tabServicesVisibility)
-        # layout.addWidget(self.dsManager)
-        self.dsManagerViewModel = DSManagerModel(ds_list)
+        self.dsManagerViewModel = DSManagerModel()
         self.treeViewForDS.setModel(self.dsManagerViewModel)
         self.treeViewForDS.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
         showAllAction = self.toolBarForDSTreeView.addAction(
@@ -62,6 +58,7 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
             self.tr("Hide all")
         )
         hideAllAction.triggered.connect(self.dsManagerViewModel.uncheckAll)
+        self.dsManagerViewModel.sortByServiceName()
         # signals
         self.btnGetContribPack.clicked.connect(self.get_contrib)
         self.accepted.connect(self.save_settings)
@@ -102,6 +99,8 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
             QgsApplication.restoreOverrideCursor()
             info_message = self.tr('Last version of contrib pack was downloaded!')
             QMessageBox.information(self, PluginSettings.product_name(), info_message)
+
+            self.dsManagerViewModel.resetModel()
         except:
             QgsApplication.restoreOverrideCursor()
             error_message = self.tr('Error on getting contrib pack: %s %s') % (sys.exc_type, sys.exc_value)

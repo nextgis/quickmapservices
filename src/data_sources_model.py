@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+from data_sources_list import DataSourcesList
+
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
 from PyQt4.QtGui import QIcon
@@ -27,7 +29,7 @@ from plugin_settings import PluginSettings
 
 
 class DSManagerModel(QAbstractItemModel):
-    def __init__(self, dsList, parent=None):
+    def __init__(self, parent=None):
         super(DSManagerModel, self).__init__(parent)
         self.rootItem = QtGui.QTreeWidgetItem(
             [
@@ -35,9 +37,15 @@ class DSManagerModel(QAbstractItemModel):
                 self.tr("Visible")
             ]
         )
-        self.__setupModelData(dsList)
+        self.__setupModelData()
 
-    def __setupModelData(self, dsList):
+    def resetModel(self):
+        self.__setupModelData()
+        self.modelReset.emit()
+
+    def __setupModelData(self):
+        dsList = DataSourcesList().data_sources.values()
+
         groupsItems = []
         groups = []
         for ds in dsList:
@@ -68,8 +76,6 @@ class DSManagerModel(QAbstractItemModel):
             group_item.addChild(
                 ds_item
             )
-
-        self.sort(0)
 
     def setData(self, index, value, role):
         if not index.isValid():
@@ -187,6 +193,9 @@ class DSManagerModel(QAbstractItemModel):
 
         return parentItem.childCount()
 
+    def sortByServiceName(self):
+        self.sort(0)
+
     def sort(self, column, order=Qt.AscendingOrder):
         self.layoutAboutToBeChanged.emit()
         if column == 0:
@@ -210,25 +219,27 @@ class DSManagerModel(QAbstractItemModel):
         self.layoutChanged.emit()
 
     def checkAll(self):
-        print "checkAll"
         for row in range(0, self.rootItem.childCount()):
             groupItem = self.rootItem.child(row)
             groupIndex = self.createIndex(row, 1, groupItem)
             self.setData(groupIndex, Qt.Checked, Qt.CheckStateRole)
 
     def uncheckAll(self):
-        print "uncheckAll"
         for row in range(0, self.rootItem.childCount()):
             groupItem = self.rootItem.child(row)
             groupIndex = self.createIndex(row, 1, groupItem)
             self.setData(groupIndex, Qt.Unchecked, Qt.CheckStateRole)
 
     def saveSettings(self):
+        # print "saveSettings"
         hideDSidList = []
+        # print "self.rootItem.childCount(): ", self.rootItem.childCount()
         for groupIndex in range(0, self.rootItem.childCount()):
             groupItem = self.rootItem.child(groupIndex)
+            # print "groupItem.childCount(): ", groupItem.childCount()
             for dsIndex in range(0, groupItem.childCount()):
                 dsItem = groupItem.child(dsIndex)
                 if dsItem.checkState(1) == Qt.Unchecked:
                     hideDSidList.append(dsItem.data(0, Qt.UserRole))
+        # print "hideDSidList: ", hideDSidList
         PluginSettings.set_hide_ds_id_list(hideDSidList)

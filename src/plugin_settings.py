@@ -78,8 +78,8 @@ class PluginSettings():
 
     @classmethod
     def set_hide_ds_id_list(cls, ds_id_list):
-        cls.get_settings().setValue('hide_ds_id_list', ds_id_list)
+        cls.get_settings().setValue('hide_ds_id_list_str', ";".join(ds_id_list))
 
     @classmethod
     def get_hide_ds_id_list(cls):
-        return cls.get_settings().value('hide_ds_id_list', [])
+        return cls.get_settings().value('hide_ds_id_list_str', "").split(";")
