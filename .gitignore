@@ -55,8 +55,10 @@ docs/_build/
 target/
 
 
+
 #  IDE
 .idea
 
 # Sublime IDE
 .sublime-workspace
+*.sublime-project

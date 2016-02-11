@@ -1,6 +1,5 @@
 import codecs
 import os
-import ConfigParser
 import shutil
 
 from PyQt4 import uic
@@ -8,6 +7,7 @@ from PyQt4.QtGui import QDialog, QMessageBox
 from os import path
 
 import extra_sources
+from fixed_config_parser import FixedConfigParser
 from groups_list import GroupsList
 from .gui.line_edit_color_validator import LineEditColorValidator
 
@@ -27,7 +27,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
 
         # validators
         self.id_validator = LineEditColorValidator(self.txtId, '^[A-Za-z0-9_]+$', error_tooltip=self.tr('Any text'))
-        self.alias_validator = LineEditColorValidator(self.txtAlias, '^.+$', error_tooltip=self.tr('Any text'))
+        self.alias_validator = LineEditColorValidator(self.txtAlias, '^[A-Za-z0-9_ ]+$', error_tooltip=self.tr('Any text'))
 
         # vars
         self.group_info = None
@@ -51,16 +51,30 @@ class GroupEditDialog(QDialog, FORM_CLASS):
             super(GroupEditDialog, self).accept()
 
     def validate(self, group_id, group_alias, group_icon):
-        if not group_id:
-            QMessageBox.critical(self, self.tr('Error on save group'), self.tr('Please, enter group id'))
-            return False
-        if not group_alias:
-            QMessageBox.critical(self, self.tr('Error on save group'), self.tr('Please, enter group alias!'))
-            return False
-        if not group_icon:
-            QMessageBox.critical(self, self.tr('Error on save group'), self.tr('Please, select icon for group!'))
-            return False
+        checks = [
+            (group_id, self.tr('Please, enter group id')),
+            (group_alias, self.tr('Please, enter group alias')),
+            (group_icon, self.tr('Please, select icon for group')),
+        ]
+
+        for val, comment in checks:
+            if not val:
+                QMessageBox.critical(self, self.tr('Error on save group'), comment)
+                return False
+
+
+        checks_correct = [
+            (self.id_validator, 'Please, enter correct value for group id'),
+            (self.alias_validator, 'Please, enter correct value for group alias'),
+        ]
+
+        for val, comment in checks_correct:
+            if not val.is_valid():
+                QMessageBox.critical(self, self.tr('Error on save group'), self.tr(comment))
+                return False
+
         return True
+
 
     def check_existing_id(self, group_id):
         gl = GroupsList()
@@ -90,7 +104,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         if group_icon != self.group_info.icon:
             os.remove(self.group_info.icon)
 
-            dir_path = os.path.abspath(os.path.join(self.group_info.file_path, os.path.pardir))
+            dir_path = os.path.dirname(self.group_info.file_path)
 
             ico_file_name = path.basename(group_icon)
             ico_path = path.join(dir_path, ico_file_name)
@@ -99,7 +113,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
 
 
         # write config
-        config = ConfigParser.RawConfigParser()
+        config = FixedConfigParser()
 
         config.add_section('general')
         config.add_section('ui')
@@ -144,7 +158,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         shutil.copy(group_icon, ico_path)
 
         # write config
-        config = ConfigParser.RawConfigParser()
+        config = FixedConfigParser()
 
         config.add_section('general')
         config.add_section('ui')

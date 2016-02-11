@@ -83,6 +83,10 @@ class DataSourcesList:
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
+        try:
+            message = str(message)
+        except:
+            return message
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('QuickMapServices', message)
 

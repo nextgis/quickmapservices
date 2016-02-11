@@ -14,7 +14,7 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         super(EditorWidgetTms, self).__init__(parent)
         self.setupUi(self)
-        self.wms_validator = LineEditColorValidator(self.txtUrl, 'http[s]?://.+', error_tooltip='http{s}://any_text/{z}/{x}/{y}/')
+        self.tms_validator = LineEditColorValidator(self.txtUrl, 'http[s]?://.+', error_tooltip='http{s}://any_text/{z}/{x}/{y}/')
         self.txtCrsId.setValidator(QIntValidator())
         self.txtPostgisCrsId.setValidator(QIntValidator())
 
@@ -89,6 +89,10 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
     def validate(self, ds_info):
         if not ds_info.tms_url:
                 QMessageBox.critical(self, self.tr('Error on save data source'), self.tr('Please, enter TMS url'))
+                return False
+
+        if not self.tms_validator.is_valid():
+                QMessageBox.critical(self, self.tr('Error on save data source'), self.tr('Please, enter correct value for TMS url'))
                 return False
 
         if self.rbCrsId.isChecked():
