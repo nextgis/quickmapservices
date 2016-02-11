@@ -17,11 +17,11 @@
    <item>
     <widget class="QTabWidget" name="tabUserServices">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabCommon">
       <attribute name="title">
-       <string>Common</string>
+       <string>General</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_2">
        <item row="0" column="0">
@@ -70,7 +70,7 @@
      </widget>
      <widget class="QWidget" name="tabTiledLayers">
       <attribute name="title">
-       <string>Tiled layers</string>
+       <string>Tiles</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -180,20 +180,20 @@
      </widget>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>User services</string>
+       <string>Add\Edit\Remove</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <widget class="UserGroupsBox" name="groupBox">
          <property name="title">
-          <string>User groups</string>
+          <string>Groups</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="UserServicesBox" name="groupBox_2">
          <property name="title">
-          <string>User services</string>
+          <string>Services</string>
          </property>
         </widget>
        </item>
@@ -201,7 +201,7 @@
      </widget>
      <widget class="QWidget" name="tabServicesVisibility">
       <attribute name="title">
-       <string>Services visibility</string>
+       <string>Visibility</string>
       </attribute>
       <layout class="QVBoxLayout" name="vLayoutTabServicesVisibility">
        <property name="spacing">
@@ -255,7 +255,7 @@
        <bool>true</bool>
       </property>
       <attribute name="title">
-       <string>Contributed services</string>
+       <string>More services</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
