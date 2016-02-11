@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from data_sources_list import DataSourcesList
+from groups_list import GroupsList
 
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
@@ -45,7 +46,8 @@ class DSManagerModel(QAbstractItemModel):
 
     def __setupModelData(self):
         dsList = DataSourcesList().data_sources.values()
-
+        groupInfoList = GroupsList().groups
+        print "groupInfoList: ", groupInfoList
         groupsItems = []
         groups = []
         for ds in dsList:
@@ -54,6 +56,11 @@ class DSManagerModel(QAbstractItemModel):
             else:
                 group_item = QtGui.QTreeWidgetItem([ds.group])
                 group_item.setCheckState(1, Qt.Unchecked)
+                
+                groupInfo = groupInfoList.get(ds.group)
+                if groupInfo is not None:
+                    group_item.setIcon(0, QIcon(groupInfo.icon))
+
                 groups.append(ds.group)
                 groupsItems.append(group_item)
                 self.rootItem.addChild(group_item)
