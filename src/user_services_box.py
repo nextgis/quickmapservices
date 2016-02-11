@@ -3,7 +3,7 @@ import shutil
 
 from PyQt4 import uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox
+from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon
 
 from data_sources_list import DataSourcesList, USER_DS_PATHS
 from ds_edit_dialog import DsEditDialog
@@ -11,6 +11,7 @@ from ds_edit_dialog import DsEditDialog
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_services_box.ui'))
 
+import resources_rc
 
 class UserServicesBox(QGroupBox, FORM_CLASS):
 
@@ -27,6 +28,9 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         self.btnAdd.clicked.connect(self.on_add)
         self.btnDelete.clicked.connect(self.on_delete)
 
+        self.btnAdd.setIcon(QIcon(":/plugins/QuickMapServices/icons/plus.svg"))
+        self.btnEdit.setIcon(QIcon(":/plugins/QuickMapServices/icons/compose.svg"))
+        self.btnDelete.setIcon(QIcon(":/plugins/QuickMapServices/icons/trash.svg"))
 
     def feel_list(self):
         self.lstServices.clear()

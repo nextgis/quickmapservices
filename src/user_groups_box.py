@@ -11,6 +11,7 @@ from group_edit_dialog import GroupEditDialog
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_groups_box.ui'))
 
+import resources_rc
 
 class UserGroupsBox(QGroupBox, FORM_CLASS):
 
@@ -27,6 +28,9 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         self.btnAdd.clicked.connect(self.on_add)
         self.btnDelete.clicked.connect(self.on_delete)
 
+        self.btnAdd.setIcon(QIcon(":/plugins/QuickMapServices/icons/plus.svg"))
+        self.btnEdit.setIcon(QIcon(":/plugins/QuickMapServices/icons/compose.svg"))
+        self.btnDelete.setIcon(QIcon(":/plugins/QuickMapServices/icons/trash.svg"))
 
     def feel_list(self):
         self.lstGroups.clear()

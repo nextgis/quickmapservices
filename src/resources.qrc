@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/plugins/QuickMapServices" >
         <file>icon.png</file>
+        <file>icons/compose.svg</file>
+        <file>icons/copy.svg</file>
+        <file>icons/plus.svg</file>
+        <file>icons/trash.svg</file>
     </qresource>
 </RCC>
