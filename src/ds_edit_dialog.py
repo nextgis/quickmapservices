@@ -37,7 +37,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
         }
 
         # init icon selector
-        self.txtIcon.set_dialog_ext(self.tr('Icons (*.ico);;Jpeg (*.jpg);;Png (*.png);;All files (*.*)'))
+        self.txtIcon.set_dialog_ext(self.tr('Icons (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)'))
         self.txtIcon.set_dialog_title(self.tr('Select icon for data source'))
 
         # init combos

@@ -22,7 +22,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         self.setupUi(self)
 
         # init icon selector
-        self.txtIcon.set_dialog_ext(self.tr('Icons (*.ico);;Jpeg (*.jpg);;Png (*.png);;All files (*.*)'))
+        self.txtIcon.set_dialog_ext(self.tr('All icon files (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)'))
         self.txtIcon.set_dialog_title(self.tr('Select icon for group'))
 
         # validators
