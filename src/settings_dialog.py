@@ -31,7 +31,7 @@ from qgis.core import QgsApplication
 from extra_sources import ExtraSources
 from plugin_settings import PluginSettings
 from qgis_settings import QGISSettings
-
+from data_sources_model import DSManagerModel
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'settings_dialog_base.ui'), from_imports=False)
 
@@ -43,6 +43,22 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
         self.setupUi(self)
         # init form
         self.fill_pages()
+        # init services visibility tab
+        self.dsManagerViewModel = DSManagerModel()
+        self.treeViewForDS.setModel(self.dsManagerViewModel)
+        self.treeViewForDS.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
+        showAllAction = self.toolBarForDSTreeView.addAction(
+            QtGui.QIcon(":/images/themes/default/mActionShowAllLayers.png"),
+            self.tr("Show all")
+        )
+        showAllAction.triggered.connect(self.dsManagerViewModel.checkAll)
+
+        hideAllAction = self.toolBarForDSTreeView.addAction(
+            QtGui.QIcon(":images/themes/default/mActionHideAllLayers.png"),
+            self.tr("Hide all")
+        )
+        hideAllAction.triggered.connect(self.dsManagerViewModel.uncheckAll)
+        self.dsManagerViewModel.sortByServiceName()
         # signals
         self.btnGetContribPack.clicked.connect(self.get_contrib)
         self.accepted.connect(self.save_settings)
@@ -69,6 +85,9 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
         QGISSettings.set_default_network_timeout(self.spnNetworkTimeout.value())
         # contrib pack
 
+        # ds visibility
+        self.dsManagerViewModel.saveSettings()
+
     def apply_settings(self):
         pass
 
@@ -80,6 +99,8 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
             QgsApplication.restoreOverrideCursor()
             info_message = self.tr('Last version of contrib pack was downloaded!')
             QMessageBox.information(self, PluginSettings.product_name(), info_message)
+
+            self.dsManagerViewModel.resetModel()
         except:
             QgsApplication.restoreOverrideCursor()
             error_message = self.tr('Error on getting contrib pack: %s %s') % (sys.exc_type, sys.exc_value)

@@ -20,6 +20,45 @@
     </message>
 </context>
 <context>
+    <name>DSManagerModel</name>
+    <message>
+        <location filename="data_sources_model.py" line="32"/>
+        <source>Visible</source>
+        <translation>Видимость</translation>
+    </message>
+    <message>
+        <location filename="data_sources_model.py" line="32"/>
+        <source>Group/DS</source>
+        <translation>Группа\Подложка</translation>
+    </message>
+</context>
+<context>
+    <name>DataSourceManager</name>
+    <message>
+        <location filename="settings_dialog.py" line="71"/>
+        <source>DS name</source>
+        <translation type="obsolete">Имя подложками</translation>
+    </message>
+    <message>
+        <location filename="_settings_ds_manager.py" line="70"/>
+        <source>Visible</source>
+        <translation type="obsolete">Видимость</translation>
+    </message>
+</context>
+<context>
+    <name>DataSourceManagerDlg</name>
+    <message>
+        <location filename="_settings_ds_manager.py" line="169"/>
+        <source>DS name</source>
+        <translation type="obsolete">Имя подложками</translation>
+    </message>
+    <message>
+        <location filename="_settings_ds_manager.py" line="169"/>
+        <source>Visible</source>
+        <translation type="obsolete">Видимость</translation>
+    </message>
+</context>
+<context>
     <name>Dialog</name>
     <message>
         <location filename="about_dialog_base.ui" line="14"/>
@@ -46,7 +85,7 @@ p, li { white-space: pre-wrap; }
         <translation></translation>
     </message>
     <message>
-        <location filename="about_dialog_base.ui" line="94"/>
+        <location filename="ds_edit_dialog.ui" line="90"/>
         <source>License</source>
         <translation>Лицензия</translation>
     </message>
@@ -118,6 +157,285 @@ p, li { white-space: pre-wrap; }
         <source>Place the credit on the bottom right corner</source>
         <translation>Поместить авторство в нижнем правом углу</translation>
     </message>
+    <message>
+        <location filename="group_edit_dialog.ui" line="14"/>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="group_edit_dialog.ui" line="24"/>
+        <source>General</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="group_edit_dialog.ui" line="33"/>
+        <source>ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="group_edit_dialog.ui" line="43"/>
+        <source>Alias</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="group_edit_dialog.ui" line="53"/>
+        <source>Icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ds_edit_dialog.ui" line="60"/>
+        <source>Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ds_edit_dialog.ui" line="70"/>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ds_edit_dialog.ui" line="100"/>
+        <source>License link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ds_edit_dialog.ui" line="110"/>
+        <source>Copyright</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ds_edit_dialog.ui" line="120"/>
+        <source>Copyright link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ds_edit_dialog.ui" line="130"/>
+        <source>Terms of use</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DsEditDialog</name>
+    <message>
+        <location filename="ds_edit_dialog.py" line="38"/>
+        <source>Icons (*.ico);;Jpeg (*.jpg);;Png (*.png);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ds_edit_dialog.py" line="39"/>
+        <source>Select icon for data source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ds_edit_dialog.py" line="48"/>
+        <source>Any text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ds_edit_dialog.py" line="158"/>
+        <source>Error on save group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ds_edit_dialog.py" line="158"/>
+        <source>Data source with such id already exists! Select new id for data source!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ds_edit_dialog.py" line="192"/>
+        <source>Error on save data source</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EditorWidgetGdal</name>
+    <message>
+        <location filename="editor_widget_gdal.py" line="16"/>
+        <source>GDAL Data Source (*.xml);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_gdal.py" line="17"/>
+        <source>Select gdal data source file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_gdal.py" line="31"/>
+        <source>Error on save data source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_gdal.py" line="31"/>
+        <source>Please, select GDAL file path</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EditorWidgetTms</name>
+    <message>
+        <location filename="editor_widget_tms.py" line="105"/>
+        <source>Error on save data source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_tms.py" line="91"/>
+        <source>Please, enter TMS url</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_tms.py" line="98"/>
+        <source>Please, enter correct CRC ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_tms.py" line="105"/>
+        <source>Please, enter correct PostGIS CRC ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EditorWidgetWms</name>
+    <message>
+        <location filename="editor_widget_wms.py" line="35"/>
+        <source>Error on save data source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_wms.py" line="35"/>
+        <source>Please, enter WMS url</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FileSelectionWidget</name>
+    <message>
+        <location filename="file_selection_widget.py" line="50"/>
+        <source>Select folder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="file_selection_widget.py" line="113"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Form</name>
+    <message>
+        <location filename="editor_widget_wms.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_gdal.ui" line="23"/>
+        <source>GDAL File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_wms.ui" line="23"/>
+        <source>URL</source>
+        <translation type="unfinished">URL</translation>
+    </message>
+    <message>
+        <location filename="editor_widget_tms.ui" line="30"/>
+        <source>Z min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_tms.ui" line="44"/>
+        <source>Z max</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_tms.ui" line="61"/>
+        <source>Y Origin top</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_tms.ui" line="71"/>
+        <source>CRS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_tms.ui" line="87"/>
+        <source>CRS ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_tms.ui" line="97"/>
+        <source>PostGIS CRS ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_tms.ui" line="104"/>
+        <source>Custom proj</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_wms.ui" line="33"/>
+        <source>Params</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_wms.ui" line="43"/>
+        <source>Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="editor_widget_wms.ui" line="53"/>
+        <source>Turn over</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GroupEditDialog</name>
+    <message>
+        <location filename="group_edit_dialog.py" line="25"/>
+        <source>Icons (*.ico);;Jpeg (*.jpg);;Png (*.png);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="group_edit_dialog.py" line="26"/>
+        <source>Select icon for group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="group_edit_dialog.py" line="30"/>
+        <source>Any text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="group_edit_dialog.py" line="68"/>
+        <source>Error on save group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="group_edit_dialog.py" line="55"/>
+        <source>Please, enter group id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="group_edit_dialog.py" line="58"/>
+        <source>Please, enter group alias!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="group_edit_dialog.py" line="61"/>
+        <source>Please, select icon for group!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="group_edit_dialog.py" line="68"/>
+        <source>Group with such id already exists! Select new id for group!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GroupsList</name>
+    <message>
+        <location filename="groups_list.py" line="83"/>
+        <source>Group INI file can&apos;t be parsed: </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MapServicesDialogBase</name>
@@ -177,24 +495,44 @@ p, li { white-space: pre-wrap; }
         <translation>Настройки будут применяться для вновь добавленных слоев</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="186"/>
+        <location filename="settings_dialog_base.ui" line="252"/>
         <source>Contributed services</source>
         <translation>Дополнительные сервисы</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="302"/>
+        <location filename="settings_dialog_base.ui" line="368"/>
         <source>Get contributed pack</source>
         <translation>Получить дополнительные источники данных</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="263"/>
+        <location filename="settings_dialog_base.ui" line="329"/>
         <source>Attention!</source>
         <translation>Внимание!</translation>
     </message>
     <message>
-        <location filename="settings_dialog_base.ui" line="273"/>
+        <location filename="settings_dialog_base.ui" line="339"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Contributed services definitions are provided &apos;as is&apos; and are not validated by plugin authors. These are proof-of-concept and for testing only. Visit &lt;a href=&quot;https://github.com/nextgis/quickmapservices_contrib&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://github.com/nextgis/quickmapservices_contrib&lt;/span&gt;&lt;/a&gt; to add new services. Use at your own risk!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Эти сервисы предоставляются &quot;как есть&quot;, только для целей тестирования. Используйте на свой страх и риск. Добавить новые сервисы можно по ссылке: &lt;a href=&quot;https://github.com/nextgis/quickmapservices_contrib&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://github.com/nextgis/quickmapservices_contrib&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="183"/>
+        <source>Datasource manage</source>
+        <translation type="obsolete">Управление подложками</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="196"/>
+        <source>User services</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="189"/>
+        <source>User groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="204"/>
+        <source>Services visibility</source>
+        <translation>Видимость подложек</translation>
     </message>
 </context>
 <context>
@@ -208,49 +546,49 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="quick_map_services.py" line="230"/>
+        <location filename="quick_map_services.py" line="231"/>
         <source>QuickMapServices</source>
         <translation>QuickMapServices</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="249"/>
+        <location filename="quick_map_services.py" line="254"/>
         <source>Set proper scale</source>
         <translation>Ближайший масштаб</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="255"/>
+        <location filename="quick_map_services.py" line="260"/>
         <source>Set SlippyMap scales</source>
         <translation>Установить масштабы SlippyMap</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="261"/>
+        <location filename="quick_map_services.py" line="266"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="267"/>
+        <location filename="quick_map_services.py" line="272"/>
         <source>About</source>
         <translation>Инфо</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="149"/>
+        <location filename="quick_map_services.py" line="150"/>
         <source>Set SlippyMap scales for current project? 
 The previous settings will be overwritten!</source>
         <translation>Установить масштабный ряд SlippyMap для текущего проекта?
 Предыдущие настройки будут перезаписаны!</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="193"/>
+        <location filename="quick_map_services.py" line="194"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation>Слой %s невозможно добавить на карту!</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="194"/>
+        <location filename="quick_map_services.py" line="195"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="86"/>
+        <location filename="quick_map_services.py" line="87"/>
         <source>Extra dirs for %s can&apos;t be created: %s %s</source>
         <translation>Невозможно создать дополнительные директории для  %s: %s %s</translation>
     </message>
@@ -258,14 +596,24 @@ The previous settings will be overwritten!</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="settings_dialog.py" line="82"/>
+        <location filename="settings_dialog.py" line="103"/>
         <source>Last version of contrib pack was downloaded!</source>
         <translation>Последняя версия пакета с источниками данных была успешно загружена!</translation>
     </message>
     <message>
-        <location filename="settings_dialog.py" line="86"/>
+        <location filename="settings_dialog.py" line="107"/>
         <source>Error on getting contrib pack: %s %s</source>
         <translation>Ошибка при получении пакета: %s %s</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog.py" line="54"/>
+        <source>Show all</source>
+        <translation>Показать все</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog.py" line="60"/>
+        <source>Hide all</source>
+        <translation>Скрыть все</translation>
     </message>
 </context>
 <context>
@@ -349,6 +697,82 @@ The previous settings will be overwritten!</source>
         <location filename="tilelayer.py" line="630"/>
         <source>Layer Extent</source>
         <translation>Границы слоя</translation>
+    </message>
+</context>
+<context>
+    <name>UserGroupsBox</name>
+    <message>
+        <location filename="user_groups_box.py" line="46"/>
+        <source>Create new user group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_groups_box.py" line="53"/>
+        <source>Edit user group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_groups_box.py" line="60"/>
+        <source>Delete group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_groups_box.py" line="60"/>
+        <source>Delete selected group?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_groups_box.ui" line="14"/>
+        <source>UserGroups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_groups_box.ui" line="17"/>
+        <source>User Groups</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_groups_box.ui" line="48"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UserServicesBox</name>
+    <message>
+        <location filename="user_services_box.py" line="46"/>
+        <source>Create new user data source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_services_box.py" line="53"/>
+        <source>Edit user data source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_services_box.py" line="60"/>
+        <source>Delete data source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_services_box.py" line="60"/>
+        <source>Delete selected data source?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_services_box.ui" line="14"/>
+        <source>UserServices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_services_box.ui" line="17"/>
+        <source>User Services</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_services_box.ui" line="48"/>
+        <source>...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

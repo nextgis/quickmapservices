@@ -110,6 +110,10 @@ class QuickMapServices:
         QgsPluginLayerRegistry.instance().addPluginLayerType(self.tileLayerType)
 
         # Create menu
+        icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
+        self.menu = QMenu(self.tr(u'QuickMapServices'))
+        self.menu.setIcon(QIcon(icon_path))
+        
         self.build_menu_tree()
 
         # add to QGIS menu/toolbars
@@ -226,9 +230,7 @@ class QuickMapServices:
 
     def build_menu_tree(self):
         # Main Menu
-        icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
-        self.menu = QMenu(self.tr(u'QuickMapServices'))
-        self.menu.setIcon(QIcon(icon_path))
+        self.menu.clear()
 
         self.groups_list = GroupsList()
         self.ds_list = DataSourcesList()
@@ -236,7 +238,11 @@ class QuickMapServices:
         data_sources = self.ds_list.data_sources.values()
         data_sources.sort(key=lambda x: x.alias or x.id)
 
+        ds_hide_list = PluginSettings.get_hide_ds_id_list()
+        
         for ds in data_sources:
+            if ds.id in ds_hide_list:
+                continue
             ds.action.triggered.connect(self.insert_layer)
             gr_menu = self.groups_list.get_group_menu(ds.group)
             gr_menu.addAction(ds.action)
@@ -314,12 +320,8 @@ class QuickMapServices:
 
     def show_settings_dialog(self):
         settings_dlg = SettingsDialog()
-
         settings_dlg.exec_()
         # apply settings
-        self.remove_menu_buttons()
+        # self.remove_menu_buttons()
         self.build_menu_tree()
-        self.append_menu_buttons()
-
-
-
+        # self.append_menu_buttons()
