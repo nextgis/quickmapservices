@@ -1,6 +1,5 @@
 import codecs
 import os
-import ConfigParser
 import shutil
 
 from PyQt4 import uic
@@ -8,6 +7,7 @@ from PyQt4.QtGui import QDialog, QMessageBox
 from os import path
 
 import extra_sources
+from fixed_config_parser import FixedConfigParser
 from groups_list import GroupsList
 from .gui.line_edit_color_validator import LineEditColorValidator
 
@@ -27,7 +27,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
 
         # validators
         self.id_validator = LineEditColorValidator(self.txtId, '^[A-Za-z0-9_]+$', error_tooltip=self.tr('Any text'))
-        self.alias_validator = LineEditColorValidator(self.txtAlias, '^.+$', error_tooltip=self.tr('Any text'))
+        self.alias_validator = LineEditColorValidator(self.txtAlias, '^[A-Za-z0-9_]+$', error_tooltip=self.tr('Any text'))
 
         # vars
         self.group_info = None
@@ -99,7 +99,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
 
 
         # write config
-        config = ConfigParser.RawConfigParser()
+        config = FixedConfigParser()
 
         config.add_section('general')
         config.add_section('ui')
@@ -144,7 +144,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         shutil.copy(group_icon, ico_path)
 
         # write config
-        config = ConfigParser.RawConfigParser()
+        config = FixedConfigParser()
 
         config.add_section('general')
         config.add_section('ui')

@@ -47,7 +47,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
 
         # validators
         self.id_validator = LineEditColorValidator(self.txtId, '^[A-Za-z0-9_]+$', error_tooltip=self.tr('Any text'))
-        self.alias_validator = LineEditColorValidator(self.txtAlias, '^.+$', error_tooltip=self.tr('Any text'))
+        self.alias_validator = LineEditColorValidator(self.txtAlias, '^[A-Za-z0-9_]+$', error_tooltip=self.tr('Any text'))
 
         # events
         self.cmbType.currentIndexChanged.connect(self.change_spec_tab)
