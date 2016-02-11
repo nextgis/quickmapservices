@@ -47,7 +47,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
 
         # validators
         self.id_validator = LineEditColorValidator(self.txtId, '^[A-Za-z0-9_]+$', error_tooltip=self.tr('Any text'))
-        self.alias_validator = LineEditColorValidator(self.txtAlias, '^[A-Za-z0-9_]+$', error_tooltip=self.tr('Any text'))
+        self.alias_validator = LineEditColorValidator(self.txtAlias, '^[A-Za-z0-9_ ]+$', error_tooltip=self.tr('Any text'))
 
         # events
         self.cmbType.currentIndexChanged.connect(self.change_spec_tab)
@@ -233,11 +233,11 @@ class DsEditDialog(QDialog, FORM_CLASS):
     def validate(self, ds_info):
         # validate common fields
         checks = [
-            (ds_info.id, 'Please, enter data source id'),
-            (ds_info.alias, 'Please, enter data source alias'),
-            (ds_info.icon, 'Please, select icon for data source'),
-            (ds_info.group, 'Please, select group for data source'),
-            (ds_info.type, 'Please, select type for data source'),
+            (ds_info.id, self.tr('Please, enter data source id')),
+            (ds_info.alias, self.tr('Please, enter data source alias')),
+            (ds_info.icon, self.tr('Please, select icon for data source')),
+            (ds_info.group, self.tr('Please, select group for data source')),
+            (ds_info.type, self.tr('Please, select type for data source')),
         ]
 
         for val, comment in checks:
@@ -245,6 +245,17 @@ class DsEditDialog(QDialog, FORM_CLASS):
                 QMessageBox.critical(self, self.tr('Error on save data source'), self.tr(comment))
                 return False
 
+        checks_correct = [
+            (self.id_validator, self.tr('Please, enter correct value for data source id')),
+            (self.alias_validator, self.tr('Please, enter correct value for data source alias')),
+        ]
+
+        for val, comment in checks_correct:
+            if not val.is_valid():
+                QMessageBox.critical(self, self.tr('Error on save data source'), self.tr(comment))
+                return False
+
+        # validate special fields
         if not self.DRV_WIDGETS[ds_info.type].validate(ds_info):
             return False
 
