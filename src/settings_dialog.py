@@ -41,6 +41,7 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
         """Constructor."""
         super(SettingsDialog, self).__init__(parent)
         self.setupUi(self)
+        self.tabUserServices.setCurrentIndex(0)
         # init form
         self.fill_pages()
         # init services visibility tab
