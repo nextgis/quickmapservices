@@ -47,7 +47,6 @@ class DSManagerModel(QAbstractItemModel):
     def __setupModelData(self):
         dsList = DataSourcesList().data_sources.values()
         groupInfoList = GroupsList().groups
-        print "groupInfoList: ", groupInfoList
         groupsItems = []
         groups = []
         for ds in dsList:
