@@ -90,7 +90,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         if group_icon != self.group_info.icon:
             os.remove(self.group_info.icon)
 
-            dir_path = os.path.abspath(os.path.join(self.group_info.file_path, os.path.pardir))
+            dir_path = os.path.dirname(self.group_info.file_path)
 
             ico_file_name = path.basename(group_icon)
             ico_path = path.join(dir_path, ico_file_name)

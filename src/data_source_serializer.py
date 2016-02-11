@@ -1,10 +1,10 @@
 import codecs
 import os
 from ConfigParser import ConfigParser
-
 from config_reader_helper import ConfigReaderHelper
 from custom_translator import CustomTranslator
 from data_source_info import DataSourceInfo
+from fixed_config_parser import FixedConfigParser
 from locale import Locale
 from supported_drivers import KNOWN_DRIVERS
 
@@ -71,3 +71,54 @@ class DataSourceSerializer():
         ds.icon_path = os.path.join(dir_path, ds.icon) if ds.icon else None
 
         return ds
+
+    @classmethod
+    def write_to_ini(cls, ds_info, ini_file_path):
+        _to_utf = lambda x: x.encode('utf-8') if isinstance(x, unicode) else x
+        config = FixedConfigParser()
+
+        config.add_section('general')
+        config.add_section('ui')
+        config.add_section('license')
+        config.add_section(ds_info.type.lower())
+
+       # Required
+        config.set('general', 'id', ds_info.id)
+        config.set('general', 'type', ds_info.type)
+
+        config.set('ui', 'group', ds_info.group)
+        config.set('ui', 'alias', ds_info.alias)
+        config.set('ui', 'icon', ds_info.icon)
+
+        # Lic & Terms
+        config.set('license', 'name', ds_info.lic_name)
+        config.set('license', 'link', ds_info.lic_link)
+        config.set('license', 'copyright_text', ds_info.copyright_text)
+        config.set('license', 'copyright_link', ds_info.copyright_link)
+        config.set('license', 'terms_of_use', ds_info.terms_of_use)
+
+        if ds_info.type == KNOWN_DRIVERS.TMS:
+            config.set('tms', 'url', ds_info.tms_url)
+            config.set('tms', 'zmin', ds_info.tms_zmin)
+            config.set('tms', 'zmax', ds_info.tms_zmax)
+            config.set('tms', 'y_origin_top', ds_info.tms_y_origin_top)
+            if ds_info.tms_epsg_crs_id:
+                config.set('tms', 'epsg_crs_id', ds_info.tms_epsg_crs_id)
+            if ds_info.tms_postgis_crs_id:
+                config.set('tms', 'postgis_crs_id', ds_info.tms_postgis_crs_id)
+            if ds_info.tms_custom_proj:
+                config.set('tms', 'custom_proj', ds_info.tms_custom_proj)
+
+        if ds_info.type == KNOWN_DRIVERS.WMS:
+            config.set('wms', 'url', ds_info.wms_url)
+            config.set('wms', 'params', ds_info.wms_params)
+            config.set('wms', 'layers', ds_info.wms_layers)
+            config.set('wms', 'turn_over', ds_info.wms_turn_over)
+
+        if ds_info.type == KNOWN_DRIVERS.GDAL:
+            config.set('gdal', 'source_file', os.path.basename(ds_info.gdal_source_file))
+
+
+        with codecs.open(ini_file_path, 'wt', 'utf-8') as configfile:
+            config.write(configfile)
+

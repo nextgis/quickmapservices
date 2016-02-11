@@ -7,7 +7,9 @@ from PyQt4 import uic
 from PyQt4.QtGui import QDialog, QIcon, QMessageBox
 from os import path
 
+import extra_sources
 from data_source_info import DataSourceInfo
+from data_source_serializer import DataSourceSerializer
 from data_sources_list import DataSourcesList
 from group_info import GroupInfo
 from groups_list import GroupsList
@@ -83,7 +85,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
     def feel_common_fields(self):
         self.txtId.setText(self.ds_info.id)
         self.txtAlias.setText(self.ds_info.alias)
-        self.txtIcon.set_path(self.ds_info.icon)
+        self.txtIcon.set_path(self.ds_info.icon_path)
 
         # license
         self.txtLicense.setText(self.ds_info.lic_name)
@@ -134,23 +136,72 @@ class DsEditDialog(QDialog, FORM_CLASS):
         if ds_info == self.ds_info:
             return True
 
-        # # replace icon if need
-        # if ds_info.icon_path != self.ds_info.icon_path:
-        #     os.remove(self.ds_info.icon_path)
-        #
-        #     dir_path = os.path.abspath(os.path.join(self.ds_info.file_path, os.path.pardir))
-        #
-        #     ico_file_name = path.basename(ds_info.icon_path)
-        #     ico_path = path.join(dir_path, ico_file_name)
-        #
-        #     shutil.copy(ds_info.icon_path, ico_path)
-        #
-        # self.write_config_file(ds_info, self.ds_info.file_path)
+        # replace icon if need
+        if ds_info.icon_path != self.ds_info.icon_path:
+            os.remove(self.ds_info.icon_path)
+
+            dir_path = os.path.dirname(self.ds_info.file_path)
+
+            ico_file_name = path.basename(ds_info.icon_path)
+            ico_path = path.join(dir_path, ico_file_name)
+            shutil.copy(ds_info.icon_path, ico_path)
+
+        # replace gdal_conf if need
+        if ds_info.type == KNOWN_DRIVERS.GDAL:
+
+            def copy_new_gdal_file():
+                dir_path = os.path.dirname(self.ds_info.file_path)
+                gdal_file_name = path.basename(ds_info.gdal_source_file)
+                gdal_file_path = path.join(dir_path, gdal_file_name)
+                shutil.copy(ds_info.gdal_source_file, gdal_file_path)
+
+            # old ds = gdal
+            if self.ds_info.type == KNOWN_DRIVERS.GDAL:
+                if ds_info.gdal_source_file != self.ds_info.gdal_source_file:
+                    os.remove(self.ds_info.icon_path)
+                    copy_new_gdal_file()
+            else:
+                copy_new_gdal_file()
+
+        # write config
+        DataSourceSerializer.write_to_ini(ds_info, self.ds_info.file_path)
 
         return True
 
-    def create_new(self):
+
+    def create_new(self, ds_info):
+        if not self.check_existing_id(ds_info.id):
+            return False
+
+        # set paths
+        dir_path = path.join(extra_sources.USER_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME, ds_info.id)
+
+        if path.exists(dir_path):
+            salt = 0
+            while path.exists(dir_path + str(salt)):
+                salt += 1
+            dir_path += str(salt)
+
+        ini_path = path.join(dir_path, 'metadata.ini')
+        ico_path = path.join(dir_path, ds_info.icon)
+
+        # create dir
+        os.mkdir(dir_path)
+
+        # copy icon
+        shutil.copy(ds_info.icon_path, ico_path)
+
+        if ds_info.type == KNOWN_DRIVERS.GDAL:
+            # copy gdal file
+            gdal_file_name = path.basename(ds_info.gdal_source_file)
+            gdal_file_path = path.join(dir_path, gdal_file_name)
+            shutil.copy(ds_info.gdal_source_file, gdal_file_path)
+
+        # write config
+        DataSourceSerializer.write_to_ini(ds_info, ini_path)
+
         return True
+
 
     def check_existing_id(self, ds_id):
         gl = DataSourcesList()
@@ -160,10 +211,11 @@ class DsEditDialog(QDialog, FORM_CLASS):
             return False
         return True
 
+
     def feel_ds_info(self, ds_info):
         ds_info.id = self.txtId.text()
         ds_info.alias = self.txtAlias.text()
-        ds_info.icon = self.txtIcon.get_path()
+        ds_info.icon = os.path.basename(self.txtIcon.get_path())
 
         ds_info.lic_name = self.txtLicense.text()
         ds_info.lic_link = self.txtLicenseLink.text()
@@ -176,6 +228,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
 
         self.DRV_WIDGETS[ds_info.type].feel_ds_info(ds_info)
 
+        ds_info.icon_path = self.txtIcon.get_path()
 
     def validate(self, ds_info):
         # validate common fields
