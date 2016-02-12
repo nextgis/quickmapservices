@@ -36,6 +36,8 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         self.btnDelete.setIcon(QIcon(":/plugins/QuickMapServices/icons/trash.svg"))
         self.btnCopy.setIcon(QIcon(":/plugins/QuickMapServices/icons/copy.svg"))
 
+        self.ds_model = DSManagerModel()
+
     def feel_list(self):
         self.lstServices.clear()
         ds_list = DataSourcesList(USER_DS_PATHS)
@@ -54,6 +56,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         edit_dialog.setWindowTitle(self.tr('Create new user data source'))
         if edit_dialog.exec_() == QDialog.Accepted:
             self.feel_list()
+            self.ds_model.resetModel()
 
     def on_edit(self):
         item = self.lstServices.currentItem().data(Qt.UserRole)
@@ -62,6 +65,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         edit_dialog.set_ds_info(item)
         if edit_dialog.exec_() == QDialog.Accepted:
             self.feel_list()
+            self.ds_model.resetModel()
 
     def on_delete(self):
         res = QMessageBox.question(None,
@@ -73,10 +77,10 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
             dir_path = os.path.abspath(os.path.join(ds_info.file_path, os.path.pardir))
             shutil.rmtree(dir_path, True)
             self.feel_list()
+            self.ds_model.resetModel()
 
     def on_copy(self):
-        ds_model = DSManagerModel()
-        ds_model.sort(DSManagerModel.COLUMN_GROUP_DS)
+        self.ds_model.sort(DSManagerModel.COLUMN_GROUP_DS)
 
         select_data_sources_dialog = QDialog(self)
         select_data_sources_dialog.setWindowTitle(self.tr("Choose source data source"))
@@ -85,17 +89,18 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
 
         list_view = QTreeView(self)
         layout.addWidget(list_view)
-        list_view.setModel(ds_model)
+        list_view.setModel(self.ds_model)
         list_view.setColumnHidden(DSManagerModel.COLUMN_VISIBILITY, True)
         list_view.clicked.connect(
-            lambda index: select_data_sources_dialog.accept() if not ds_model.isGroup(index) else None
+            lambda index: select_data_sources_dialog.accept() if not self.ds_model.isGroup(index) else None
         )
 
         if select_data_sources_dialog.exec_() == QDialog.Accepted:
-            data_source = ds_model.data(list_view.currentIndex(), Qt.UserRole)
+            data_source = self.ds_model.data(list_view.currentIndex(), Qt.UserRole)
             data_source.id += "_copy"
             edit_dialog = DsEditDialog()
             edit_dialog.setWindowTitle(self.tr('Create user data source from existing'))
             edit_dialog.fill_ds_info(data_source)
             if edit_dialog.exec_() == QDialog.Accepted:
                 self.feel_list()
+                self.ds_model.resetModel()

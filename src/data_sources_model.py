@@ -28,10 +28,20 @@ from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
 from PyQt4.QtGui import QIcon
 from plugin_settings import PluginSettings
 
+from singleton import QSingleton
+
 
 class DSManagerModel(QAbstractItemModel):
+    __metaclass__ = QSingleton
+
     COLUMN_GROUP_DS = 0
     COLUMN_VISIBILITY = 1
+
+    # instance = None
+
+    # @classmethod
+    # def getInstance(cls):
+    #     if cls.instance
 
     def __init__(self, parent=None):
         super(DSManagerModel, self).__init__(parent)
@@ -44,6 +54,7 @@ class DSManagerModel(QAbstractItemModel):
         self.__setupModelData()
 
     def resetModel(self):
+        self.rootItem = QtGui.QTreeWidgetItem(self.columnNames)
         self.__setupModelData()
         self.modelReset.emit()
 
