@@ -35,6 +35,7 @@ from data_sources_model import DSManagerModel
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'settings_dialog_base.ui'), from_imports=False)
 
+
 class SettingsDialog(QtGui.QDialog, FORM_CLASS):
 
     def __init__(self, parent=None):
@@ -47,7 +48,7 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
         # init services visibility tab
         self.dsManagerViewModel = DSManagerModel()
         self.treeViewForDS.setModel(self.dsManagerViewModel)
-        self.treeViewForDS.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
+        self.treeViewForDS.header().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QtGui.QHeaderView.Stretch)
         showAllAction = self.toolBarForDSTreeView.addAction(
             QtGui.QIcon(":/images/themes/default/mActionShowAllLayers.png"),
             self.tr("Show all")
@@ -59,7 +60,7 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
             self.tr("Hide all")
         )
         hideAllAction.triggered.connect(self.dsManagerViewModel.uncheckAll)
-        self.dsManagerViewModel.sortByServiceName()
+        self.dsManagerViewModel.sort(DSManagerModel.COLUMN_GROUP_DS)
         # signals
         self.btnGetContribPack.clicked.connect(self.get_contrib)
         self.accepted.connect(self.save_settings)

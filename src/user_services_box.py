@@ -76,7 +76,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
 
     def on_copy(self):
         ds_model = DSManagerModel()
-        ds_model.sortByServiceName()
+        ds_model.sort(DSManagerModel.COLUMN_GROUP_DS)
 
         select_data_sources_dialog = QDialog(self)
         select_data_sources_dialog.setWindowTitle(self.tr("Choose source data source"))
@@ -86,7 +86,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         list_view = QTreeView(self)
         layout.addWidget(list_view)
         list_view.setModel(ds_model)
-        list_view.setColumnHidden(1, True)
+        list_view.setColumnHidden(DSManagerModel.COLUMN_VISIBILITY, True)
         list_view.clicked.connect(
             lambda index: select_data_sources_dialog.accept() if not ds_model.isGroup(index) else None
         )
