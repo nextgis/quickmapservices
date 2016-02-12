@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabUserServices">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabCommon">
       <attribute name="title">
@@ -186,14 +186,14 @@
        <item>
         <widget class="UserGroupsBox" name="groupBox">
          <property name="title">
-          <string>Groups</string>
+          <string>My groups</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="UserServicesBox" name="groupBox_2">
          <property name="title">
-          <string>Services</string>
+          <string>My services</string>
          </property>
         </widget>
        </item>

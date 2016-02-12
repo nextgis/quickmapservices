@@ -3,7 +3,7 @@ import shutil
 
 from PyQt4 import uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QTreeView
+from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QTreeView, QHeaderView
 
 from data_sources_list import DataSourcesList, USER_DS_PATHS
 from ds_edit_dialog import DsEditDialog
@@ -91,8 +91,13 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         layout.addWidget(list_view)
         list_view.setModel(self.ds_model)
         list_view.setColumnHidden(DSManagerModel.COLUMN_VISIBILITY, True)
+        list_view.setAlternatingRowColors(True)
+        list_view.header().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.ResizeToContents)
         list_view.clicked.connect(
-            lambda index: select_data_sources_dialog.accept() if not self.ds_model.isGroup(index) else None
+            lambda index: select_data_sources_dialog.accept() \
+                if not self.ds_model.isGroup(index) and \
+                    index.column() == DSManagerModel.COLUMN_GROUP_DS \
+                else None
         )
 
         if select_data_sources_dialog.exec_() == QDialog.Accepted:

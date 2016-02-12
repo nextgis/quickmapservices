@@ -22,9 +22,17 @@
 """
 
 
+class GroupCategory:
+    BASE = 'base'
+    CONTRIB = 'contrib'
+    USER = 'user'
+
+    all = [BASE, CONTRIB, USER]
+
+
 class GroupInfo:
 
-    def __init__(self, group_id=None, alias=None, icon=None, file_path=None, menu=None):
+    def __init__(self, group_id=None, alias=None, icon=None, file_path=None, menu=None, category=None):
         # general
         self.id = group_id
         # ui
@@ -34,3 +42,5 @@ class GroupInfo:
         # internal
         self.file_path = file_path
         self.menu = menu
+
+        self.category = category

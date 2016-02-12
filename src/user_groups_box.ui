@@ -23,7 +23,20 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
+      <widget class="QToolButton" name="btnCopy">
+       <property name="toolTip">
+        <string>Create new user group from existing</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="btnAdd">
+       <property name="toolTip">
+        <string>Create new user group</string>
+       </property>
        <property name="text">
         <string>...</string>
        </property>
@@ -46,6 +59,9 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="toolTip">
+        <string>Edit user group</string>
+       </property>
        <property name="text">
         <string>...</string>
        </property>
@@ -56,13 +72,9 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="text">
-        <string>...</string>
+       <property name="toolTip">
+        <string>Delete user group</string>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="btnCopy">
        <property name="text">
         <string>...</string>
        </property>

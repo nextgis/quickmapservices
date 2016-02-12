@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+# from data_source_info import DataSourceCategory
+# from group_info import 
 from data_sources_list import DataSourcesList
 from groups_list import GroupsList
 
@@ -36,6 +38,7 @@ class DSManagerModel(QAbstractItemModel):
 
     COLUMN_GROUP_DS = 0
     COLUMN_VISIBILITY = 1
+    COLUMN_SOURCE = 2
 
     # instance = None
 
@@ -49,6 +52,7 @@ class DSManagerModel(QAbstractItemModel):
         self.columnNames = []
         self.columnNames.insert(self.COLUMN_GROUP_DS, self.tr("Group/DS"))
         self.columnNames.insert(self.COLUMN_VISIBILITY, self.tr("Visible"))
+        self.columnNames.insert(self.COLUMN_SOURCE, self.tr("Source"))
 
         self.rootItem = QtGui.QTreeWidgetItem(self.columnNames)
         self.__setupModelData()
@@ -77,7 +81,10 @@ class DSManagerModel(QAbstractItemModel):
             if ds.group in groups:
                 group_item = groupsItems[groups.index(ds.group)]
             else:
-                group_item = QtGui.QTreeWidgetItem([ds.group])
+                group_item = QtGui.QTreeWidgetItem()
+                group_item.setData(self.COLUMN_GROUP_DS, Qt.DisplayRole, ds.group)
+                group_item.setData(self.COLUMN_VISIBILITY, Qt.DisplayRole, "")
+                group_item.setData(self.COLUMN_SOURCE, Qt.DisplayRole, ds.category)
                 group_item.setCheckState(self.COLUMN_VISIBILITY, Qt.Unchecked)
 
                 groupInfo = groupInfoList.get(ds.group)
@@ -89,9 +96,12 @@ class DSManagerModel(QAbstractItemModel):
                 groupsItems.append(group_item)
                 self.rootItem.addChild(group_item)
 
-            ds_item = QtGui.QTreeWidgetItem([ds.alias])
-            ds_item.setData(self.COLUMN_GROUP_DS, Qt.UserRole, ds)
+            ds_item = QtGui.QTreeWidgetItem()
+            ds_item.setData(self.COLUMN_GROUP_DS, Qt.DisplayRole, ds.alias)
             ds_item.setIcon(self.COLUMN_GROUP_DS, QIcon(ds.icon_path))
+            ds_item.setData(self.COLUMN_GROUP_DS, Qt.UserRole, ds)
+            ds_item.setData(self.COLUMN_VISIBILITY, Qt.DisplayRole, "")
+            ds_item.setData(self.COLUMN_SOURCE, Qt.DisplayRole, ds.category)
 
             ds_check_state = Qt.Checked
             if ds.id in PluginSettings.get_hide_ds_id_list():

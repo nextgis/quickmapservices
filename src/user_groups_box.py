@@ -3,7 +3,7 @@ import shutil
 
 from PyQt4 import uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QListView
+from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QTableView, QHeaderView
 
 from groups_list import GroupsList, USER_GROUP_PATHS
 from group_edit_dialog import GroupEditDialog
@@ -85,10 +85,22 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         layout = QVBoxLayout(select_group_dialog)
         select_group_dialog.setLayout(layout)
 
-        groups_list_view = QListView(self)
+        groups_list_view = QTableView(self)
         layout.addWidget(groups_list_view)
         groups_list_view.setModel(self.ds_model)
-        groups_list_view.clicked.connect(select_group_dialog.accept)
+        groups_list_view.setColumnHidden(DSManagerModel.COLUMN_VISIBILITY, True)
+        groups_list_view.horizontalHeader().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch)
+        groups_list_view.setSelectionMode(QTableView.NoSelection)
+        groups_list_view.setAlternatingRowColors(True)
+        groups_list_view.setShowGrid(False)
+        groups_list_view.verticalHeader().setResizeMode(QHeaderView.ResizeToContents)
+        groups_list_view.verticalHeader().hide()
+        groups_list_view.clicked.connect(
+            lambda index: select_group_dialog.accept() \
+                if self.ds_model.isGroup(index) and \
+                    index.column() == DSManagerModel.COLUMN_GROUP_DS \
+                else None
+        )
 
         if select_group_dialog.exec_() == QDialog.Accepted:
             group_info = self.ds_model.data(groups_list_view.currentIndex(), Qt.UserRole)

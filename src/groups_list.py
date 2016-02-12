@@ -29,7 +29,7 @@ from qgis.core import QgsMessageLog
 from config_reader_helper import ConfigReaderHelper
 import extra_sources
 from custom_translator import CustomTranslator
-from group_info import GroupInfo
+from group_info import GroupInfo, GroupCategory
 from locale import Locale
 
 CURR_PATH = os.path.dirname(__file__)
@@ -39,6 +39,12 @@ CONTRIBUTE_GROUP_PATHS = [os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_
 USER_GROUP_PATHS = [os.path.join(extra_sources.USER_DIR_PATH, extra_sources.GROUPS_DIR_NAME), ]
 
 ALL_GROUP_PATHS = INTERNAL_GROUP_PATHS + CONTRIBUTE_GROUP_PATHS + USER_GROUP_PATHS
+
+ROOT_MAPPING = {
+    INTERNAL_GROUP_PATHS[0]: GroupCategory.BASE,
+    CONTRIBUTE_GROUP_PATHS[0]: GroupCategory.CONTRIB,
+    USER_GROUP_PATHS[0]: GroupCategory.USER
+}
 
 
 class GroupsList:
@@ -53,11 +59,16 @@ class GroupsList:
     def _fill_groups_list(self):
         self.groups = {}
         for gr_path in self.paths:
+            if gr_path in ROOT_MAPPING.keys():
+                category = ROOT_MAPPING[gr_path]
+            else:
+                category = GroupCategory.USER
+
             for root, dirs, files in os.walk(gr_path):
                 for ini_file in [f for f in files if f.endswith('.ini')]:
-                    self._read_ini_file(root, ini_file)
+                    self._read_ini_file(root, ini_file, category)
 
-    def _read_ini_file(self, root, ini_file_path):
+    def _read_ini_file(self, root, ini_file_path, category):
         try:
             ini_full_path = os.path.join(root, ini_file_path)
             parser = ConfigParser()
@@ -78,7 +89,8 @@ class GroupsList:
             group_menu = QMenu(self.tr(group_alias))
             group_menu.setIcon(QIcon(group_icon_path))
             #append to all groups
-            self.groups[group_id] = GroupInfo(group_id, group_alias, group_icon_path, ini_full_path, group_menu)
+            # set contrib&user
+            self.groups[group_id] = GroupInfo(group_id, group_alias, group_icon_path, ini_full_path, group_menu, category)
         except Exception, e:
             error_message = self.tr('Group INI file can\'t be parsed: ') + e.message
             QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)

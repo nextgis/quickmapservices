@@ -23,7 +23,20 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
+      <widget class="QToolButton" name="btnCopy">
+       <property name="toolTip">
+        <string>Create new user service from existing</string>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="btnAdd">
+       <property name="toolTip">
+        <string>Create new user service</string>
+       </property>
        <property name="text">
         <string>...</string>
        </property>
@@ -33,6 +46,9 @@
       <widget class="QToolButton" name="btnEdit">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Edit user service</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -44,13 +60,9 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="text">
-        <string>...</string>
+       <property name="toolTip">
+        <string>Delete user service</string>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="btnCopy">
        <property name="text">
         <string>...</string>
        </property>
