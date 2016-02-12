@@ -54,9 +54,19 @@ class DSManagerModel(QAbstractItemModel):
         self.__setupModelData()
 
     def resetModel(self):
-        self.rootItem = QtGui.QTreeWidgetItem(self.columnNames)
+        self.beginResetModel()
+        self.__clear()
         self.__setupModelData()
+        self.endResetModel()
         self.modelReset.emit()
+
+    def __clear(self):
+        for groupIndex in range(self.rootItem.childCount() - 1, -1, -1):
+            groupItem = self.rootItem.child(groupIndex)
+            for dsIndex in range(groupItem.childCount() - 1, -1, -1):
+                dsItem = groupItem.child(dsIndex)
+                groupItem.removeChild(dsItem)
+            self.rootItem.removeChild(groupItem)
 
     def __setupModelData(self):
         dsList = DataSourcesList().data_sources.values()
@@ -193,19 +203,14 @@ class DSManagerModel(QAbstractItemModel):
     def parent(self, index):
         if not index.isValid():
             return QModelIndex()
-
         childItem = index.internalPointer()
         parentItem = childItem.parent()
-
         if parentItem == self.rootItem:
             return QModelIndex()
 
         return self.createIndex(parentItem.parent().indexOfChild(parentItem), index.column(), parentItem)
 
     def rowCount(self, parent):
-        # if parent.column() > 0:
-        #     return 0
-
         if not parent.isValid():
             parentItem = self.rootItem
         else:
@@ -248,17 +253,13 @@ class DSManagerModel(QAbstractItemModel):
             self.setData(groupIndex, Qt.Unchecked, Qt.CheckStateRole)
 
     def saveSettings(self):
-        # print "saveSettings"
         hideDSidList = []
-        # print "self.rootItem.childCount(): ", self.rootItem.childCount()
         for groupIndex in range(0, self.rootItem.childCount()):
             groupItem = self.rootItem.child(groupIndex)
-            # print "groupItem.childCount(): ", groupItem.childCount()
             for dsIndex in range(0, groupItem.childCount()):
                 dsItem = groupItem.child(dsIndex)
                 if dsItem.checkState(self.COLUMN_VISIBILITY) == Qt.Unchecked:
                     hideDSidList.append(dsItem.data(self.COLUMN_GROUP_DS, Qt.UserRole).id)
-        # print "hideDSidList: ", hideDSidList
         PluginSettings.set_hide_ds_id_list(hideDSidList)
 
     def isGroup(self, index):
