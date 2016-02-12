@@ -119,6 +119,5 @@ class DataSourceSerializer():
             config.set('gdal', 'source_file', os.path.basename(ds_info.gdal_source_file))
 
 
-        with codecs.open(ini_file_path, 'wt', 'utf-8') as configfile:
+        with codecs.open(ini_file_path, 'w', 'utf-8') as configfile:
             config.write(configfile)
-

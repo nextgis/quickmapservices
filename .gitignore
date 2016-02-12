@@ -60,5 +60,5 @@ target/
 .idea
 
 # Sublime IDE
-.sublime-workspace
+*.sublime-workspace
 *.sublime-project

@@ -23,6 +23,11 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ds_edit_dialog.ui'))
 
 
+def is_same(file1, file2):
+    return os.path.normcase(os.path.normpath(file1)) == \
+                os.path.normcase(os.path.normpath(file2))
+
+
 class DsEditDialog(QDialog, FORM_CLASS):
 
     def __init__(self, parent=None):
@@ -82,6 +87,14 @@ class DsEditDialog(QDialog, FORM_CLASS):
         self.feel_common_fields()
         self.feel_specific_fields()
 
+    def fill_ds_info(self, ds_info):
+        self.ds_info = ds_info
+        self.init_with_existing = False
+        # feel fields
+        self.feel_common_fields()
+        self.feel_specific_fields()
+
+
     def feel_common_fields(self):
         self.txtId.setText(self.ds_info.id)
         self.txtAlias.setText(self.ds_info.alias)
@@ -137,7 +150,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
             return True
 
         # replace icon if need
-        if ds_info.icon_path != self.ds_info.icon_path:
+        if not is_same(ds_info.icon_path, self.ds_info.icon_path):
             os.remove(self.ds_info.icon_path)
 
             dir_path = os.path.dirname(self.ds_info.file_path)
@@ -260,5 +273,3 @@ class DsEditDialog(QDialog, FORM_CLASS):
             return False
 
         return True
-
-

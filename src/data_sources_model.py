@@ -55,18 +55,18 @@ class DSManagerModel(QAbstractItemModel):
             else:
                 group_item = QtGui.QTreeWidgetItem([ds.group])
                 group_item.setCheckState(1, Qt.Unchecked)
-                
+
                 groupInfo = groupInfoList.get(ds.group)
                 if groupInfo is not None:
                     group_item.setIcon(0, QIcon(groupInfo.icon))
+                group_item.setData(0, Qt.UserRole, groupInfo)
 
                 groups.append(ds.group)
                 groupsItems.append(group_item)
                 self.rootItem.addChild(group_item)
-                
 
             ds_item = QtGui.QTreeWidgetItem([ds.alias])
-            ds_item.setData(0, Qt.UserRole, ds.id)
+            ds_item.setData(0, Qt.UserRole, ds)
             ds_item.setIcon(0, QIcon(ds.icon_path))
 
             ds_check_state = Qt.Checked
@@ -105,7 +105,7 @@ class DSManagerModel(QAbstractItemModel):
             for row in range(0, self.rowCount(index)):
                 childItem = index.internalPointer().child(row)
                 childItem.setCheckState(index.column(), checkState)
-                
+
             self.dataChanged.emit(
                 self.index(0, index.column(), index),
                 self.index(row, index.column(), index)
@@ -141,7 +141,7 @@ class DSManagerModel(QAbstractItemModel):
         if not index.isValid():
             return None
 
-        if role not in [Qt.DisplayRole, Qt.CheckStateRole, Qt.DecorationRole]:
+        if role not in [Qt.DisplayRole, Qt.CheckStateRole, Qt.DecorationRole, Qt.UserRole]:
             return None
 
         item = index.internalPointer()
@@ -210,9 +210,9 @@ class DSManagerModel(QAbstractItemModel):
             role = Qt.CheckStateRole
 
         if order == Qt.AscendingOrder:
-            compareFunc = lambda a,b: True if cmp(a, b) < 0 else False
+            compareFunc = lambda a, b: True if cmp(a, b) < 0 else False
         else:
-            compareFunc = lambda a,b: True if cmp(a, b) > 0 else False
+            compareFunc = lambda a, b: True if cmp(a, b) > 0 else False
 
         for groupIndexI in range(0, self.rootItem.childCount()):
             for groupIndexJ in range(0, groupIndexI):
@@ -246,6 +246,15 @@ class DSManagerModel(QAbstractItemModel):
             for dsIndex in range(0, groupItem.childCount()):
                 dsItem = groupItem.child(dsIndex)
                 if dsItem.checkState(1) == Qt.Unchecked:
-                    hideDSidList.append(dsItem.data(0, Qt.UserRole))
+                    hideDSidList.append(dsItem.data(0, Qt.UserRole).id)
         # print "hideDSidList: ", hideDSidList
         PluginSettings.set_hide_ds_id_list(hideDSidList)
+
+    def isGroup(self, index):
+        childItem = index.internalPointer()
+        parentItem = childItem.parent()
+
+        if parentItem == self.rootItem:
+            return True
+
+        return False

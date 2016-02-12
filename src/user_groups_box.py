@@ -3,15 +3,17 @@ import shutil
 
 from PyQt4 import uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon
+from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QListView
 
 from groups_list import GroupsList, USER_GROUP_PATHS
 from group_edit_dialog import GroupEditDialog
+from data_sources_model import DSManagerModel
+
+import resources_rc
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_groups_box.ui'))
 
-import resources_rc
 
 class UserGroupsBox(QGroupBox, FORM_CLASS):
 
@@ -27,10 +29,12 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         self.btnEdit.clicked.connect(self.on_edit)
         self.btnAdd.clicked.connect(self.on_add)
         self.btnDelete.clicked.connect(self.on_delete)
+        self.btnCopy.clicked.connect(self.on_copy)
 
         self.btnAdd.setIcon(QIcon(":/plugins/QuickMapServices/icons/plus.svg"))
         self.btnEdit.setIcon(QIcon(":/plugins/QuickMapServices/icons/compose.svg"))
         self.btnDelete.setIcon(QIcon(":/plugins/QuickMapServices/icons/trash.svg"))
+        self.btnCopy.setIcon(QIcon(":/plugins/QuickMapServices/icons/copy.svg"))
 
     def feel_list(self):
         self.lstGroups.clear()
@@ -59,7 +63,6 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         if edit_dialog.exec_() == QDialog.Accepted:
             self.feel_list()
 
-
     def on_delete(self):
         res = QMessageBox.question(None,
                                    self.tr('Delete group'),
@@ -70,3 +73,25 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
             dir_path = os.path.abspath(os.path.join(group_info.file_path, os.path.pardir))
             shutil.rmtree(dir_path, True)
             self.feel_list()
+
+    def on_copy(self):
+        ds_model = DSManagerModel()
+
+        select_group_dialog = QDialog(self)
+        select_group_dialog.setWindowTitle(self.tr("Choose source group"))
+        layout = QVBoxLayout(select_group_dialog)
+        select_group_dialog.setLayout(layout)
+
+        groups_list_view = QListView(self)
+        layout.addWidget(groups_list_view)
+        groups_list_view.setModel(ds_model)
+        groups_list_view.clicked.connect(select_group_dialog.accept)
+
+        if select_group_dialog.exec_() == QDialog.Accepted:
+            group_info = ds_model.data(groups_list_view.currentIndex(), Qt.UserRole)
+            group_info.id += "_copy"
+            edit_dialog = GroupEditDialog()
+            edit_dialog.setWindowTitle(self.tr('Create user group from existing'))
+            edit_dialog.fill_group_info(group_info)
+            if edit_dialog.exec_() == QDialog.Accepted:
+                self.feel_list()

@@ -14,6 +14,12 @@ from .gui.line_edit_color_validator import LineEditColorValidator
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'group_edit_dialog.ui'))
 
+
+def is_same(file1, file2):
+    return os.path.normcase(os.path.normpath(file1)) == \
+                os.path.normcase(os.path.normpath(file2))
+
+
 class GroupEditDialog(QDialog, FORM_CLASS):
 
     def __init__(self, parent=None):
@@ -33,10 +39,17 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         self.group_info = None
         self.init_with_existing = False
 
-
     def set_group_info(self, group_info):
         self.group_info = group_info
         self.init_with_existing = True
+        # feel fields
+        self.txtId.setText(self.group_info.id)
+        self.txtAlias.setText(self.group_info.alias)
+        self.txtIcon.set_path(self.group_info.icon)
+
+    def fill_group_info(self, group_info):
+        self.group_info = group_info
+        self.init_with_existing = False
         # feel fields
         self.txtId.setText(self.group_info.id)
         self.txtAlias.setText(self.group_info.alias)
@@ -62,7 +75,6 @@ class GroupEditDialog(QDialog, FORM_CLASS):
                 QMessageBox.critical(self, self.tr('Error on save group'), comment)
                 return False
 
-
         checks_correct = [
             (self.id_validator, 'Please, enter correct value for group id'),
             (self.alias_validator, 'Please, enter correct value for group alias'),
@@ -74,7 +86,6 @@ class GroupEditDialog(QDialog, FORM_CLASS):
                 return False
 
         return True
-
 
     def check_existing_id(self, group_id):
         gl = GroupsList()
@@ -97,11 +108,11 @@ class GroupEditDialog(QDialog, FORM_CLASS):
 
         if group_id == self.group_info.id and \
            group_alias == self.group_info.alias and \
-           group_icon == self.group_info.icon:
+           is_same(group_icon, self.group_info.icon):
             return True
 
         # replace icon if need
-        if group_icon != self.group_info.icon:
+        if not is_same(group_icon, self.group_info.icon):
             os.remove(self.group_info.icon)
 
             dir_path = os.path.dirname(self.group_info.file_path)
@@ -110,7 +121,6 @@ class GroupEditDialog(QDialog, FORM_CLASS):
             ico_path = path.join(dir_path, ico_file_name)
 
             shutil.copy(group_icon, ico_path)
-
 
         # write config
         config = FixedConfigParser()
@@ -121,7 +131,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         config.set('ui', 'alias', group_alias)
         config.set('ui', 'icon', path.basename(group_icon))
 
-        with codecs.open(self.group_info.file_path, 'wt', 'utf-8') as configfile:
+        with codecs.open(self.group_info.file_path, 'w', 'utf-8') as configfile:
             config.write(configfile)
 
         return True
@@ -166,10 +176,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         config.set('ui', 'alias', group_alias)
         config.set('ui', 'icon', ico_file_name)
 
-        with codecs.open(ini_path, 'wt', 'utf-8') as configfile:
+        with codecs.open(ini_path, 'w', 'utf-8') as configfile:
             config.write(configfile)
 
         return True
-
-
-
