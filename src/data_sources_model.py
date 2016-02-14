@@ -90,6 +90,8 @@ class DSManagerModel(QAbstractItemModel):
                 groupInfo = groupInfoList.get(ds.group)
                 if groupInfo is not None:
                     group_item.setIcon(self.COLUMN_GROUP_DS, QIcon(groupInfo.icon))
+                else:
+                    group_item.setData(self.COLUMN_GROUP_DS, Qt.DisplayRole, ds.group + " (%s!)" % self.tr("group not found"))
                 group_item.setData(self.COLUMN_GROUP_DS, Qt.UserRole, groupInfo)
 
                 groups.append(ds.group)
@@ -230,10 +232,10 @@ class DSManagerModel(QAbstractItemModel):
 
     def sort(self, column, order=Qt.AscendingOrder):
         self.layoutAboutToBeChanged.emit()
-        if column == self.COLUMN_GROUP_DS:
-            role = Qt.DisplayRole
-        elif column == self.COLUMN_VISIBILITY:
+        if column == self.COLUMN_VISIBILITY:
             role = Qt.CheckStateRole
+        else:
+            role = Qt.DisplayRole
 
         if order == Qt.AscendingOrder:
             compareFunc = lambda a, b: True if cmp(a, b) < 0 else False

@@ -22,14 +22,24 @@
 <context>
     <name>DSManagerModel</name>
     <message>
-        <location filename="data_sources_model.py" line="35"/>
+        <location filename="data_sources_model.py" line="54"/>
         <source>Visible</source>
         <translation>Видимость</translation>
     </message>
     <message>
-        <location filename="data_sources_model.py" line="35"/>
+        <location filename="data_sources_model.py" line="53"/>
         <source>Group/DS</source>
         <translation>Группа\Подложка</translation>
+    </message>
+    <message>
+        <location filename="data_sources_model.py" line="55"/>
+        <source>Source</source>
+        <translation>Источник</translation>
+    </message>
+    <message>
+        <location filename="data_sources_model.py" line="94"/>
+        <source>group not found</source>
+        <translation>группа не найдена</translation>
     </message>
 </context>
 <context>
@@ -165,7 +175,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="group_edit_dialog.ui" line="24"/>
         <source>General</source>
-        <translation type="unfinished">Общие</translation>
+        <translation>Общие</translation>
     </message>
     <message>
         <location filename="group_edit_dialog.ui" line="33"/>
@@ -216,67 +226,67 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>DsEditDialog</name>
     <message>
-        <location filename="ds_edit_dialog.py" line="41"/>
+        <location filename="ds_edit_dialog.py" line="46"/>
         <source>Select icon for data source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="50"/>
+        <location filename="ds_edit_dialog.py" line="55"/>
         <source>Any text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="209"/>
+        <location filename="ds_edit_dialog.py" line="222"/>
         <source>Error on save group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="209"/>
+        <location filename="ds_edit_dialog.py" line="222"/>
         <source>Data source with such id already exists! Select new id for data source!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="255"/>
+        <location filename="ds_edit_dialog.py" line="268"/>
         <source>Error on save data source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="40"/>
+        <location filename="ds_edit_dialog.py" line="45"/>
         <source>Icons (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="236"/>
+        <location filename="ds_edit_dialog.py" line="249"/>
         <source>Please, enter data source id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="237"/>
+        <location filename="ds_edit_dialog.py" line="250"/>
         <source>Please, enter data source alias</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="238"/>
+        <location filename="ds_edit_dialog.py" line="251"/>
         <source>Please, select icon for data source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="239"/>
+        <location filename="ds_edit_dialog.py" line="252"/>
         <source>Please, select group for data source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="240"/>
+        <location filename="ds_edit_dialog.py" line="253"/>
         <source>Please, select type for data source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="249"/>
+        <location filename="ds_edit_dialog.py" line="262"/>
         <source>Please, enter correct value for data source id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ds_edit_dialog.py" line="250"/>
+        <location filename="ds_edit_dialog.py" line="263"/>
         <source>Please, enter correct value for data source alias</source>
         <translation type="unfinished"></translation>
     </message>
@@ -434,42 +444,42 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupEditDialog</name>
     <message>
-        <location filename="group_edit_dialog.py" line="26"/>
+        <location filename="group_edit_dialog.py" line="32"/>
         <source>Select icon for group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="group_edit_dialog.py" line="30"/>
+        <location filename="group_edit_dialog.py" line="36"/>
         <source>Any text</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="group_edit_dialog.py" line="82"/>
+        <location filename="group_edit_dialog.py" line="93"/>
         <source>Error on save group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="group_edit_dialog.py" line="55"/>
+        <location filename="group_edit_dialog.py" line="68"/>
         <source>Please, enter group id</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="group_edit_dialog.py" line="82"/>
+        <location filename="group_edit_dialog.py" line="93"/>
         <source>Group with such id already exists! Select new id for group!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="group_edit_dialog.py" line="25"/>
+        <location filename="group_edit_dialog.py" line="31"/>
         <source>All icon files (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="group_edit_dialog.py" line="56"/>
+        <location filename="group_edit_dialog.py" line="69"/>
         <source>Please, enter group alias</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="group_edit_dialog.py" line="57"/>
+        <location filename="group_edit_dialog.py" line="70"/>
         <source>Please, select icon for group</source>
         <translation type="unfinished"></translation>
     </message>
@@ -477,7 +487,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupsList</name>
     <message>
-        <location filename="groups_list.py" line="83"/>
+        <location filename="groups_list.py" line="95"/>
         <source>Group INI file can&apos;t be parsed: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -597,12 +607,22 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="settings_dialog_base.ui" line="189"/>
         <source>Groups</source>
-        <translation>Группы</translation>
+        <translation type="obsolete">Группы</translation>
     </message>
     <message>
         <location filename="settings_dialog_base.ui" line="196"/>
         <source>Services</source>
-        <translation>Сервисы</translation>
+        <translation type="obsolete">Сервисы</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="189"/>
+        <source>My groups</source>
+        <translation>Мои группы</translation>
+    </message>
+    <message>
+        <location filename="settings_dialog_base.ui" line="196"/>
+        <source>My services</source>
+        <translation>Мои сервисы</translation>
     </message>
 </context>
 <context>
@@ -666,22 +686,22 @@ The previous settings will be overwritten!</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="settings_dialog.py" line="100"/>
+        <location filename="settings_dialog.py" line="102"/>
         <source>Last version of contrib pack was downloaded!</source>
         <translation>Последняя версия пакета с источниками данных была успешно загружена!</translation>
     </message>
     <message>
-        <location filename="settings_dialog.py" line="106"/>
+        <location filename="settings_dialog.py" line="108"/>
         <source>Error on getting contrib pack: %s %s</source>
         <translation>Ошибка при получении пакета: %s %s</translation>
     </message>
     <message>
-        <location filename="settings_dialog.py" line="50"/>
+        <location filename="settings_dialog.py" line="52"/>
         <source>Show all</source>
         <translation>Показать все</translation>
     </message>
     <message>
-        <location filename="settings_dialog.py" line="56"/>
+        <location filename="settings_dialog.py" line="58"/>
         <source>Hide all</source>
         <translation>Скрыть все</translation>
     </message>
@@ -772,24 +792,14 @@ The previous settings will be overwritten!</source>
 <context>
     <name>UserGroupsBox</name>
     <message>
-        <location filename="user_groups_box.py" line="50"/>
-        <source>Create new user group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="user_groups_box.py" line="57"/>
-        <source>Edit user group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="user_groups_box.py" line="64"/>
+        <location filename="user_groups_box.ui" line="76"/>
         <source>Delete group</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить группу</translation>
     </message>
     <message>
-        <location filename="user_groups_box.py" line="64"/>
+        <location filename="user_groups_box.py" line="71"/>
         <source>Delete selected group?</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить выбранную группу?</translation>
     </message>
     <message>
         <location filename="user_groups_box.ui" line="14"/>
@@ -802,33 +812,33 @@ The previous settings will be overwritten!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="user_groups_box.ui" line="60"/>
+        <location filename="user_groups_box.ui" line="79"/>
         <source>...</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_groups_box.py" line="84"/>
+        <source>Choose source group</source>
+        <translation type="unfinished">Выбирите группу</translation>
+    </message>
+    <message>
+        <location filename="user_groups_box.ui" line="38"/>
+        <source>Create group</source>
+        <translation>Создать группу</translation>
+    </message>
+    <message>
+        <location filename="user_groups_box.ui" line="63"/>
+        <source>Edit group</source>
+        <translation>Редактировать группу</translation>
+    </message>
+    <message>
+        <location filename="user_groups_box.ui" line="28"/>
+        <source>Create group from existing</source>
+        <translation>Создать группу на основе существующей</translation>
     </message>
 </context>
 <context>
     <name>UserServicesBox</name>
-    <message>
-        <location filename="user_services_box.py" line="50"/>
-        <source>Create new user data source</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="user_services_box.py" line="57"/>
-        <source>Edit user data source</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="user_services_box.py" line="64"/>
-        <source>Delete data source</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="user_services_box.py" line="64"/>
-        <source>Delete selected data source?</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <location filename="user_services_box.ui" line="14"/>
         <source>UserServices</source>
@@ -840,9 +850,39 @@ The previous settings will be overwritten!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="user_services_box.ui" line="48"/>
+        <location filename="user_services_box.ui" line="67"/>
         <source>...</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="user_services_box.ui" line="28"/>
+        <source>Create service from existing</source>
+        <translation>Создать сервис на основе существующего</translation>
+    </message>
+    <message>
+        <location filename="user_services_box.ui" line="38"/>
+        <source>Create service</source>
+        <translation>Создать сервис</translation>
+    </message>
+    <message>
+        <location filename="user_services_box.ui" line="51"/>
+        <source>Edit service</source>
+        <translation>Редактировать сервис</translation>
+    </message>
+    <message>
+        <location filename="user_services_box.ui" line="64"/>
+        <source>Delete service</source>
+        <translation>Удалить сервис</translation>
+    </message>
+    <message>
+        <location filename="user_services_box.py" line="71"/>
+        <source>Delete selected service?</source>
+        <translation>Удалить выбранный сервис?</translation>
+    </message>
+    <message>
+        <location filename="user_services_box.py" line="86"/>
+        <source>Choose source service</source>
+        <translation>Выбирите сервис</translation>
     </message>
 </context>
 </TS>

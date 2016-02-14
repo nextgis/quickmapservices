@@ -24,7 +24,7 @@
 
 class GroupCategory:
     BASE = 'base'
-    CONTRIB = 'contrib'
+    CONTRIB = 'contributed'
     USER = 'user'
 
     all = [BASE, CONTRIB, USER]

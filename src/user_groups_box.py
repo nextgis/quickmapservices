@@ -53,7 +53,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
 
     def on_add(self):
         edit_dialog = GroupEditDialog()
-        edit_dialog.setWindowTitle(self.tr('Create new user group'))
+        edit_dialog.setWindowTitle(self.tr('Create group'))
         if edit_dialog.exec_() == QDialog.Accepted:
             self.feel_list()
             self.ds_model.resetModel()
@@ -61,7 +61,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
     def on_edit(self):
         item = self.lstGroups.currentItem().data(Qt.UserRole)
         edit_dialog = GroupEditDialog()
-        edit_dialog.setWindowTitle(self.tr('Edit user group'))
+        edit_dialog.setWindowTitle(self.tr('Edit group'))
         edit_dialog.set_group_info(item)
         if edit_dialog.exec_() == QDialog.Accepted:
             self.feel_list()
@@ -106,7 +106,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
             group_info = self.ds_model.data(groups_list_view.currentIndex(), Qt.UserRole)
             group_info.id += "_copy"
             edit_dialog = GroupEditDialog()
-            edit_dialog.setWindowTitle(self.tr('Create user group from existing'))
+            edit_dialog.setWindowTitle(self.tr('Create group from existing'))
             edit_dialog.fill_group_info(group_info)
             if edit_dialog.exec_() == QDialog.Accepted:
                 self.feel_list()

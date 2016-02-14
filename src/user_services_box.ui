@@ -25,7 +25,7 @@
      <item>
       <widget class="QToolButton" name="btnCopy">
        <property name="toolTip">
-        <string>Create new user service from existing</string>
+        <string>Create service from existing</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -35,7 +35,7 @@
      <item>
       <widget class="QToolButton" name="btnAdd">
        <property name="toolTip">
-        <string>Create new user service</string>
+        <string>Create service</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -48,7 +48,7 @@
         <bool>false</bool>
        </property>
        <property name="toolTip">
-        <string>Edit user service</string>
+        <string>Edit service</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -61,7 +61,7 @@
         <bool>false</bool>
        </property>
        <property name="toolTip">
-        <string>Delete user service</string>
+        <string>Delete service</string>
        </property>
        <property name="text">
         <string>...</string>

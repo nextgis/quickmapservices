@@ -25,7 +25,7 @@
      <item>
       <widget class="QToolButton" name="btnCopy">
        <property name="toolTip">
-        <string>Create new user group from existing</string>
+        <string>Create group from existing</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -35,7 +35,7 @@
      <item>
       <widget class="QToolButton" name="btnAdd">
        <property name="toolTip">
-        <string>Create new user group</string>
+        <string>Create group</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -60,7 +60,7 @@
         <bool>false</bool>
        </property>
        <property name="toolTip">
-        <string>Edit user group</string>
+        <string>Edit group</string>
        </property>
        <property name="text">
         <string>...</string>
@@ -73,7 +73,7 @@
         <bool>false</bool>
        </property>
        <property name="toolTip">
-        <string>Delete user group</string>
+        <string>Delete group</string>
        </property>
        <property name="text">
         <string>...</string>

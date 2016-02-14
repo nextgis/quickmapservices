@@ -53,7 +53,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
 
     def on_add(self):
         edit_dialog = DsEditDialog()
-        edit_dialog.setWindowTitle(self.tr('Create new user data source'))
+        edit_dialog.setWindowTitle(self.tr('Create service'))
         if edit_dialog.exec_() == QDialog.Accepted:
             self.feel_list()
             self.ds_model.resetModel()
@@ -61,7 +61,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
     def on_edit(self):
         item = self.lstServices.currentItem().data(Qt.UserRole)
         edit_dialog = DsEditDialog()
-        edit_dialog.setWindowTitle(self.tr('Edit user data source'))
+        edit_dialog.setWindowTitle(self.tr('Edit service'))
         edit_dialog.set_ds_info(item)
         if edit_dialog.exec_() == QDialog.Accepted:
             self.feel_list()
@@ -69,8 +69,8 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
 
     def on_delete(self):
         res = QMessageBox.question(None,
-                                   self.tr('Delete data source'),
-                                   self.tr('Delete selected data source?'),
+                                   self.tr('Delete service'),
+                                   self.tr('Delete selected service?'),
                                    QMessageBox.Yes, QMessageBox.No)
         if res == QMessageBox.Yes:
             ds_info = self.lstServices.currentItem().data(Qt.UserRole)
@@ -83,7 +83,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         self.ds_model.sort(DSManagerModel.COLUMN_GROUP_DS)
 
         select_data_sources_dialog = QDialog(self)
-        select_data_sources_dialog.setWindowTitle(self.tr("Choose source data source"))
+        select_data_sources_dialog.setWindowTitle(self.tr("Choose source service"))
         layout = QVBoxLayout(select_data_sources_dialog)
         select_data_sources_dialog.setLayout(layout)
 
@@ -104,7 +104,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
             data_source = self.ds_model.data(list_view.currentIndex(), Qt.UserRole)
             data_source.id += "_copy"
             edit_dialog = DsEditDialog()
-            edit_dialog.setWindowTitle(self.tr('Create user data source from existing'))
+            edit_dialog.setWindowTitle(self.tr('Create service from existing'))
             edit_dialog.fill_ds_info(data_source)
             if edit_dialog.exec_() == QDialog.Accepted:
                 self.feel_list()
