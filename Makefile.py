@@ -20,7 +20,7 @@ Configuration
 """
 BUILD_UI_FOR_TATGET_BUILD = False
 IGNORE_PATTERNS_FOR_TARGET_INSTALL = (
-    '*.pyc', '*.ts', '*.qrc',
+    '*.pyc', '*.ts', '*.qrc', '.git'
     #'*.ui',
 )
 
@@ -87,7 +87,7 @@ def install_plugin():
     plugin_install_dir = os.path.join(QGIS_PLUGINS_DIST_DIR, plugin_name)
     if os.path.exists(plugin_install_dir):
         shutil.rmtree(plugin_install_dir)
-    
+
     print "plugin_dir: ", type(plugin_dir)
     print "plugin_install_dir: ", type(plugin_install_dir)
 

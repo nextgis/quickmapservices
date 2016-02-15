@@ -22,6 +22,7 @@
 """
 import codecs
 import os
+import sys
 from ConfigParser import ConfigParser
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMenu, QIcon
@@ -32,7 +33,7 @@ from custom_translator import CustomTranslator
 from group_info import GroupInfo, GroupCategory
 from locale import Locale
 
-CURR_PATH = os.path.dirname(__file__)
+CURR_PATH = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
 
 INTERNAL_GROUP_PATHS = [os.path.join(CURR_PATH, extra_sources.GROUPS_DIR_NAME), ]
 CONTRIBUTE_GROUP_PATHS = [os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.GROUPS_DIR_NAME), ]

@@ -59,7 +59,7 @@ class QuickMapServices:
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
-        self.plugin_dir = os.path.dirname(__file__)
+        self.plugin_dir = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
 
         # initialize locale
         self.translator = QTranslator()

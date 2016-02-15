@@ -23,6 +23,7 @@
 from ConfigParser import ConfigParser
 import codecs
 import os
+import sys
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QIcon, QAction
 from qgis.core import QgsMessageLog
@@ -34,7 +35,7 @@ from data_source_serializer import DataSourceSerializer
 from locale import Locale
 from supported_drivers import KNOWN_DRIVERS
 
-CURR_PATH = os.path.dirname(__file__)
+CURR_PATH = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
 
 INTERNAL_DS_PATHS = [os.path.join(CURR_PATH, extra_sources.DATA_SOURCES_DIR_NAME), ]
 CONTRIBUTE_DS_PATHS = [os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME), ]
