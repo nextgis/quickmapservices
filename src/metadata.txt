@@ -2,7 +2,7 @@
 name=QuickMapServices
 qgisMinimumVersion=2.4
 description=Collection of easy to add basemaps
-version=0.15.14
+version=0.15.15
 author=NextGIS
 email=info@nextgis.com
 about=QGIS plugin for convenient way to add various map services (basemaps) in one click.

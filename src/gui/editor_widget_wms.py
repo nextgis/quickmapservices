@@ -35,7 +35,7 @@ class EditorWidgetWms(QWidget, FORM_CLASS):
             QMessageBox.critical(self, self.tr('Error on save data source'), self.tr('Please, enter WMS url'))
             return False
 
-        if not self.tms_validator.is_valid():
+        if not self.wms_validator.is_valid():
                 QMessageBox.critical(self, self.tr('Error on save data source'), self.tr('Please, enter correct value for WMS url'))
                 return False
 
