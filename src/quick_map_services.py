@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 import os.path
+import urlparse
 import xml.etree.ElementTree as ET
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
@@ -28,7 +29,7 @@ from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
-from qgis.core import QgsRasterLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject, QgsPluginLayerRegistry
+from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject, QgsPluginLayerRegistry
 from qgis.gui import QgsMessageBar
 import sys
 from extra_sources import ExtraSources
@@ -166,6 +167,7 @@ class QuickMapServices:
 
     def insert_layer(self):
         #TODO: need factory!
+        layers4add = []
         action = self.menu.sender()
         ds = action.data()
         if ds.type == KNOWN_DRIVERS.TMS:
@@ -178,8 +180,10 @@ class QuickMapServices:
             service_info.postgis_crs_id = ds.tms_postgis_crs_id
             service_info.custom_proj = ds.tms_custom_proj
             layer = TileLayer(self, service_info, False)
+            layers4add.append(layer)
         if ds.type == KNOWN_DRIVERS.GDAL:
             layer = QgsRasterLayer(ds.gdal_source_file, self.tr(ds.alias))
+            layers4add.append(layer)
         if ds.type == KNOWN_DRIVERS.WMS:
             qgis_wms_uri = u''
             if ds.wms_params:
@@ -192,27 +196,52 @@ class QuickMapServices:
                     qgis_wms_uri += '&layers='+'&layers='.join(layers)+'&styles='*len(layers)
             qgis_wms_uri += '&url=' + ds.wms_url
             layer = QgsRasterLayer(qgis_wms_uri, self.tr(ds.alias), KNOWN_DRIVERS.WMS.lower())
+            layers4add.append(layer)
+        if ds.type == KNOWN_DRIVERS.WFS:
+            qgis_wfs_uri_base = ds.wfs_url
+            o = urlparse.urlparse(qgis_wfs_uri_base)
+            request_attrs = dict(urlparse.parse_qsl(o.query))
 
-        if not layer.isValid():
-            error_message = self.tr('Layer %s can\'t be added to the map!') % ds.alias
-            self.iface.messageBar().pushMessage(self.tr('Error'),
-                                                error_message,
-                                                level=QgsMessageBar.CRITICAL)
-            QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
-        else:
-            # Set attribs
-            layer.setAttribution(ds.copyright_text)
-            layer.setAttributionUrl(ds.copyright_link)
-            # Insert to bottom
-            QgsMapLayerRegistry.instance().addMapLayer(layer, False)
-            toc_root = QgsProject.instance().layerTreeRoot()
-            toc_root.insertLayer(len(toc_root.children()), layer)
-            # Save link
-            self.service_layers.append(layer)
-            # Set OTF CRS Transform for map
-            if PluginSettings.enable_otf_3857() and ds.type == KNOWN_DRIVERS.TMS:
-                self.iface.mapCanvas().setCrsTransformEnabled(True)
-                self.iface.mapCanvas().setDestinationCrs(TileLayer.CRS_3857)
+            layers_str = request_attrs.get('TYPENAME', '')
+            layers = layers_str.split(',')
+            for layer_name in layers:
+                new_request_attrs = request_attrs
+                new_request_attrs['TYPENAME'] == layer_name
+
+                url_parts = list(o)
+                url_parts[4] = "&".join(
+                    ["%s=%s" % (k, v) for k, v in new_request_attrs.items()]
+                )
+
+                qgis_wfs_uri = urlparse.urlunparse(url_parts)
+
+                layer = QgsVectorLayer(
+                    qgis_wfs_uri,
+                    "%s - %s" % (self.tr(ds.alias), layer_name),
+                    "WFS")
+                layers4add.append(layer)
+
+        for layer in layers4add:
+            if not layer.isValid():
+                error_message = self.tr('Layer %s can\'t be added to the map!') % ds.alias
+                self.iface.messageBar().pushMessage(self.tr('Error'),
+                                                    error_message,
+                                                    level=QgsMessageBar.CRITICAL)
+                QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
+            else:
+                # Set attribs
+                layer.setAttribution(ds.copyright_text)
+                layer.setAttributionUrl(ds.copyright_link)
+                # Insert to bottom
+                QgsMapLayerRegistry.instance().addMapLayer(layer, False)
+                toc_root = QgsProject.instance().layerTreeRoot()
+                toc_root.insertLayer(len(toc_root.children()), layer)
+                # Save link
+                self.service_layers.append(layer)
+                # Set OTF CRS Transform for map
+                if PluginSettings.enable_otf_3857() and ds.type == KNOWN_DRIVERS.TMS:
+                    self.iface.mapCanvas().setCrsTransformEnabled(True)
+                    self.iface.mapCanvas().setDestinationCrs(TileLayer.CRS_3857)
 
     def unload(self):
         # remove menu/

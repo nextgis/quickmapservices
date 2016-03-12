@@ -17,6 +17,7 @@ from supported_drivers import KNOWN_DRIVERS
 from .gui.editor_widget_gdal import EditorWidgetGdal
 from .gui.editor_widget_tms import EditorWidgetTms
 from .gui.editor_widget_wms import EditorWidgetWms
+from .gui.editor_widget_wfs import EditorWidgetWfs
 from .gui.line_edit_color_validator import LineEditColorValidator
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -38,7 +39,8 @@ class DsEditDialog(QDialog, FORM_CLASS):
         self.DRV_WIDGETS = {
             KNOWN_DRIVERS.GDAL: EditorWidgetGdal(),
             KNOWN_DRIVERS.TMS: EditorWidgetTms(),
-            KNOWN_DRIVERS.WMS: EditorWidgetWms()
+            KNOWN_DRIVERS.WMS: EditorWidgetWms(),
+            KNOWN_DRIVERS.WFS: EditorWidgetWfs(),
         }
 
         # init icon selector
