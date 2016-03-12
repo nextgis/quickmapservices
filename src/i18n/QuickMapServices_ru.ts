@@ -11,7 +11,7 @@
     <message>
         <location filename="about_dialog.py" line="57"/>
         <source>&lt;p&gt;Collection of internet map services&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Developers:&lt;/strong&gt; &lt;a href=&quot;http://nextgis.org&quot;&gt;NextGIS&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Issue tracker:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices/issues&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Source code:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Коллекция картографических интернет ресурсов&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Разработка:&lt;/strong&gt; &lt;a href=&quot;http://nextgis.org&quot;&gt;NextGIS&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Трекер ошибок:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices/issues&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Исходный код:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;</translation>
+        <translation>&lt;p&gt;Коллекция картографических интернет-ресурсов&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Разработка:&lt;/strong&gt; &lt;a href=&quot;http://nextgis.org&quot;&gt;NextGIS&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Трекер ошибок:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices/issues&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Исходный код:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="about_dialog.py" line="67"/>
@@ -819,7 +819,7 @@ The previous settings will be overwritten!</source>
     <message>
         <location filename="user_groups_box.py" line="84"/>
         <source>Choose source group</source>
-        <translation type="unfinished">Выбирите группу</translation>
+        <translation type="unfinished">Выбрать группу</translation>
     </message>
     <message>
         <location filename="user_groups_box.ui" line="38"/>
@@ -882,7 +882,7 @@ The previous settings will be overwritten!</source>
     <message>
         <location filename="user_services_box.py" line="86"/>
         <source>Choose source service</source>
-        <translation>Выбирите сервис</translation>
+        <translation>Выбрать сервис</translation>
     </message>
 </context>
 </TS>
