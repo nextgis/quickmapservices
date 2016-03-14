@@ -59,6 +59,10 @@ class DataSourceSerializer():
             gdal_conf = ConfigReaderHelper.try_read_config(parser, 'gdal', 'source_file', reraise=(ds.type == KNOWN_DRIVERS.GDAL))
             ds.gdal_source_file = os.path.join(dir_path, gdal_conf)
 
+        #WMS
+        ds.wfs_url = ConfigReaderHelper.try_read_config(parser, 'wfs', 'url', reraise=(ds.type == KNOWN_DRIVERS.WFS))
+        # ds.wfs_layers = ConfigReaderHelper.try_read_config(parser, 'wfs', 'layers')
+
         #try read translations
         posible_trans = parser.items('ui')
         for key, val in posible_trans:
@@ -118,6 +122,9 @@ class DataSourceSerializer():
         if ds_info.type == KNOWN_DRIVERS.GDAL:
             config.set('gdal', 'source_file', os.path.basename(ds_info.gdal_source_file))
 
+        if ds_info.type == KNOWN_DRIVERS.WFS:
+            config.set('wfs', 'url', ds_info.wfs_url)
+            # config.set('wfs', 'layers', ds_info.wfs_layers)
 
         with codecs.open(ini_file_path, 'w', 'utf-8') as configfile:
             config.write(configfile)

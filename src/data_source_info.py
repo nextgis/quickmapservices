@@ -61,6 +61,9 @@ class DataSourceInfo:
 
         self.gdal_source_file = None
 
+        self.wfs_url = None
+        # self.wfs_layers = None
+
         # internal
         self.file_path = None
         self.icon_path = None
