@@ -14,7 +14,7 @@ about=Convenient list of basemaps. Easy to add as a layer, easy to create new ba
 
 # Uncomment the following line and add your changelog:
 changelog=0.16.1
-        * Add wfs support
+        * Fix visibility management on MacOS
       0.16:
         * Convenient forms for adding, editing, removing services or groups
         * It is now possible to hide and show services/groups to shorten the list
