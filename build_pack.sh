@@ -27,6 +27,9 @@ rm -R $BUILD_DIR/$PLUGIN_NAME/groups_contrib
 cd $BUILD_DIR
 VER=`grep "version=" ./$PLUGIN_NAME/metadata.txt | sed 's/version=//'`
 
+# Compile resources
+pyrcc4 -o ./$PLUGIN_NAME/resources_rc.py ./$PLUGIN_NAME/resources.qrc
+
 #Zip dir
 #zip -9 -r $PLUGIN_NAME"_"$VER.zip ./$PLUGIN_NAME
 zip -9 -r $PLUGIN_NAME.zip ./$PLUGIN_NAME

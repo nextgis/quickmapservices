@@ -13,7 +13,9 @@ about=Convenient list of basemaps. Easy to add as a layer, easy to create new ba
 # Optional items:
 
 # Uncomment the following line and add your changelog:
-changelog=0.16.1
+changelog=0.16.2:
+        * Fix build scripts
+      0.16.1:
         * Fix visibility management on MacOS
       0.16:
         * Convenient forms for adding, editing, removing services or groups
