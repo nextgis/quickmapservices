@@ -43,7 +43,7 @@ class DataSourceSerializer():
         ds.tms_url = ConfigReaderHelper.try_read_config(parser, 'tms', 'url', reraise=(ds.type == KNOWN_DRIVERS.TMS))
         ds.tms_zmin = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'zmin')
         ds.tms_zmax = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'zmax')
-        ds.tms_y_origin_top = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'y_origin_top')
+        ds.tms_y_origin_top = ConfigReaderHelper.try_read_config_bool(parser, 'tms', 'y_origin_top')
         ds.tms_epsg_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'epsg_crs_id')
         ds.tms_postgis_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'postgis_crs_id')
         ds.tms_custom_proj = ConfigReaderHelper.try_read_config(parser, 'tms', 'custom_proj')
