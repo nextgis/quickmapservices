@@ -39,7 +39,9 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
         self.txtUrl.setText(ds_info.tms_url)
         self.spbZMin.setValue(int(ds_info.tms_zmin) if ds_info.tms_zmin else self.spbZMin.value())
         self.spbZMax.setValue(int(ds_info.tms_zmax) if ds_info.tms_zmax else self.spbZMax.value())
-        self.chkOriginTop.setChecked(ds_info.tms_y_origin_top if ds_info.tms_y_origin_top else False)
+        self.chkOriginTop.setChecked(True if (
+            ds_info.tms_y_origin_top is None or
+            ds_info.tms_y_origin_top == 1) else False)
 
         if self.ds_info.tms_epsg_crs_id:
             self.txtCrsId.setText(str(self.ds_info.tms_epsg_crs_id))
@@ -63,7 +65,7 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
         ds_info.tms_url = self.txtUrl.text()
         ds_info.tms_zmin = self.spbZMin.value()
         ds_info.tms_zmax = self.spbZMax.value()
-        ds_info.tms_y_origin_top = self.chkOriginTop.isChecked()
+        ds_info.tms_y_origin_top = int(self.chkOriginTop.isChecked())
 
         if self.rbCrsId.isChecked():
             try:
