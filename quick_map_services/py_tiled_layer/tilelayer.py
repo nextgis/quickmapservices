@@ -196,6 +196,10 @@ class TileLayer(QgsPluginLayer):
             # for print composer output image, use last zoom level of map item on print composer (or map canvas)
             zoom = self.canvasLastZoom
 
+        #################
+        zoom = 0
+        #################
+
         # zoom limit
         if zoom < self.layerDef.zmin:
             msg = self.tr("Current zoom level ({0}) is smaller than zmin ({1}): {2}").format(zoom,
@@ -206,12 +210,20 @@ class TileLayer(QgsPluginLayer):
 
         while True:
             # calculate tile range (yOrigin is top)
-            size = self.layerDef.TSIZE1 / 2 ** (zoom - 1)
-            matrixSize = 2 ** zoom
-            ulx = max(0, int((extent.xMinimum() + self.layerDef.TSIZE1) / size))
-            uly = max(0, int((self.layerDef.TSIZE1 - extent.yMaximum()) / size))
-            lrx = min(int((extent.xMaximum() + self.layerDef.TSIZE1) / size), matrixSize - 1)
-            lry = min(int((self.layerDef.TSIZE1 - extent.yMinimum()) / size), matrixSize - 1)
+            ##############
+            # size = self.layerDef.TSIZE1 / 2 ** (zoom - 1)
+            # matrixSize = 2 ** zoom
+            # ulx = max(0, int((extent.xMinimum() + self.layerDef.TSIZE1) / size))
+            # uly = max(0, int((self.layerDef.TSIZE1 - extent.yMaximum()) / size))
+            # lrx = min(int((extent.xMaximum() + self.layerDef.TSIZE1) / size), matrixSize - 1)
+            # lry = min(int((self.layerDef.TSIZE1 - extent.yMinimum()) / size), matrixSize - 1)
+            ##############
+            ########
+            ulx = 647
+            uly = 523
+            lrx = 649
+            lry = 525
+            ########
 
             # bounding box limit
             if self.layerDef.bbox:
@@ -263,6 +275,10 @@ class TileLayer(QgsPluginLayer):
                 for tx in range(ulx, lrx + 1):
                     data = None
                     url = self.layerDef.tileUrl(zoom, tx, ty)
+                    ############
+                    # msg = self.tr("url: {0}").format(url)
+                    # self.showBarMessage(msg, QgsMessageBar.INFO, 1)
+                    ############
                     if self.tiles and zoom == self.tiles.zoom and url in self.tiles.tiles:
                         data = self.tiles.tiles[url].data
                     tiles.addTile(url, Tile(zoom, tx, ty, data))
@@ -284,6 +300,7 @@ class TileLayer(QgsPluginLayer):
                     cacheHits += self.downloader.cacheHits
                     downloadedCount = self.downloader.fetchSuccesses - self.downloader.cacheHits
                     msg = self.tr("{0} files downloaded. {1} caches hit.").format(downloadedCount, cacheHits)
+                    msg = self.tr("url[0] is: {0}").format(self.downloader.requestingUrls)
                     barmsg = None
                     if self.downloader.errorStatus != Downloader.NO_ERROR:
                         if self.downloader.errorStatus == Downloader.TIMEOUT_ERROR:
