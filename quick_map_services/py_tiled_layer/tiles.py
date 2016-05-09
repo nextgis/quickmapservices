@@ -122,8 +122,8 @@ class Tiles:
 
 class TileServiceInfo:
     TILE_SIZE = 256
-    # TSIZE1 = 20037508.342789244
-    TSIZE1 = 8669.884
+    TSIZE1 = 20037508.342789244
+    # TSIZE1 = 8669.884
 
     def __init__(self, title, credit, serviceUrl, yOriginTop=1, zmin=TileDefaultSettings.ZMIN,
                  zmax=TileDefaultSettings.ZMAX, bbox=None, epsg_crs_id=None, postgis_crs_id=None, custom_proj=None):

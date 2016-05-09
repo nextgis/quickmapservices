@@ -275,10 +275,6 @@ class TileLayer(QgsPluginLayer):
                 for tx in range(ulx, lrx + 1):
                     data = None
                     url = self.layerDef.tileUrl(zoom, tx, ty)
-                    ############
-                    # msg = self.tr("url: {0}").format(url)
-                    # self.showBarMessage(msg, QgsMessageBar.INFO, 1)
-                    ############
                     if self.tiles and zoom == self.tiles.zoom and url in self.tiles.tiles:
                         data = self.tiles.tiles[url].data
                     tiles.addTile(url, Tile(zoom, tx, ty, data))
@@ -300,7 +296,6 @@ class TileLayer(QgsPluginLayer):
                     cacheHits += self.downloader.cacheHits
                     downloadedCount = self.downloader.fetchSuccesses - self.downloader.cacheHits
                     msg = self.tr("{0} files downloaded. {1} caches hit.").format(downloadedCount, cacheHits)
-                    msg = self.tr("url[0] is: {0}").format(self.downloader.requestingUrls)
                     barmsg = None
                     if self.downloader.errorStatus != Downloader.NO_ERROR:
                         if self.downloader.errorStatus == Downloader.TIMEOUT_ERROR:
@@ -371,6 +366,12 @@ class TileLayer(QgsPluginLayer):
         # tile extent to pixel
         map2pixel = renderContext.mapToPixel()
         extent = tiles.extent()
+        ######################
+        ######################
+        msg = self.tr("extent is: {0}").format(extent.toString())
+        self.showBarMessage(msg, QgsMessageBar.INFO, 5)
+        ######################
+        ######################
         topLeft = map2pixel.transform(extent.xMinimum(), extent.yMaximum())
         bottomRight = map2pixel.transform(extent.xMaximum(), extent.yMinimum())
         rect = QRectF(QPointF(topLeft.x() * sdx, topLeft.y() * sdy),
