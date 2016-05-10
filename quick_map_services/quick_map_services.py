@@ -114,7 +114,7 @@ class QuickMapServices:
         icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
         self.menu = QMenu(self.tr(u'QuickMapServices'))
         self.menu.setIcon(QIcon(icon_path))
-        
+
         self.build_menu_tree()
 
         # add to QGIS menu/toolbars
@@ -179,6 +179,9 @@ class QuickMapServices:
             service_info.epsg_crs_id = ds.tms_epsg_crs_id
             service_info.postgis_crs_id = ds.tms_postgis_crs_id
             service_info.custom_proj = ds.tms_custom_proj
+            ###############
+            service_info.tile_size_at_zmin = ds.tile_size_at_zmin
+            ###############
             layer = TileLayer(self, service_info, False)
             layers4add.append(layer)
         if ds.type == KNOWN_DRIVERS.GDAL:
@@ -268,7 +271,7 @@ class QuickMapServices:
         data_sources.sort(key=lambda x: x.alias or x.id)
 
         ds_hide_list = PluginSettings.get_hide_ds_id_list()
-        
+
         for ds in data_sources:
             if ds.id in ds_hide_list:
                 continue

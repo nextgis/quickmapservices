@@ -113,7 +113,7 @@ class TileLayer(QgsPluginLayer):
         if layerDef.bbox:
             self.setExtent(BoundingBox.degreesToMercatorMeters(layerDef.bbox).toQgsRectangle())
         else:
-            self.setExtent(QgsRectangle(-layerDef.TSIZE1, -layerDef.TSIZE1, layerDef.TSIZE1, layerDef.TSIZE1))
+            self.setExtent(QgsRectangle(-layerDef.tsize1, -layerDef.tsize1, layerDef.tsize1, layerDef.tsize1))
         self.setValid(True)
         self.tiles = None
         self.useLastZoomForPrint = False
@@ -186,7 +186,7 @@ class TileLayer(QgsPluginLayer):
         isDpiEqualToCanvas = painter.device().logicalDpiX() == mapSettings.outputDpi()
         if isDpiEqualToCanvas or not self.useLastZoomForPrint:
             # calculate zoom level
-            tile_mpp1 = self.layerDef.TSIZE1 / self.layerDef.TILE_SIZE
+            tile_mpp1 = self.layerDef.tsize1 / self.layerDef.TILE_SIZE
             viewport_mpp = extent.width() / painter.viewport().width()
             lg = math.log(float(tile_mpp1) / float(viewport_mpp), 2)
             zoom = int(math.modf(lg)[1]) + 1*(math.modf(lg)[0] > self.CHANGE_SCALE_VALUE) + 1
@@ -195,10 +195,6 @@ class TileLayer(QgsPluginLayer):
         else:
             # for print composer output image, use last zoom level of map item on print composer (or map canvas)
             zoom = self.canvasLastZoom
-
-        #################
-        zoom = 0
-        #################
 
         # zoom limit
         if zoom < self.layerDef.zmin:
@@ -211,18 +207,22 @@ class TileLayer(QgsPluginLayer):
         while True:
             # calculate tile range (yOrigin is top)
             ##############
-            # size = self.layerDef.TSIZE1 / 2 ** (zoom - 1)
-            # matrixSize = 2 ** zoom
-            # ulx = max(0, int((extent.xMinimum() + self.layerDef.TSIZE1) / size))
-            # uly = max(0, int((self.layerDef.TSIZE1 - extent.yMaximum()) / size))
-            # lrx = min(int((extent.xMaximum() + self.layerDef.TSIZE1) / size), matrixSize - 1)
-            # lry = min(int((self.layerDef.TSIZE1 - extent.yMinimum()) / size), matrixSize - 1)
+            size = self.layerDef.tsize1 / 2 ** (zoom - 1)
+            matrixSize = 2 ** zoom
+            ulx = max(0, int((extent.xMinimum() + self.layerDef.tsize1) / size))
+            uly = max(0, int((self.layerDef.tsize1 - extent.yMaximum()) / size))
+            lrx = min(int((extent.xMaximum() + self.layerDef.tsize1) / size), matrixSize - 1)
+            lry = min(int((self.layerDef.tsize1 - extent.yMinimum()) / size), matrixSize - 1)
             ##############
             ########
-            ulx = 647
-            uly = 523
-            lrx = 649
-            lry = 525
+            # ulx = 647
+            # uly = 523
+            # lrx = 649
+            # lry = 525
+            # ulx = 1294
+            # uly = 1047
+            # lrx = 1299
+            # lry = 1051
             ########
 
             # bounding box limit
@@ -368,8 +368,8 @@ class TileLayer(QgsPluginLayer):
         extent = tiles.extent()
         ######################
         ######################
-        msg = self.tr("extent is: {0}").format(extent.toString())
-        self.showBarMessage(msg, QgsMessageBar.INFO, 5)
+        # msg = self.tr("extent is: {0}").format(extent.toString())
+        # self.showBarMessage(msg, QgsMessageBar.INFO, 5)
         ######################
         ######################
         topLeft = map2pixel.transform(extent.xMinimum(), extent.yMaximum())
