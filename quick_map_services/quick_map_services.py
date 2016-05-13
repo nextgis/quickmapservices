@@ -23,6 +23,7 @@
 import os.path
 import urlparse
 import xml.etree.ElementTree as ET
+import ast
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog
@@ -179,9 +180,11 @@ class QuickMapServices:
             service_info.epsg_crs_id = ds.tms_epsg_crs_id
             service_info.postgis_crs_id = ds.tms_postgis_crs_id
             service_info.custom_proj = ds.tms_custom_proj
-            ###############
-            service_info.tile_size_at_zmin = ds.tile_size_at_zmin
-            ###############
+            if ds.tms_tsize1 is not None:
+                service_info.tsize1 = ds.tms_tsize1
+            if ds.tms_custom_tile_ranges is not None:
+                # needs error handling
+                service_info.custom_tile_ranges = ast.literal_eval(ds.tms_custom_tile_ranges)
             layer = TileLayer(self, service_info, False)
             layers4add.append(layer)
         if ds.type == KNOWN_DRIVERS.GDAL:

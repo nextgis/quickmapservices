@@ -35,3 +35,14 @@ class ConfigReaderHelper:
             else:
                 val = None
         return val
+
+    @staticmethod
+    def try_read_config_float(parser, section, param, reraise=False):
+        try:
+            val = parser.getfloat(section, param)
+        except:
+            if reraise:
+                raise
+            else:
+                val = None
+        return val

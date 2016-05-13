@@ -115,29 +115,28 @@ class Tiles:
         return image
 
     def extent(self):
-        size = self.tsize1 / 2 ** (self.zoom - 1)
-
-        return QgsRectangle(self.xmin * size - self.tsize1, self.tsize1 - (self.ymax + 1) * size,
-                            (self.xmax + 1) * size - self.tsize1, self.tsize1 - self.ymin * size)
-    # def extent(self):
-    #     size = self.tsize1 / 2 ** (self.zoom + 1)
-    #     nx = self.xmax - self.xmin + 1
-    #     ny = self.ymax - self.ymin + 1
-    #     # easting = 40000 - 800
-    #     # northing = 70000 + 150
-    #     easting = 0
-    #     northing = 0
-    #     return QgsRectangle(-size * nx + easting, -size * ny + northing, size * nx + easting, size * ny + northing)
+        if self.serviceInfo.custom_tile_ranges is None:
+            size = self.tsize1 / 2 ** (self.zoom - 1)
+            return QgsRectangle(self.xmin * size - self.tsize1, self.tsize1 - (self.ymax + 1) * size,
+                                (self.xmax + 1) * size - self.tsize1, self.tsize1 - self.ymin * size)
+        else:
+            size = self.tsize1 / 2 ** (self.zoom + 1)
+            nx = self.xmax - self.xmin + 1
+            ny = self.ymax - self.ymin + 1
+            # easting = 40000 - 800
+            # northing = 70000 + 150
+            easting = 0
+            northing = 0
+            return QgsRectangle(-size * nx + easting, -size * ny + northing, size * nx + easting, size * ny + northing)
 
 
 class TileServiceInfo:
     TILE_SIZE = 256
-    # TSIZE1 = 20037508.342789244
-    # TSIZE1 = 8669.884
+    # TSIZE1 = 20037508.342789244 # (R * math.pi)
 
     def __init__(self, title, credit, serviceUrl, yOriginTop=1, zmin=TileDefaultSettings.ZMIN,
                  zmax=TileDefaultSettings.ZMAX, bbox=None, epsg_crs_id=None, postgis_crs_id=None, custom_proj=None,
-                 tsize1=R * math.pi):
+                 tsize1=R * math.pi, custom_tile_ranges=None):
         self.title = title
         self.credit = credit
         self.serviceUrl = serviceUrl
@@ -149,6 +148,7 @@ class TileServiceInfo:
         self.postgis_crs_id = postgis_crs_id
         self.custom_proj = custom_proj
         self.tsize1 = tsize1
+        self.custom_tile_ranges = custom_tile_ranges
 
     def tileUrl(self, zoom, x, y):
         if not self.yOriginTop:

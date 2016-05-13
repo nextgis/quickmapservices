@@ -53,6 +53,8 @@ class DataSourceInfo:
         self.tms_epsg_crs_id = None
         self.tms_postgis_crs_id = None
         self.tms_custom_proj = None
+        self.tms_tsize1 = None
+        self.tms_custom_tile_ranges = None
 
         self.wms_url = None
         self.wms_params = None

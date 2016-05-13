@@ -206,24 +206,17 @@ class TileLayer(QgsPluginLayer):
 
         while True:
             # calculate tile range (yOrigin is top)
-            ##############
-            size = self.layerDef.tsize1 / 2 ** (zoom - 1)
-            matrixSize = 2 ** zoom
-            ulx = max(0, int((extent.xMinimum() + self.layerDef.tsize1) / size))
-            uly = max(0, int((self.layerDef.tsize1 - extent.yMaximum()) / size))
-            lrx = min(int((extent.xMaximum() + self.layerDef.tsize1) / size), matrixSize - 1)
-            lry = min(int((self.layerDef.tsize1 - extent.yMinimum()) / size), matrixSize - 1)
-            ##############
-            ########
-            # ulx = 647
-            # uly = 523
-            # lrx = 649
-            # lry = 525
-            # ulx = 1294
-            # uly = 1047
-            # lrx = 1299
-            # lry = 1051
-            ########
+            if self.layerDef.custom_tile_ranges is None:
+                size = self.layerDef.tsize1 / 2 ** (zoom - 1)
+                matrixSize = 2 ** zoom
+                ulx = max(0, int((extent.xMinimum() + self.layerDef.tsize1) / size))
+                uly = max(0, int((self.layerDef.tsize1 - extent.yMaximum()) / size))
+                lrx = min(int((extent.xMaximum() + self.layerDef.tsize1) / size), matrixSize - 1)
+                lry = min(int((self.layerDef.tsize1 - extent.yMinimum()) / size), matrixSize - 1)
+            else:
+                msg = self.tr("zoom is: {0}").format(zoom)
+                self.showBarMessage(msg, QgsMessageBar.INFO, 5)
+                ulx, lrx, uly, lry = self.layerDef.custom_tile_ranges[zoom]
 
             # bounding box limit
             if self.layerDef.bbox:

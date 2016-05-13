@@ -47,9 +47,8 @@ class DataSourceSerializer():
         ds.tms_epsg_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'epsg_crs_id')
         ds.tms_postgis_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'postgis_crs_id')
         ds.tms_custom_proj = ConfigReaderHelper.try_read_config(parser, 'tms', 'custom_proj')
-        ################
-        ds.tms_tile_size_at_zmin = ConfigReaderHelper.try_read_config(parser, 'tms', 'tms_tile_size_at_zmin')
-        ################
+        ds.tms_tsize1 = ConfigReaderHelper.try_read_config_float(parser, 'tms', 'tsize1')
+        ds.tms_custom_tile_ranges = ConfigReaderHelper.try_read_config(parser, 'tms', 'custom_tile_ranges')
 
         #WMS
         ds.wms_url = ConfigReaderHelper.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))
@@ -115,6 +114,8 @@ class DataSourceSerializer():
                 config.set('tms', 'postgis_crs_id', ds_info.tms_postgis_crs_id)
             if ds_info.tms_custom_proj:
                 config.set('tms', 'custom_proj', ds_info.tms_custom_proj)
+            if ds_info.tms_tsize1:
+                config.set('tms', 'tsize1', ds_info.tms_tsize1)
 
         if ds_info.type == KNOWN_DRIVERS.WMS:
             config.set('wms', 'url', ds_info.wms_url)
