@@ -1,6 +1,7 @@
 import os
 import shutil
 
+import sys
 from PyQt4 import uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QTableView, QHeaderView
@@ -9,11 +10,10 @@ from groups_list import GroupsList, USER_GROUP_PATHS
 from group_edit_dialog import GroupEditDialog
 from data_sources_model import DSManagerModel
 
-import resources_rc
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_groups_box.ui'))
 
+plugin_dir = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
 
 class UserGroupsBox(QGroupBox, FORM_CLASS):
 
@@ -31,10 +31,10 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         self.btnDelete.clicked.connect(self.on_delete)
         self.btnCopy.clicked.connect(self.on_copy)
 
-        self.btnAdd.setIcon(QIcon(":/plugins/QuickMapServices/icons/plus.svg"))
-        self.btnEdit.setIcon(QIcon(":/plugins/QuickMapServices/icons/compose.svg"))
-        self.btnDelete.setIcon(QIcon(":/plugins/QuickMapServices/icons/trash.svg"))
-        self.btnCopy.setIcon(QIcon(":/plugins/QuickMapServices/icons/copy.svg"))
+        self.btnAdd.setIcon(QIcon(plugin_dir + '/icons/plus.svg'))
+        self.btnEdit.setIcon(QIcon(plugin_dir + '/icons/compose.svg'))
+        self.btnDelete.setIcon(QIcon(plugin_dir + '/icons/trash.svg'))
+        self.btnCopy.setIcon(QIcon(plugin_dir + '/icons/copy.svg'))
 
         self.ds_model = DSManagerModel()
 
