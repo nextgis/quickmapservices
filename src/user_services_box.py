@@ -83,6 +83,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         self.ds_model.sort(DSManagerModel.COLUMN_GROUP_DS)
 
         select_data_sources_dialog = QDialog(self)
+        select_data_sources_dialog.resize(400, 400)
         select_data_sources_dialog.setWindowTitle(self.tr("Choose source service"))
         layout = QVBoxLayout(select_data_sources_dialog)
         select_data_sources_dialog.setLayout(layout)
@@ -90,6 +91,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         list_view = QTreeView(self)
         layout.addWidget(list_view)
         list_view.setModel(self.ds_model)
+        #list_view.expandAll()
         list_view.setColumnHidden(DSManagerModel.COLUMN_VISIBILITY, True)
         list_view.setAlternatingRowColors(True)
         list_view.header().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.ResizeToContents)

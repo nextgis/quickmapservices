@@ -81,6 +81,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
 
     def on_copy(self):
         select_group_dialog = QDialog(self)
+        select_group_dialog.resize(300, 400)
         select_group_dialog.setWindowTitle(self.tr("Choose source group"))
         layout = QVBoxLayout(select_group_dialog)
         select_group_dialog.setLayout(layout)
