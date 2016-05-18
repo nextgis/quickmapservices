@@ -221,6 +221,13 @@ class QuickMapServices:
                     "WFS")
                 layers4add.append(layer)
 
+        if ds.type == KNOWN_DRIVERS.GEOJSON:
+            layer = QgsVectorLayer(
+                ds.geojson_url,
+                self.tr(ds.alias),
+                "ogr")
+            layers4add.append(layer)
+
         for layer in layers4add:
             if not layer.isValid():
                 error_message = self.tr('Layer %s can\'t be added to the map!') % ds.alias

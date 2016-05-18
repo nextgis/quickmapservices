@@ -1,5 +1,3 @@
-import ConfigParser
-import codecs
 import os
 import shutil
 
@@ -18,6 +16,7 @@ from .gui.editor_widget_gdal import EditorWidgetGdal
 from .gui.editor_widget_tms import EditorWidgetTms
 from .gui.editor_widget_wms import EditorWidgetWms
 from .gui.editor_widget_wfs import EditorWidgetWfs
+from .gui.editor_widget_geojson import EditorWidgetGeoJson
 from .gui.line_edit_color_validator import LineEditColorValidator
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -41,6 +40,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
             KNOWN_DRIVERS.TMS: EditorWidgetTms(),
             KNOWN_DRIVERS.WMS: EditorWidgetWms(),
             KNOWN_DRIVERS.WFS: EditorWidgetWfs(),
+            KNOWN_DRIVERS.GEOJSON: EditorWidgetGeoJson(),
         }
 
         # init icon selector

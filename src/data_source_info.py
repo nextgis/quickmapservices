@@ -64,6 +64,8 @@ class DataSourceInfo:
         self.wfs_url = None
         # self.wfs_layers = None
 
+        self.geojson_url = None
+
         # internal
         self.file_path = None
         self.icon_path = None

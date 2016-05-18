@@ -27,12 +27,14 @@ class KNOWN_DRIVERS():
     TMS = 'TMS'
     GDAL = 'GDAL'
     WFS = 'WFS'
+    GEOJSON = 'GeoJSON'
 
     ALL_DRIVERS = [
         WMS,
         TMS,
         GDAL,
         WFS,
+        GEOJSON,
     ]
 
     # 'TiledWMS',
