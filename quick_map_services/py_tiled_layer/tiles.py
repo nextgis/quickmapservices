@@ -152,6 +152,15 @@ class TileServiceInfo:
         self.tsize1 = tsize1
         self.custom_tile_ranges = custom_tile_ranges
 
+    def xTilesAtZmin(self):
+        tranges = self.custom_tile_ranges
+        if not tranges:
+            return 1 # 'normal' tile scheme has 1 tile at zmin
+        else:
+            zmin = list(tranges.keys())[0]
+            xmax, xmin = tranges[zmin][-1], tranges[zmin][-2]
+            return xmax - xmin + 1
+
     def tileUrl(self, zoom, x, y):
         if not self.yOriginTop:
             y = (2 ** zoom - 1) - y

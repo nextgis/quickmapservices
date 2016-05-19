@@ -186,7 +186,7 @@ class TileLayer(QgsPluginLayer):
         isDpiEqualToCanvas = painter.device().logicalDpiX() == mapSettings.outputDpi()
         if isDpiEqualToCanvas or not self.useLastZoomForPrint:
             # calculate zoom level
-            tile_mpp1 = self.layerDef.tsize1 / self.layerDef.TILE_SIZE
+            tile_mpp1 = self.layerDef.tsize1 / self.layerDef.TILE_SIZE / self.layerDef.xTilesAtZmin()
             viewport_mpp = extent.width() / painter.viewport().width()
             lg = math.log(float(tile_mpp1) / float(viewport_mpp), 2)
             zoom = int(math.modf(lg)[1]) + 1*(math.modf(lg)[0] > self.CHANGE_SCALE_VALUE) + 1
