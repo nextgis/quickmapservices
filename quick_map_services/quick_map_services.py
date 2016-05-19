@@ -177,6 +177,10 @@ class QuickMapServices:
             service_info.zmax = ds.tms_zmax or service_info.zmax
             if ds.tms_y_origin_top is not None:
                 service_info.yOriginTop = ds.tms_y_origin_top
+            if ds.tms_originX is not None:
+                service_info.originX = ds.tms_originX
+            if ds.tms_originY is not None:
+                service_info.originY = ds.tms_originY
             service_info.epsg_crs_id = ds.tms_epsg_crs_id
             service_info.postgis_crs_id = ds.tms_postgis_crs_id
             service_info.custom_proj = ds.tms_custom_proj

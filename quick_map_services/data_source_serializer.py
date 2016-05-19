@@ -44,6 +44,8 @@ class DataSourceSerializer():
         ds.tms_zmin = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'zmin')
         ds.tms_zmax = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'zmax')
         ds.tms_y_origin_top = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'y_origin_top')
+        ds.tms_originX = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'originX')
+        ds.tms_originY = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'originY')
         ds.tms_epsg_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'epsg_crs_id')
         ds.tms_postgis_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'postgis_crs_id')
         ds.tms_custom_proj = ConfigReaderHelper.try_read_config(parser, 'tms', 'custom_proj')
@@ -108,6 +110,8 @@ class DataSourceSerializer():
             config.set('tms', 'zmin', ds_info.tms_zmin)
             config.set('tms', 'zmax', ds_info.tms_zmax)
             config.set('tms', 'y_origin_top', ds_info.tms_y_origin_top)
+            config.set('tms', 'originX', ds_info.tms_orignX)
+            config.set('tms', 'originY', ds_info.tms_originY)
             if ds_info.tms_epsg_crs_id:
                 config.set('tms', 'epsg_crs_id', ds_info.tms_epsg_crs_id)
             if ds_info.tms_postgis_crs_id:

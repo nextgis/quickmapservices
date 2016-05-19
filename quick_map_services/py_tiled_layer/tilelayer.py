@@ -58,7 +58,8 @@ class TileLayer(QgsPluginLayer):
     CRS_3857 = QgsCoordinateReferenceSystem(3857)
 
     LAYER_TYPE = "PyTiledLayer"
-    MAX_TILE_COUNT = 256
+    # MAX_TILE_COUNT = 256
+    MAX_TILE_COUNT = 10000000
     CHANGE_SCALE_VALUE = 0.30
 
     def __init__(self, plugin, layerDef, creditVisibility=1):
@@ -213,10 +214,12 @@ class TileLayer(QgsPluginLayer):
                 uly = max(0, int((self.layerDef.tsize1 - extent.yMaximum()) / size))
                 lrx = min(int((extent.xMaximum() + self.layerDef.tsize1) / size), matrixSize - 1)
                 lry = min(int((self.layerDef.tsize1 - extent.yMinimum()) / size), matrixSize - 1)
-            else:
-                msg = self.tr("zoom is: {0}").format(zoom)
-                self.showBarMessage(msg, QgsMessageBar.INFO, 5)
+            else: # for custom_tile_ranges
                 ulx, lrx, uly, lry = self.layerDef.custom_tile_ranges[zoom]
+                #############
+                msg = self.tr("extent.xMinimum() is: {0}").format(extent.xMinimum())
+                self.showBarMessage(msg, QgsMessageBar.INFO, 2)
+                #############
 
             # bounding box limit
             if self.layerDef.bbox:
@@ -246,6 +249,10 @@ class TileLayer(QgsPluginLayer):
             break
 
         self.logT("TileLayer.draw: {0} {1} {2} {3} {4}".format(zoom, ulx, uly, lrx, lry))
+        #############
+        msg = self.tr("zoom, ulx, uly, lrx, lry are: {0}, {1}, {2}, {3}, {4}").format(zoom, ulx, uly, lrx, lry)
+        self.showBarMessage(msg, QgsMessageBar.INFO, 2)
+        #############
 
         # save painter state
         painter.save()
@@ -359,12 +366,12 @@ class TileLayer(QgsPluginLayer):
         # tile extent to pixel
         map2pixel = renderContext.mapToPixel()
         extent = tiles.extent()
-        ######################
-        ######################
-        # msg = self.tr("extent is: {0}").format(extent.toString())
-        # self.showBarMessage(msg, QgsMessageBar.INFO, 5)
-        ######################
-        ######################
+        ####################
+        ####################
+        msg = self.tr("tiles extent is: {0}").format(extent.toString())
+        self.showBarMessage(msg, QgsMessageBar.INFO, 5)
+        ####################
+        ####################
         topLeft = map2pixel.transform(extent.xMinimum(), extent.yMaximum())
         bottomRight = map2pixel.transform(extent.xMaximum(), extent.yMinimum())
         rect = QRectF(QPointF(topLeft.x() * sdx, topLeft.y() * sdy),

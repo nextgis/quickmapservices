@@ -50,6 +50,8 @@ class DataSourceInfo:
         self.tms_zmin = None
         self.tms_zmax = None
         self.tms_y_origin_top = None
+        self.tms_originX = None
+        self.tms_originY = None
         self.tms_epsg_crs_id = None
         self.tms_postgis_crs_id = None
         self.tms_custom_proj = None
