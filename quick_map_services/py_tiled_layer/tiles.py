@@ -117,11 +117,13 @@ class Tiles:
     def extent(self):
         if self.serviceInfo.custom_tile_ranges is None:
             size = self.tsize1 / 2 ** (self.zoom - 1)
-            return QgsRectangle(self.xmin * size - self.tsize1, self.tsize1 - (self.ymax + 1) * size,
-                                (self.xmax + 1) * size - self.tsize1, self.tsize1 - self.ymin * size)
+            offsetX = self.serviceInfo.offsetX
+            offsetY = self.serviceInfo.offsetY
+            return QgsRectangle(offsetX + self.xmin * size - self.tsize1, offsetY + self.tsize1 - (self.ymax + 1) * size,
+                                offsetX + (self.xmax + 1) * size - self.tsize1, offsetY + self.tsize1 - self.ymin * size)
         else:
-            originX = self.serviceInfo.originX # -5583200
-            originY = self.serviceInfo.originY # 4617500
+            originX = self.serviceInfo.originX
+            originY = self.serviceInfo.originY
             size = self.tsize1 / 2 ** self.zoom
             return QgsRectangle(originX + self.xmin * size, originY - (self.ymax + 1) * size,
                                 originX + (self.xmax + 1) * size, originY - self.ymin * size)
@@ -139,6 +141,8 @@ class TileServiceInfo:
         self.yOriginTop = yOriginTop
         self.originX = originX
         self.originY = originY
+        self.offsetX = self.originX + R * math.pi # zero for 'normal' origin
+        self.offsetY = self.originY - R * math.pi # zero for 'normal' origin
         self.zmin = max(zmin, 0)
         self.zmax = zmax
         self.bbox = bbox

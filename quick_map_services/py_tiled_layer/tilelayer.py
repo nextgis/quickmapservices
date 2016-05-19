@@ -436,6 +436,12 @@ class TileLayer(QgsPluginLayer):
         # draw the image on the map canvas
         rect = QRectF(QPointF(0, 0), QPointF(viewport.width() * sdx, viewport.height() * sdy))
         renderContext.painter().drawImage(rect, reprojected_image)
+        ####################
+        ####################
+        msg = self.tr("tiles extent is: {0}").format(extent.toString())
+        self.showBarMessage(msg, QgsMessageBar.INFO, 5)
+        ####################
+        ####################
 
     def drawTilesDirectly(self, renderContext, tiles, sdx=1.0, sdy=1.0):
         p = renderContext.painter()
