@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QSettings, QDir
+from PyQt4.QtCore import QSettings, QDir, Qt
 
 
 class PluginSettings():
@@ -83,3 +83,25 @@ class PluginSettings():
     @classmethod
     def get_hide_ds_id_list(cls):
         return cls.get_settings().value('hide_ds_id_list_str', '', str).split(";")
+
+    @classmethod
+    def server_dock_area(cls):
+        settings = cls.get_settings()
+        return settings.value('/ui/dockWidgetArea', Qt.RightDockWidgetArea,  type=int)
+
+    @classmethod
+    def set_server_dock_area(cls, val):
+        settings = cls.get_settings()
+        settings.setValue('/ui/dockWidgetArea', val)
+
+
+    @classmethod
+    def server_dock_visibility(cls):
+        settings = cls.get_settings()
+        return settings.value('/ui/dockWidgetIsVisible', True, type=bool)
+
+
+    @classmethod
+    def set_server_dock_visibility(cls, val):
+        settings = cls.get_settings()
+        settings.setValue('/ui/dockWidgetIsVisible', val)

@@ -35,6 +35,7 @@ import sys
 from extra_sources import ExtraSources
 from locale import Locale
 from plugin_settings import PluginSettings
+from qms_service_toolbox import QmsServiceToolbox
 
 from settings_dialog import SettingsDialog
 from about_dialog import AboutDialog
@@ -115,6 +116,7 @@ class QuickMapServices:
         self.menu = QMenu(self.tr(u'QuickMapServices'))
         self.menu.setIcon(QIcon(icon_path))
         
+        self.init_server_panel()
         self.build_menu_tree()
 
         # add to QGIS menu/toolbars
@@ -251,8 +253,9 @@ class QuickMapServices:
                     self.iface.mapCanvas().setDestinationCrs(TileLayer.CRS_3857)
 
     def unload(self):
-        # remove menu/
+        # remove menu/panels
         self.remove_menu_buttons()
+        self.remove_server_panel()
 
         # clean vars
         self.menu = None
@@ -298,6 +301,13 @@ class QuickMapServices:
         scales_act.triggered.connect(self.set_tms_scales)
         #self.menu.addAction(scales_act)  # TODO: uncomment after fix
         self.service_actions.append(scales_act)
+
+        icon_settings_path = self.plugin_dir + '/icons/mapservices.png'
+        server_panel_act = self.server_toolbox.toggleViewAction()
+        server_panel_act.setIcon(QIcon(icon_settings_path))
+        server_panel_act.setText(self.tr('Show\\Hide services panel'))
+        self.service_actions.append(server_panel_act)
+        self.menu.addAction(server_panel_act)
 
         icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
         settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
@@ -361,3 +371,25 @@ class QuickMapServices:
         # self.remove_menu_buttons()
         self.build_menu_tree()
         # self.append_menu_buttons()
+
+    def init_server_panel(self):
+        self.server_toolbox = QmsServiceToolbox(self.iface)
+        self.iface.addDockWidget(PluginSettings.server_dock_area(), self.server_toolbox)
+        self.server_toolbox.setWindowIcon(QIcon(self.plugin_dir + '/icons/mapservices.png'))
+        self.server_toolbox.setVisible(PluginSettings.server_dock_visibility())
+        # self.server_toolbox.setFloating(PluginSettings.dock_floating())
+        # self.server_toolbox.resize(PluginSettings.dock_size())
+        # self.server_toolbox.move(PluginSettings.dock_pos())
+        # self.server_toolbox.setWindowIcon(QIcon(path.join(_current_path, 'edit-find-project.png')))
+
+    def remove_server_panel(self):
+        mw = self.iface.mainWindow()
+        PluginSettings.set_server_dock_area(mw.dockWidgetArea(self.server_toolbox))
+        PluginSettings.set_server_dock_visibility(self.server_toolbox.isVisible())
+        # PluginSettings.set_dock_floating(self.__quick_tlb.isFloating())
+        # PluginSettings.set_dock_pos(self.__quick_tlb.pos())
+        # PluginSettings.set_dock_size(self.__quick_tlb.size())
+        # PluginSettings.set_dock_geocoder_name(self.__quick_tlb.get_active_geocoder_name())
+        self.iface.removeDockWidget(self.server_toolbox)
+        del self.server_toolbox
+
