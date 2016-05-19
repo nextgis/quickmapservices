@@ -58,8 +58,7 @@ class TileLayer(QgsPluginLayer):
     CRS_3857 = QgsCoordinateReferenceSystem(3857)
 
     LAYER_TYPE = "PyTiledLayer"
-    # MAX_TILE_COUNT = 256
-    MAX_TILE_COUNT = 10000000
+    MAX_TILE_COUNT = 256
     CHANGE_SCALE_VALUE = 0.30
 
     def __init__(self, plugin, layerDef, creditVisibility=1):
@@ -207,7 +206,7 @@ class TileLayer(QgsPluginLayer):
 
         while True:
             # calculate tile range (yOrigin is top)
-            if self.layerDef.custom_tile_ranges is None:
+            if self.layerDef.custom_tile_ranges is None: # should add xOffset & yOffset in first part of conditional
                 size = self.layerDef.tsize1 / 2 ** (zoom - 1)
                 matrixSize = 2 ** zoom
                 ulx = max(0, int((extent.xMinimum() + self.layerDef.tsize1) / size))
@@ -215,11 +214,12 @@ class TileLayer(QgsPluginLayer):
                 lrx = min(int((extent.xMaximum() + self.layerDef.tsize1) / size), matrixSize - 1)
                 lry = min(int((self.layerDef.tsize1 - extent.yMinimum()) / size), matrixSize - 1)
             else: # for custom_tile_ranges
-                ulx, lrx, uly, lry = self.layerDef.custom_tile_ranges[zoom]
-                #############
-                msg = self.tr("extent.xMinimum() is: {0}").format(extent.xMinimum())
-                self.showBarMessage(msg, QgsMessageBar.INFO, 2)
-                #############
+                size = self.layerDef.tsize1 / 2 ** zoom
+                xmin, xmax, ymin, ymax = self.layerDef.custom_tile_ranges[zoom]
+                ulx = max(int((extent.xMinimum() - self.layerDef.originX)/ size), xmin)
+                uly = max(int((self.layerDef.originY - extent.yMaximum())/ size), ymin)
+                lrx = min(int((extent.xMaximum() - self.layerDef.originX)/ size), xmax)
+                lry = min(int((self.layerDef.originY - extent.yMinimum())/ size), ymax)
 
             # bounding box limit
             if self.layerDef.bbox:
@@ -249,10 +249,6 @@ class TileLayer(QgsPluginLayer):
             break
 
         self.logT("TileLayer.draw: {0} {1} {2} {3} {4}".format(zoom, ulx, uly, lrx, lry))
-        #############
-        msg = self.tr("zoom, ulx, uly, lrx, lry are: {0}, {1}, {2}, {3}, {4}").format(zoom, ulx, uly, lrx, lry)
-        self.showBarMessage(msg, QgsMessageBar.INFO, 2)
-        #############
 
         # save painter state
         painter.save()
@@ -366,12 +362,6 @@ class TileLayer(QgsPluginLayer):
         # tile extent to pixel
         map2pixel = renderContext.mapToPixel()
         extent = tiles.extent()
-        ####################
-        ####################
-        msg = self.tr("tiles extent is: {0}").format(extent.toString())
-        self.showBarMessage(msg, QgsMessageBar.INFO, 5)
-        ####################
-        ####################
         topLeft = map2pixel.transform(extent.xMinimum(), extent.yMaximum())
         bottomRight = map2pixel.transform(extent.xMaximum(), extent.yMinimum())
         rect = QRectF(QPointF(topLeft.x() * sdx, topLeft.y() * sdy),
@@ -436,12 +426,6 @@ class TileLayer(QgsPluginLayer):
         # draw the image on the map canvas
         rect = QRectF(QPointF(0, 0), QPointF(viewport.width() * sdx, viewport.height() * sdy))
         renderContext.painter().drawImage(rect, reprojected_image)
-        ####################
-        ####################
-        msg = self.tr("tiles extent is: {0}").format(extent.toString())
-        self.showBarMessage(msg, QgsMessageBar.INFO, 5)
-        ####################
-        ####################
 
     def drawTilesDirectly(self, renderContext, tiles, sdx=1.0, sdy=1.0):
         p = renderContext.painter()
