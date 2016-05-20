@@ -117,10 +117,8 @@ class Tiles:
     def extent(self):
         if self.serviceInfo.custom_tile_ranges is None:
             size = self.tsize1 / 2 ** (self.zoom - 1)
-            offsetX = self.serviceInfo.offsetX
-            offsetY = self.serviceInfo.offsetY
-            return QgsRectangle(offsetX + self.xmin * size - self.tsize1, offsetY + self.tsize1 - (self.ymax + 1) * size,
-                                offsetX + (self.xmax + 1) * size - self.tsize1, offsetY + self.tsize1 - self.ymin * size)
+            return QgsRectangle(self.xmin * size - self.tsize1, self.tsize1 - (self.ymax + 1) * size,
+                                (self.xmax + 1) * size - self.tsize1, self.tsize1 - self.ymin * size)
         else:
             originX = self.serviceInfo.originX
             originY = self.serviceInfo.originY
@@ -132,17 +130,13 @@ class TileServiceInfo:
     TILE_SIZE = 256
     # TSIZE1 = 20037508.342789244 # (R * math.pi)
 
-    def __init__(self, title, credit, serviceUrl, yOriginTop=1, originX= -R * math.pi, originY = R * math.pi,
-                 zmin=TileDefaultSettings.ZMIN, zmax=TileDefaultSettings.ZMAX, bbox=None, epsg_crs_id=None,
-                 postgis_crs_id=None, custom_proj=None, tsize1=R * math.pi, custom_tile_ranges=None):
+    def __init__(self, title, credit, serviceUrl, yOriginTop=1, zmin=TileDefaultSettings.ZMIN,
+                 zmax=TileDefaultSettings.ZMAX, bbox=None, epsg_crs_id=None, postgis_crs_id=None,
+                 custom_proj=None, custom_tile_ranges=None, tsize1=R * math.pi, originX= -R * math.pi, originY = R * math.pi):
         self.title = title
         self.credit = credit
         self.serviceUrl = serviceUrl
         self.yOriginTop = yOriginTop
-        self.originX = originX
-        self.originY = originY
-        self.offsetX = self.originX + R * math.pi # zero for 'normal' origin
-        self.offsetY = self.originY - R * math.pi # zero for 'normal' origin
         self.zmin = max(zmin, 0)
         self.zmax = zmax
         self.bbox = bbox
@@ -151,13 +145,15 @@ class TileServiceInfo:
         self.custom_proj = custom_proj
         self.tsize1 = tsize1
         self.custom_tile_ranges = custom_tile_ranges
+        self.originX = originX
+        self.originY = originY
 
     def xTilesAtZmin(self):
         tranges = self.custom_tile_ranges
-        if not tranges:
-            return 1 # 'normal' tile scheme has 1 tile at zmin
+        if tranges is None:
+            return 1 # non-custom tile scheme has 1 tile at zmin
         else:
-            zmin = list(tranges.keys())[0]
+            zmin = sorted(list(tranges.keys()))[0]
             xmax, xmin = tranges[zmin][-1], tranges[zmin][-2]
             return xmax - xmin + 1
 
