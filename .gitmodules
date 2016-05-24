@@ -1,0 +1,3 @@
+[submodule "src/qms_external_api_python"]
+	path = src/qms_external_api_python
+	url = https://github.com/nextgis/qms_external_api_python.git
