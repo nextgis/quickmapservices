@@ -88,10 +88,15 @@ def add_layer_to_map(ds):
             # Set attribs
             layer.setAttribution(ds.copyright_text)
             layer.setAttributionUrl(ds.copyright_link)
-            # Insert to bottom
-            QgsMapLayerRegistry.instance().addMapLayer(layer, False)
-            toc_root = QgsProject.instance().layerTreeRoot()
-            toc_root.insertLayer(len(toc_root.children()), layer)
+            # Insert to bottom if wms\tms
+            if ds.type.lower() in (KNOWN_DRIVERS.WMS.lower(), KNOWN_DRIVERS.TMS.lower()):
+                QgsMapLayerRegistry.instance().addMapLayer(layer, False)
+                toc_root = QgsProject.instance().layerTreeRoot()
+                toc_root.insertLayer(len(toc_root.children()), layer)
+            else:
+                # insert to top
+                QgsMapLayerRegistry.instance().addMapLayer(layer, True)
+
             # Save link
             # !!!! self.service_layers.append(layer)
             # Set OTF CRS Transform for map
