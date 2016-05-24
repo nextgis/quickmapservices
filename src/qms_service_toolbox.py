@@ -2,8 +2,12 @@ from urllib2 import URLError
 from os import path
 
 from PyQt4 import uic
-from PyQt4.QtGui import QDockWidget, QListWidgetItem, QIcon  # , QMessageBox
+from PyQt4.QtGui import QDockWidget, QListWidgetItem, QCursor, QApplication # , QMessageBox
 from PyQt4.QtCore import QThread, pyqtSignal, Qt
+
+from data_source_serializer import DataSourceSerializer
+from qgis_map_helpers import add_layer_to_map
+from .qms_external_api_python.client import Client
 
 
 FORM_CLASS, _ = uic.loadUiType(path.join(
@@ -23,7 +27,6 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
         self.txtSearch.textChanged.connect(self.start_search)
 
-        self.lstSearchResult.currentItemChanged.connect(self.result_selected)
         self.lstSearchResult.itemDoubleClicked.connect(self.result_selected)
 
 
@@ -52,10 +55,11 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
     def show_result(self, results):
         self.lstSearchResult.clear()
         if results:
-            for (pt, desc) in results:
+            for geoservice in results:
                 new_item = QListWidgetItem()
-                new_item.setText(unicode(desc))
-                new_item.setData(Qt.UserRole, pt)
+                new_item.setText(unicode(geoservice['name']) +' [%s]' % geoservice['type'].upper())
+                new_item.setData(Qt.UserRole, geoservice)
+                #todo: remake with cache icons
                 self.lstSearchResult.addItem(new_item)
         else:
             new_item = QListWidgetItem()
@@ -72,7 +76,20 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
     def result_selected(self, current=None, previous=None):
         if current:
-            point = current.data(Qt.UserRole)
+            try:
+                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                geoservice = current.data(Qt.UserRole)
+                geoservice_info = Client().get_geoservice_info(geoservice)
+                ds = DataSourceSerializer.read_from_json(geoservice_info)
+                add_layer_to_map(ds)
+            except Exception as ex:
+                pass
+            finally:
+                QApplication.restoreOverrideCursor()
+
+
+
+
 
 
 class SearchThread(QThread):
@@ -83,20 +100,14 @@ class SearchThread(QThread):
     def __init__(self, search_text, parent=None):
         QThread.__init__(self, parent)
         self.search_text = search_text
-        #define geocoder
-        self.coder = None #GeocoderFactory.get_geocoder(geocoder_name)
+        self.searcher = Client()
 
-    def __del__(self):
-        pass
-        #self.wait()
-
-    def run(self):        
+    def run(self):
         results = []
-        #results.append([None, self.search_text])  # debug
 
         # search
         try:
-            results = self.coder.geocode_multiple_results(self.search_text)
+            results = self.searcher.search_geoservices(self.search_text)
         except URLError:
                         import sys
                         error_text = (self.tr("Network error!\n{0}")).format(unicode(sys.exc_info()[1]))
@@ -109,4 +120,3 @@ class SearchThread(QThread):
                         self.error_occurred.emit(error_text)
 
         self.data_downloaded.emit(results)
-        #self.terminate()

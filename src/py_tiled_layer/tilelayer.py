@@ -27,6 +27,8 @@ from PyQt4.QtCore import SIGNAL
 from PyQt4.QtGui import QFont, QColor, QBrush
 from qgis.core import QgsPluginLayer, QgsCoordinateReferenceSystem, QgsPluginLayerType, QgsImageOperation
 from qgis.gui import QgsMessageBar
+from qgis.utils import iface
+
 from ..plugin_settings import PluginSettings
 from ..qgis_settings import QGISSettings
 
@@ -61,10 +63,10 @@ class TileLayer(QgsPluginLayer):
     MAX_TILE_COUNT = 256
     CHANGE_SCALE_VALUE = 0.30
 
-    def __init__(self, plugin, layerDef, creditVisibility=1):
+    def __init__(self, layerDef, creditVisibility=1):
         QgsPluginLayer.__init__(self, TileLayer.LAYER_TYPE, layerDef.title)
-        self.plugin = plugin
-        self.iface = plugin.iface
+
+        self.iface = iface
         self.layerDef = layerDef
         self.creditVisibility = 1 if creditVisibility else 0
 
@@ -715,10 +717,9 @@ class TileLayer(QgsPluginLayer):
 class TileLayerType(QgsPluginLayerType):
     def __init__(self, plugin):
         QgsPluginLayerType.__init__(self, TileLayer.LAYER_TYPE)
-        self.plugin = plugin
 
     def createLayer(self):
-        return TileLayer(self.plugin, TileServiceInfo.createEmptyInfo())
+        return TileLayer(TileServiceInfo.createEmptyInfo())
 
     def showLayerProperties(self, layer):
         from propertiesdialog import PropertiesDialog

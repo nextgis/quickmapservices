@@ -80,6 +80,58 @@ class DataSourceSerializer():
         return ds
 
     @classmethod
+    def read_from_json(cls, json_data):
+        ds = DataSourceInfo()
+
+        # Required
+        ds.id = json_data['id']
+        ds.type = json_data['type']
+
+        ds.group = None
+        ds.alias = json_data['name']
+        ds.icon = None
+
+        # Lic & Terms
+        ds.lic_name = json_data['license_name']
+        ds.lic_link = json_data['license_url']
+        ds.copyright_text = json_data['copyright_text']
+        ds.copyright_link = json_data['copyright_url']
+        ds.terms_of_use = json_data['terms_of_use_url']
+
+        #TMS
+        if ds.type.lower() == KNOWN_DRIVERS.TMS.lower():
+            ds.tms_url = json_data['url']
+            ds.tms_zmin = json_data['z_min']
+            ds.tms_zmax = json_data['z_max']
+            #ds.tms_y_origin_top = json_data['y_origin_top'] #TODO: make it!
+            ds.tms_epsg_crs_id = json_data['epsg']
+            ds.tms_postgis_crs_id = None
+            ds.tms_custom_proj = None
+
+        #WMS
+        if ds.type.lower() == KNOWN_DRIVERS.WMS.lower():
+            ds.wms_url = json_data['url']
+            ds.wms_params = json_data['params']
+            ds.wms_layers = json_data['layers']
+            ds.wms_turn_over = json_data['turn_over']
+            ds.format = json_data['format']
+
+        #WFS
+        if ds.type.lower() == KNOWN_DRIVERS.WFS.lower():
+            ds.wfs_url = json_data['url']
+            # ds.wfs_layers = ConfigReaderHelper.try_read_config(parser, 'wfs', 'layers')
+
+        #GEOJSON
+        if ds.type.lower() == KNOWN_DRIVERS.GEOJSON.lower():
+            ds.geojson_url = json_data['url']
+
+        #internal stuff
+        #ds.file_path = ini_file_path
+        #ds.icon_path = os.path.join(dir_path, ds.icon) if ds.icon else None
+
+        return ds
+
+    @classmethod
     def write_to_ini(cls, ds_info, ini_file_path):
         _to_utf = lambda x: x.encode('utf-8') if isinstance(x, unicode) else x
         config = FixedConfigParser()
