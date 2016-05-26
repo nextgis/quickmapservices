@@ -10,6 +10,7 @@ from supported_drivers import KNOWN_DRIVERS
 from py_tiled_layer.tiles import TileServiceInfo
 from py_tiled_layer.tilelayer import TileLayer
 
+service_layers = []
 
 def tr(message):
     # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
@@ -88,17 +89,17 @@ def add_layer_to_map(ds):
             # Set attribs
             layer.setAttribution(ds.copyright_text)
             layer.setAttributionUrl(ds.copyright_link)
-            # Insert to bottom if wms\tms
+            # Insert layer
+            toc_root = QgsProject.instance().layerTreeRoot()
             if ds.type.lower() in (KNOWN_DRIVERS.WMS.lower(), KNOWN_DRIVERS.TMS.lower()):
-                QgsMapLayerRegistry.instance().addMapLayer(layer, False)
-                toc_root = QgsProject.instance().layerTreeRoot()
-                toc_root.insertLayer(len(toc_root.children()), layer)
+                position = len(toc_root.children())  # Insert to bottom if wms\tms
             else:
-                # insert to top
-                QgsMapLayerRegistry.instance().addMapLayer(layer, True)
+                position = 0  # insert to top
+            QgsMapLayerRegistry.instance().addMapLayer(layer, False)
+            toc_root.insertLayer(position, layer)
 
             # Save link
-            # !!!! self.service_layers.append(layer)
+            service_layers.append(layer)
             # Set OTF CRS Transform for map
             if PluginSettings.enable_otf_3857() and ds.type == KNOWN_DRIVERS.TMS:
                 iface.mapCanvas().setCrsTransformEnabled(True)
