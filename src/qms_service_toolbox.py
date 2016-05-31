@@ -3,12 +3,12 @@ from os import path
 
 from PyQt4 import uic
 from PyQt4.QtGui import QDockWidget, QListWidgetItem, QCursor, QApplication # , QMessageBox
-from PyQt4.QtCore import QThread, pyqtSignal, Qt
+from PyQt4.QtCore import QThread, pyqtSignal, Qt, QTimer
 
 from data_source_serializer import DataSourceSerializer
 from qgis_map_helpers import add_layer_to_map
 from .qms_external_api_python.client import Client
-
+import sys
 
 FORM_CLASS, _ = uic.loadUiType(path.join(
     path.dirname(__file__), 'qms_service_toolbox.ui'))
@@ -25,12 +25,18 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         if hasattr(self.txtSearch, 'setPlaceholderText'):
             self.txtSearch.setPlaceholderText(self.tr("Search string..."))
 
-        self.txtSearch.textChanged.connect(self.start_search)
+        self.delay_timer = QTimer(self)
+        self.delay_timer.setSingleShot(True)
+        self.delay_timer.setInterval(250)
+
+        self.delay_timer.timeout.connect(self.start_search)
+        self.txtSearch.textChanged.connect(self.delay_timer.start)
 
         self.lstSearchResult.itemDoubleClicked.connect(self.result_selected)
 
 
     def start_search(self):
+        print 'start search'
         search_text = unicode(self.txtSearch.text())
         if not search_text:
             self.lstSearchResult.clear()
@@ -109,13 +115,11 @@ class SearchThread(QThread):
         try:
             results = self.searcher.search_geoservices(self.search_text)
         except URLError:
-                        import sys
                         error_text = (self.tr("Network error!\n{0}")).format(unicode(sys.exc_info()[1]))
                         #error_text = 'net'
                         self.error_occurred.emit(error_text)
                         return
         except Exception:
-                        import sys
                         error_text = (self.tr("Error of processing!\n{0}: {1}")).format(unicode(sys.exc_info()[0].__name__), unicode(sys.exc_info()[1]))
                         #error_text = 'common'
                         self.error_occurred.emit(error_text)
