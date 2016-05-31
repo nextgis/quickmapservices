@@ -17,7 +17,9 @@ mkdir $BUILD_DIR/$PLUGIN_NAME
 cp -R ./src/* $BUILD_DIR/$PLUGIN_NAME
 
 #Clean
-rm $BUILD_DIR/$PLUGIN_NAME/*.pyc
+find $BUILD_DIR/$PLUGIN_NAME -name "*.pyc" -type f -delete
+find $BUILD_DIR/$PLUGIN_NAME -name "*.pyo" -type f -delete
+
 
 #Remove Contrib
 rm -R $BUILD_DIR/$PLUGIN_NAME/data_sources_contrib
