@@ -113,10 +113,12 @@ class SearchThread(QThread):
                         error_text = (self.tr("Network error!\n{0}")).format(unicode(sys.exc_info()[1]))
                         #error_text = 'net'
                         self.error_occurred.emit(error_text)
+                        return
         except Exception:
                         import sys
                         error_text = (self.tr("Error of processing!\n{0}: {1}")).format(unicode(sys.exc_info()[0].__name__), unicode(sys.exc_info()[1]))
                         #error_text = 'common'
                         self.error_occurred.emit(error_text)
+                        return
 
         self.data_downloaded.emit(results)
