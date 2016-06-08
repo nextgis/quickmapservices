@@ -21,7 +21,7 @@
     <item>
      <widget class="QgsFilterLineEdit" name="txtSearch">
       <property name="toolTip">
-       <string>Enter address for geocoding</string>
+       <string>Enter part of service's name</string>
       </property>
      </widget>
     </item>
