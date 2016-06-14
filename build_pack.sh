@@ -19,6 +19,9 @@ cp -R ./src/* $BUILD_DIR/$PLUGIN_NAME
 #Clean
 find $BUILD_DIR/$PLUGIN_NAME -name "*.pyc" -type f -delete
 find $BUILD_DIR/$PLUGIN_NAME -name "*.pyo" -type f -delete
+find $BUILD_DIR/$PLUGIN_NAME -name ".git" -type f -delete
+find $BUILD_DIR/$PLUGIN_NAME -name ".gitignore" -type f -delete
+
 
 
 #Remove Contrib
