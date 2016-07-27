@@ -14,7 +14,7 @@ about=Convenient list of basemaps. Easy to add as a layer, easy to create new ba
 
 # Uncomment the following line and add your changelog:
 changelog=0.17.4
-        * Fix qgis hanging when service searching
+        * Fix qgis hanging when searching for a service
       0.17.3:
         * Fix errors
         * Remove PIL from requirements
