@@ -103,7 +103,7 @@ class DataSourceSerializer():
             ds.tms_url = json_data['url']
             ds.tms_zmin = json_data['z_min']
             ds.tms_zmax = json_data['z_max']
-            #ds.tms_y_origin_top = json_data['y_origin_top'] #TODO: make it!
+            ds.tms_y_origin_top = json_data.get('y_origin_top')
             ds.tms_epsg_crs_id = json_data['epsg']
             ds.tms_postgis_crs_id = None
             ds.tms_custom_proj = None
