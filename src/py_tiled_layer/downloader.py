@@ -51,7 +51,7 @@ class Downloader(QObject):
         self.timer.timeout.connect(self.fetchTimedOut)
 
         # network settings
-        self.userAgent = "Mozilla/5.0"
+        self.userAgent = "QuickMapServices tile layer (+https://github.com/nextgis/quickmapservices)"
         self.max_connection = 4
         self.default_cache_expiration = 24
         self.errorStatus = Downloader.NO_ERROR
