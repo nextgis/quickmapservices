@@ -14,7 +14,7 @@ about=Convenient list of basemaps. Easy to add as a layer, easy to create new ba
 
 # Uncomment the following line and add your changelog:
 changelog=
-      0.17.6
+      0.17.8
         * Fix saving and restoring grayscale parameter of a basemap with a project
         * Fix saving and restoring TMS services
         * Add custom user-agent (required for OSM tile servers)
