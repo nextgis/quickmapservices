@@ -598,7 +598,7 @@ class TileLayer(QgsPluginLayer):
         self.setBlendModeByName(self.customProperty("blendMode", LayerDefaultSettings.BLEND_MODE))
         self.setSmoothRender(int(self.customProperty("smoothRender", LayerDefaultSettings.SMOOTH_RENDER)))
         self.creditVisibility = int(self.customProperty("creditVisibility", 1))
-        self.setGrayscaleRender(int(self.customProperty("grascaleRender", LayerDefaultSettings.GRAYSCALE_RENDER)))
+        self.setGrayscaleRender(int(self.customProperty("grayscaleRender", LayerDefaultSettings.GRAYSCALE_RENDER)))
         self.setBrigthness(int(self.customProperty("brigthness", LayerDefaultSettings.BRIGTNESS)))
         self.setContrast(float(self.customProperty("contrast", LayerDefaultSettings.CONTRAST)))
 
