@@ -225,7 +225,7 @@ class QuickMapServices:
         icon_settings_path = self.plugin_dir + '/icons/mapservices.png'
         server_panel_act = self.server_toolbox.toggleViewAction()
         server_panel_act.setIcon(QIcon(icon_settings_path))
-        server_panel_act.setText(self.tr('Show\\Hide services panel'))
+        server_panel_act.setText(self.tr('Search QMS'))
         self.service_actions.append(server_panel_act)
         self.menu.addAction(server_panel_act)
 

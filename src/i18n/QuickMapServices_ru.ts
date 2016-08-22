@@ -695,8 +695,8 @@ The previous settings will be overwritten!</source>
     </message>
     <message>
         <location filename="quick_map_services.py" line="228"/>
-        <source>Show\Hide services panel</source>
-        <translation>Показать\Скрыть панель сервисов</translation>
+        <source>Search QMS</source>
+        <translation>Поиск в QMS</translation>
     </message>
 </context>
 <context>

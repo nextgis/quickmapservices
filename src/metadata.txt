@@ -2,7 +2,7 @@
 name=QuickMapServices
 qgisMinimumVersion=2.4
 description=Collection of easy to add basemaps
-version=0.17.5
+version=0.17.7
 author=NextGIS
 email=info@nextgis.com
 about=Convenient list of basemaps. Easy to add as a layer, easy to create new basemaps and edit. Please leave feedback in issues and contribute new services!
