@@ -115,7 +115,7 @@ class TileLayer(QgsPluginLayer):
         if layerDef.bbox:
             self.setExtent(BoundingBox.degreesToMercatorMeters(layerDef.bbox).toQgsRectangle())
         else:
-            self.setExtent(QgsRectangle(-layerDef.TSIZE1, -layerDef.TSIZE1, layerDef.TSIZE1, layerDef.TSIZE1))
+            self.setExtent(QgsRectangle(-layerDef.tsize1, -layerDef.tsize1, layerDef.tsize1, layerDef.tsize1))
         self.setValid(True)
         self.tiles = None
         self.useLastZoomForPrint = False
@@ -188,7 +188,7 @@ class TileLayer(QgsPluginLayer):
         isDpiEqualToCanvas = painter.device().logicalDpiX() == mapSettings.outputDpi()
         if isDpiEqualToCanvas or not self.useLastZoomForPrint:
             # calculate zoom level
-            tile_mpp1 = self.layerDef.TSIZE1 / self.layerDef.TILE_SIZE
+            tile_mpp1 = self.layerDef.tsize1 / self.layerDef.TILE_SIZE / self.layerDef.xTilesAtZmin() # should be attribute, not method call..
             viewport_mpp = extent.width() / painter.viewport().width()
             lg = math.log(float(tile_mpp1) / float(viewport_mpp), 2)
             zoom = int(math.modf(lg)[1]) + 1*(math.modf(lg)[0] > self.CHANGE_SCALE_VALUE) + 1
@@ -208,12 +208,20 @@ class TileLayer(QgsPluginLayer):
 
         while True:
             # calculate tile range (yOrigin is top)
-            size = self.layerDef.TSIZE1 / 2 ** (zoom - 1)
-            matrixSize = 2 ** zoom
-            ulx = max(0, int((extent.xMinimum() + self.layerDef.TSIZE1) / size))
-            uly = max(0, int((self.layerDef.TSIZE1 - extent.yMaximum()) / size))
-            lrx = min(int((extent.xMaximum() + self.layerDef.TSIZE1) / size), matrixSize - 1)
-            lry = min(int((self.layerDef.TSIZE1 - extent.yMinimum()) / size), matrixSize - 1)
+            if self.layerDef.custom_tile_ranges is None: # should add xOffset & yOffset in first part of conditional
+                size = self.layerDef.tsize1 / 2 ** (zoom - 1)
+                matrixSize = 2 ** zoom
+                ulx = max(0, int((extent.xMinimum() + self.layerDef.tsize1) / size))
+                uly = max(0, int((self.layerDef.tsize1 - extent.yMaximum()) / size))
+                lrx = min(int((extent.xMaximum() + self.layerDef.tsize1) / size), matrixSize - 1)
+                lry = min(int((self.layerDef.tsize1 - extent.yMinimum()) / size), matrixSize - 1)
+            else: # for custom_tile_ranges
+                size = self.layerDef.tsize1 / 2 ** zoom
+                xmin, xmax, ymin, ymax = self.layerDef.custom_tile_ranges[zoom]
+                ulx = max(int((extent.xMinimum() - self.layerDef.originX)/ size), xmin)
+                uly = max(int((self.layerDef.originY - extent.yMaximum())/ size), ymin)
+                lrx = min(int((extent.xMaximum() - self.layerDef.originX)/ size), xmax)
+                lry = min(int((self.layerDef.originY - extent.yMinimum())/ size), ymax)
 
             # bounding box limit
             if self.layerDef.bbox:
