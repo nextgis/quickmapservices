@@ -116,7 +116,7 @@ class Tiles:
 
     def extent(self):
         size = self.tsize1 / 2 ** (self.zoom - 1)
-        if self.serviceInfo.custom_tile_ranges is None:
+        if self.serviceInfo.tile_ranges is None:
             return QgsRectangle(self.xmin * size - self.tsize1, self.tsize1 - (self.ymax + 1) * size,
                                 (self.xmax + 1) * size - self.tsize1, self.tsize1 - self.ymin * size)
         else:
@@ -131,7 +131,7 @@ class TileServiceInfo:
 
     def __init__(self, title, credit, serviceUrl, yOriginTop=1, zmin=TileDefaultSettings.ZMIN,
                  zmax=TileDefaultSettings.ZMAX, bbox=None, epsg_crs_id=None, postgis_crs_id=None,
-                 custom_proj=None, custom_tile_ranges=None, tsize1=R * math.pi, originX= -R * math.pi, originY = R * math.pi):
+                 custom_proj=None, tile_ranges=None, tsize1=R * math.pi, originX= -R * math.pi, originY = R * math.pi):
         self.title = title
         self.credit = credit
         self.serviceUrl = serviceUrl
@@ -143,7 +143,7 @@ class TileServiceInfo:
         self.postgis_crs_id = postgis_crs_id
         self.custom_proj = custom_proj
         self.tsize1 = tsize1
-        self.custom_tile_ranges = custom_tile_ranges
+        self.tile_ranges = tile_ranges
         self.originX = originX
         self.originY = originY
 

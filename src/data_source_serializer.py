@@ -47,10 +47,10 @@ class DataSourceSerializer():
         ds.tms_epsg_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'epsg_crs_id')
         ds.tms_postgis_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'postgis_crs_id')
         ds.tms_custom_proj = ConfigReaderHelper.try_read_config(parser, 'tms', 'custom_proj')
-        ds.tms_custom_tile_ranges = ConfigReaderHelper.try_read_config(parser, 'tms', 'custom_tile_ranges')
-        ds.tms_custom_tsize1 = ConfigReaderHelper.try_read_config_float(parser, 'tms', 'custom_tsize1')
-        ds.tms_custom_origin_x = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'custom_origin_x')
-        ds.tms_custom_origin_y = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'custom_origin_y')
+        ds.tms_tile_ranges = ConfigReaderHelper.try_read_config(parser, 'tms', 'tile_ranges')
+        ds.tms_tsize1 = ConfigReaderHelper.try_read_config_float(parser, 'tms', 'tsize1')
+        ds.tms_origin_x = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'origin_x')
+        ds.tms_origin_y = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'origin_y')
 
         #WMS
         ds.wms_url = ConfigReaderHelper.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))
@@ -176,10 +176,10 @@ class DataSourceSerializer():
                 config.set('tms', 'postgis_crs_id', ds_info.tms_postgis_crs_id)
             if ds_info.tms_custom_proj:
                 config.set('tms', 'custom_proj', ds_info.tms_custom_proj)
-            config.set('tms', 'custom_tile_ranges', ds_info.tms_custom_tile_ranges)
-            config.set('tms', 'custom_tsize1', ds_info.tms_custom_tsize1)
-            config.set('tms', 'custom_origin_x', ds_info.tms_custom_origin_x)
-            config.set('tms', 'custom_origin_y', ds_info.tms_custom_origin_y)
+            config.set('tms', 'tile_ranges', ds_info.tms_tile_ranges)
+            config.set('tms', 'tsize1', ds_info.tms_tsize1)
+            config.set('tms', 'origin_x', ds_info.tms_origin_x)
+            config.set('tms', 'origin_y', ds_info.tms_origin_y)
 
         if ds_info.type == KNOWN_DRIVERS.WMS:
             config.set('wms', 'url', ds_info.wms_url)

@@ -115,9 +115,9 @@ class TileLayer(QgsPluginLayer):
         if layerDef.bbox:
             self.setExtent(BoundingBox.degreesToMercatorMeters(layerDef.bbox).toQgsRectangle())
         else:
-            if self.layerDef.custom_tile_ranges is not None:
-                zmin = sorted(self.layerDef.custom_tile_ranges.keys())[0]
-                tbbox = self.layerDef.custom_tile_ranges[zmin]
+            if self.layerDef.tile_ranges is not None:
+                zmin = sorted(self.layerDef.tile_ranges.keys())[0]
+                tbbox = self.layerDef.tile_ranges[zmin]
 
                 size = self.layerDef.tsize1 / 2**(zmin - 1)
                 xmin = self.layerDef.originX + tbbox[0] * size
@@ -231,14 +231,14 @@ class TileLayer(QgsPluginLayer):
         while True:
             # calculate tile range (yOrigin is top)
             size = self.layerDef.tsize1 / 2 ** (zoom - 1)
-            if self.layerDef.custom_tile_ranges is None: # should add xOffset & yOffset in first part of conditional
+            if self.layerDef.tile_ranges is None: # should add xOffset & yOffset in first part of conditional
                 matrixSize = 2 ** zoom
                 ulx = max(0, int((extent.xMinimum() + self.layerDef.tsize1) / size))
                 uly = max(0, int((self.layerDef.tsize1 - extent.yMaximum()) / size))
                 lrx = min(int((extent.xMaximum() + self.layerDef.tsize1) / size), matrixSize - 1)
                 lry = min(int((self.layerDef.tsize1 - extent.yMinimum()) / size), matrixSize - 1)
-            else: # for custom_tile_ranges
-                xmin, xmax, ymin, ymax = self.layerDef.custom_tile_ranges[zoom]
+            else: # for tile_ranges
+                xmin, xmax, ymin, ymax = self.layerDef.tile_ranges[zoom]
 
                 ulx = max(int((extent.xMinimum() - self.layerDef.originX)/ size), xmin)
                 uly = max(int((self.layerDef.originY - extent.yMaximum())/ size), ymin)

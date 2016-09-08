@@ -31,14 +31,14 @@ def add_layer_to_map(ds):
         service_info.postgis_crs_id = ds.tms_postgis_crs_id
         service_info.custom_proj = ds.tms_custom_proj
 
-        if ds.tms_custom_tile_ranges is not None: # needs try block & checks that keys are integers etc..
-            service_info.custom_tile_ranges = ast.literal_eval(ds.tms_custom_tile_ranges)
-        if ds.tms_custom_tsize1 is not None:
-            service_info.tsize1 = ds.tms_custom_tsize1
-        if ds.tms_custom_origin_x is not None:
-            service_info.originX = ds.tms_custom_origin_x
-        if ds.tms_custom_origin_y is not None:
-            service_info.originY = ds.tms_custom_origin_y
+        if ds.tms_tile_ranges is not None: # needs try block & checks that keys are integers etc..
+            service_info.tile_ranges = ast.literal_eval(ds.tms_tile_ranges)
+        if ds.tms_tsize1 is not None:
+            service_info.tsize1 = ds.tms_tsize1
+        if ds.tms_origin_x is not None:
+            service_info.originX = ds.tms_origin_x
+        if ds.tms_origin_y is not None:
+            service_info.originY = ds.tms_origin_y
 
         layer = TileLayer(service_info, False)
         layers4add.append(layer)
