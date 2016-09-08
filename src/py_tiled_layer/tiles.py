@@ -115,14 +115,13 @@ class Tiles:
         return image
 
     def extent(self):
+        size = self.tsize1 / 2 ** (self.zoom - 1)
         if self.serviceInfo.custom_tile_ranges is None:
-            size = self.tsize1 / 2 ** (self.zoom - 1)
             return QgsRectangle(self.xmin * size - self.tsize1, self.tsize1 - (self.ymax + 1) * size,
                                 (self.xmax + 1) * size - self.tsize1, self.tsize1 - self.ymin * size)
         else:
             originX = self.serviceInfo.originX
             originY = self.serviceInfo.originY
-            size = self.tsize1 / 2 ** self.zoom
             return QgsRectangle(originX + self.xmin * size, originY - (self.ymax + 1) * size,
                                 originX + (self.xmax + 1) * size, originY - self.ymin * size)
 
@@ -147,15 +146,6 @@ class TileServiceInfo:
         self.custom_tile_ranges = custom_tile_ranges
         self.originX = originX
         self.originY = originY
-
-    def xTilesAtZmin(self):
-        tranges = self.custom_tile_ranges
-        if tranges is None:
-            return 1 # non-custom tile scheme has 1 tile at zmin
-        else:
-            zmin = sorted(list(tranges.keys()))[0]
-            xmax, xmin = tranges[zmin][-1], tranges[zmin][-2]
-            return xmax - xmin + 1
 
     def tileUrl(self, zoom, x, y):
         if not self.yOriginTop:

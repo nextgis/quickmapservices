@@ -1,3 +1,4 @@
+import ast
 import urlparse
 
 from PyQt4.QtCore import QCoreApplication
@@ -28,6 +29,7 @@ def add_layer_to_map(ds):
             service_info.yOriginTop = ds.tms_y_origin_top
         service_info.epsg_crs_id = ds.tms_epsg_crs_id
         service_info.postgis_crs_id = ds.tms_postgis_crs_id
+        service_info.custom_proj = ds.tms_custom_proj
 
         if ds.tms_custom_tile_ranges is not None: # needs try block & checks that keys are integers etc..
             service_info.custom_tile_ranges = ast.literal_eval(ds.tms_custom_tile_ranges)
@@ -38,7 +40,6 @@ def add_layer_to_map(ds):
         if ds.tms_custom_origin_y is not None:
             service_info.originY = ds.tms_custom_origin_y
 
-        service_info.custom_proj = ds.tms_custom_proj
         layer = TileLayer(service_info, False)
         layers4add.append(layer)
     if ds.type.lower() == KNOWN_DRIVERS.GDAL.lower():

@@ -23,7 +23,6 @@
 import os.path
 import urlparse
 import xml.etree.ElementTree as ET
-import ast
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
 from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog
@@ -115,7 +114,6 @@ class QuickMapServices:
         icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
         self.menu = QMenu(self.tr(u'QuickMapServices'))
         self.menu.setIcon(QIcon(icon_path))
-
         self.init_server_panel()
 
         self.build_menu_tree()
@@ -171,7 +169,6 @@ class QuickMapServices:
     def insert_layer(self):
         action = self.menu.sender()
         ds = action.data()
-
         add_layer_to_map(ds)
 
     def unload(self):
