@@ -84,7 +84,7 @@ class Tiles:
         self.xmax = xmax
         self.ymax = ymax
         self.TILE_SIZE = serviceInfo.TILE_SIZE
-        self.TSIZE1 = serviceInfo.TSIZE1
+        self.tsize1 = serviceInfo.tsize1
         self.yOriginTop = serviceInfo.yOriginTop
         self.serviceInfo = serviceInfo
         self.tiles = {}
@@ -115,17 +115,23 @@ class Tiles:
         return image
 
     def extent(self):
-        size = self.TSIZE1 / 2 ** (self.zoom - 1)
-        return QgsRectangle(self.xmin * size - self.TSIZE1, self.TSIZE1 - (self.ymax + 1) * size,
-                            (self.xmax + 1) * size - self.TSIZE1, self.TSIZE1 - self.ymin * size)
-
+        size = self.tsize1 / 2 ** (self.zoom - 1)
+        if self.serviceInfo.custom_tile_ranges is None:
+            return QgsRectangle(self.xmin * size - self.tsize1, self.tsize1 - (self.ymax + 1) * size,
+                                (self.xmax + 1) * size - self.tsize1, self.tsize1 - self.ymin * size)
+        else:
+            originX = self.serviceInfo.originX
+            originY = self.serviceInfo.originY
+            return QgsRectangle(originX + self.xmin * size, originY - (self.ymax + 1) * size,
+                                originX + (self.xmax + 1) * size, originY - self.ymin * size)
 
 class TileServiceInfo:
     TILE_SIZE = 256
-    TSIZE1 = 20037508.342789244
+    # TSIZE1 = 20037508.342789244 # (R * math.pi)
 
     def __init__(self, title, credit, serviceUrl, yOriginTop=1, zmin=TileDefaultSettings.ZMIN,
-                 zmax=TileDefaultSettings.ZMAX, bbox=None, epsg_crs_id=None, postgis_crs_id=None, custom_proj=None):
+                 zmax=TileDefaultSettings.ZMAX, bbox=None, epsg_crs_id=None, postgis_crs_id=None,
+                 custom_proj=None, custom_tile_ranges=None, tsize1=R * math.pi, originX= -R * math.pi, originY = R * math.pi):
         self.title = title
         self.credit = credit
         self.serviceUrl = serviceUrl
@@ -136,6 +142,10 @@ class TileServiceInfo:
         self.epsg_crs_id = epsg_crs_id
         self.postgis_crs_id = postgis_crs_id
         self.custom_proj = custom_proj
+        self.tsize1 = tsize1
+        self.custom_tile_ranges = custom_tile_ranges
+        self.originX = originX
+        self.originY = originY
 
     def tileUrl(self, zoom, x, y):
         if not self.yOriginTop:
@@ -160,15 +170,15 @@ class TileServiceInfo:
         return self.serviceUrl.replace("{z}", str(zoom)).replace("{x}", str(x)).replace("{y}", str(y))
 
     def getTileRect(self, zoom, x, y):
-        size = self.TSIZE1 / 2 ** (zoom - 1)
-        return QgsRectangle(x * size - self.TSIZE1, self.TSIZE1 - y * size, (x + 1) * size - self.TSIZE1,
-                            self.TSIZE1 - (y + 1) * size)
+        size = self.tsize1 / 2 ** (zoom - 1)
+        return QgsRectangle(x * size - self.tsize1, self.tsize1 - y * size, (x + 1) * size - self.tsize1,
+                            self.tsize1 - (y + 1) * size)
 
     def degreesToTile(self, zoom, lon, lat):
         x, y = degreesToMercatorMeters(lon, lat)
-        size = self.TSIZE1 / 2 ** (zoom - 1)
-        tx = int((x + self.TSIZE1) / size)
-        ty = int((self.TSIZE1 - y) / size)
+        size = self.tsize1 / 2 ** (zoom - 1)
+        tx = int((x + self.tsize1) / size)
+        ty = int((self.tsize1 - y) / size)
         return tx, ty
 
     def bboxDegreesToTileRange(self, zoom, bbox):

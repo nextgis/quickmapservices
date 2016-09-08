@@ -114,8 +114,8 @@ class QuickMapServices:
         icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
         self.menu = QMenu(self.tr(u'QuickMapServices'))
         self.menu.setIcon(QIcon(icon_path))
-        
         self.init_server_panel()
+
         self.build_menu_tree()
 
         # add to QGIS menu/toolbars
@@ -171,7 +171,6 @@ class QuickMapServices:
         ds = action.data()
         add_layer_to_map(ds)
 
-
     def unload(self):
         # remove menu/panels
         self.remove_menu_buttons()
@@ -198,7 +197,7 @@ class QuickMapServices:
         data_sources.sort(key=lambda x: x.alias or x.id)
 
         ds_hide_list = PluginSettings.get_hide_ds_id_list()
-        
+
         for ds in data_sources:
             if ds.id in ds_hide_list:
                 continue

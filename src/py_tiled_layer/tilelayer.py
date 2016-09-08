@@ -115,7 +115,30 @@ class TileLayer(QgsPluginLayer):
         if layerDef.bbox:
             self.setExtent(BoundingBox.degreesToMercatorMeters(layerDef.bbox).toQgsRectangle())
         else:
-            self.setExtent(QgsRectangle(-layerDef.TSIZE1, -layerDef.TSIZE1, layerDef.TSIZE1, layerDef.TSIZE1))
+            if self.layerDef.custom_tile_ranges is not None:
+                zmin = sorted(self.layerDef.custom_tile_ranges.keys())[0]
+                tbbox = self.layerDef.custom_tile_ranges[zmin]
+
+                size = self.layerDef.tsize1 / 2**(zmin - 1)
+                xmin = self.layerDef.originX + tbbox[0] * size
+                xmax = self.layerDef.originX + (tbbox[1] + 1) * size
+                ymin = self.layerDef.originY - (tbbox[3] + 1) * size
+                ymax = self.layerDef.originY - tbbox[2] * size
+            else:
+                xmin = -layerDef.tsize1
+                ymin = -layerDef.tsize1
+                xmax = layerDef.tsize1
+                ymax = layerDef.tsize1
+
+            self.setExtent(
+                QgsRectangle(
+                    xmin,
+                    ymin,
+                    xmax,
+                    ymax,
+                )
+            )
+
         self.setValid(True)
         self.tiles = None
         self.useLastZoomForPrint = False
@@ -174,7 +197,6 @@ class TileLayer(QgsPluginLayer):
         self.contrast = contrast
         self.setCustomProperty("contrast", contrast)
 
-
     def draw(self, renderContext):
 
         self.renderContext = renderContext
@@ -188,7 +210,7 @@ class TileLayer(QgsPluginLayer):
         isDpiEqualToCanvas = painter.device().logicalDpiX() == mapSettings.outputDpi()
         if isDpiEqualToCanvas or not self.useLastZoomForPrint:
             # calculate zoom level
-            tile_mpp1 = self.layerDef.TSIZE1 / self.layerDef.TILE_SIZE
+            tile_mpp1 = self.layerDef.tsize1 / self.layerDef.TILE_SIZE # should be attribute, not method call..
             viewport_mpp = extent.width() / painter.viewport().width()
             lg = math.log(float(tile_mpp1) / float(viewport_mpp), 2)
             zoom = int(math.modf(lg)[1]) + 1*(math.modf(lg)[0] > self.CHANGE_SCALE_VALUE) + 1
@@ -208,12 +230,20 @@ class TileLayer(QgsPluginLayer):
 
         while True:
             # calculate tile range (yOrigin is top)
-            size = self.layerDef.TSIZE1 / 2 ** (zoom - 1)
-            matrixSize = 2 ** zoom
-            ulx = max(0, int((extent.xMinimum() + self.layerDef.TSIZE1) / size))
-            uly = max(0, int((self.layerDef.TSIZE1 - extent.yMaximum()) / size))
-            lrx = min(int((extent.xMaximum() + self.layerDef.TSIZE1) / size), matrixSize - 1)
-            lry = min(int((self.layerDef.TSIZE1 - extent.yMinimum()) / size), matrixSize - 1)
+            size = self.layerDef.tsize1 / 2 ** (zoom - 1)
+            if self.layerDef.custom_tile_ranges is None: # should add xOffset & yOffset in first part of conditional
+                matrixSize = 2 ** zoom
+                ulx = max(0, int((extent.xMinimum() + self.layerDef.tsize1) / size))
+                uly = max(0, int((self.layerDef.tsize1 - extent.yMaximum()) / size))
+                lrx = min(int((extent.xMaximum() + self.layerDef.tsize1) / size), matrixSize - 1)
+                lry = min(int((self.layerDef.tsize1 - extent.yMinimum()) / size), matrixSize - 1)
+            else: # for custom_tile_ranges
+                xmin, xmax, ymin, ymax = self.layerDef.custom_tile_ranges[zoom]
+
+                ulx = max(int((extent.xMinimum() - self.layerDef.originX)/ size), xmin)
+                uly = max(int((self.layerDef.originY - extent.yMaximum())/ size), ymin)
+                lrx = min(int((extent.xMaximum() - self.layerDef.originX)/ size), xmax)
+                lry = min(int((self.layerDef.originY - extent.yMinimum())/ size), ymax)
 
             # bounding box limit
             if self.layerDef.bbox:
