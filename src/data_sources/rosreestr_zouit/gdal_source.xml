@@ -1,6 +1,6 @@
 <GDAL_WMS>
     <Service name="AGS">
-        <ServerUrl>http://maps.rosreestr.ru/arcgis/rest/services/Cadastre/ZOUIT/MapServer</ServerUrl>
+        <ServerUrl>http://pkk5.rosreestr.ru/arcgis/rest/services/Cadastre/ZONES/MapServer</ServerUrl>
         <ImageFormat>png32</ImageFormat>
         <Transparent>true</Transparent>
         <ImageSR>102100</ImageSR>
