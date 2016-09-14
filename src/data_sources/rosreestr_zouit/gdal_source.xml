@@ -4,7 +4,7 @@
         <ImageFormat>png32</ImageFormat>
         <Transparent>true</Transparent>
         <ImageSR>102100</ImageSR>
-        <Layers></Layers>
+        <Layers>show:0,1,2</Layers>
         <BBoxOrder>xyXY</BBoxOrder>
     </Service>
     <DataWindow>
