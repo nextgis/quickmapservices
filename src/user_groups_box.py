@@ -3,9 +3,10 @@ import os
 import shutil
 
 import sys
-from PyQt4 import uic
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QTableView, QHeaderView
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QVBoxLayout, QTableView, QHeaderView
+from qgis.PyQt.QtGui import QIcon
 
 from .groups_list import GroupsList, USER_GROUP_PATHS
 from .group_edit_dialog import GroupEditDialog
@@ -14,7 +15,14 @@ from .data_sources_model import DSManagerModel
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_groups_box.ui'))
 
-plugin_dir = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
+
+encoding = sys.getfilesystemencoding()
+try:
+    filename = unicode(__file__, encoding)
+except TypeError:
+    filename = __file__
+plugin_dir = os.path.dirname(filename)
+
 
 class UserGroupsBox(QGroupBox, FORM_CLASS):
 

@@ -3,15 +3,21 @@ import os
 import shutil
 
 import sys
-from PyQt4 import uic
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QTreeView, QHeaderView
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QVBoxLayout, QTreeView, QHeaderView
+from qgis.PyQt.QtGui import QIcon
 
 from .data_sources_list import DataSourcesList, USER_DS_PATHS
 from .ds_edit_dialog import DsEditDialog
 from .data_sources_model import DSManagerModel
 
-plugin_dir = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
+encoding = sys.getfilesystemencoding()
+try:
+    filename = unicode(__file__, encoding)
+except TypeError:
+    filename = __file__
+plugin_dir = os.path.dirname(filename)
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_services_box.ui'))

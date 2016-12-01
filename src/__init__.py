@@ -21,6 +21,8 @@
  ***************************************************************************/
  This script initializes the plugin, making it known to QGIS.
 """
+import os
+import qgis.utils
 
 
 # noinspection PyPep8Naming
@@ -30,6 +32,31 @@ def classFactory(iface):  # pylint: disable=invalid-name
     :param iface: A QGIS interface instance.
     :type iface: QgsInterface
     """
-    #
+
+    plugin_name = os.path.dirname(__file__).split(os.path.sep)[-1]
+    plugin_name = qgis.utils.pluginMetadata(plugin_name, 'name')
+    try:
+        # qgis.PyQt is available in QGIS >=2.14
+        from qgis.PyQt.QtCore import qVersion
+        # qgis.utils.QGis is available in QGIS < 3
+        if hasattr(qgis.utils, 'QGis'):
+            import qgis2compat.apicompat
+            qgis2compat.log('apicompat used in %s' % plugin_name)
+    except ImportError:
+        try:
+            # we are in QGIS < 2.14
+            import qgis2compat
+            import qgis2compat.apicompat
+            qgis2compat.log('PyQt and apicompat used in %s' % plugin_name)
+        except ImportError:
+            import traceback
+            message = ('The Plugin %s uses the QGIS2compat plugin. '
+                       'Please install it with the plugin manager it and '
+                       'restart QGIS. For more information read '
+                       'http://opengis.ch/qgis2compat' %
+                       plugin_name)
+            traceback.print_exc()
+            raise ImportError(message)
+
     from .quick_map_services import QuickMapServices
     return QuickMapServices(iface)

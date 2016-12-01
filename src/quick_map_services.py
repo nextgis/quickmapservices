@@ -24,12 +24,13 @@ from __future__ import absolute_import
 import os.path
 import xml.etree.ElementTree as ET
 
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt, QUrl
-from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog, QDesktopServices
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt, QUrl
+from qgis.PyQt.QtWidgets import QAction, QToolButton, QMenu, QMessageBox, QDialog
+from qgis.PyQt.QtGui import QIcon, QDesktopServices
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
-from qgis.core import QgsProject, QgsPluginLayerRegistry
+from qgis.core import QgsProject, QgsApplication
 from qgis.gui import QgsMessageBar
 import sys
 from .extra_sources import ExtraSources
@@ -60,7 +61,13 @@ class QuickMapServices(object):
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
-        self.plugin_dir = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
+
+        encoding = sys.getfilesystemencoding()
+        try:
+            filename = unicode(__file__, encoding)
+        except TypeError:
+            filename = __file__
+        self.plugin_dir = os.path.dirname(filename)
 
         # initialize locale
         self.translator = QTranslator()
@@ -108,7 +115,7 @@ class QuickMapServices(object):
 
         # Register plugin layer type
         self.tileLayerType = TileLayerType(self)
-        QgsPluginLayerRegistry.instance().addPluginLayerType(self.tileLayerType)
+        QgsApplication.pluginLayerRegistry().addPluginLayerType(self.tileLayerType)
 
         # Create menu
         icon_path = self.plugin_dir + '/icons/mActionAddLayer.svg'
@@ -184,7 +191,7 @@ class QuickMapServices(object):
         self.groups_list = None
         self.service_layers = None
         # Unregister plugin layer type
-        QgsPluginLayerRegistry.instance().removePluginLayerType(TileLayer.LAYER_TYPE)
+        QgsApplication.pluginLayerRegistry().removePluginLayerType(TileLayer.LAYER_TYPE)
 
     def build_menu_tree(self):
         # Main Menu
@@ -194,7 +201,7 @@ class QuickMapServices(object):
         self.ds_list = DataSourcesList()
 
         data_sources = self.ds_list.data_sources.values()
-        data_sources.sort(key=lambda x: x.alias or x.id)
+        data_sources = sorted(data_sources, key=lambda x: x.alias or x.id)
 
         ds_hide_list = PluginSettings.get_hide_ds_id_list()
 

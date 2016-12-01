@@ -10,6 +10,7 @@
         copyright            : (C) 2014 by NextGIS
         email                : info@nextgis.com
  ***************************************************************************/
+
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *

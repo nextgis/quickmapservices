@@ -24,8 +24,9 @@ from __future__ import absolute_import
 import codecs
 import os
 import sys
-from PyQt4.QtCore import QCoreApplication
-from PyQt4.QtGui import QMenu, QIcon
+from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtWidgets import QMenu
+from qgis.PyQt.QtGui import QIcon
 from qgis.core import QgsMessageLog
 from .config_reader_helper import ConfigReaderHelper
 from . import extra_sources
@@ -34,7 +35,12 @@ from .group_info import GroupInfo, GroupCategory
 from .locale import Locale
 from .compat import configparser
 
-CURR_PATH = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
+encoding = sys.getfilesystemencoding()
+try:
+    filename = unicode(__file__, encoding)
+except TypeError:
+    filename = __file__
+CURR_PATH = os.path.dirname(filename)
 
 INTERNAL_GROUP_PATHS = [os.path.join(CURR_PATH, extra_sources.GROUPS_DIR_NAME), ]
 CONTRIBUTE_GROUP_PATHS = [os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.GROUPS_DIR_NAME), ]

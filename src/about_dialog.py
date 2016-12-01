@@ -22,8 +22,11 @@
 """
 import os
 
-from PyQt4 import uic
-from PyQt4.QtGui import QDialog, QDialogButtonBox, QPixmap
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
+from qgis.PyQt.QtGui import QPixmap
+
+from .compat import configparser
 
 from .compat import configparser
 
@@ -47,7 +50,9 @@ class AboutDialog(QDialog, FORM_CLASS):
         cfg.read(os.path.join(os.path.dirname(__file__), 'metadata.txt'))
         version = cfg.get('general', 'version')
 
-        self.lblVersion.setText(self.tr('Version: %s') % (version))
+        # TODO: Fix!
+        # self.lblVersion.setText(self.tr('Version: %s') % (version))
+        self.lblVersion.setText(('Version: %s') % (version))
 
         self.tbInfo.setHtml(self.get_about_text())
         self.tbLicense.setPlainText(self.get_license_text())

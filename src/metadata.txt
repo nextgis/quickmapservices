@@ -1,6 +1,7 @@
 [general]
 name=QuickMapServices
 qgisMinimumVersion=2.4
+qgisMaximumVersion=3.99
 description=Collection of easy to add basemaps
 version=0.19.2
 author=NextGIS

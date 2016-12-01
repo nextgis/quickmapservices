@@ -22,8 +22,8 @@
 """
 import ast
 
-from PyQt4.QtCore import QSettings, QDir, Qt, QByteArray
-from qgis.core import QGis
+from qgis.PyQt.QtCore import QSettings, QDir, Qt, QByteArray
+from qgis.core import Qgis
 
 
 class PluginSettings(object):
@@ -145,7 +145,7 @@ class PluginSettings(object):
 
     @classmethod
     def use_native_tms(cls):
-        if QGis.QGIS_VERSION_INT >= 21808:
+        if Qgis.QGIS_VERSION_INT >= 21808:
             return cls.get_settings().value('tile_layer/use_native_tms', False, bool)
         else:
             return False

@@ -20,8 +20,8 @@
  ***************************************************************************/
 """
 import threading
-from PyQt4.QtCore import QObject, QTimer, QEventLoop, QDateTime, qDebug, SIGNAL, QUrl
-from PyQt4.QtNetwork import QNetworkRequest, QNetworkReply
+from qgis.PyQt.QtCore import QObject, QTimer, QEventLoop, QDateTime, qDebug, QUrl, pyqtSignal
+from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
 from qgis.core import QgsNetworkAccessManager
 
 
@@ -30,6 +30,8 @@ debug_mode = 0
 
 class Downloader(QObject):
 
+    downloadFinished = pyqtSignal(unicode, int, bool)
+    
     NOT_FOUND = 0
     NO_ERROR = 0
     TIMEOUT_ERROR = 4

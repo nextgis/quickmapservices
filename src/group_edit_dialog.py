@@ -3,8 +3,9 @@ import codecs
 import os
 import shutil
 
-from PyQt4 import uic
-from PyQt4.QtGui import QDialog, QFileDialog, QMessageBox, QPixmap
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QDialog, QMessageBox, QFileDialog
+from qgis.PyQt.QtGui import QPixmap
 from os import path
 
 from . import extra_sources
@@ -41,7 +42,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         # vars
         self.group_info = None
         self.init_with_existing = False
-        
+
         self.set_icon(
             os.path.join(
                 os.path.dirname(__file__),

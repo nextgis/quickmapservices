@@ -1,8 +1,8 @@
 from __future__ import absolute_import
 import ast
 
-from PyQt4.QtCore import QCoreApplication
-from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject
+from qgis.PyQt.QtCore import QCoreApplication
+from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsMessageLog, QgsProject
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
@@ -146,7 +146,7 @@ def add_layer_to_map(ds):
                 position = len(toc_root.children())  # Insert to bottom if wms\tms
             else:
                 position = 0  # insert to top
-            QgsMapLayerRegistry.instance().addMapLayer(layer, False)
+            QgsProject.instance().addMapLayer(layer, False)
             toc_root.insertLayer(position, layer)
 
             # Save link

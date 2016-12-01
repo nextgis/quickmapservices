@@ -5,23 +5,26 @@ import sys
 
 from os import path
 
-from PyQt4 import uic
-from PyQt4.QtGui import (
+from qgis.PyQt import uic
+from qgis.PyQt.QtGui import (
+    QImage,
+    QPixmap,
+    QCursor,
+    QFont
+)
+
+from qgis.PyQt.QtWidgets import (
     QApplication,
     QWidget,
     QDockWidget,
     QHBoxLayout,
     QLabel,
-    QImage,
-    QPixmap,
     QToolButton,
-    QCursor,
     QSizePolicy,
     QListWidgetItem,
-    QGridLayout,
-    QFont)
+    QGridLayout)
 
-from PyQt4.QtCore import (
+from qgis.PyQt.QtCore import (
     QThread,
     pyqtSignal,
     Qt,
@@ -38,6 +41,7 @@ from qgis.core import (
 )
 
 from .rb_result_renderer import RubberBandResultRenderer
+from .compat import URLError
 from .data_source_serializer import DataSourceSerializer
 from .qgis_map_helpers import add_layer_to_map
 from .qms_external_api_python.client import Client
@@ -90,7 +94,7 @@ class CachedServices(object):
     def __init__(self):
         self.geoservices = []
         self.load_last_used_services()
-    
+
     def load_last_used_services(self):
         for geoservice, image_ba in PluginSettings.get_last_used_services():
             geoservice = Geoservice( geoservice, image_ba)
@@ -458,6 +462,7 @@ class SearchThread(QThread):
                 # get icon
                 ba = QByteArray()
                 icon_id = result.get("icon")
+
                 if not self.img_cach.has_key(icon_id):
                     if icon_id:
                         ba = QByteArray(self.searcher.get_icon_content(icon_id, 24, 24))

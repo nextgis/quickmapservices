@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import pyqtWrapperType
+from qgis.PyQt.QtCore import pyqtWrapperType
 
 def singleton(class_):
   instances = {}

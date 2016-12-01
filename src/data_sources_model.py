@@ -26,8 +26,10 @@ from __future__ import absolute_import
 from .data_sources_list import DataSourcesList
 from .groups_list import GroupsList
 
-from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
-from PyQt4.QtGui import QIcon, QTreeWidgetItem
+from qgis.PyQt.QtCore import Qt, QAbstractItemModel, QModelIndex
+from qgis.PyQt.QtWidgets import QTreeWidgetItem
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QTreeWidgetItem
 from .plugin_settings import PluginSettings
 
 from .singleton import QSingleton
