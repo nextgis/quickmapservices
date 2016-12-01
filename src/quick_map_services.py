@@ -142,7 +142,7 @@ class QuickMapServices:
         #get current scale
         curr_scale = self.iface.mapCanvas().scale()
         #find nearest
-        nearest_scale = sys.maxint
+        nearest_scale = sys.maxsize
         for scale_str in self.scales_list:
             scale = scale_str.split(':')[1]
             scale_int = int(scale)
@@ -150,7 +150,7 @@ class QuickMapServices:
                 nearest_scale = scale_int
 
         #set new scale
-        if nearest_scale != sys.maxint:
+        if nearest_scale != sys.maxsize:
             self.iface.mapCanvas().zoomScale(nearest_scale)
 
     def set_tms_scales(self):
