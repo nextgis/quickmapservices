@@ -20,7 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from supported_drivers import KNOWN_DRIVERS
+from __future__ import absolute_import
+from .supported_drivers import KNOWN_DRIVERS
 
 try:
     from osgeo import gdal

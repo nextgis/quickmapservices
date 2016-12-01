@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import absolute_import
 # Import the PyQt and QGIS libraries
 import os
 import threading
@@ -32,8 +33,8 @@ from qgis.utils import iface
 from ..plugin_settings import PluginSettings
 from ..qgis_settings import QGISSettings
 
-from tiles import *
-from downloader import Downloader
+from .tiles import *
+from .downloader import Downloader
 
 
 try:
@@ -752,7 +753,7 @@ class TileLayerType(QgsPluginLayerType):
         return TileLayer(TileServiceInfo.createEmptyInfo())
 
     def showLayerProperties(self, layer):
-        from propertiesdialog import PropertiesDialog
+        from .propertiesdialog import PropertiesDialog
 
         dialog = PropertiesDialog(layer)
         QObject.connect(dialog, SIGNAL("applyClicked()"), self.applyClicked)

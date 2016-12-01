@@ -20,8 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import absolute_import
 from PyQt4.QtCore import QTranslator
-from singleton import singleton
+from .singleton import singleton
 
 
 @singleton

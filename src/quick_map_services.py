@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import absolute_import
 import os.path
 import urlparse
 import xml.etree.ElementTree as ET
@@ -32,18 +33,18 @@ from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog
 from qgis.core import QgsProject, QgsPluginLayerRegistry
 from qgis.gui import QgsMessageBar
 import sys
-from extra_sources import ExtraSources
-from locale import Locale
-from plugin_settings import PluginSettings
-from qgis_map_helpers import add_layer_to_map
-from qms_service_toolbox import QmsServiceToolbox
+from .extra_sources import ExtraSources
+from .locale import Locale
+from .plugin_settings import PluginSettings
+from .qgis_map_helpers import add_layer_to_map
+from .qms_service_toolbox import QmsServiceToolbox
 
-from settings_dialog import SettingsDialog
-from about_dialog import AboutDialog
-from py_tiled_layer.tilelayer import TileLayer, TileLayerType
-from data_sources_list import DataSourcesList
-from groups_list import GroupsList
-from custom_translator import CustomTranslator
+from .settings_dialog import SettingsDialog
+from .about_dialog import AboutDialog
+from .py_tiled_layer.tilelayer import TileLayer, TileLayerType
+from .data_sources_list import DataSourcesList
+from .groups_list import GroupsList
+from .custom_translator import CustomTranslator
 
 
 class QuickMapServices:

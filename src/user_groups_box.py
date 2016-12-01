@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 import shutil
 
@@ -6,9 +7,9 @@ from PyQt4 import uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QTableView, QHeaderView
 
-from groups_list import GroupsList, USER_GROUP_PATHS
-from group_edit_dialog import GroupEditDialog
-from data_sources_model import DSManagerModel
+from .groups_list import GroupsList, USER_GROUP_PATHS
+from .group_edit_dialog import GroupEditDialog
+from .data_sources_model import DSManagerModel
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_groups_box.ui'))

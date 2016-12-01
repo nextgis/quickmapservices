@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import absolute_import
 import codecs
 import os
 import sys
@@ -27,11 +28,11 @@ from ConfigParser import ConfigParser
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMenu, QIcon
 from qgis.core import QgsMessageLog
-from config_reader_helper import ConfigReaderHelper
-import extra_sources
-from custom_translator import CustomTranslator
-from group_info import GroupInfo, GroupCategory
-from locale import Locale
+from .config_reader_helper import ConfigReaderHelper
+from . import extra_sources
+from .custom_translator import CustomTranslator
+from .group_info import GroupInfo, GroupCategory
+from .locale import Locale
 
 CURR_PATH = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
 

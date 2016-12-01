@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import absolute_import
 import json
 import os
 import tempfile
@@ -31,7 +32,7 @@ from PyQt4.QtCore import QUrl, QEventLoop, QFile, QIODevice
 from PyQt4.QtNetwork import QNetworkRequest, QNetworkReply
 from qgis.core import QgsApplication, QgsNetworkAccessManager
 
-from plugin_settings import PluginSettings
+from .plugin_settings import PluginSettings
 
 LOCAL_SETTINGS_PATH = os.path.dirname(QgsApplication.qgisUserDbFilePath())
 PLUGIN_SETTINGS_PATH = os.path.join(LOCAL_SETTINGS_PATH, PluginSettings.product_name())

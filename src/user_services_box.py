@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 import shutil
 
@@ -6,9 +7,9 @@ from PyQt4 import uic
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QTreeView, QHeaderView
 
-from data_sources_list import DataSourcesList, USER_DS_PATHS
-from ds_edit_dialog import DsEditDialog
-from data_sources_model import DSManagerModel
+from .data_sources_list import DataSourcesList, USER_DS_PATHS
+from .ds_edit_dialog import DsEditDialog
+from .data_sources_model import DSManagerModel
 
 plugin_dir = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
 

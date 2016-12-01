@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import ast
 import urlparse
 
@@ -6,10 +7,10 @@ from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsMessageLog, QgsMapLayer
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
-from plugin_settings import PluginSettings
-from supported_drivers import KNOWN_DRIVERS
-from py_tiled_layer.tiles import TileServiceInfo
-from py_tiled_layer.tilelayer import TileLayer
+from .plugin_settings import PluginSettings
+from .supported_drivers import KNOWN_DRIVERS
+from .py_tiled_layer.tiles import TileServiceInfo
+from .py_tiled_layer.tilelayer import TileLayer
 
 service_layers = []
 

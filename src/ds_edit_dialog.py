@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import os
 import shutil
 
@@ -5,13 +6,13 @@ from PyQt4 import uic
 from PyQt4.QtGui import QDialog, QIcon, QMessageBox
 from os import path
 
-import extra_sources
-from data_source_info import DataSourceInfo
-from data_source_serializer import DataSourceSerializer
-from data_sources_list import DataSourcesList
-from group_info import GroupInfo
-from groups_list import GroupsList
-from supported_drivers import KNOWN_DRIVERS
+from . import extra_sources
+from .data_source_info import DataSourceInfo
+from .data_source_serializer import DataSourceSerializer
+from .data_sources_list import DataSourcesList
+from .group_info import GroupInfo
+from .groups_list import GroupsList
+from .supported_drivers import KNOWN_DRIVERS
 from .gui.editor_widget_gdal import EditorWidgetGdal
 from .gui.editor_widget_tms import EditorWidgetTms
 from .gui.editor_widget_wms import EditorWidgetWms

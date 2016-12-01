@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import codecs
 import os
 import shutil
@@ -6,9 +7,9 @@ from PyQt4 import uic
 from PyQt4.QtGui import QDialog, QMessageBox
 from os import path
 
-import extra_sources
-from fixed_config_parser import FixedConfigParser
-from groups_list import GroupsList
+from . import extra_sources
+from .fixed_config_parser import FixedConfigParser
+from .groups_list import GroupsList
 from .gui.line_edit_color_validator import LineEditColorValidator
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
