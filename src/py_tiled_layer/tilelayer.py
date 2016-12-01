@@ -47,7 +47,7 @@ except:
 debug_mode = 0
 
 
-class LayerDefaultSettings:
+class LayerDefaultSettings(object):
     TRANSPARENCY = 0
     BLEND_MODE = "SourceOver"
     SMOOTH_RENDER = True

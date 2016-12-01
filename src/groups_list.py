@@ -49,7 +49,7 @@ ROOT_MAPPING = {
 }
 
 
-class GroupsList:
+class GroupsList(object):
 
     def __init__(self, group_paths=ALL_GROUP_PATHS):
         self.locale = Locale.get_locale()

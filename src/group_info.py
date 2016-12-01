@@ -22,7 +22,7 @@
 """
 
 
-class GroupCategory:
+class GroupCategory(object):
     BASE = 'base'
     CONTRIB = 'contributed'
     USER = 'user'
@@ -30,7 +30,7 @@ class GroupCategory:
     all = [BASE, CONTRIB, USER]
 
 
-class GroupInfo:
+class GroupInfo(object):
 
     def __init__(self, group_id=None, alias=None, icon=None, file_path=None, menu=None, category=None):
         # general

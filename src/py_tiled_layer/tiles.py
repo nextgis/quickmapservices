@@ -29,7 +29,7 @@ from qgis.core import QgsRectangle
 R = 6378137
 
 
-class TileDefaultSettings:
+class TileDefaultSettings(object):
     ZMIN = 0
     ZMAX = 18
 
@@ -41,7 +41,7 @@ def degreesToMercatorMeters(lon, lat):
     return x, y
 
 
-class BoundingBox:
+class BoundingBox(object):
     def __init__(self, xmin, ymin, xmax, ymax):
         self.xmin = xmin
         self.ymin = ymin
@@ -68,7 +68,7 @@ class BoundingBox:
         return BoundingBox(a[0], a[1], a[2], a[3])
 
 
-class Tile:
+class Tile(object):
     def __init__(self, zoom, x, y, data=None):
         self.zoom = zoom
         self.x = x
@@ -76,7 +76,7 @@ class Tile:
         self.data = data
 
 
-class Tiles:
+class Tiles(object):
     def __init__(self, zoom, xmin, ymin, xmax, ymax, serviceInfo):
         self.zoom = zoom
         self.xmin = xmin
@@ -125,7 +125,7 @@ class Tiles:
             return QgsRectangle(originX + self.xmin * size, originY - (self.ymax + 1) * size,
                                 originX + (self.xmax + 1) * size, originY - self.ymin * size)
 
-class TileServiceInfo:
+class TileServiceInfo(object):
     TILE_SIZE = 256
     # TSIZE1 = 20037508.342789244 # (R * math.pi)
 

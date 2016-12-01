@@ -50,7 +50,7 @@ ROOT_MAPPING = {
     USER_DS_PATHS[0]: DataSourceCategory.USER
 }
 
-class DataSourcesList:
+class DataSourcesList(object):
 
     def __init__(self, ds_paths=ALL_DS_PATHS):
         self.data_sources = {}

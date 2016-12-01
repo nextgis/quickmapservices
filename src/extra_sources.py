@@ -46,7 +46,7 @@ GROUPS_DIR_NAME = 'groups'
 CONTRIBUTE_REPO_URL = 'https://api.github.com/repos/nextgis/quickmapservices_contrib'
 
 
-class ExtraSources():
+class ExtraSources(object):
 
     __replies = []
 

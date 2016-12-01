@@ -10,7 +10,7 @@ from .locale import Locale
 from .supported_drivers import KNOWN_DRIVERS
 
 
-class DataSourceSerializer():
+class DataSourceSerializer(object):
 
     @classmethod
     def read_from_ini(cls, ini_file_path):

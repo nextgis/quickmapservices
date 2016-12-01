@@ -23,7 +23,7 @@
 from PyQt4.QtCore import QSettings, QDir, Qt
 
 
-class PluginSettings():
+class PluginSettings(object):
 
     _company_name = 'NextGIS'
     _product = 'QuickMapServices'

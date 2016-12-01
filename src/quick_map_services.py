@@ -47,7 +47,7 @@ from .groups_list import GroupsList
 from .custom_translator import CustomTranslator
 
 
-class QuickMapServices:
+class QuickMapServices(object):
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):
