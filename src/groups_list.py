@@ -93,7 +93,7 @@ class GroupsList:
             #append to all groups
             # set contrib&user
             self.groups[group_id] = GroupInfo(group_id, group_alias, group_icon_path, ini_full_path, group_menu, category)
-        except Exception, e:
+        except Exception as e:
             error_message = self.tr('Group INI file can\'t be parsed: ') + e.message
             QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
 

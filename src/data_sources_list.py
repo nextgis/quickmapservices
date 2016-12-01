@@ -79,7 +79,7 @@ class DataSourcesList:
                         # append to array
                         self.data_sources[ds.id] = ds
 
-                    except Exception, e:
+                    except Exception as e:
                         error_message = 'INI file can\'t be parsed: ' + e.message
                         QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
 
