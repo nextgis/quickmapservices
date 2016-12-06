@@ -54,8 +54,8 @@ class AboutDialog(QDialog, FORM_CLASS):
 
 
     def get_about_text(self):
-        return self.tr('<p>Collection of internet map services</p>'
-                       '<p><strong>Developers:</strong> <a href="http://nextgis.org">NextGIS</a></p>'
+        return self.tr('<p>Convenient list of basemaps + seach string for finding datasets and basemaps. Please contribute new services via <a href="http://qms.nextgis.com">http://qms.nextgis.com</a></p>'
+                       '<p><strong>Developers:</strong> <a href="http://nextgis.com">NextGIS</a></p>'
                        '<p><strong>Issue tracker:</strong> <a href="https://github.com/nextgis/quickmapservices/issues">GitHub</a></p>'
                        '<p><strong>Source code:</strong> <a href="https://github.com/nextgis/quickmapservices">GitHub</a></p>')
 
