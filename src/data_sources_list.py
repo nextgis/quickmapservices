@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import absolute_import
 from ConfigParser import ConfigParser
 import codecs
 import os
@@ -27,13 +28,13 @@ import sys
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QIcon, QAction
 from qgis.core import QgsMessageLog
-from config_reader_helper import ConfigReaderHelper
-from custom_translator import CustomTranslator
-from data_source_info import DataSourceInfo, DataSourceCategory
-import extra_sources
-from data_source_serializer import DataSourceSerializer
-from locale import Locale
-from supported_drivers import KNOWN_DRIVERS
+from .config_reader_helper import ConfigReaderHelper
+from .custom_translator import CustomTranslator
+from .data_source_info import DataSourceInfo, DataSourceCategory
+from . import extra_sources
+from .data_source_serializer import DataSourceSerializer
+from .locale import Locale
+from .supported_drivers import KNOWN_DRIVERS
 
 CURR_PATH = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
 
@@ -49,7 +50,7 @@ ROOT_MAPPING = {
     USER_DS_PATHS[0]: DataSourceCategory.USER
 }
 
-class DataSourcesList:
+class DataSourcesList(object):
 
     def __init__(self, ds_paths=ALL_DS_PATHS):
         self.data_sources = {}
@@ -78,7 +79,7 @@ class DataSourcesList:
                         # append to array
                         self.data_sources[ds.id] = ds
 
-                    except Exception, e:
+                    except Exception as e:
                         error_message = 'INI file can\'t be parsed: ' + e.message
                         QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
 

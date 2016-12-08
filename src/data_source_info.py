@@ -22,7 +22,7 @@
 """
 
 
-class DataSourceCategory:
+class DataSourceCategory(object):
     BASE = 'base'
     CONTRIB = 'contributed'
     USER = 'user'
@@ -30,7 +30,7 @@ class DataSourceCategory:
     all = [BASE, CONTRIB, USER]
 
 
-class DataSourceInfo:
+class DataSourceInfo(object):
 
     def __init__(self):
         self.id = None

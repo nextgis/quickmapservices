@@ -20,7 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from supported_drivers import KNOWN_DRIVERS
+from __future__ import absolute_import
+from .supported_drivers import KNOWN_DRIVERS
 
 try:
     from osgeo import gdal
@@ -28,7 +29,7 @@ except ImportError:
     import gdal
 
 
-class GdalUtils():
+class GdalUtils(object):
 
     @classmethod
     def get_supported_drivers(cls):

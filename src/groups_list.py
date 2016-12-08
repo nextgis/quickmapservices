@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import absolute_import
 import codecs
 import os
 import sys
@@ -27,11 +28,11 @@ from ConfigParser import ConfigParser
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMenu, QIcon
 from qgis.core import QgsMessageLog
-from config_reader_helper import ConfigReaderHelper
-import extra_sources
-from custom_translator import CustomTranslator
-from group_info import GroupInfo, GroupCategory
-from locale import Locale
+from .config_reader_helper import ConfigReaderHelper
+from . import extra_sources
+from .custom_translator import CustomTranslator
+from .group_info import GroupInfo, GroupCategory
+from .locale import Locale
 
 CURR_PATH = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
 
@@ -48,7 +49,7 @@ ROOT_MAPPING = {
 }
 
 
-class GroupsList:
+class GroupsList(object):
 
     def __init__(self, group_paths=ALL_GROUP_PATHS):
         self.locale = Locale.get_locale()
@@ -92,7 +93,7 @@ class GroupsList:
             #append to all groups
             # set contrib&user
             self.groups[group_id] = GroupInfo(group_id, group_alias, group_icon_path, ini_full_path, group_menu, category)
-        except Exception, e:
+        except Exception as e:
             error_message = self.tr('Group INI file can\'t be parsed: ') + e.message
             QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
 

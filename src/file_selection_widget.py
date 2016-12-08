@@ -16,7 +16,8 @@
 *                                                                         *
 ***************************************************************************
 """
-from plugin_settings import PluginSettings
+from __future__ import absolute_import
+from .plugin_settings import PluginSettings
 
 __author__ = 'Victor Olaya'
 __date__ = 'August 2012'

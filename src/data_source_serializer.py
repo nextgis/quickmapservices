@@ -1,15 +1,16 @@
+from __future__ import absolute_import
 import codecs
 import os
 from ConfigParser import ConfigParser
-from config_reader_helper import ConfigReaderHelper
-from custom_translator import CustomTranslator
-from data_source_info import DataSourceInfo
-from fixed_config_parser import FixedConfigParser
-from locale import Locale
-from supported_drivers import KNOWN_DRIVERS
+from .config_reader_helper import ConfigReaderHelper
+from .custom_translator import CustomTranslator
+from .data_source_info import DataSourceInfo
+from .fixed_config_parser import FixedConfigParser
+from .locale import Locale
+from .supported_drivers import KNOWN_DRIVERS
 
 
-class DataSourceSerializer():
+class DataSourceSerializer(object):
 
     @classmethod
     def read_from_ini(cls, ini_file_path):

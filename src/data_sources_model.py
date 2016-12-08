@@ -20,17 +20,18 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import absolute_import
 # from data_source_info import DataSourceCategory
 # from group_info import 
-from data_sources_list import DataSourcesList
-from groups_list import GroupsList
+from .data_sources_list import DataSourcesList
+from .groups_list import GroupsList
 
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
 from PyQt4.QtGui import QIcon
-from plugin_settings import PluginSettings
+from .plugin_settings import PluginSettings
 
-from singleton import QSingleton
+from .singleton import QSingleton
 
 
 class DSManagerModel(QAbstractItemModel):

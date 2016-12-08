@@ -23,7 +23,7 @@
 from PyQt4.QtCore import QSettings
 
 
-class QGISSettings():
+class QGISSettings(object):
 
     @classmethod
     def get_settings(cls):

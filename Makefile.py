@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+
 import os
 import sys
 import subprocess
@@ -13,7 +15,7 @@ plugin_name = args[0]
 plugin_dir = args[1]
 targets = args[2:]
 
-print "targets: ", targets
+print("targets: ", targets)
 
 """
 Configuration
@@ -36,17 +38,17 @@ TS_FILE_NAME = "QuickMapServices_ru.ts"
 Work section:
 """
 def process_ui():
-    print "process ui ..."
+    print("process ui ...")
     
     ui_dir = os.path.join(plugin_dir, "src", "ui")
     if not os.path.exists(ui_dir):
-        print "there is no ui dir? ui files not found"
+        print("there is no ui dir? ui files not found")
         return
     
     ui_files = [f for f in os.listdir(ui_dir) if os.path.splitext(f)[1] == ".ui"]
 
     for ui_file in ui_files:
-        print "Process %s ..." % ui_file
+        print("Process %s ..." % ui_file)
         subprocess.call([
             'pyuic4.bat',
             '-o',
@@ -56,11 +58,11 @@ def process_ui():
 
 
 def process_qrc():
-    print "process qrc ..."
+    print("process qrc ...")
     qrc_files = [f for f in os.listdir(plugin_dir) if os.path.splitext(f)[1] == ".qrc"]
 
     for qrc_file in qrc_files:
-        print "Process %s ..." % qrc_file
+        print("Process %s ..." % qrc_file)
         subprocess.call([
             'pyrcc4',
             '-o',
@@ -70,12 +72,12 @@ def process_qrc():
 
 
 def process_ts():
-    print "process ts ..."
+    print("process ts ...")
     i18n_dir = os.path.join(plugin_dir, "i18n")
     i18n_files = [f for f in os.listdir(i18n_dir) if os.path.splitext(f)[1] == ".ts"]
 
     for i18n_file in i18n_files:
-        print "Process %s ..." % os.path.join(i18n_dir, i18n_file)
+        print("Process %s ..." % os.path.join(i18n_dir, i18n_file))
         subprocess.call([
             'lrelease',
             os.path.join(i18n_dir, i18n_file)
@@ -83,13 +85,13 @@ def process_ts():
 
 
 def install_plugin():
-    print "install plugin ..."
+    print("install plugin ...")
     plugin_install_dir = os.path.join(QGIS_PLUGINS_DIST_DIR, plugin_name)
     if os.path.exists(plugin_install_dir):
         shutil.rmtree(plugin_install_dir)
 
-    print "plugin_dir: ", type(plugin_dir)
-    print "plugin_install_dir: ", type(plugin_install_dir)
+    print("plugin_dir: ", type(plugin_dir))
+    print("plugin_install_dir: ", type(plugin_install_dir))
 
     shutil.copytree(
         plugin_dir,
@@ -99,7 +101,7 @@ def install_plugin():
 
 
 def make_zip():
-    print "make zip ..."
+    print("make zip ...")
     zipFile = zipfile.ZipFile(os.path.join(skript_dir, plugin_name.lower() + ".zip"), 'w')
 
     src_dir = os.path.join(plugin_dir)
@@ -116,7 +118,7 @@ def make_zip():
 
 
 def make_ts_file():
-    print "make ts file ..."
+    print("make ts file ...")
     target_files = []
     for root, dirs, files in os.walk(plugin_dir):
         target_files.extend(
