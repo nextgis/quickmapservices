@@ -4,13 +4,14 @@ import os
 import shutil
 
 from PyQt4 import uic
-from PyQt4.QtGui import QDialog, QMessageBox
+from PyQt4.QtGui import QDialog, QFileDialog, QMessageBox, QPixmap
 from os import path
 
 from . import extra_sources
 from .fixed_config_parser import FixedConfigParser
 from .groups_list import GroupsList
 from .gui.line_edit_color_validator import LineEditColorValidator
+from .plugin_settings import PluginSettings
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'group_edit_dialog.ui'))
@@ -29,8 +30,9 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         self.setupUi(self)
 
         # init icon selector
-        self.txtIcon.set_dialog_ext(self.tr('All icon files (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)'))
-        self.txtIcon.set_dialog_title(self.tr('Select icon for group'))
+        # self.txtIcon.set_dialog_ext(self.tr('All icon files (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)'))
+        # self.txtIcon.set_dialog_title(self.tr('Select icon for group'))
+        self.iconChooseButton.clicked.connect(self.choose_icon)
 
         # validators
         self.id_validator = LineEditColorValidator(self.txtId, '^[A-Za-z0-9_]+$', error_tooltip=self.tr('Any text'))
@@ -39,6 +41,14 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         # vars
         self.group_info = None
         self.init_with_existing = False
+        
+        self.set_icon(
+            os.path.join(
+                os.path.dirname(__file__),
+                'icons',
+                'mapservices.png'
+            )
+        )
 
     def set_group_info(self, group_info):
         self.group_info = group_info
@@ -46,7 +56,8 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         # feel fields
         self.txtId.setText(self.group_info.id)
         self.txtAlias.setText(self.group_info.alias)
-        self.txtIcon.set_path(self.group_info.icon)
+        # self.txtIcon.set_path(self.group_info.icon)
+        self.set_icon(self.group_info.icon)
 
     def fill_group_info(self, group_info):
         self.group_info = group_info
@@ -54,7 +65,25 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         # feel fields
         self.txtId.setText(self.group_info.id)
         self.txtAlias.setText(self.group_info.alias)
-        self.txtIcon.set_path(self.group_info.icon)
+        # self.txtIcon.set_path(self.group_info.icon)
+        self.set_icon(self.group_info.icon)
+
+    def choose_icon(self):
+        icon_path = QFileDialog.getOpenFileName(
+            self,
+            self.tr('Select icon for group'),
+            PluginSettings.get_default_user_icon_path(),
+            self.tr('All icon files (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)')
+        )
+        if icon_path != "":
+            PluginSettings.set_default_user_icon_path(icon_path)
+            self.set_icon(icon_path)
+
+    def set_icon(self, icon_path):
+        self.__group_icon = icon_path
+        self.iconPreview.setPixmap(
+            QPixmap(self.__group_icon)
+        )
 
     def accept(self):
         if self.init_with_existing:
@@ -99,7 +128,8 @@ class GroupEditDialog(QDialog, FORM_CLASS):
     def save_existing(self):
         group_id = self.txtId.text()
         group_alias = self.txtAlias.text()
-        group_icon = self.txtIcon.get_path()
+        # group_icon = self.txtIcon.get_path()
+        group_icon = self.__group_icon
 
         if not self.validate(group_id, group_alias, group_icon):
             return False
@@ -140,7 +170,8 @@ class GroupEditDialog(QDialog, FORM_CLASS):
     def create_new(self):
         group_id = self.txtId.text()
         group_alias = self.txtAlias.text()
-        group_icon = self.txtIcon.get_path()
+        # group_icon = self.txtIcon.get_path()
+        group_icon = self.__group_icon
 
         if not self.validate(group_id, group_alias, group_icon):
             return False

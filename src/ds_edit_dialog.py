@@ -3,7 +3,7 @@ import os
 import shutil
 
 from PyQt4 import uic
-from PyQt4.QtGui import QDialog, QIcon, QMessageBox
+from PyQt4.QtGui import QDialog, QFileDialog, QIcon, QMessageBox, QPixmap
 from os import path
 
 from . import extra_sources
@@ -19,6 +19,7 @@ from .gui.editor_widget_wms import EditorWidgetWms
 from .gui.editor_widget_wfs import EditorWidgetWfs
 from .gui.editor_widget_geojson import EditorWidgetGeoJson
 from .gui.line_edit_color_validator import LineEditColorValidator
+from .plugin_settings import PluginSettings
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ds_edit_dialog.ui'))
@@ -45,8 +46,9 @@ class DsEditDialog(QDialog, FORM_CLASS):
         }
 
         # init icon selector
-        self.txtIcon.set_dialog_ext(self.tr('Icons (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)'))
-        self.txtIcon.set_dialog_title(self.tr('Select icon for data source'))
+        # self.txtIcon.set_dialog_ext(self.tr('Icons (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)'))
+        # self.txtIcon.set_dialog_title(self.tr('Select icon for data source'))
+        self.iconChooseButton.clicked.connect(self.choose_icon)
 
         # init combos
         self.init_groups_cmb()
@@ -65,6 +67,13 @@ class DsEditDialog(QDialog, FORM_CLASS):
         self.init_with_existing = False
         self._editor_tab = None
 
+        self.set_icon(
+            os.path.join(
+                os.path.dirname(__file__),
+                'icons',
+                'mapservices.png'
+            )
+        )
 
     def init_groups_cmb(self):
         ds_groups = GroupsList()
@@ -97,11 +106,28 @@ class DsEditDialog(QDialog, FORM_CLASS):
         self.feel_common_fields()
         self.feel_specific_fields()
 
+    def choose_icon(self):
+        icon_path = QFileDialog.getOpenFileName(
+            self,
+            self.tr('Select icon for data source'),
+            PluginSettings.get_default_user_icon_path(),
+            self.tr('Icons (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)')
+        )
+        if icon_path != "":
+            PluginSettings.set_default_user_icon_path(icon_path)
+            self.set_icon(icon_path)
+
+    def set_icon(self, icon_path):
+        self.__ds_icon = icon_path
+        self.iconPreview.setPixmap(
+            QPixmap(self.__ds_icon)
+        )
 
     def feel_common_fields(self):
         self.txtId.setText(self.ds_info.id)
         self.txtAlias.setText(self.ds_info.alias)
-        self.txtIcon.set_path(self.ds_info.icon_path)
+        # self.txtIcon.set_path(self.ds_info.icon_path)
+        self.set_icon(self.ds_info.icon_path)
 
         # license
         self.txtLicense.setText(self.ds_info.lic_name)
@@ -231,7 +257,8 @@ class DsEditDialog(QDialog, FORM_CLASS):
     def feel_ds_info(self, ds_info):
         ds_info.id = self.txtId.text()
         ds_info.alias = self.txtAlias.text()
-        ds_info.icon = os.path.basename(self.txtIcon.get_path())
+        # ds_info.icon = os.path.basename(self.txtIcon.get_path())
+        ds_info.icon = os.path.basename(self.__ds_icon)
 
         ds_info.lic_name = self.txtLicense.text()
         ds_info.lic_link = self.txtLicenseLink.text()
@@ -244,7 +271,8 @@ class DsEditDialog(QDialog, FORM_CLASS):
 
         self.DRV_WIDGETS[ds_info.type].feel_ds_info(ds_info)
 
-        ds_info.icon_path = self.txtIcon.get_path()
+        ds_info.icon_path = self.__ds_icon
+        # ds_info.icon_path = self.txtIcon.get_path()
 
     def validate(self, ds_info):
         # validate common fields
