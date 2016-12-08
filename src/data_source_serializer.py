@@ -86,7 +86,6 @@ class DataSourceSerializer():
     @classmethod
     def read_from_json(cls, json_data):
         ds = DataSourceInfo()
-
         # Required
         ds.id = json_data['id']
         ds.type = json_data['type']
@@ -128,6 +127,11 @@ class DataSourceSerializer():
         #WFS
         if ds.type.lower() == KNOWN_DRIVERS.WFS.lower():
             ds.wfs_url = json_data['url']
+            layer_name = json_data.get('layer')
+            if layer_name is not None:
+                ds.wfs_layers.append(layer_name)
+
+            ds.wfs_epsg = json_data.get('epsg')
             # ds.wfs_layers = ConfigReaderHelper.try_read_config(parser, 'wfs', 'layers')
 
         #GEOJSON

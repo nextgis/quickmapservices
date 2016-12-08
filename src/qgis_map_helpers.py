@@ -62,12 +62,23 @@ def add_layer_to_map(ds):
         qgis_wfs_uri_base = ds.wfs_url
         o = urlparse.urlparse(qgis_wfs_uri_base)
         request_attrs = dict(urlparse.parse_qsl(o.query))
+        
+        new_request_attrs = {}
+        for k, v in request_attrs.items():
+            new_request_attrs[k.upper()] = v
 
-        layers_str = request_attrs.get('TYPENAME', '')
-        layers = layers_str.split(',')
+        if ds.wfs_epsg is not None:
+            new_request_attrs['SRSNAME'] = "EPSG:{0}".format(ds.wfs_epsg)
+
+        layers = []
+        if len(ds.wfs_layers) > 0:
+            layers.extend(ds.wfs_layers)
+        else:
+            layers_str = request_attrs.get('TYPENAME', '')
+            layers.extend(layers_str.split())
+
         for layer_name in layers:
-            new_request_attrs = request_attrs
-            new_request_attrs['TYPENAME'] == layer_name
+            new_request_attrs['TYPENAME'] = layer_name
 
             url_parts = list(o)
             url_parts[4] = "&".join(
@@ -75,7 +86,6 @@ def add_layer_to_map(ds):
             )
 
             qgis_wfs_uri = urlparse.urlunparse(url_parts)
-
             layer = QgsVectorLayer(
                 qgis_wfs_uri,
                 "%s - %s" % (tr(ds.alias), layer_name),

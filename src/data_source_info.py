@@ -66,7 +66,8 @@ class DataSourceInfo:
         self.gdal_source_file = None
 
         self.wfs_url = None
-        # self.wfs_layers = None
+        self.wfs_layers = []
+        self.wfs_epsg = None
 
         self.geojson_url = None
 
