@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from PyQt4.QtCore import QSettings
+from qgis.core import QgsNetworkAccessManager
 
 
 class QGISSettings(object):
@@ -58,3 +59,32 @@ class QGISSettings(object):
         if not isinstance(int_value, int) or int_value < 1 or int_value > 100000000:
             raise ValueError(int_value)
         return QGISSettings.get_settings().setValue('/qgis/networkAndProxy/networkTimeout', int_value)
+
+    @classmethod
+    def get_qgis_proxy(cls):
+        s = cls.get_settings()
+        proxy_enabled = s.value("proxy/proxyEnabled", u"", type=unicode)
+        proxy_type = s.value("proxy/proxyType", u"", type=unicode)
+        proxy_host = s.value("proxy/proxyHost", u"", type=unicode)
+        proxy_port = s.value("proxy/proxyPort", u"", type=unicode)
+        proxy_user = s.value("proxy/proxyUser", u"", type=unicode)
+        proxy_password = s.value("proxy/proxyPassword", u"", type=unicode)
+
+        if proxy_enabled == "true":
+            if proxy_type == "DefaultProxy":
+                qgsNetMan = QgsNetworkAccessManager.instance()
+                proxy = qgsNetMan.proxy().applicationProxy()
+                proxy_host = proxy.hostName()
+                proxy_port = str(proxy.port())
+                proxy_user = proxy.user()
+                proxy_password = proxy.password()
+
+            if proxy_type in ["DefaultProxy", "Socks5Proxy", "HttpProxy", "HttpCachingProxy"]:
+                return (
+                    proxy_host,
+                    proxy_port,
+                    proxy_user,
+                    proxy_password
+                )
+
+        return ("", "", "", "")

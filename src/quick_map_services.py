@@ -112,7 +112,7 @@ class QuickMapServices(object):
         QgsPluginLayerRegistry.instance().addPluginLayerType(self.tileLayerType)
 
         # Create menu
-        icon_path = self.plugin_dir + '/icons/mActionAddLayer.png'
+        icon_path = self.plugin_dir + '/icons/mActionAddLayer.svg'
         self.menu = QMenu(self.tr(u'QuickMapServices'))
         self.menu.setIcon(QIcon(icon_path))
         self.init_server_panel()
@@ -210,37 +210,32 @@ class QuickMapServices(object):
 
         # Scales, Settings and About actions
         self.menu.addSeparator()
-        icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
+        icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.svg'  # TODO change icon
         set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'), self.iface.mainWindow())
         set_nearest_scale_act.triggered.connect(self.set_nearest_scale)
         self.menu.addAction(set_nearest_scale_act)  # TODO: uncomment after fix
         self.service_actions.append(set_nearest_scale_act)
 
-        icon_scales_path = self.plugin_dir + '/icons/mActionSettings.png'  # TODO change icon
+        icon_scales_path = self.plugin_dir + '/icons/mActionSettings.svg'  # TODO change icon
         scales_act = QAction(QIcon(icon_scales_path), self.tr('Set SlippyMap scales'), self.iface.mainWindow())
         scales_act.triggered.connect(self.set_tms_scales)
         #self.menu.addAction(scales_act)  # TODO: uncomment after fix
         self.service_actions.append(scales_act)
 
-        icon_settings_path = self.plugin_dir + '/icons/mapservices.png'
-        server_panel_act = self.server_toolbox.toggleViewAction()
-        server_panel_act.setIcon(QIcon(icon_settings_path))
-        server_panel_act.setText(self.tr('Search QMS'))
-        self.service_actions.append(server_panel_act)
-        self.menu.addAction(server_panel_act)
+        self.service_actions.append(self.qms_search_action)
+        self.menu.addAction(self.qms_search_action)
 
-        icon_settings_path = self.plugin_dir + '/icons/mActionSettings.png'
+        icon_settings_path = self.plugin_dir + '/icons/mActionSettings.svg'
         settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
         self.service_actions.append(settings_act)
         settings_act.triggered.connect(self.show_settings_dialog)
         self.menu.addAction(settings_act)
 
-        icon_about_path = self.plugin_dir + '/icons/mActionAbout.png'
+        icon_about_path = self.plugin_dir + '/icons/mActionAbout.svg'
         info_act = QAction(QIcon(icon_about_path), self.tr('About'), self.iface.mainWindow())
         self.service_actions.append(info_act)
         info_act.triggered.connect(self.info_dlg.show)
         self.menu.addAction(info_act)
-
 
     def remove_menu_buttons(self):
         """
@@ -257,6 +252,9 @@ class QuickMapServices(object):
             self.iface.webToolBar().removeAction(self.tb_action)
             self.iface.layerToolBar().removeAction(self.tb_action)
 
+        if self.qms_search_action:
+            self.iface.removeVectorToolBarIcon(self.qms_search_action)
+            self.iface.removeWebToolBarIcon(self.qms_search_action)
     def append_menu_buttons(self):
         """
         Append menus and buttons to appropriate toolbar
@@ -281,8 +279,10 @@ class QuickMapServices(object):
         toolbutton.setToolTip(self.menu.title())
         if PluginSettings.move_to_layers_menu():
             self.tb_action = self.iface.layerToolBar().addWidget(toolbutton)
+            self.iface.addVectorLayerToolBarIcon(self.qms_search_action)
         else:
             self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
+            self.iface.addWebToolBarIcon(self.qms_search_action) 
 
     def show_settings_dialog(self):
         settings_dlg = SettingsDialog()
@@ -295,12 +295,18 @@ class QuickMapServices(object):
     def init_server_panel(self):
         self.server_toolbox = QmsServiceToolbox(self.iface)
         self.iface.addDockWidget(PluginSettings.server_dock_area(), self.server_toolbox)
-        self.server_toolbox.setWindowIcon(QIcon(self.plugin_dir + '/icons/mapservices.png'))
+        self.server_toolbox.setWindowIcon(QIcon(self.plugin_dir + '/icons/mActionSearch.svg'))
         self.server_toolbox.setVisible(PluginSettings.server_dock_visibility())
         # self.server_toolbox.setFloating(PluginSettings.dock_floating())
         # self.server_toolbox.resize(PluginSettings.dock_size())
         # self.server_toolbox.move(PluginSettings.dock_pos())
         # self.server_toolbox.setWindowIcon(QIcon(path.join(_current_path, 'edit-find-project.png')))
+
+        # QMS search action
+        icon_settings_path = self.plugin_dir + '/icons/mActionSearch.svg'
+        self.qms_search_action = self.server_toolbox.toggleViewAction()
+        self.qms_search_action.setIcon(QIcon(icon_settings_path))
+        self.qms_search_action.setText(self.tr('Search QMS'))
 
     def remove_server_panel(self):
         mw = self.iface.mainWindow()

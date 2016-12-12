@@ -2,7 +2,7 @@
 name=QuickMapServices
 qgisMinimumVersion=2.4
 description=Collection of easy to add basemaps
-version=0.17.9
+version=0.17.12
 author=NextGIS
 email=info@nextgis.com
 about=Convenient list of basemaps + seach string for finding datasets and basemaps. Please contribute new services via http://qms.nextgis.com!
@@ -14,7 +14,10 @@ about=Convenient list of basemaps + seach string for finding datasets and basema
 
 # Uncomment the following line and add your changelog:
 changelog=
-      0.17.9
+      0.17.12
+        * Change search services list
+        * Add service layer in selected group, in root if no one selected
+        * Fix work with qgis proxy
         * Fix loading wfs services from qms.nextgis.com
       0.17.8
         * Fix saving and restoring grayscale parameter of a basemap with a project
