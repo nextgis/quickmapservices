@@ -5,7 +5,7 @@ description=Collection of easy to add basemaps
 version=0.17.12
 author=NextGIS
 email=info@nextgis.com
-about=Convenient list of basemaps + seach string for finding datasets and basemaps. Please contribute new services via http://qms.nextgis.com!
+about=Convenient list of services + search for finding datasets and basemaps. Please contribute new services via http://qms.nextgis.com!
 
 
 # End of mandatory metadata
