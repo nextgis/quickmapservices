@@ -14,12 +14,13 @@ about=Convenient list of services + search for finding datasets and basemaps. Pl
 
 # Uncomment the following line and add your changelog:
 changelog=
-      0.17.14
+      0.18
+        * New search results list design
         * Show last used services
-        * Fix local wfs service creation 
-        * Change search services list design
-        * Add service layer in selected group, in root if no one selected
+        * Add service to a group, if selected
+        * Support for custom tiling grids (experimental)
         * Fix work with qgis proxy
+        * Fix local wfs service creation 
         * Fix loading wfs services from qms.nextgis.com
       0.17.8
         * Fix saving and restoring grayscale parameter of a basemap with a project
