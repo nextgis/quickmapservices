@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from urllib2 import URLError
 from os import path
+import ast
 
 from PyQt4 import uic
 from PyQt4.QtGui import *
@@ -12,7 +13,61 @@ from .data_source_serializer import DataSourceSerializer
 from .qgis_map_helpers import add_layer_to_map
 from .qms_external_api_python.client import Client
 from .qgis_settings import QGISSettings
+from .plugin_settings import PluginSettings
+from .singleton import singleton
 import sys
+
+
+class Geoservice(object):
+    def __init__(self, attributes, image_qByteArray):
+        self.attributes = attributes
+        self.image_qByteArray = image_qByteArray
+
+    def isValid(self):
+        return self.attributes.get("id") is not None
+
+    @property
+    def id(self):
+        return self.attributes.get("id")
+
+    def saveSelf(self, qSettings):
+        qSettings.setValue(
+            "{}/json".format(self.id),
+            unicode(self.attributes)
+        )
+        qSettings.setValue(
+            "{}/image".format(self.id),
+            self.image_qByteArray
+        )
+
+    def loadSelf(self, id, qSettings):
+        service_json = qSettings.value("{}/json".format(self.id), None)
+        self.attributes = ast.literal_eval(service_json)
+        self.image_qByteArray = settings.value("{}/image".format(self.id), type=QByteArray)
+
+
+@singleton
+class CachedServices(object):
+    def __init__(self):
+        self.geoservices = []
+        self.load_last_used_services()
+    
+    def load_last_used_services(self):
+        for geoservice, image_ba in PluginSettings.get_last_used_services():
+            geoservice = Geoservice( geoservice, image_ba)
+            if geoservice.isValid:
+                self.geoservices.append(geoservice)
+
+    def add_service(self, geoservice, image_ba):
+        self.geoservices.insert(
+            0,
+            Geoservice(geoservice, image_ba)
+        )
+        self.geoservices = self.geoservices[0:5]
+        PluginSettings.set_last_used_services(self.geoservices)
+
+    def get_cached_services(self):
+        return [(geoservice.attributes, geoservice.image_qByteArray) for geoservice in self.geoservices]
 
 
 FORM_CLASS, _ = uic.loadUiType(path.join(
@@ -37,14 +92,17 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.delay_timer.timeout.connect(self.start_search)
         self.txtSearch.textChanged.connect(self.delay_timer.start)
 
-        self.lstSearchResult.itemDoubleClicked.connect(self.result_selected)
+        # self.lstSearchResult.itemDoubleClicked.connect(self.result_selected)
 
         self.one_process_work = QMutex()
+
+        self.add_last_used_services()
 
     def start_search(self):
         search_text = unicode(self.txtSearch.text())
         if not search_text:
             self.lstSearchResult.clear()
+            self.add_last_used_services()
             return
 
         # if 1 == 1 and self.search_threads:
@@ -65,6 +123,25 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         searcher.data_download_finished.connect(self.stop_progress)
         self.search_threads = searcher
         searcher.start()
+
+    def add_last_used_services(self):
+        services = CachedServices().get_cached_services()
+        if len(services) == 0:
+            return
+
+        self.lstSearchResult.insertItem(0, self.tr("Last used:"))
+        for attributes, image_qByteArray in services:
+            custom_widget = QmsSearchResultItemWidget(
+                attributes,
+                image_qByteArray
+            )
+            new_item = QListWidgetItem(self.lstSearchResult)
+            new_item.setSizeHint(custom_widget.sizeHint())
+            self.lstSearchResult.addItem(new_item)
+            self.lstSearchResult.setItemWidget(
+                new_item,
+                custom_widget
+            )
 
     def show_progress(self):
         self.lstSearchResult.clear()
@@ -103,21 +180,21 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.lstSearchResult.clear()
         self.lstSearchResult.addItem(error_text)
 
-    def result_selected(self, current=None, previous=None):
-        if current:
-            try:
-                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-                geoservice = current.data(Qt.UserRole)
-                client = Client()
-                client.set_proxy(*QGISSettings.get_qgis_proxy())
-                geoservice_info = client.get_geoservice_info(geoservice)
-                ds = DataSourceSerializer.read_from_json(geoservice_info)
-                add_layer_to_map(ds)
-            except Exception as ex:
-                print ex.message
-                pass
-            finally:
-                QApplication.restoreOverrideCursor()
+    # def result_selected(self, current=None, previous=None):
+    #     if current:
+    #         try:
+    #             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+    #             geoservice = current.data(Qt.UserRole)
+    #             client = Client()
+    #             client.set_proxy(*QGISSettings.get_qgis_proxy())
+    #             geoservice_info = client.get_geoservice_info(geoservice)
+    #             ds = DataSourceSerializer.read_from_json(geoservice_info)
+    #             add_layer_to_map(ds)
+    #         except Exception as ex:
+    #             print ex.message
+    #             pass
+    #         finally:
+    #             QApplication.restoreOverrideCursor()
 
 
 class QmsSearchResultItemWidget(QWidget):
@@ -149,7 +226,7 @@ class QmsSearchResultItemWidget(QWidget):
         # print "ds.icon_path: ", ds.icon_path
 
         self.service_desc.setText(
-            "<strong> {} </strong><div style=\"margin-top: 3px\">{}, <a href=\"{}\">  details <a/> <div/>".format(
+            "<strong> {} </strong><div style=\"margin-top: 3px\">{}, <a href=\"{}\">details<a/><div/>".format(
             # "{}<div style=\"margin-top: 3px\"> <em> {} </em>, <a href=\"{}\">  details <a/> <div/>".format(
                 geoservice.get('name', ""),
                 geoservice.get('type', "").upper(),
@@ -163,8 +240,8 @@ class QmsSearchResultItemWidget(QWidget):
         self.addButton.clicked.connect(self.addToMap)
         self.layout.addWidget(self.addButton)
 
-        # self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         self.geoservice = geoservice
+        self.image_ba = image_ba
 
     def addToMap(self):
         try:
@@ -174,6 +251,8 @@ class QmsSearchResultItemWidget(QWidget):
             geoservice_info = client.get_geoservice_info(self.geoservice)
             ds = DataSourceSerializer.read_from_json(geoservice_info)
             add_layer_to_map(ds)
+
+            CachedServices().add_service(self.geoservice, self.image_ba)
         except Exception as ex:
             print ex.message
             pass

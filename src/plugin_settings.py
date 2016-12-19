@@ -20,9 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QSettings, QDir, Qt
-import extra_sources
+import ast
 
+from PyQt4.QtCore import QSettings, QDir, Qt, QByteArray
+
+import extra_sources
 
 class PluginSettings(object):
 
@@ -115,3 +117,28 @@ class PluginSettings(object):
     def set_default_user_icon_path(cls, val):
         settings = cls.get_settings()
         settings.setValue('/ui/default_user_icon_path', val)
+
+    @classmethod
+    def get_last_used_services(cls):
+        settings = cls.get_settings()
+        services = []
+        settings.beginGroup("last_used_services")
+        for service_id in settings.childGroups():
+            service_key = "{}".format(service_id)
+
+            service_json_str = settings.value(service_key + "/json", None)
+            service_json = ast.literal_eval(service_json_str)
+            image_ba = settings.value(service_key + "/image", type=QByteArray)
+
+            services.append((service_json, image_ba))
+
+        return services
+            
+    @classmethod
+    def set_last_used_services(cls, services):
+        settings = cls.get_settings()
+        settings.remove("last_used_services")
+        settings.beginGroup("last_used_services")
+        for geoservice in services:
+            geoservice.saveSelf(settings)
+        

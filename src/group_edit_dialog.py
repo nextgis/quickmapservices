@@ -46,7 +46,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
             os.path.join(
                 os.path.dirname(__file__),
                 'icons',
-                'mapservices.png'
+                'mapservice.png'
             )
         )
 

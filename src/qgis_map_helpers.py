@@ -61,6 +61,10 @@ def add_layer_to_map(ds):
         layers4add.append(layer)
     if ds.type.lower() == KNOWN_DRIVERS.WFS.lower():
         qgis_wfs_uri_base = ds.wfs_url
+
+        if ds.wfs_params is not None:
+            qgis_wfs_uri_base += ds.wfs_params
+
         o = urlparse.urlparse(qgis_wfs_uri_base)
         request_attrs = dict(urlparse.parse_qsl(o.query))
         

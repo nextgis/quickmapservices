@@ -67,7 +67,9 @@ class DataSourceInfo(object):
 
         self.wfs_url = None
         self.wfs_layers = []
+        self.wfs_params = None
         self.wfs_epsg = None
+        self.wfs_turn_over = None
 
         self.geojson_url = None
 

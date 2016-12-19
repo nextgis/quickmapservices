@@ -66,7 +66,10 @@ class DataSourceSerializer(object):
 
         #WFS
         ds.wfs_url = ConfigReaderHelper.try_read_config(parser, 'wfs', 'url', reraise=(ds.type == KNOWN_DRIVERS.WFS))
-        # ds.wfs_layers = ConfigReaderHelper.try_read_config(parser, 'wfs', 'layers')
+        ds.wfs_params = ConfigReaderHelper.try_read_config(parser, 'wfs', 'params')
+        wfs_layers = ConfigReaderHelper.try_read_config(parser, 'wfs', 'layers')
+        if wfs_layers is not None:
+            ds.wfs_layers = wfs_layers.split()
 
         # WFS
         ds.geojson_url = ConfigReaderHelper.try_read_config(parser, 'geojson', 'url', reraise=(ds.type == KNOWN_DRIVERS.GEOJSON))
@@ -197,7 +200,8 @@ class DataSourceSerializer(object):
 
         if ds_info.type == KNOWN_DRIVERS.WFS:
             config.set('wfs', 'url', ds_info.wfs_url)
-            # config.set('wfs', 'layers', ds_info.wfs_layers)
+            config.set('wfs', 'params', ds_info.wfs_params)
+            config.set('wfs', 'layers', ",".join(ds_info.wfs_layers))
 
         if ds_info.type == KNOWN_DRIVERS.GEOJSON:
             config.set('geojson', 'url', ds_info.geojson_url)

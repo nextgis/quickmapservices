@@ -26,7 +26,7 @@ import urlparse
 import xml.etree.ElementTree as ET
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
-from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog
+from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog, QSizePolicy
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
@@ -253,8 +253,8 @@ class QuickMapServices(object):
             self.iface.layerToolBar().removeAction(self.tb_action)
 
         if self.qms_search_action:
-            self.iface.removeVectorToolBarIcon(self.qms_search_action)
-            self.iface.removeWebToolBarIcon(self.qms_search_action)
+            self.iface.webToolBar().removeAction(self.qms_search_action)
+            self.iface.layerToolBar().removeAction(self.qms_search_action)
     def append_menu_buttons(self):
         """
         Append menus and buttons to appropriate toolbar
@@ -277,12 +277,17 @@ class QuickMapServices(object):
         toolbutton.setIcon(self.menu.icon())
         toolbutton.setText(self.menu.title())
         toolbutton.setToolTip(self.menu.title())
+        # self.tb_action = toolbutton.defaultAction()
+        # print "self.tb_action: ", self.tb_action
         if PluginSettings.move_to_layers_menu():
             self.tb_action = self.iface.layerToolBar().addWidget(toolbutton)
-            self.iface.addVectorLayerToolBarIcon(self.qms_search_action)
+            # self.iface.layerToolBar().addAction(self.tb_action)
+            self.iface.layerToolBar().addAction(self.qms_search_action)
         else:
             self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
-            self.iface.addWebToolBarIcon(self.qms_search_action) 
+            # self.iface.webToolBar().addAction(self.tb_action)
+            self.iface.webToolBar().addAction(self.qms_search_action)
+
 
     def show_settings_dialog(self):
         settings_dlg = SettingsDialog()
