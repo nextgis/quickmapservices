@@ -222,15 +222,14 @@ class QmsSearchResultItemWidget(QWidget):
 
         # geoservice_info = client.get_geoservice_info(geoservice)
         # ds = DataSourceSerializer.read_from_json(geoservice_info)
-        # print "ds.icon: ", ds.icon
         # print "ds.icon_path: ", ds.icon_path
 
         self.service_desc.setText(
-            "<strong> {} </strong><div style=\"margin-top: 3px\">{}, <a href=\"{}\">details<a/><div/>".format(
+            u"<strong> {} </strong><div style=\"margin-top: 3px\">{}, <a href=\"{}\">details<a/><div/>".format(
             # "{}<div style=\"margin-top: 3px\"> <em> {} </em>, <a href=\"{}\">  details <a/> <div/>".format(
-                geoservice.get('name', ""),
-                geoservice.get('type', "").upper(),
-                Client().geoservice_info_url(geoservice.get('id', ""))
+                geoservice.get('name', u""),
+                geoservice.get('type', u"").upper(),
+                Client().geoservice_info_url(geoservice.get('id', u""))
             )
         )
         self.layout.addWidget(self.service_desc)
