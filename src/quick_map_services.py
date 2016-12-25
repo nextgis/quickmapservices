@@ -26,7 +26,7 @@ import urlparse
 import xml.etree.ElementTree as ET
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt, QUrl
-from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog, QSizePolicy, QDesktopServices
+from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog, QDesktopServices
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
