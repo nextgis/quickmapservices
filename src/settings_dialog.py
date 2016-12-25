@@ -24,9 +24,9 @@ from __future__ import absolute_import
 
 import os
 
-from PyQt4 import QtGui, uic
+from PyQt4 import uic
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QMessageBox, QCursor
+from PyQt4.QtGui import QMessageBox, QCursor, QDialog, QIcon
 import sys
 from qgis.core import QgsApplication
 from .extra_sources import ExtraSources
@@ -37,7 +37,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'settings_dialog_base.ui'), from_imports=False)
 
 
-class SettingsDialog(QtGui.QDialog, FORM_CLASS):
+class SettingsDialog(QDialog, FORM_CLASS):
 
     def __init__(self, parent=None):
         """Constructor."""
@@ -49,15 +49,15 @@ class SettingsDialog(QtGui.QDialog, FORM_CLASS):
         # init services visibility tab
         self.dsManagerViewModel = DSManagerModel()
         self.treeViewForDS.setModel(self.dsManagerViewModel)
-        self.treeViewForDS.header().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QtGui.QHeaderView.Stretch)
+        self.treeViewForDS.header().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch)
         showAllAction = self.toolBarForDSTreeView.addAction(
-            QtGui.QIcon(":/images/themes/default/mActionShowAllLayers.png"),
+            QIcon(":/images/themes/default/mActionShowAllLayers.png"),
             self.tr("Show all")
         )
         showAllAction.triggered.connect(self.dsManagerViewModel.checkAll)
 
         hideAllAction = self.toolBarForDSTreeView.addAction(
-            QtGui.QIcon(":images/themes/default/mActionHideAllLayers.png"),
+            QIcon(":images/themes/default/mActionHideAllLayers.png"),
             self.tr("Hide all")
         )
         hideAllAction.triggered.connect(self.dsManagerViewModel.uncheckAll)
