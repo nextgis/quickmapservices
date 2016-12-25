@@ -8,6 +8,9 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import QThread, pyqtSignal, Qt, QTimer, QMutex, QSize, QByteArray
 
 from qgis.gui import QgsFilterLineEdit
+from qgis.core import (
+    QgsMessageLog,
+)
 
 from .data_source_serializer import DataSourceSerializer
 from .qgis_map_helpers import add_layer_to_map
@@ -16,7 +19,15 @@ from .qgis_settings import QGISSettings
 from .plugin_settings import PluginSettings
 from .singleton import singleton
 import sys
+import traceback
 
+
+def plPrint(msg, level=QgsMessageLog.INFO):
+    QgsMessageLog.logMessage(
+        msg,
+        "QMS",
+        level
+    )
 
 class Geoservice(object):
     def __init__(self, attributes, image_qByteArray):
@@ -111,16 +122,17 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         #     self.search_threads.wait()
         if self.search_threads:
             self.search_threads.data_downloaded.disconnect()
-            self.search_threads.data_download_finished.disconnect()
+            self.search_threads.search_finished.disconnect()
             self.search_threads.stop()
             self.search_threads.wait()
             self.lstSearchResult.clear()
 
-        self.show_progress()
+        # self.show_progress()
         searcher = SearchThread(search_text, self.one_process_work, self.iface.mainWindow())
         searcher.data_downloaded.connect(self.show_result)
         searcher.error_occurred.connect(self.show_error)
-        searcher.data_download_finished.connect(self.stop_progress)
+        searcher.search_started.connect(self.search_started_process)
+        searcher.search_finished.connect(self.search_finished_progress)
         self.search_threads = searcher
         searcher.start()
 
@@ -143,13 +155,41 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
                 custom_widget
             )
 
-    def show_progress(self):
+    def search_started_process(self):
+        # plPrint("search_started_process")
         self.lstSearchResult.clear()
         self.lstSearchResult.insertItem(0, self.tr('Searching...'))
-    def stop_progress(self):
+
+    # def show_progress(self):
+    #     self.lstSearchResult.clear()
+
+    def search_finished_progress(self):
+        # plPrint("search_finished_progress")
         self.lstSearchResult.takeItem(0)
+        if self.lstSearchResult.count() == 0:
+            new_widget = QLabel()
+            new_widget.setTextFormat(Qt.RichText)
+            new_widget.setOpenExternalLinks(True)
+            new_widget.setWordWrap(True)
+            new_widget.setText(
+                u"<div align='center'> <strong>{}</strong> </div><div align='center' style='margin-top: 3px'> {} </div>".format(
+                    self.tr(u"No results."),
+                    self.tr(u"You can add a service to become searchable. Start <a href='{}'>here</a>.").format(
+                        u"https://qms.nextgis.com/create"
+                    ),
+                )
+            )
+            new_item = QListWidgetItem(self.lstSearchResult)
+            new_item.setSizeHint(new_widget.sizeHint())
+            self.lstSearchResult.addItem(new_item)
+            self.lstSearchResult.setItemWidget(
+                new_item,
+                new_widget
+            )
+            # self.lstSearchResult.insertItem(0, self.tr('Services not found. Create it here.'))            
 
     def show_result(self, geoservice, image_ba):
+        # plPrint("show_result")
         # self.lstSearchResult.clear()
         if geoservice:
             custom_widget = QmsSearchResultItemWidget(geoservice, image_ba)
@@ -263,7 +303,8 @@ class QmsSearchResultItemWidget(QWidget):
 
 class SearchThread(QThread):
 
-    data_download_finished = pyqtSignal()
+    search_started = pyqtSignal()
+    search_finished = pyqtSignal()
     data_downloaded = pyqtSignal(object, QByteArray)
     error_occurred = pyqtSignal(object)
 
@@ -279,6 +320,8 @@ class SearchThread(QThread):
         self.need_stop = False
 
     def run(self):
+        self.search_started.emit()
+
         results = []
 
         # search
@@ -315,7 +358,7 @@ class SearchThread(QThread):
                         # error_text = 'common'
                         self.error_occurred.emit(error_text)
 
-        self.data_download_finished.emit()
+        self.search_finished.emit()
         self.mutex.unlock()
 
     def stop(self):

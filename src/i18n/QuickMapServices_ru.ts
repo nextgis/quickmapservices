@@ -4,12 +4,12 @@
 <context>
     <name>@default</name>
     <message>
-        <location filename="qgis_map_helpers.py" line="110"/>
+        <location filename="qgis_map_helpers.py" line="111"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation>Слой %s невозможно добавить на карту!</translation>
     </message>
     <message>
-        <location filename="qgis_map_helpers.py" line="111"/>
+        <location filename="qgis_map_helpers.py" line="112"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -634,17 +634,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QmsServiceToolbox</name>
     <message>
-        <location filename="qms_service_toolbox.py" line="86"/>
+        <location filename="qms_service_toolbox.py" line="97"/>
         <source>Search string...</source>
         <translation>Поиск геосервиса...</translation>
     </message>
     <message>
-        <location filename="qms_service_toolbox.py" line="148"/>
+        <location filename="qms_service_toolbox.py" line="161"/>
         <source>Searching...</source>
         <translation>Поиск...</translation>
     </message>
     <message>
-        <location filename="qms_service_toolbox.py" line="172"/>
+        <location filename="qms_service_toolbox.py" line="212"/>
         <source>No results!</source>
         <translation>Нет результатов!</translation>
     </message>
@@ -654,9 +654,9 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">QMS Service</translation>
     </message>
     <message>
-        <location filename="qms_service_toolbox.py" line="132"/>
+        <location filename="qms_service_toolbox.py" line="144"/>
         <source>Last used:</source>
-        <translation>Недавно использовавшийся:</translation>
+        <translation>Недавно использованы:</translation>
     </message>
     <message>
         <location filename="qms_service_toolbox.ui" line="14"/>
@@ -666,7 +666,17 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="qms_service_toolbox.ui" line="24"/>
         <source>Enter part of service&apos;s name</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите часть имени сервиса</translation>
+    </message>
+    <message>
+        <location filename="qms_service_toolbox.py" line="174"/>
+        <source>No results.</source>
+        <translation>Ничего не найдено.</translation>
+    </message>
+    <message>
+        <location filename="qms_service_toolbox.py" line="174"/>
+        <source>You can add a service to become searchable. Start &lt;a href=&apos;{}&apos;&gt;here&lt;/a&gt;.</source>
+        <translation>Вы можете &lt;a href=&apos;{}&apos;&gt;добавить сервис&lt;/a&gt; самостоятельно, и он станет доступен через поиск.</translation>
     </message>
 </context>
 <context>
@@ -677,22 +687,22 @@ p, li { white-space: pre-wrap; }
         <translation>QuickMapServices</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="214"/>
+        <location filename="quick_map_services.py" line="226"/>
         <source>Set proper scale</source>
         <translation>Ближайший масштаб</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="220"/>
+        <location filename="quick_map_services.py" line="232"/>
         <source>Set SlippyMap scales</source>
         <translation>Установить масштабы SlippyMap</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="229"/>
+        <location filename="quick_map_services.py" line="238"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="235"/>
+        <location filename="quick_map_services.py" line="244"/>
         <source>About</source>
         <translation>Инфо</translation>
     </message>
@@ -714,22 +724,27 @@ The previous settings will be overwritten!</source>
         <translation>Невозможно создать дополнительные директории для  %s: %s %s</translation>
     </message>
     <message>
-        <location filename="quick_map_services.py" line="314"/>
+        <location filename="quick_map_services.py" line="321"/>
         <source>Search QMS</source>
         <translation>Поиск в QMS</translation>
+    </message>
+    <message>
+        <location filename="quick_map_services.py" line="218"/>
+        <source>Add to Search</source>
+        <translation>Добавить в Поиск</translation>
     </message>
 </context>
 <context>
     <name>SearchThread</name>
     <message>
-        <location filename="qms_service_toolbox.py" line="311"/>
+        <location filename="qms_service_toolbox.py" line="353"/>
         <source>Network error!
 {0}</source>
         <translation>Сетевая ошибка!
 {0}</translation>
     </message>
     <message>
-        <location filename="qms_service_toolbox.py" line="315"/>
+        <location filename="qms_service_toolbox.py" line="357"/>
         <source>Error of processing!
 {0}: {1}</source>
         <translation>Ошибка обработки!

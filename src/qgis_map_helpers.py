@@ -16,8 +16,8 @@ service_layers = []
 
 def tr(message):
     # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-    return QCoreApplication.translate('QuickMapServices', message)
-
+    # return QCoreApplication.translate('QuickMapServices', message)
+    return message
 
 def add_layer_to_map(ds):
     layers4add = []
@@ -57,6 +57,7 @@ def add_layer_to_map(ds):
                     layers.reverse()
                 qgis_wms_uri += '&layers=' + '&layers='.join(layers) + '&styles=' * len(layers)
         qgis_wms_uri += '&url=' + ds.wms_url
+
         layer = QgsRasterLayer(qgis_wms_uri, tr(ds.alias), KNOWN_DRIVERS.WMS.lower())
         layers4add.append(layer)
     if ds.type.lower() == KNOWN_DRIVERS.WFS.lower():

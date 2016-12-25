@@ -124,9 +124,20 @@ class DataSourceSerializer(object):
         if ds.type.lower() == KNOWN_DRIVERS.WMS.lower():
             ds.wms_url = json_data['url']
             ds.wms_params = json_data['params']
+            if ds.wms_params is None:
+                ds.wms_params = ""
+
             ds.wms_layers = json_data['layers']
             ds.wms_turn_over = json_data['turn_over']
+            
             ds.format = json_data['format']
+            if ds.format is None:
+                ds.format = 'image/png'
+            ds.wms_params += '&format=' + ds.format
+            
+            epsg = json_data['epsg']
+            if epsg is not None:
+                ds.wms_params += '&crs=EPSG:' + str(epsg)  
 
         #WFS
         if ds.type.lower() == KNOWN_DRIVERS.WFS.lower():

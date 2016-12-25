@@ -25,8 +25,8 @@ import os.path
 import urlparse
 import xml.etree.ElementTree as ET
 
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt
-from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog, QSizePolicy
+from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt, QUrl
+from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog, QSizePolicy, QDesktopServices
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
@@ -208,6 +208,18 @@ class QuickMapServices(object):
             if gr_menu not in self.menu.children():
                 self.menu.addMenu(gr_menu)
 
+        # QMS web service
+        self.menu.addSeparator()
+
+        self.service_actions.append(self.qms_search_action)
+        self.menu.addAction(self.qms_search_action)
+
+        icon_create_service_path = self.plugin_dir + '/icons/mActionCreate.svg'
+        qms_create_service_action = QAction(self.tr('Add to Search'), self.iface.mainWindow())
+        qms_create_service_action.setIcon(QIcon(icon_create_service_path))
+        qms_create_service_action.triggered.connect(self.openURL)
+        self.menu.addAction(qms_create_service_action)
+
         # Scales, Settings and About actions
         self.menu.addSeparator()
         icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.svg'  # TODO change icon
@@ -221,9 +233,6 @@ class QuickMapServices(object):
         scales_act.triggered.connect(self.set_tms_scales)
         #self.menu.addAction(scales_act)  # TODO: uncomment after fix
         self.service_actions.append(scales_act)
-
-        self.service_actions.append(self.qms_search_action)
-        self.menu.addAction(self.qms_search_action)
 
         icon_settings_path = self.plugin_dir + '/icons/mActionSettings.svg'
         settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
@@ -281,11 +290,9 @@ class QuickMapServices(object):
         # print "self.tb_action: ", self.tb_action
         if PluginSettings.move_to_layers_menu():
             self.tb_action = self.iface.layerToolBar().addWidget(toolbutton)
-            # self.iface.layerToolBar().addAction(self.tb_action)
             self.iface.layerToolBar().addAction(self.qms_search_action)
         else:
             self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
-            # self.iface.webToolBar().addAction(self.tb_action)
             self.iface.webToolBar().addAction(self.qms_search_action)
 
 
@@ -324,3 +331,5 @@ class QuickMapServices(object):
         self.iface.removeDockWidget(self.server_toolbox)
         del self.server_toolbox
 
+    def openURL(self):
+        QDesktopServices.openUrl(QUrl("https://qms.nextgis.com/create"))
