@@ -1,5 +1,4 @@
 import os
-import urlparse
 
 from PyQt4 import uic
 from PyQt4.QtGui import QWidget, QMessageBox
@@ -34,4 +33,3 @@ class EditorWidgetGeoJson(QWidget, FORM_CLASS):
                 return False
 
         return True
-

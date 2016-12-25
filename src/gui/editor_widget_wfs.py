@@ -1,5 +1,4 @@
 import os
-import urlparse
 
 from PyQt4 import uic
 from PyQt4.QtGui import QWidget, QMessageBox
@@ -41,9 +40,3 @@ class EditorWidgetWfs(QWidget, FORM_CLASS):
                 return False
 
         return True
-
-    # def set_layers_names(self):
-    #     o = urlparse.urlparse(self.txtUrl.text())
-    #     request_attrs = urlparse.parse_qs(o.query)
-    #     layers_names = ",".join(request_attrs.get('TYPENAME', ''))
-    #     self.txtLayers.setText(layers_names)

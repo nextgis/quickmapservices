@@ -22,7 +22,6 @@
 """
 from __future__ import absolute_import
 import os.path
-import urlparse
 import xml.etree.ElementTree as ET
 
 from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt, QUrl
