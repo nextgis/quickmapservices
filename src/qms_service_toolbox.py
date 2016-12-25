@@ -4,8 +4,29 @@ from os import path
 import ast
 
 from PyQt4 import uic
-from PyQt4.QtGui import *
-from PyQt4.QtCore import QThread, pyqtSignal, Qt, QTimer, QMutex, QSize, QByteArray
+from PyQt4.QtGui import (
+    QApplication,
+    QWidget,
+    QDockWidget,
+    QHBoxLayout,
+    QLabel,
+    QImage,
+    QPixmap,
+    QToolButton,
+    QCursor,
+    QSizePolicy,
+    QListWidgetItem,
+)
+
+from PyQt4.QtCore import (
+    QThread,
+    pyqtSignal,
+    Qt,
+    QTimer,
+    QMutex,
+    QSize,
+    QByteArray
+)
 
 from qgis.gui import QgsFilterLineEdit
 from qgis.core import (
@@ -293,7 +314,7 @@ class QmsSearchResultItemWidget(QWidget):
 
             CachedServices().add_service(self.geoservice, self.image_ba)
         except Exception as ex:
-            print ex.message
+            plPrint(unicode(ex))
             pass
         finally:
             QApplication.restoreOverrideCursor()
