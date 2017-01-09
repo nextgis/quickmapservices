@@ -38,6 +38,7 @@ class Downloader(QObject):
     def __init__(self, parent=None):
         QObject.__init__(self, parent)
         self.queue = []
+        self.redirected_urls = {}
         self.requestingUrls = []
         self.replies = []
 
@@ -85,27 +86,36 @@ class Downloader(QObject):
         isFromCache = 0
         httpStatusCode = reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)
         if reply.error() == QNetworkReply.NoError:
-            self.fetchSuccesses += 1
-            if reply.attribute(QNetworkRequest.SourceIsFromCacheAttribute):
-                self.cacheHits += 1
-                isFromCache = 1
-            elif not reply.hasRawHeader("Cache-Control"):
-                cache = QgsNetworkAccessManager.instance().cache()
-                if cache:
-                    metadata = cache.metaData(reply.request().url())
-                    # self.log("Expiration date: " + metadata.expirationDate().toString().encode("utf-8"))
-                    if metadata.expirationDate().isNull():
-                        metadata.setExpirationDate(
-                            QDateTime.currentDateTime().addSecs(self.default_cache_expiration * 60 * 60))
-                        cache.updateMetaData(metadata)
-                        self.log(
-                            "Default expiration date has been set: %s (%d h)" % (url, self.default_cache_expiration))
-
-            if reply.isReadable():
-                data = reply.readAll()
-                self.fetchedFiles[url] = data
+            if httpStatusCode == 301:
+                new_url = str(reply.rawHeader("Location"))
+                self.addToQueue(new_url, url)
             else:
-                qDebug("http status code: " + str(httpStatusCode))
+                self.fetchSuccesses += 1
+                if reply.attribute(QNetworkRequest.SourceIsFromCacheAttribute):
+                    self.cacheHits += 1
+                    isFromCache = 1
+                elif not reply.hasRawHeader("Cache-Control"):
+                    cache = QgsNetworkAccessManager.instance().cache()
+                    if cache:
+                        metadata = cache.metaData(reply.request().url())
+                        # self.log("Expiration date: " + metadata.expirationDate().toString().encode("utf-8"))
+                        if metadata.expirationDate().isNull():
+                            metadata.setExpirationDate(
+                                QDateTime.currentDateTime().addSecs(self.default_cache_expiration * 60 * 60))
+                            cache.updateMetaData(metadata)
+                            self.log(
+                                "Default expiration date has been set: %s (%d h)" % (url, self.default_cache_expiration))
+
+                if reply.isReadable():
+                    data = reply.readAll()
+                    if self.redirected_urls.has_key(url):
+                        url = self.redirected_urls[url]
+
+                    self.fetchedFiles[url] = data
+                else:
+                    qDebug("http status code: " + str(httpStatusCode))
+
+                self.emit(SIGNAL('replyFinished(QString, int, int)'), url, reply.error(), isFromCache)
         else:
             if self.sync and httpStatusCode == 404:
                 self.fetchedFiles[url] = self.NOT_FOUND
@@ -113,7 +123,6 @@ class Downloader(QObject):
             if self.errorStatus == self.NO_ERROR:
                 self.errorStatus = self.UNKNOWN_ERROR
 
-        self.emit(SIGNAL('replyFinished(QString, int, int)'), url, reply.error(), isFromCache)
         reply.deleteLater()
 
         if debug_mode:
@@ -149,6 +158,7 @@ class Downloader(QObject):
         self.log("fetchFiles()")
         self.sync = True
         self.queue = []
+        self.redirected_urls = {} 
         self.clearCounts()
         self.errorStatus = Downloader.NO_ERROR
         self.fetchedFiles = {}
@@ -173,10 +183,12 @@ class Downloader(QObject):
             self.timer.stop()
         return self.fetchedFiles
 
-    def addToQueue(self, url):
+    def addToQueue(self, url, redirected_from=None):
         if url in self.queue:
             return False
         self.queue.append(url)
+        if redirected_from is not None:
+            self.redirected_urls[url] = redirected_from
         return True
 
     def queueCount(self):
