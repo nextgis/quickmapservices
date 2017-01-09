@@ -26,9 +26,8 @@ from __future__ import absolute_import
 from .data_sources_list import DataSourcesList
 from .groups_list import GroupsList
 
-from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
-from PyQt4.QtGui import QIcon
+from PyQt4.QtGui import QIcon, QTreeWidgetItem
 from .plugin_settings import PluginSettings
 
 from .singleton import QSingleton
@@ -55,7 +54,7 @@ class DSManagerModel(QAbstractItemModel):
         self.columnNames.insert(self.COLUMN_VISIBILITY, self.tr("Visible"))
         self.columnNames.insert(self.COLUMN_SOURCE, self.tr("Source"))
 
-        self.rootItem = QtGui.QTreeWidgetItem(self.columnNames)
+        self.rootItem = QTreeWidgetItem(self.columnNames)
         self.__setupModelData()
 
     def resetModel(self):
@@ -82,7 +81,7 @@ class DSManagerModel(QAbstractItemModel):
             if ds.group in groups:
                 group_item = groupsItems[groups.index(ds.group)]
             else:
-                group_item = QtGui.QTreeWidgetItem()
+                group_item = QTreeWidgetItem()
                 group_item.setData(self.COLUMN_GROUP_DS, Qt.DisplayRole, ds.group)
                 group_item.setData(self.COLUMN_VISIBILITY, Qt.DisplayRole, "")
                 group_item.setData(self.COLUMN_SOURCE, Qt.DisplayRole, ds.category)
@@ -99,7 +98,7 @@ class DSManagerModel(QAbstractItemModel):
                 groupsItems.append(group_item)
                 self.rootItem.addChild(group_item)
 
-            ds_item = QtGui.QTreeWidgetItem()
+            ds_item = QTreeWidgetItem()
             ds_item.setData(self.COLUMN_GROUP_DS, Qt.DisplayRole, ds.alias)
             ds_item.setIcon(self.COLUMN_GROUP_DS, QIcon(ds.icon_path))
             ds_item.setData(self.COLUMN_GROUP_DS, Qt.UserRole, ds)
