@@ -16,6 +16,7 @@ from PyQt4.QtGui import (
     QCursor,
     QSizePolicy,
     QListWidgetItem,
+    QGridLayout,
 )
 
 from PyQt4.QtCore import (
@@ -276,24 +277,56 @@ class QmsSearchResultItemWidget(QWidget):
         self.service_icon.setPixmap(pixmap)
         self.layout.addWidget(self.service_icon)
 
-        self.service_desc = QLabel(self)
-        self.service_desc.setTextFormat(Qt.RichText)
-        self.service_desc.setOpenExternalLinks(True)
-        self.service_desc.setWordWrap(True)
+        self.service_desc_layout = QGridLayout(self)
+        self.service_desc_layout.setSpacing(0)
+        self.layout.addLayout(self.service_desc_layout)
 
-        # geoservice_info = client.get_geoservice_info(geoservice)
-        # ds = DataSourceSerializer.read_from_json(geoservice_info)
-        # print "ds.icon_path: ", ds.icon_path
+        self.service_name = QLabel(self)
+        self.service_name.setTextFormat(Qt.RichText)
+        self.service_name.setWordWrap(True)
+        self.service_name.setText(u"   <strong> {} </strong>".format(geoservice.get('name', u"")))
+        self.service_desc_layout.addWidget(self.service_name, 0, 0, 1, 3)
 
-        self.service_desc.setText(
-            u"<strong> {} </strong><div style=\"margin-top: 3px\">{}, <a href=\"{}\">details<a/><div/>".format(
-            # "{}<div style=\"margin-top: 3px\"> <em> {} </em>, <a href=\"{}\">  details <a/> <div/>".format(
-                geoservice.get('name', u""),
-                geoservice.get('type', u"").upper(),
-                Client().geoservice_info_url(geoservice.get('id', u""))
-            )
-        )
-        self.layout.addWidget(self.service_desc)
+        self.service_type = QLabel(self)
+        self.service_type.setTextFormat(Qt.RichText)
+        self.service_type.setWordWrap(True)
+        self.service_type.setText(geoservice.get('type', u"").upper() + " ")
+        self.service_desc_layout.addWidget(self.service_type, 1, 0)
+
+        self.service_deteils = QLabel(self)
+        self.service_deteils.setTextFormat(Qt.RichText)
+        self.service_deteils.setWordWrap(True)
+        self.service_deteils.setOpenExternalLinks(True)
+        self.service_deteils.setText(u"<a href=\"{}\">details</a>, ".format(
+            Client().geoservice_info_url(geoservice.get('id', u""))
+        ))
+        self.service_desc_layout.addWidget(self.service_deteils, 1, 1)
+
+        self.service_report = QLabel(self)
+        self.service_report.setTextFormat(Qt.RichText)
+        self.service_report.setWordWrap(True)
+        self.service_report.setOpenExternalLinks(True)
+        self.service_report.setText(u"<a href=\"{}\">report a problem</a><div/>".format(
+            Client().geoservice_report_url(geoservice.get('id', u""))
+        ))
+        self.service_desc_layout.addWidget(self.service_report, 1, 2)
+        self.service_desc_layout.setColumnStretch(2, 1)
+
+        # self.service_desc = QLabel(self)
+        # self.service_desc.setTextFormat(Qt.RichText)
+        # self.service_desc.setOpenExternalLinks(True)
+        # self.service_desc.setWordWrap(True)
+
+        # self.service_desc.setText(
+        #     u"<strong> {} </strong><div style=\"margin-top: 3px\">{}, <a href=\"{}\">details</a>, <a href=\"{}\">report</a><div/>".format(
+        #     # "{}<div style=\"margin-top: 3px\"> <em> {} </em>, <a href=\"{}\">  details <a/> <div/>".format(
+        #         geoservice.get('name', u""),
+        #         geoservice.get('type', u"").upper(),
+        #         Client().geoservice_info_url(geoservice.get('id', u"")),
+        #         Client().geoservice_report_url(geoservice.get('id', u""))
+        #     )
+        # )
+        # self.layout.addWidget(self.service_desc)
 
         self.addButton = QToolButton()
         self.addButton.setText("Add")
