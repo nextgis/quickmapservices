@@ -8,6 +8,7 @@ from PyQt4.QtGui import (
     QApplication,
     QWidget,
     QDockWidget,
+    QVBoxLayout,
     QHBoxLayout,
     QLabel,
     QImage,
@@ -17,6 +18,7 @@ from PyQt4.QtGui import (
     QSizePolicy,
     QListWidgetItem,
     QGridLayout,
+    QSpacerItem
 )
 
 from PyQt4.QtCore import (
@@ -92,11 +94,15 @@ class CachedServices(object):
                 self.geoservices.append(geoservice)
 
     def add_service(self, geoservice, image_ba):
-        self.geoservices.insert(
-            0,
-            Geoservice(geoservice, image_ba)
-        )
-        self.geoservices = self.geoservices[0:5]
+        new_gs = Geoservice(geoservice, image_ba)
+        geoservices4store = [new_gs]
+        
+        for gs in self.geoservices:
+            if gs.id == new_gs.id:
+                continue
+            geoservices4store.append(gs)
+
+        self.geoservices = geoservices4store[0:5]
         PluginSettings.set_last_used_services(self.geoservices)
 
     def get_cached_services(self):
@@ -125,31 +131,36 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.delay_timer.timeout.connect(self.start_search)
         self.txtSearch.textChanged.connect(self.delay_timer.start)
 
-        # self.lstSearchResult.itemDoubleClicked.connect(self.result_selected)
-
         self.one_process_work = QMutex()
 
+        # self.wSearchResult = QWidget()
+        # self.lSearchResult = QVBoxLayout(self.wSearchResult)
+        # self.saSearchResult.setWidget(self.wSearchResult)
+        # self.saSearchResult.setWidgetResizable(True)
+
         self.add_last_used_services()
+
+    # def clearSearchResult(self):
+    #     for i in reversed(range(self.lSearchResult.count())): 
+    #         self.lSearchResult.itemAt(i).widget().setParent(None)
 
     def start_search(self):
         search_text = unicode(self.txtSearch.text())
         if not search_text:
             self.lstSearchResult.clear()
+            # self.clearSearchResult()
             self.add_last_used_services()
             return
 
-        # if 1 == 1 and self.search_threads:
-        #     # print 'Kill ', self.search_threads
-        #     self.search_threads.terminate()
-        #     self.search_threads.wait()
         if self.search_threads:
             self.search_threads.data_downloaded.disconnect()
             self.search_threads.search_finished.disconnect()
             self.search_threads.stop()
             self.search_threads.wait()
+            
             self.lstSearchResult.clear()
+            # self.clearSearchResult()
 
-        # self.show_progress()
         searcher = SearchThread(search_text, self.one_process_work, self.iface.mainWindow())
         searcher.data_downloaded.connect(self.show_result)
         searcher.error_occurred.connect(self.show_error)
@@ -164,6 +175,10 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             return
 
         self.lstSearchResult.insertItem(0, self.tr("Last used:"))
+        # l = QLabel(self.tr("Last used:"))
+        # l.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        # self.lSearchResult.addWidget(l)
+
         for attributes, image_qByteArray in services:
             custom_widget = QmsSearchResultItemWidget(
                 attributes,
@@ -176,19 +191,25 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
                 new_item,
                 custom_widget
             )
+            # self.lSearchResult.addWidget(custom_widget)
+
+        # w = QWidget()
+        # w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # self.lSearchResult.addWidget(w)
 
     def search_started_process(self):
-        # plPrint("search_started_process")
         self.lstSearchResult.clear()
+        # self.clearSearchResult()
         self.lstSearchResult.insertItem(0, self.tr('Searching...'))
-
-    # def show_progress(self):
-    #     self.lstSearchResult.clear()
+        # l = QLabel(self.tr("Searching..."))
+        # l.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+        # self.lSearchResult.addWidget(l)
 
     def search_finished_progress(self):
-        # plPrint("search_finished_progress")
         self.lstSearchResult.takeItem(0)
+        # self.lSearchResult.itemAt(0).widget().setParent(None)
         if self.lstSearchResult.count() == 0:
+        # if self.lSearchResult.count() == 0:
             new_widget = QLabel()
             new_widget.setTextFormat(Qt.RichText)
             new_widget.setOpenExternalLinks(True)
@@ -208,55 +229,39 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
                 new_item,
                 new_widget
             )
-            # self.lstSearchResult.insertItem(0, self.tr('Services not found. Create it here.'))            
+            # self.lSearchResult.addWidget(new_widget)          
+
+        # w = QWidget()
+        # w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # self.lSearchResult.addWidget(w)
 
     def show_result(self, geoservice, image_ba):
-        # plPrint("show_result")
-        # self.lstSearchResult.clear()
         if geoservice:
             custom_widget = QmsSearchResultItemWidget(geoservice, image_ba)
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(custom_widget.sizeHint())
-            # new_item.setText(
-            #     unicode(geoservice['name']) + ' [%s]' % geoservice['type'].upper()
-            # )
-            # new_item.setData(Qt.UserRole, geoservice)
-
-            # todo: remake with cache icons
             self.lstSearchResult.addItem(new_item)
             self.lstSearchResult.setItemWidget(
                 new_item,
                 custom_widget
             )
+            # self.lSearchResult.addWidget(custom_widget)
 
         else:
             new_item = QListWidgetItem()
             new_item.setText(self.tr('No results!'))
             new_item.setData(Qt.UserRole, None)
             self.lstSearchResult.addItem(new_item)
-
+            # l = QLabel(self.tr("No results!"))
+            # l.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
+            # self.lSearchResult.addWidget(l)
         self.lstSearchResult.update()
 
     def show_error(self, error_text):
-        # print error_text
         self.lstSearchResult.clear()
         self.lstSearchResult.addItem(error_text)
-
-    # def result_selected(self, current=None, previous=None):
-    #     if current:
-    #         try:
-    #             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-    #             geoservice = current.data(Qt.UserRole)
-    #             client = Client()
-    #             client.set_proxy(*QGISSettings.get_qgis_proxy())
-    #             geoservice_info = client.get_geoservice_info(geoservice)
-    #             ds = DataSourceSerializer.read_from_json(geoservice_info)
-    #             add_layer_to_map(ds)
-    #         except Exception as ex:
-    #             print ex.message
-    #             pass
-    #         finally:
-    #             QApplication.restoreOverrideCursor()
+        # self.clearSearchResult()
+        # self.lSearchResult.addWidget(QLabel(error_text))
 
 
 class QmsSearchResultItemWidget(QWidget):
@@ -332,6 +337,8 @@ class QmsSearchResultItemWidget(QWidget):
         self.addButton.setText("Add")
         self.addButton.clicked.connect(self.addToMap)
         self.layout.addWidget(self.addButton)
+        
+        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
 
         self.geoservice = geoservice
         self.image_ba = image_ba

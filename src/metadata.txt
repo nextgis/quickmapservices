@@ -2,7 +2,7 @@
 name=QuickMapServices
 qgisMinimumVersion=2.4
 description=Collection of easy to add basemaps
-version=0.18.3
+version=0.18.4
 author=NextGIS
 email=info@nextgis.com
 about=Convenient list of services + search for finding datasets and basemaps. Please contribute new services via http://qms.nextgis.com!
@@ -14,6 +14,9 @@ about=Convenient list of services + search for finding datasets and basemaps. Pl
 
 # Uncomment the following line and add your changelog:
 changelog=
+      0.18.4
+        * Fix open settings dialog bug
+        * Do not duplicate services in last used services list
       0.18.3
         * Add report a problem link
       0.18.2
