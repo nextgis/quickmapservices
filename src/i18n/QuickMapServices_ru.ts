@@ -794,7 +794,7 @@ The previous settings will be overwritten!</source>
     <message>
         <location filename="tilelayer.py" line="319"/>
         <source>{0} files downloaded. {1} caches hit.</source>
-        <translation>{0} файлов скачено. {1} из кэша.</translation>
+        <translation>{0} файлов скачано. {1} из кэша.</translation>
     </message>
     <message>
         <location filename="tilelayer.py" line="323"/>
@@ -804,7 +804,7 @@ The previous settings will be overwritten!</source>
     <message>
         <location filename="tilelayer.py" line="610"/>
         <source> {} files failed.</source>
-        <translation> {} файла(ов) не скачено.</translation>
+        <translation> {} файла(ов) не скачано.</translation>
     </message>
     <message>
         <location filename="tilelayer.py" line="327"/>
@@ -819,7 +819,7 @@ The previous settings will be overwritten!</source>
     <message>
         <location filename="tilelayer.py" line="608"/>
         <source>{0} of {1} files downloaded.</source>
-        <translation>{0} из {1} файлов скачено.</translation>
+        <translation>{0} из {1} файлов скачано.</translation>
     </message>
     <message>
         <location filename="tilelayer.py" line="653"/>
