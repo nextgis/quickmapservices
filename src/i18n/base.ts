@@ -146,7 +146,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="propertiesdialog_base.ui" line="197"/>
-        <source>Place the credit on the bottom right corner</source>
+        <source>Place the credit in the bottom right corner</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -750,7 +750,7 @@ The previous settings will be overwritten!</source>
     </message>
     <message>
         <location filename="tilelayer.py" line="288"/>
-        <source>{0} files downloaded. {1} caches hit.</source>
+        <source>{0} files downloaded. {1} cache hits.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

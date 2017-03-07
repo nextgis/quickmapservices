@@ -23,16 +23,19 @@
 from __future__ import absolute_import
 
 import os
+import sys
 
 from PyQt4 import uic
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QMessageBox, QCursor, QDialog, QIcon
-import sys
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+
 from qgis.core import QgsApplication
+
 from .extra_sources import ExtraSources
 from .plugin_settings import PluginSettings
 from .qgis_settings import QGISSettings
 from .data_sources_model import DSManagerModel
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'settings_dialog_base.ui'), from_imports=False)
 
