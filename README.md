@@ -16,7 +16,7 @@ Resources:
 Important notes:
 
 1. Adding copyrights of particular service providers to your map outputs is currently the sole responsibility of the user.
-2. If you want to add your own service - send pull-requests here: https://github.com/nextgis/quickmapservices_contrib, you can also read the instruction on how to do it: https://github.com/nextgis/quickmapservices/wiki/Adding-data-source
+2. If you want to add your own service - add them here: http://qms.nextgis.com
 
 ##Examples: lots of easy to add services
 ![](http://nextgis.ru/wp-content/uploads/2015/06/qms-contrib-10.png)
@@ -30,6 +30,6 @@ This program is licensed under GNU GPL v2 or any later version
 
 Commercial support
 ----------
-Need to fix a bug or add a feature to QuickMapServices? We provide custom development and support for this software. [Contact us](http://nextgis.ru/en/contact/) to discuss options!
+Need to fix a bug or add a feature to QuickMapServices? We provide custom development and support for this software. [Contact us](http://nextgis.com/contact/) to discuss options!
 
 [![http://nextgis.com](http://nextgis.ru/img/nextgis.png)](http://nextgis.com)
