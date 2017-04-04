@@ -21,13 +21,14 @@
 """
 # Import the PyQt and QGIS libraries
 import math
-from PyQt4.QtCore import QRect
+from PyQt4.QtCore import QRect, Qt
 from PyQt4.QtGui import QImage, QPainter
 from qgis.core import QgsRectangle
 
 
 R = 6378137
 
+debug_mode = 0
 
 class TileDefaultSettings(object):
     ZMIN = 0
@@ -99,8 +100,11 @@ class Tiles(object):
     def image(self):
         width = (self.xmax - self.xmin + 1) * self.TILE_SIZE
         height = (self.ymax - self.ymin + 1) * self.TILE_SIZE
+        
         image = QImage(width, height, QImage.Format_ARGB32_Premultiplied)
+        image.fill(Qt.transparent)
         p = QPainter(image)
+        
         for tile in self.tiles.values():
             if not tile.data:
                 continue
@@ -110,8 +114,25 @@ class Tiles(object):
             rect = QRect(x * self.TILE_SIZE, y * self.TILE_SIZE, self.TILE_SIZE, self.TILE_SIZE)
 
             timg = QImage()
-            timg.loadFromData(tile.data)
-            p.drawImage(rect, timg)
+            res = timg.loadFromData(tile.data)
+            if res:
+                p.drawImage(rect, timg)
+
+            if debug_mode:
+                p.setPen(Qt.black)
+                p.drawText(
+                    rect,
+                    Qt.AlignBottom | Qt.AlignRight,
+                    # "x: %s, y:%s\nz: %s, data: %s" % (x, y, tile.zoom, tile.data.size())
+                    "z: %s, data: %s" % (tile.zoom, tile.data.size())
+                )
+                if not res:
+                    p.setPen(Qt.darkRed)
+                    p.drawText(rect, Qt.AlignCenter, "Bad tile")
+
+                p.setPen(Qt.black)
+                p.drawRect(rect)
+
         return image
 
     def extent(self):
