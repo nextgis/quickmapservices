@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 import codecs
 import os
+import urlparse
+
 from ConfigParser import ConfigParser
 from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
@@ -8,6 +10,33 @@ from .data_source_info import DataSourceInfo
 from .fixed_config_parser import FixedConfigParser
 from .locale import Locale
 from .supported_drivers import KNOWN_DRIVERS
+
+
+def parse_wms_url_parameter(url, parameters_str):
+    wms_url = url.split("?")[0]
+    
+    o = urlparse.urlparse(url)
+    parameters = dict(urlparse.parse_qsl(o.query))
+    
+    wms_params = []
+    wms_url_params = []
+    
+    for parameter in parameters_str.strip("&").split("&"):
+        if parameter.find("=") == -1:
+            continue
+        k,v = parameter.split("=")
+        parameters.update({k: v})
+    
+    for k,v in parameters.items():
+        if k.upper() in ["VERSION", "REQUEST", "FORMAT", "CRS", "STYLES", "SERVICE", "DPIMODE", "CONTEXTUALWMSLEGEND"]:
+            wms_params.append("%s=%s"%(k,v))
+        else:
+            wms_url_params.append("%s=%s"%(k,v))
+    
+    wms_params = "&".join(wms_params)
+    wms_url_params = "&".join(wms_url_params)
+
+    return (wms_url, wms_params, wms_url_params)
 
 
 class DataSourceSerializer(object):
@@ -54,8 +83,11 @@ class DataSourceSerializer(object):
         ds.tms_origin_y = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'origin_y')
 
         #WMS
-        ds.wms_url = ConfigReaderHelper.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS))
-        ds.wms_params = ConfigReaderHelper.try_read_config(parser, 'wms', 'params')
+        ds.wms_url, ds.wms_params, ds.wms_url_params = parse_wms_url_parameter(
+            ConfigReaderHelper.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS), default=""),
+            ConfigReaderHelper.try_read_config(parser, 'wms', 'params', default="")
+        )
+
         ds.wms_layers = ConfigReaderHelper.try_read_config(parser, 'wms', 'layers')
         ds.wms_turn_over = ConfigReaderHelper.try_read_config_bool(parser, 'wms', 'turn_over')
 
@@ -122,10 +154,11 @@ class DataSourceSerializer(object):
 
         #WMS
         if ds.type.lower() == KNOWN_DRIVERS.WMS.lower():
-            ds.wms_url = json_data['url']
-            ds.wms_params = json_data['params']
-            if ds.wms_params is None:
-                ds.wms_params = ""
+            
+            ds.wms_url, ds.wms_params, ds.wms_url_params = parse_wms_url_parameter(
+                json_data['url'],
+                json_data['params']
+            )
 
             ds.wms_layers = json_data['layers']
             ds.wms_turn_over = json_data['turn_over']

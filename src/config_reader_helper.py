@@ -4,14 +4,14 @@ __author__ = 'yellow'
 class ConfigReaderHelper(object):
 
     @staticmethod
-    def try_read_config(parser, section, param, reraise=False):
+    def try_read_config(parser, section, param, reraise=False, default=None):
         try:
             val = parser.get(section, param)
         except:
             if reraise:
                 raise
             else:
-                val = None
+                val = default
         return val
 
     @staticmethod

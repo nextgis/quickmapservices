@@ -20,7 +20,7 @@ class EditorWidgetWms(QWidget, FORM_CLASS):
     def feel_form(self, ds_info):
         self.ds_info = ds_info
         self.txtUrl.setText(ds_info.wms_url)
-        self.txtParams.setText(ds_info.wms_params)
+        self.txtParams.setText(ds_info.wms_params + "&" + ds_info.wms_url_params)
         self.txtLayers.setText(ds_info.wms_layers)
         self.chkTurnOver.setChecked(ds_info.wms_turn_over if ds_info.wms_turn_over else False)
 

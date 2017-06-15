@@ -60,6 +60,7 @@ class DataSourceInfo(object):
 
         self.wms_url = None
         self.wms_params = None
+        self.wms_url_params = None
         self.wms_layers = None
         self.wms_turn_over = None
 

@@ -56,7 +56,9 @@ def add_layer_to_map(ds):
                 if ds.wms_turn_over:
                     layers.reverse()
                 qgis_wms_uri += '&layers=' + '&layers='.join(layers) + '&styles=' * len(layers)
-        qgis_wms_uri += '&url=' + ds.wms_url
+        qgis_wms_uri += '&url=' + ds.wms_url + "?" + ds.wms_url_params.replace("=","%3D").replace("&","%26")
+
+        # print ">>> qgis_wms_uri: ", qgis_wms_uri
 
         layer = QgsRasterLayer(qgis_wms_uri, tr(ds.alias), KNOWN_DRIVERS.WMS.lower())
         layers4add.append(layer)
