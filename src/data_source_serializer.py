@@ -12,7 +12,7 @@ from .locale import Locale
 from .supported_drivers import KNOWN_DRIVERS
 
 
-def parse_wms_url_parameter(url, parameters_str):
+def parse_wms_url_parameter(url, parameters_str, ignore_layers=False):
     wms_url = url.split("?")[0]
     
     o = urlparse.urlparse(url)
@@ -28,7 +28,9 @@ def parse_wms_url_parameter(url, parameters_str):
         parameters.update({k: v})
     
     for k,v in parameters.items():
-        if k.upper() in ["VERSION", "REQUEST", "FORMAT", "CRS", "STYLES", "SERVICE", "DPIMODE", "CONTEXTUALWMSLEGEND"]:
+        if ignore_layers and k.upper() in  ["LAYERS", "STYLES"]:
+            continue
+        if k.upper() in ["VERSION", "REQUEST", "FORMAT", "CRS", "LAYERS", "STYLES", "SERVICE", "DPIMODE", "CONTEXTUALWMSLEGEND"]:
             wms_params.append("%s=%s"%(k,v))
         else:
             wms_url_params.append("%s=%s"%(k,v))
@@ -83,12 +85,14 @@ class DataSourceSerializer(object):
         ds.tms_origin_y = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'origin_y')
 
         #WMS
+        ds.wms_layers = ConfigReaderHelper.try_read_config(parser, 'wms', 'layers')
+
         ds.wms_url, ds.wms_params, ds.wms_url_params = parse_wms_url_parameter(
             ConfigReaderHelper.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS), default=""),
-            ConfigReaderHelper.try_read_config(parser, 'wms', 'params', default="")
+            ConfigReaderHelper.try_read_config(parser, 'wms', 'params', default=""),
+            (ds.wms_layers is not None)
         )
 
-        ds.wms_layers = ConfigReaderHelper.try_read_config(parser, 'wms', 'layers')
         ds.wms_turn_over = ConfigReaderHelper.try_read_config_bool(parser, 'wms', 'turn_over')
 
         #GDAL
@@ -154,13 +158,14 @@ class DataSourceSerializer(object):
 
         #WMS
         if ds.type.lower() == KNOWN_DRIVERS.WMS.lower():
+            ds.wms_layers = json_data['layers']
             
             ds.wms_url, ds.wms_params, ds.wms_url_params = parse_wms_url_parameter(
                 json_data['url'],
-                json_data['params']
+                json_data['params'],
+                (ds.wms_layers is not None)
             )
 
-            ds.wms_layers = json_data['layers']
             ds.wms_turn_over = json_data['turn_over']
             
             ds.format = json_data['format']
