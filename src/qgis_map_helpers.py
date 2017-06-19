@@ -9,8 +9,9 @@ from qgis.utils import iface
 
 from .plugin_settings import PluginSettings
 from .supported_drivers import KNOWN_DRIVERS
-from .py_tiled_layer.tiles import TileServiceInfo
+from .py_tiled_layer.tiles import TileServiceInfo, TileDefaultSettings
 from .py_tiled_layer.tilelayer import TileLayer
+from .qgis_proj_helper import ProjectionHelper
 
 service_layers = []
 
@@ -23,26 +24,42 @@ def add_layer_to_map(ds):
     layers4add = []
 
     if ds.type.lower() == KNOWN_DRIVERS.TMS.lower():
-        service_info = TileServiceInfo(tr(ds.alias), ds.copyright_text, ds.tms_url)
-        service_info.zmin = ds.tms_zmin or service_info.zmin
-        service_info.zmax = ds.tms_zmax or service_info.zmax
-        if ds.tms_y_origin_top is not None:
-            service_info.yOriginTop = ds.tms_y_origin_top
-        service_info.epsg_crs_id = ds.tms_epsg_crs_id
-        service_info.postgis_crs_id = ds.tms_postgis_crs_id
-        service_info.custom_proj = ds.tms_custom_proj
+        if PluginSettings.use_native_tms():     # add version check
+            service_url = ds.tms_url.replace("=", "%3D").replace("&", "%26")
+            if ds.tms_y_origin_top is not None and ds.tms_y_origin_top==False:
+                service_url = service_url.replace('{y}', '{-y}')
 
-        if ds.tms_tile_ranges is not None: # needs try block & checks that keys are integers etc..
-            service_info.tile_ranges = ast.literal_eval(ds.tms_tile_ranges)
-        if ds.tms_tsize1 is not None:
-            service_info.tsize1 = ds.tms_tsize1
-        if ds.tms_origin_x is not None:
-            service_info.originX = ds.tms_origin_x
-        if ds.tms_origin_y is not None:
-            service_info.originY = ds.tms_origin_y
+            qgis_tms_uri = 'type=xyz&zmin={0}&zmax={1}&url={2}'.format(
+                ds.tms_zmin or TileDefaultSettings.ZMIN,
+                ds.tms_zmax or TileDefaultSettings.ZMAX,
+                service_url
+            )
+            #print ">>> qgis_tms_uri: ", qgis_tms_uri
 
-        layer = TileLayer(service_info, False)
-        layers4add.append(layer)
+            layer = QgsRasterLayer(qgis_tms_uri, tr(ds.alias), KNOWN_DRIVERS.WMS.lower())
+            ProjectionHelper.set_tile_layer_proj(layer, ds.tms_epsg_crs_id, ds.tms_postgis_crs_id, ds.tms_custom_proj)
+            layers4add.append(layer)
+        else:
+            service_info = TileServiceInfo(tr(ds.alias), ds.copyright_text, ds.tms_url)
+            service_info.zmin = ds.tms_zmin or service_info.zmin
+            service_info.zmax = ds.tms_zmax or service_info.zmax
+            if ds.tms_y_origin_top is not None:
+                service_info.yOriginTop = ds.tms_y_origin_top
+            service_info.epsg_crs_id = ds.tms_epsg_crs_id
+            service_info.postgis_crs_id = ds.tms_postgis_crs_id
+            service_info.custom_proj = ds.tms_custom_proj
+
+            if ds.tms_tile_ranges is not None: # needs try block & checks that keys are integers etc..
+                service_info.tile_ranges = ast.literal_eval(ds.tms_tile_ranges)
+            if ds.tms_tsize1 is not None:
+                service_info.tsize1 = ds.tms_tsize1
+            if ds.tms_origin_x is not None:
+                service_info.originX = ds.tms_origin_x
+            if ds.tms_origin_y is not None:
+                service_info.originY = ds.tms_origin_y
+
+            layer = TileLayer(service_info, False)
+            layers4add.append(layer)
     if ds.type.lower() == KNOWN_DRIVERS.GDAL.lower():
         layer = QgsRasterLayer(ds.gdal_source_file, tr(ds.alias))
         layers4add.append(layer)

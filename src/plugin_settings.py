@@ -23,6 +23,7 @@
 import ast
 
 from PyQt4.QtCore import QSettings, QDir, Qt, QByteArray
+from qgis.core import QGis
 
 import extra_sources
 
@@ -142,3 +143,14 @@ class PluginSettings(object):
         for geoservice in services:
             geoservice.saveSelf(settings)
         
+
+    @classmethod
+    def use_native_tms(cls):
+        if QGis.QGIS_VERSION_INT >= 21808:
+            return cls.get_settings().value('tile_layer/use_native_tms', False, bool)
+        else:
+            return False
+
+    @classmethod
+    def set_use_native_tms(cls, bool_val):
+        return cls.get_settings().setValue('tile_layer/use_native_tms', bool_val)

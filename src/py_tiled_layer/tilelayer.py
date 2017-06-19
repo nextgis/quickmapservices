@@ -32,7 +32,7 @@ from qgis.utils import iface
 
 from ..plugin_settings import PluginSettings
 from ..qgis_settings import QGISSettings
-
+from ..qgis_proj_helper import ProjectionHelper
 from .tiles import *
 from .downloader import Downloader
 
@@ -83,35 +83,7 @@ class TileLayer(QgsPluginLayer):
         self.setCustomProperty("creditVisibility", self.creditVisibility)
 
         # set standard/custom crs
-        self.setCrs(self.CRS_3857)
-        try:
-            crs = None
-            if layerDef.epsg_crs_id is not None:
-                crs = QgsCoordinateReferenceSystem(layerDef.epsg_crs_id, QgsCoordinateReferenceSystem.EpsgCrsId)
-            if layerDef.postgis_crs_id is not None:
-                crs = QgsCoordinateReferenceSystem(layerDef.postgis_crs_id, QgsCoordinateReferenceSystem.PostgisCrsId)
-            if layerDef.custom_proj is not None:
-                # create form proj4 str
-                custom_crs = QgsCoordinateReferenceSystem()
-                custom_crs.createFromProj4(layerDef.custom_proj)
-                # try to search in db
-                searched = custom_crs.findMatchingProj()
-                if searched:
-                    crs = QgsCoordinateReferenceSystem(searched, QgsCoordinateReferenceSystem.InternalCrsId)
-                else:
-                    # create custom and use it
-                    custom_crs.saveAsUserCRS('quickmapservices %s' % layerDef.title)
-                    searched = custom_crs.findMatchingProj()
-                    if searched:
-                        crs = QgsCoordinateReferenceSystem(searched, QgsCoordinateReferenceSystem.InternalCrsId)
-                    else:
-                        crs = custom_crs
-
-            if crs:
-                self.setCrs(crs)
-        except:
-            msg = self.tr("Custom crs can't be set for layer {0}!").format(layerDef.title)
-            self.showBarMessage(msg, QgsMessageBar.WARNING, 4)
+        ProjectionHelper.set_tile_layer_proj(self, layerDef.epsg_crs_id, layerDef.postgis_crs_id, layerDef.custom_proj)
 
         if layerDef.bbox:
             self.setExtent(BoundingBox.degreesToMercatorMeters(layerDef.bbox).toQgsRectangle())
