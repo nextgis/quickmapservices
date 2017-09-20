@@ -25,7 +25,6 @@ import ast
 from PyQt4.QtCore import QSettings, QDir, Qt, QByteArray
 from qgis.core import QGis
 
-import extra_sources
 
 class PluginSettings(object):
 
@@ -112,7 +111,7 @@ class PluginSettings(object):
 
     @classmethod
     def get_default_user_icon_path(cls):
-        return cls.get_settings().value('/ui/default_user_icon_path', extra_sources.PLUGIN_SETTINGS_PATH)
+        return cls.get_settings().value('/ui/default_user_icon_path', '')
 
     @classmethod
     def set_default_user_icon_path(cls, val):
