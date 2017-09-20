@@ -14,6 +14,8 @@ about=Convenient list of services + search for finding datasets and basemaps. Pl
 
 # Uncomment the following line and add your changelog:
 changelog=
+      0.18.7
+        * Add native renderer
       0.18.6
         * Fix custom wms parameters processing.
       0.18.5  
