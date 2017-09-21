@@ -35,9 +35,11 @@ from qgis.gui import QgsFilterLineEdit
 from qgis.core import (
     QgsMessageLog,
     QgsCoordinateReferenceSystem,
-    QgsCoordinateTransform
+    QgsCoordinateTransform,
+    QgsGeometry
 )
 
+from .rb_result_renderer import RubberBandResultRenderer
 from .data_source_serializer import DataSourceSerializer
 from .qgis_map_helpers import add_layer_to_map
 from .qms_external_api_python.client import Client
@@ -122,6 +124,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
         self.iface = iface
         self.search_threads = None  # []
+        self.extent_renderer = RubberBandResultRenderer()
 
         if hasattr(self.txtSearch, 'setPlaceholderText'):
             self.txtSearch.setPlaceholderText(self.tr("Search string..."))
@@ -267,7 +270,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
     def show_result(self, geoservice, image_ba):
         if geoservice:
-            custom_widget = QmsSearchResultItemWidget(geoservice, image_ba)
+            custom_widget = QmsSearchResultItemWidget(geoservice, image_ba, extent_renderer=self.extent_renderer)
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(custom_widget.sizeHint())
             self.lstSearchResult.addItem(new_item)
@@ -295,8 +298,10 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
 
 class QmsSearchResultItemWidget(QWidget):
-    def __init__(self, geoservice, image_ba, parent=None):
+    def __init__(self, geoservice, image_ba, parent=None, extent_renderer=None):
         QWidget.__init__(self, parent)
+
+        self.extent_renderer = extent_renderer
 
         self.layout = QHBoxLayout(self)
         # self.layout.addSpacing(0)
@@ -391,6 +396,19 @@ class QmsSearchResultItemWidget(QWidget):
 
     def mouseDoubleClickEvent(self, event):
         self.addToMap()
+
+    def enterEvent(self, event):
+        extent = self.geoservice.get('extent', None)
+        if self.extent_renderer and extent:
+            if ';' in extent:
+                extent = extent.split(';')[1]
+            geom = QgsGeometry.fromWkt(extent)
+            self.extent_renderer.show_feature(geom)
+
+    def leaveEvent(self, event):
+        if self.extent_renderer:
+            self.extent_renderer.clear_feature()
+
 
 class SearchThread(QThread):
 
