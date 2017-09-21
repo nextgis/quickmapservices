@@ -26,6 +26,19 @@
      </widget>
     </item>
     <item>
+     <widget class="QPushButton" name="btnFilterByExtent">
+      <property name="text">
+       <string>Filter by extent</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QListWidget" name="lstSearchResult">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -51,7 +64,7 @@
   <customwidget>
    <class>QgsFilterLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>qgis.gui</header>
+   <header>qgsfilterlineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

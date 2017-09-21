@@ -34,6 +34,8 @@ from PyQt4.QtCore import (
 from qgis.gui import QgsFilterLineEdit
 from qgis.core import (
     QgsMessageLog,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform
 )
 
 from .data_source_serializer import DataSourceSerializer
@@ -130,7 +132,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
         self.delay_timer.timeout.connect(self.start_search)
         self.txtSearch.textChanged.connect(self.delay_timer.start)
-
+        self.btnFilterByExtent.toggled.connect(self.toggle_filter_button)
         self.one_process_work = QMutex()
 
         # self.wSearchResult = QWidget()
@@ -144,13 +146,38 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
     #     for i in reversed(range(self.lSearchResult.count())): 
     #         self.lSearchResult.itemAt(i).widget().setParent(None)
 
+    def toggle_filter_button(self, checked):
+        self.txtSearch.setDisabled(checked)
+        if checked:
+            self.iface.mapCanvas().extentsChanged.connect(self.start_search)
+            self.iface.mapCanvas().destinationCrsChanged.connect(self.start_search)
+            self.start_search()
+        else:
+            self.iface.mapCanvas().extentsChanged.disconnect(self.start_search)
+            self.iface.mapCanvas().destinationCrsChanged.disconnect(self.start_search)
+
+
     def start_search(self):
-        search_text = unicode(self.txtSearch.text())
-        if not search_text:
-            self.lstSearchResult.clear()
-            # self.clearSearchResult()
-            self.add_last_used_services()
-            return
+        search_text = None
+        geom_filter = None
+
+        if not self.btnFilterByExtent.isChecked():
+            # text search
+            search_text = unicode(self.txtSearch.text())
+            if not search_text:
+                self.lstSearchResult.clear()
+                # self.clearSearchResult()
+                self.add_last_used_services()
+                return
+        else:
+            # extent filter
+            extent = self.iface.mapCanvas().extent()
+            map_crs = self.iface.mapCanvas().mapRenderer().destinationCrs()
+            if map_crs.postgisSrid() != 4326:
+                crsDest = QgsCoordinateReferenceSystem(4326)    # WGS 84
+                xform = QgsCoordinateTransform(map_crs, crsDest)
+                extent = xform.transform(extent)
+            geom_filter = extent.asWktPolygon()
 
         if self.search_threads:
             self.search_threads.data_downloaded.disconnect()
@@ -161,7 +188,10 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             self.lstSearchResult.clear()
             # self.clearSearchResult()
 
-        searcher = SearchThread(search_text, self.one_process_work, self.iface.mainWindow())
+        searcher = SearchThread(search_text,
+                                self.one_process_work,
+                                parent=self.iface.mainWindow(),
+                                geom_filter=geom_filter)
         searcher.data_downloaded.connect(self.show_result)
         searcher.error_occurred.connect(self.show_error)
         searcher.search_started.connect(self.search_started_process)
@@ -369,9 +399,10 @@ class SearchThread(QThread):
     data_downloaded = pyqtSignal(object, QByteArray)
     error_occurred = pyqtSignal(object)
 
-    def __init__(self, search_text, mutex, parent=None):
+    def __init__(self, search_text, mutex, parent=None, geom_filter=None):
         QThread.__init__(self, parent)
         self.search_text = search_text
+        self.geom_filter = geom_filter
         self.searcher = Client()
         self.searcher.set_proxy(*QGISSettings.get_qgis_proxy())
         self.mutex = mutex
@@ -388,7 +419,7 @@ class SearchThread(QThread):
         # search
         try:
             self.mutex.lock()
-            results = self.searcher.search_geoservices(self.search_text)
+            results = self.searcher.search_geoservices(self.search_text, intersects_boundary=self.geom_filter)
 
             for result in results:
                 if self.need_stop:
