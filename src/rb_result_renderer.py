@@ -37,11 +37,11 @@ class RubberBandResultRenderer():
         self.rb.setIconSize(12)
 
         self.features_rb = QgsRubberBand(self.iface.mapCanvas(), QGis.Point)
-        magenta_transp = QColor('magenta')
-        magenta_transp.setAlpha(100)
+        magenta_transp = QColor('#3388ff')
+        magenta_transp.setAlpha(120)
         self.features_rb.setColor(magenta_transp)
         self.features_rb.setIconSize(12)
-        self.features_rb.setWidth(3)
+        self.features_rb.setWidth(2)
 
     def show_point(self, point, center=False):
         #check srs
