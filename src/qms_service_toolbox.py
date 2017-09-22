@@ -439,26 +439,34 @@ class SearchThread(QThread):
             self.mutex.lock()
             results = self.searcher.search_geoservices(self.search_text, intersects_boundary=self.geom_filter)
 
+            ext_results = []
             for result in results:
                 if self.need_stop:
                     break
-
+                # get icon
                 ba = QByteArray()
-
                 icon_id = result.get("icon")
-                
                 if not self.img_cach.has_key(icon_id):
                     if icon_id:
                         ba = QByteArray(self.searcher.get_icon_content(icon_id, 24, 24))
                     else:
                         ba = QByteArray(self.searcher.get_default_icon(24, 24))
-
                     self.img_cach[icon_id] = ba
-
                 else:
                     ba = self.img_cach[icon_id]
+                # get extent
+                extent = result['extent']
+                area = None
+                if extent:
+                    if extent.startswith('SRID'):
+                        extent = extent.split(';')[1]
+                    area = QgsGeometry.fromWkt(extent).area()
 
-                self.data_downloaded.emit(result, ba)
+                ext_results.append([area, result, ba])
+
+            ext_results.sort(key=lambda x: x[0])
+            for result in ext_results:
+                self.data_downloaded.emit(result[1], result[2])
         except URLError:
                         error_text = (self.tr("Network error!\n{0}")).format(unicode(sys.exc_info()[1]))
                         # error_text = 'net'
