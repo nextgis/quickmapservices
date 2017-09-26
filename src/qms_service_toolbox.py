@@ -345,7 +345,15 @@ class QmsSearchResultItemWidget(QWidget):
 
         self.status_label = QLabel(self)
         self.status_label.setTextFormat(Qt.RichText)
-        self.status_label.setText(geoservice.get('cumulative_status', u''))
+        self.status_label.setText(u'\u2B24')
+
+        status = geoservice.get('cumulative_status', u'')
+        if status == 'works':
+            self.status_label.setStyleSheet("color: green")
+        if status == 'failed':
+            self.status_label.setStyleSheet("color: red")
+        if status == 'problematic':
+            self.status_label.setStyleSheet("color: yellow")
         self.layout.addWidget(self.status_label)
 
 
