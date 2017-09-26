@@ -8,7 +8,6 @@ from PyQt4.QtGui import (
     QApplication,
     QWidget,
     QDockWidget,
-    QVBoxLayout,
     QHBoxLayout,
     QLabel,
     QImage,
@@ -18,7 +17,6 @@ from PyQt4.QtGui import (
     QSizePolicy,
     QListWidgetItem,
     QGridLayout,
-    QSpacerItem
 )
 
 from PyQt4.QtCore import (
@@ -27,11 +25,9 @@ from PyQt4.QtCore import (
     Qt,
     QTimer,
     QMutex,
-    QSize,
     QByteArray
 )
 
-from qgis.gui import QgsFilterLineEdit
 from qgis.core import (
     QgsMessageLog,
     QgsCoordinateReferenceSystem,
@@ -47,7 +43,6 @@ from .qgis_settings import QGISSettings
 from .plugin_settings import PluginSettings
 from .singleton import singleton
 import sys
-import traceback
 
 
 def plPrint(msg, level=QgsMessageLog.INFO):
@@ -138,16 +133,8 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.btnFilterByExtent.toggled.connect(self.toggle_filter_button)
         self.one_process_work = QMutex()
 
-        # self.wSearchResult = QWidget()
-        # self.lSearchResult = QVBoxLayout(self.wSearchResult)
-        # self.saSearchResult.setWidget(self.wSearchResult)
-        # self.saSearchResult.setWidgetResizable(True)
-
         self.add_last_used_services()
 
-    # def clearSearchResult(self):
-    #     for i in reversed(range(self.lSearchResult.count())): 
-    #         self.lSearchResult.itemAt(i).widget().setParent(None)
 
     def toggle_filter_button(self, checked):
         self.txtSearch.setDisabled(checked)
@@ -232,17 +219,12 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
     def search_started_process(self):
         self.lstSearchResult.clear()
-        # self.clearSearchResult()
         self.lstSearchResult.insertItem(0, self.tr('Searching...'))
-        # l = QLabel(self.tr("Searching..."))
-        # l.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-        # self.lSearchResult.addWidget(l)
+
 
     def search_finished_progress(self):
         self.lstSearchResult.takeItem(0)
-        # self.lSearchResult.itemAt(0).widget().setParent(None)
         if self.lstSearchResult.count() == 0:
-        # if self.lSearchResult.count() == 0:
             new_widget = QLabel()
             new_widget.setTextFormat(Qt.RichText)
             new_widget.setOpenExternalLinks(True)
@@ -262,11 +244,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
                 new_item,
                 new_widget
             )
-            # self.lSearchResult.addWidget(new_widget)          
 
-        # w = QWidget()
-        # w.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        # self.lSearchResult.addWidget(w)
 
     def show_result(self, geoservice, image_ba):
         if geoservice:
@@ -278,23 +256,34 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
                 new_item,
                 custom_widget
             )
-            # self.lSearchResult.addWidget(custom_widget)
 
         else:
             new_item = QListWidgetItem()
             new_item.setText(self.tr('No results!'))
             new_item.setData(Qt.UserRole, None)
             self.lstSearchResult.addItem(new_item)
-            # l = QLabel(self.tr("No results!"))
-            # l.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Fixed)
-            # self.lSearchResult.addWidget(l)
         self.lstSearchResult.update()
+
 
     def show_error(self, error_text):
         self.lstSearchResult.clear()
-        self.lstSearchResult.addItem(error_text)
-        # self.clearSearchResult()
-        # self.lSearchResult.addWidget(QLabel(error_text))
+        new_widget = QLabel()
+        new_widget.setTextFormat(Qt.RichText)
+        new_widget.setOpenExternalLinks(True)
+        new_widget.setWordWrap(True)
+        new_widget.setText(
+            u"<div align='center'> <strong>{}</strong> </div><div align='center' style='margin-top: 3px'> {} </div>".format(
+                self.tr('Error'),
+                error_text
+            )
+        )
+        new_item = QListWidgetItem(self.lstSearchResult)
+        new_item.setSizeHint(new_widget.sizeHint())
+        self.lstSearchResult.addItem(new_item)
+        self.lstSearchResult.setItemWidget(
+            new_item,
+            new_widget
+        )
 
 
 class QmsSearchResultItemWidget(QWidget):
@@ -304,7 +293,6 @@ class QmsSearchResultItemWidget(QWidget):
         self.extent_renderer = extent_renderer
 
         self.layout = QHBoxLayout(self)
-        # self.layout.addSpacing(0)
         self.layout.setContentsMargins(5, 10, 5, 10)
         self.setLayout(self.layout)
 
@@ -337,8 +325,9 @@ class QmsSearchResultItemWidget(QWidget):
         self.service_deteils.setTextFormat(Qt.RichText)
         self.service_deteils.setWordWrap(True)
         self.service_deteils.setOpenExternalLinks(True)
-        self.service_deteils.setText(u"<a href=\"{}\">details</a>, ".format(
-            Client().geoservice_info_url(geoservice.get('id', u""))
+        self.service_deteils.setText(u"<a href=\"{0}\">{1}</a>, ".format(
+            Client().geoservice_info_url(geoservice.get('id', u"")),
+            self.tr('details')
         ))
         self.service_desc_layout.addWidget(self.service_deteils, 1, 1)
 
@@ -346,30 +335,22 @@ class QmsSearchResultItemWidget(QWidget):
         self.service_report.setTextFormat(Qt.RichText)
         self.service_report.setWordWrap(True)
         self.service_report.setOpenExternalLinks(True)
-        self.service_report.setText(u"<a href=\"{}\">report a problem</a><div/>".format(
-            Client().geoservice_report_url(geoservice.get('id', u""))
+        self.service_report.setText(u"<a href=\"{0}\">{1}</a><div/>".format(
+            Client().geoservice_report_url(geoservice.get('id', u"")),
+            self.tr('report a problem')
         ))
         self.service_desc_layout.addWidget(self.service_report, 1, 2)
         self.service_desc_layout.setColumnStretch(2, 1)
 
-        # self.service_desc = QLabel(self)
-        # self.service_desc.setTextFormat(Qt.RichText)
-        # self.service_desc.setOpenExternalLinks(True)
-        # self.service_desc.setWordWrap(True)
 
-        # self.service_desc.setText(
-        #     u"<strong> {} </strong><div style=\"margin-top: 3px\">{}, <a href=\"{}\">details</a>, <a href=\"{}\">report</a><div/>".format(
-        #     # "{}<div style=\"margin-top: 3px\"> <em> {} </em>, <a href=\"{}\">  details <a/> <div/>".format(
-        #         geoservice.get('name', u""),
-        #         geoservice.get('type', u"").upper(),
-        #         Client().geoservice_info_url(geoservice.get('id', u"")),
-        #         Client().geoservice_report_url(geoservice.get('id', u""))
-        #     )
-        # )
-        # self.layout.addWidget(self.service_desc)
+        self.status_label = QLabel(self)
+        self.status_label.setTextFormat(Qt.RichText)
+        self.status_label.setText(geoservice.get('cumulative_status', u''))
+        self.layout.addWidget(self.status_label)
+
 
         self.addButton = QToolButton()
-        self.addButton.setText("Add")
+        self.addButton.setText(self.tr("Add"))
         self.addButton.clicked.connect(self.addToMap)
         self.layout.addWidget(self.addButton)
         
@@ -467,6 +448,7 @@ class SearchThread(QThread):
             ext_results.sort(key=lambda x: x[0])
             for result in ext_results:
                 self.data_downloaded.emit(result[1], result[2])
+            self.search_finished.emit()
         except URLError:
                         error_text = (self.tr("Network error!\n{0}")).format(unicode(sys.exc_info()[1]))
                         # error_text = 'net'
@@ -476,7 +458,6 @@ class SearchThread(QThread):
                         # error_text = 'common'
                         self.error_occurred.emit(error_text)
 
-        self.search_finished.emit()
         self.mutex.unlock()
 
     def stop(self):
