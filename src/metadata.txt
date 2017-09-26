@@ -2,7 +2,7 @@
 name=QuickMapServices
 qgisMinimumVersion=2.4
 description=Collection of easy to add basemaps
-version=0.18.7
+version=0.18.8
 author=NextGIS
 email=info@nextgis.com
 about=Convenient list of services + search for finding datasets and basemaps. Please contribute new services via http://qms.nextgis.com!
@@ -14,11 +14,15 @@ about=Convenient list of services + search for finding datasets and basemaps. Pl
 
 # Uncomment the following line and add your changelog:
 changelog=
+      0.18.8
+        * GeoFilter
+        * Status of services
+        * Fix bugs
       0.18.7
         * Add native renderer
       0.18.6
         * Fix custom wms parameters processing.
-      0.18.5  
+      0.18.5
         * Fix TMS services rendering 'ripple' effect due to broken tiles.
       0.18.4
         * Fix open settings dialog bug
