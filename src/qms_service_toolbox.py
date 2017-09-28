@@ -17,7 +17,7 @@ from PyQt4.QtGui import (
     QSizePolicy,
     QListWidgetItem,
     QGridLayout,
-)
+    QFont)
 
 from PyQt4.QtCore import (
     QThread,
@@ -345,15 +345,16 @@ class QmsSearchResultItemWidget(QWidget):
 
         self.status_label = QLabel(self)
         self.status_label.setTextFormat(Qt.RichText)
-        self.status_label.setText(u'\u2B24')
+        self.status_label.setText(u'\u2022')
+
 
         status = geoservice.get('cumulative_status', u'')
         if status == 'works':
-            self.status_label.setStyleSheet("color: green")
+            self.status_label.setStyleSheet("color: green; font-size: 30px")
         if status == 'failed':
-            self.status_label.setStyleSheet("color: red")
+            self.status_label.setStyleSheet("color: red; font-size: 30px")
         if status == 'problematic':
-            self.status_label.setStyleSheet("color: yellow")
+            self.status_label.setStyleSheet("color: yellow; font-size: 30px")
         self.layout.addWidget(self.status_label)
 
 
