@@ -629,17 +629,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QmsSearchResultItemWidget</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="340"/>
+        <location filename="../qms_service_toolbox.py" line="342"/>
         <source>details</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="350"/>
+        <location filename="../qms_service_toolbox.py" line="352"/>
         <source>report a problem</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="374"/>
+        <location filename="../qms_service_toolbox.py" line="376"/>
         <source>Add</source>
         <translation type="unfinished"></translation>
     </message>
@@ -647,7 +647,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QmsServiceToolbox</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="130"/>
+        <location filename="../qms_service_toolbox.py" line="132"/>
         <source>Search string...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -657,7 +657,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="285"/>
+        <location filename="../qms_service_toolbox.py" line="276"/>
         <source>No results!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -672,23 +672,38 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.ui" line="31"/>
+        <location filename="../qms_service_toolbox.ui" line="50"/>
         <source>Filter by extent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="210"/>
+        <location filename="../qms_service_toolbox.py" line="211"/>
         <source>Last used:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="250"/>
+        <location filename="../qms_service_toolbox.py" line="246"/>
         <source>No results.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="250"/>
+        <location filename="../qms_service_toolbox.py" line="246"/>
         <source>You can add a service to become searchable. Start &lt;a href=&apos;{}&apos;&gt;here&lt;/a&gt;.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qms_service_toolbox.py" line="127"/>
+        <source>All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qms_service_toolbox.py" line="128"/>
+        <source>Only works</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../qms_service_toolbox.py" line="288"/>
+        <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -749,13 +764,13 @@ The previous settings will be overwritten!</source>
 <context>
     <name>SearchThread</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="473"/>
+        <location filename="../qms_service_toolbox.py" line="482"/>
         <source>Network error!
 {0}</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="477"/>
+        <location filename="../qms_service_toolbox.py" line="486"/>
         <source>Error of processing!
 {0}: {1}</source>
         <translation type="unfinished"></translation>

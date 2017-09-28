@@ -52,6 +52,9 @@ def plPrint(msg, level=QgsMessageLog.INFO):
         level
     )
 
+STATUS_FILTER_ALL = 'all'
+STATUS_FILTER_ONLY_WORKS = 'works'
+
 class Geoservice(object):
     def __init__(self, attributes, image_qByteArray):
         self.attributes = attributes
@@ -121,6 +124,10 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.search_threads = None  # []
         self.extent_renderer = RubberBandResultRenderer()
 
+        self.cmbStatusFilter.addItem(self.tr('All'), STATUS_FILTER_ALL)
+        self.cmbStatusFilter.addItem(self.tr('Only works'), STATUS_FILTER_ONLY_WORKS)
+        self.cmbStatusFilter.currentIndexChanged.connect(self.start_search)
+
         if hasattr(self.txtSearch, 'setPlaceholderText'):
             self.txtSearch.setPlaceholderText(self.tr("Search string..."))
 
@@ -150,6 +157,12 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
     def start_search(self):
         search_text = None
         geom_filter = None
+
+        # status filter
+        status_filter = None
+        sel_value = self.cmbStatusFilter.itemData(self.cmbStatusFilter.currentIndex())
+        if sel_value != STATUS_FILTER_ALL:
+            status_filter = sel_value
 
         if not self.btnFilterByExtent.isChecked():
             # text search
@@ -181,7 +194,8 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         searcher = SearchThread(search_text,
                                 self.one_process_work,
                                 parent=self.iface.mainWindow(),
-                                geom_filter=geom_filter)
+                                geom_filter=geom_filter,
+                                status_filter=status_filter)
         searcher.data_downloaded.connect(self.show_result)
         searcher.error_occurred.connect(self.show_error)
         searcher.search_started.connect(self.search_started_process)
@@ -407,10 +421,12 @@ class SearchThread(QThread):
     data_downloaded = pyqtSignal(object, QByteArray)
     error_occurred = pyqtSignal(object)
 
-    def __init__(self, search_text, mutex, parent=None, geom_filter=None):
+    def __init__(self, search_text, mutex, parent=None, geom_filter=None, status_filter=None):
         QThread.__init__(self, parent)
         self.search_text = search_text
         self.geom_filter = geom_filter
+        self.status_filter = status_filter
+
         self.searcher = Client()
         self.searcher.set_proxy(*QGISSettings.get_qgis_proxy())
         self.mutex = mutex
@@ -427,7 +443,11 @@ class SearchThread(QThread):
         # search
         try:
             self.mutex.lock()
-            results = self.searcher.search_geoservices(self.search_text, intersects_boundary=self.geom_filter)
+            results = self.searcher.get_geoservices(
+                search_str=self.search_text,
+                intersects_boundary=self.geom_filter,
+                cumulative_status=self.status_filter
+            )
 
             ext_results = []
             for result in results:
