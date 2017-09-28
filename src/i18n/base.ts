@@ -672,7 +672,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.ui" line="50"/>
+        <location filename="../qms_service_toolbox.ui" line="56"/>
         <source>Filter by extent</source>
         <translation type="unfinished"></translation>
     </message>
@@ -697,13 +697,13 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="128"/>
-        <source>Only works</source>
+        <location filename="../qms_service_toolbox.py" line="288"/>
+        <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="288"/>
-        <source>Error</source>
+        <location filename="../qms_service_toolbox.py" line="128"/>
+        <source>Valid</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

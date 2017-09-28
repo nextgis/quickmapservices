@@ -693,7 +693,7 @@ p, li { white-space: pre-wrap; }
         <translation>Вы можете &lt;a href=&apos;{}&apos;&gt;добавить сервис&lt;/a&gt; самостоятельно, и он станет доступен через поиск.</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.ui" line="50"/>
+        <location filename="../qms_service_toolbox.ui" line="56"/>
         <source>Filter by extent</source>
         <translation>Фильтр по охвату</translation>
     </message>
@@ -703,14 +703,14 @@ p, li { white-space: pre-wrap; }
         <translation>Все</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="128"/>
-        <source>Only works</source>
-        <translation>Только рабочие</translation>
-    </message>
-    <message>
         <location filename="../qms_service_toolbox.py" line="288"/>
         <source>Error</source>
         <translation>Ошибка</translation>
+    </message>
+    <message>
+        <location filename="../qms_service_toolbox.py" line="128"/>
+        <source>Valid</source>
+        <translation>Рабочие</translation>
     </message>
 </context>
 <context>

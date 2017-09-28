@@ -125,7 +125,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.extent_renderer = RubberBandResultRenderer()
 
         self.cmbStatusFilter.addItem(self.tr('All'), STATUS_FILTER_ALL)
-        self.cmbStatusFilter.addItem(self.tr('Only works'), STATUS_FILTER_ONLY_WORKS)
+        self.cmbStatusFilter.addItem(self.tr('Valid'), STATUS_FILTER_ONLY_WORKS)
         self.cmbStatusFilter.currentIndexChanged.connect(self.start_search)
 
         if hasattr(self.txtSearch, 'setPlaceholderText'):
