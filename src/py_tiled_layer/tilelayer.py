@@ -288,7 +288,7 @@ class TileLayer(QgsPluginLayer):
                 if self.iface:
                     cacheHits += self.downloader.cacheHits
                     downloadedCount = self.downloader.fetchSuccesses - self.downloader.cacheHits
-                    msg = self.tr("{0} files downloaded. {1} caches hit.").format(downloadedCount, cacheHits)
+                    msg = self.tr("{0} files downloaded. {1} cache hits.").format(downloadedCount, cacheHits)
                     barmsg = None
                     if self.downloader.errorStatus != Downloader.NO_ERROR:
                         if self.downloader.errorStatus == Downloader.TIMEOUT_ERROR:

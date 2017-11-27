@@ -873,7 +873,7 @@ The previous settings will be overwritten!</source>
     </message>
     <message>
         <location filename="../py_tiled_layer/tilelayer.py" line="291"/>
-        <source>{0} files downloaded. {1} caches hit.</source>
+        <source>{0} files downloaded. {1} cache hits.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
