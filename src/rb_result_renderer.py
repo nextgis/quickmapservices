@@ -18,6 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import print_function
 
 from PyQt4.QtGui import QColor
 from qgis.gui import QgsRubberBand
@@ -64,7 +65,7 @@ class RubberBandResultRenderer():
         try:
             return self.transformation.transform(point)
         except:
-            print 'Error on transform!'  # DEBUG! need message???
+            print('Error on transform!')  # DEBUG! need message???
             return
 
     def transform_bbox(self, bbox):
@@ -73,7 +74,7 @@ class RubberBandResultRenderer():
         try:
             return self.transformation.transformBoundingBox(bbox)
         except:
-            print 'Error on transform!'  # DEBUG! need message???
+            print('Error on transform!')  # DEBUG! need message???
             return
 
     def transform_geom(self, geom):
@@ -83,7 +84,7 @@ class RubberBandResultRenderer():
             geom.transform(self.transformation)
             return geom
         except:
-            print 'Error on transform!'  # DEBUG! need message???
+            print('Error on transform!')  # DEBUG! need message???
             return
 
     def center_to_point(self, point):

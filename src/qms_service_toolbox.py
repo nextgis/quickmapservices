@@ -1,7 +1,9 @@
 from __future__ import absolute_import
-from urllib2 import URLError
-from os import path
+
 import ast
+import sys
+
+from os import path
 
 from PyQt4 import uic
 from PyQt4.QtGui import (
@@ -42,7 +44,7 @@ from .qms_external_api_python.client import Client
 from .qgis_settings import QGISSettings
 from .plugin_settings import PluginSettings
 from .singleton import singleton
-import sys
+from .compat import URLError
 
 
 def plPrint(msg, level=QgsMessageLog.INFO):

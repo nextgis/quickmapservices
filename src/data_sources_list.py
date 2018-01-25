@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 from __future__ import absolute_import
-from ConfigParser import ConfigParser
 import codecs
 import os
 import sys

@@ -1,12 +1,12 @@
 from __future__ import absolute_import
 import ast
-import urlparse
 
 from PyQt4.QtCore import QCoreApplication
 from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsMessageLog, QgsMapLayerRegistry, QgsProject
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
+from .compat import urlparse
 from .plugin_settings import PluginSettings
 from .supported_drivers import KNOWN_DRIVERS
 from .py_tiled_layer.tiles import TileServiceInfo, TileDefaultSettings
@@ -87,7 +87,7 @@ def add_layer_to_map(ds):
 
         o = urlparse.urlparse(qgis_wfs_uri_base)
         request_attrs = dict(urlparse.parse_qsl(o.query))
-        
+
         new_request_attrs = {}
         for k, v in request_attrs.items():
             new_request_attrs[k.upper()] = v
@@ -141,7 +141,7 @@ def add_layer_to_map(ds):
             selected_node = iface.layerTreeView().currentNode()
             if selected_node.nodeType() == selected_node.NodeGroup:
                 toc_root =  selected_node
-            
+
             if ds.type.lower() in (KNOWN_DRIVERS.WMS.lower(), KNOWN_DRIVERS.TMS.lower()):
                 position = len(toc_root.children())  # Insert to bottom if wms\tms
             else:

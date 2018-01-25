@@ -1,9 +1,9 @@
-from ConfigParser import RawConfigParser
+from .compat import configparser
 
 DEFAULTSECT = "DEFAULT"
 
 
-class FixedConfigParser(RawConfigParser):
+class FixedConfigParser(configparser.RawConfigParser):
     """
     Unicode writer fix for ConfigParser
     """

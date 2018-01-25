@@ -24,7 +24,6 @@ from __future__ import absolute_import
 import codecs
 import os
 import sys
-from ConfigParser import ConfigParser
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMenu, QIcon
 from qgis.core import QgsMessageLog
@@ -33,6 +32,7 @@ from . import extra_sources
 from .custom_translator import CustomTranslator
 from .group_info import GroupInfo, GroupCategory
 from .locale import Locale
+from .compat import configparser
 
 CURR_PATH = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
 
@@ -73,7 +73,7 @@ class GroupsList(object):
     def _read_ini_file(self, root, ini_file_path, category):
         try:
             ini_full_path = os.path.join(root, ini_file_path)
-            parser = ConfigParser()
+            parser = configparser.ConfigParser()
             ini_file = codecs.open(ini_full_path, 'r', 'utf-8')
             parser.readfp(ini_file)
             #read config

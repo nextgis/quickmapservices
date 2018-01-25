@@ -1,32 +1,31 @@
 from __future__ import absolute_import
 import codecs
 import os
-import urlparse
 
-from ConfigParser import ConfigParser
 from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
 from .data_source_info import DataSourceInfo
 from .fixed_config_parser import FixedConfigParser
 from .locale import Locale
 from .supported_drivers import KNOWN_DRIVERS
+from .compat import configparser, urlparse
 
 
 def parse_wms_url_parameter(url, parameters_str, ignore_layers=False):
     wms_url = url.split("?")[0]
-    
+
     o = urlparse.urlparse(url)
     parameters = dict(urlparse.parse_qsl(o.query))
-    
+
     wms_params = []
     wms_url_params = []
-    
+
     for parameter in parameters_str.strip("&").split("&"):
         if parameter.find("=") == -1:
             continue
         k,v = parameter.split("=")
         parameters.update({k: v})
-    
+
     for k,v in parameters.items():
         if ignore_layers and k.upper() in  ["LAYERS", "STYLES"]:
             continue
@@ -34,7 +33,7 @@ def parse_wms_url_parameter(url, parameters_str, ignore_layers=False):
             wms_params.append("%s=%s"%(k,v))
         else:
             wms_url_params.append("%s=%s"%(k,v))
-    
+
     wms_params = "&".join(wms_params)
     wms_url_params = "&".join(wms_url_params)
 
@@ -51,7 +50,7 @@ class DataSourceSerializer(object):
         dir_path = os.path.abspath(os.path.join(ini_file_path, os.path.pardir))
         ini_file = codecs.open(ini_file_path, 'r', 'utf-8')
 
-        parser = ConfigParser()
+        parser = configparser.ConfigParser()
         parser.readfp(ini_file)
 
         ds = DataSourceInfo()
@@ -159,7 +158,7 @@ class DataSourceSerializer(object):
         #WMS
         if ds.type.lower() == KNOWN_DRIVERS.WMS.lower():
             ds.wms_layers = json_data['layers']
-            
+
             ds.wms_url, ds.wms_params, ds.wms_url_params = parse_wms_url_parameter(
                 json_data['url'],
                 json_data['params'],
@@ -167,15 +166,15 @@ class DataSourceSerializer(object):
             )
 
             ds.wms_turn_over = json_data['turn_over']
-            
+
             ds.format = json_data['format']
             if ds.format is None:
                 ds.format = 'image/png'
             ds.wms_params += '&format=' + ds.format
-            
+
             epsg = json_data['epsg']
             if epsg is not None:
-                ds.wms_params += '&crs=EPSG:' + str(epsg)  
+                ds.wms_params += '&crs=EPSG:' + str(epsg)
 
         #WFS
         if ds.type.lower() == KNOWN_DRIVERS.WFS.lower():
@@ -207,7 +206,7 @@ class DataSourceSerializer(object):
         config.add_section('license')
         config.add_section(ds_info.type.lower())
 
-       # Required
+        # Required
         config.set('general', 'id', ds_info.id)
         config.set('general', 'type', ds_info.type)
 
