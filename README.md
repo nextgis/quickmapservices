@@ -18,6 +18,9 @@ Important notes:
 1. Adding copyrights of particular service providers to your map outputs is currently the sole responsibility of the user.
 2. If you want to add your own service - add them here: http://qms.nextgis.com
 
+## Examples: overview of QMS
+![](http://nextgis.com/wp-content/uploads/2018/02/qms.gif)
+
 ## Examples: lots of easy to add services
 ![](http://nextgis.ru/wp-content/uploads/2015/06/qms-contrib-10.png)
 
