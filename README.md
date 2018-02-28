@@ -18,10 +18,10 @@ Important notes:
 1. Adding copyrights of particular service providers to your map outputs is currently the sole responsibility of the user.
 2. If you want to add your own service - add them here: http://qms.nextgis.com
 
-##Examples: lots of easy to add services
+## Examples: lots of easy to add services
 ![](http://nextgis.ru/wp-content/uploads/2015/06/qms-contrib-10.png)
 
-##Examples: turn to grayscale at once
+## Examples: turn to grayscale at once
 ![](http://nextgis.ru/wp-content/uploads/2015/10/qms-grey-mqosm-en.gif)
 
 License
