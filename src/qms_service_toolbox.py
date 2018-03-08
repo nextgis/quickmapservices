@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import ast
 import sys
+import datetime
 
 from os import path
 
@@ -45,6 +46,8 @@ from .qgis_settings import QGISSettings
 from .plugin_settings import PluginSettings
 from .singleton import singleton
 from .compat import URLError
+
+from .qms_news import News
 
 
 def plPrint(msg, level=QgsMessageLog.INFO):
@@ -144,6 +147,20 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
         self.add_last_used_services()
 
+        self.news =  News(
+            self.tr('Help QMS <a href="http://nextgis.com/qms-plugin-crowdfunding">upgrade to QGIS3</a>'),
+            datetime.datetime(2018, 3, 5),
+            datetime.datetime(2018, 3, 15),
+        )
+        
+        self.show_news()
+
+    def show_news(self):
+        if self.news.date_finish > datetime.datetime.now():
+            self.newsLabel.setText(self.news.html)
+            self.newsFrame.setVisible(True)
+        else:
+            self.newsFrame.setVisible(False)
 
     def toggle_filter_button(self, checked):
         self.txtSearch.setDisabled(checked)

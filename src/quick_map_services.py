@@ -33,7 +33,7 @@ from qgis.core import QgsProject, QgsPluginLayerRegistry
 from qgis.gui import QgsMessageBar
 import sys
 from .extra_sources import ExtraSources
-from .locale import Locale
+from .plugin_locale import Locale
 from .plugin_settings import PluginSettings
 from .qgis_map_helpers import add_layer_to_map
 from .qms_service_toolbox import QmsServiceToolbox

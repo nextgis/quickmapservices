@@ -31,7 +31,7 @@ from .config_reader_helper import ConfigReaderHelper
 from . import extra_sources
 from .custom_translator import CustomTranslator
 from .group_info import GroupInfo, GroupCategory
-from .locale import Locale
+from .plugin_locale import Locale
 from .compat import configparser
 
 CURR_PATH = os.path.dirname(__file__).decode(sys.getfilesystemencoding())

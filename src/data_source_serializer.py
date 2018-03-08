@@ -6,7 +6,7 @@ from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
 from .data_source_info import DataSourceInfo
 from .fixed_config_parser import FixedConfigParser
-from .locale import Locale
+from .plugin_locale import Locale
 from .supported_drivers import KNOWN_DRIVERS
 from .compat import configparser, urlparse
 

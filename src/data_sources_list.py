@@ -32,7 +32,7 @@ from .custom_translator import CustomTranslator
 from .data_source_info import DataSourceInfo, DataSourceCategory
 from . import extra_sources
 from .data_source_serializer import DataSourceSerializer
-from .locale import Locale
+from .plugin_locale import Locale
 from .supported_drivers import KNOWN_DRIVERS
 
 CURR_PATH = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
