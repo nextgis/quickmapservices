@@ -1,8 +1,9 @@
 import os
 import sys
 
+from .compat import get_file_dir
 
-plugin_dir = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
+plugin_dir = get_file_dir(__file__)
 
 
 class News(object):

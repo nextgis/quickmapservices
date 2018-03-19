@@ -2,8 +2,9 @@ from __future__ import absolute_import
 import os
 import shutil
 
-from PyQt4 import uic
-from PyQt4.QtGui import QDialog, QFileDialog, QIcon, QMessageBox, QPixmap
+from qgis.PyQt import uic
+from qgis.PyQt.QtGui import QIcon, QPixmap
+from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox
 from os import path
 
 from . import extra_sources

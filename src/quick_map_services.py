@@ -24,12 +24,14 @@ from __future__ import absolute_import
 import os.path
 import xml.etree.ElementTree as ET
 
-from PyQt4.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt, QUrl
-from PyQt4.QtGui import QAction, QIcon, QToolButton, QMenu, QMessageBox, QDialog, QDesktopServices
+from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt, QUrl
+from qgis.PyQt.QtWidgets import QAction, QToolButton, QMenu,QMessageBox, QDialog
+from qgis.PyQt.QtGui import QIcon, QDesktopServices
+
 # Initialize Qt resources from file resources.py
 #import resources_rc
 # Import the code for the dialog
-from qgis.core import QgsProject, QgsPluginLayerRegistry
+from qgis.core import QgsProject
 from qgis.gui import QgsMessageBar
 import sys
 from .extra_sources import ExtraSources
@@ -43,7 +45,9 @@ from .about_dialog import AboutDialog
 from .py_tiled_layer.tilelayer import TileLayer, TileLayerType
 from .data_sources_list import DataSourcesList
 from .groups_list import GroupsList
-from .custom_translator import CustomTranslator
+from .custom_translator import CustomTranslator, QTranslator
+from .compat import get_file_dir
+from .compat2qgis import qgisRegistryInstance
 
 
 class QuickMapServices(object):
@@ -60,7 +64,7 @@ class QuickMapServices(object):
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
-        self.plugin_dir = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
+        self.plugin_dir = get_file_dir(__file__)
 
         # initialize locale
         self.translator = QTranslator()
@@ -70,8 +74,10 @@ class QuickMapServices(object):
             self.plugin_dir,
             'i18n',
             'QuickMapServices_{}.qm'.format(self.locale))
+        print("locale_path: %s" % locale_path)
         if os.path.exists(locale_path):
-            self.translator.load(locale_path)
+            r = self.translator.load(locale_path)
+            print("Load translator result: %s" % r)
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
@@ -108,7 +114,7 @@ class QuickMapServices(object):
 
         # Register plugin layer type
         self.tileLayerType = TileLayerType(self)
-        QgsPluginLayerRegistry.instance().addPluginLayerType(self.tileLayerType)
+        qgisRegistryInstance.addPluginLayerType(self.tileLayerType)
 
         # Create menu
         icon_path = self.plugin_dir + '/icons/mActionAddLayer.svg'
@@ -183,8 +189,8 @@ class QuickMapServices(object):
         self.ds_list = None
         self.groups_list = None
         self.service_layers = None
-        # Unregister plugin layer type
-        QgsPluginLayerRegistry.instance().removePluginLayerType(TileLayer.LAYER_TYPE)
+        # # Unregister plugin layer type
+        qgisRegistryInstance.removePluginLayerType(TileLayer.LAYER_TYPE)
 
     def build_menu_tree(self):
         # Main Menu
@@ -194,7 +200,7 @@ class QuickMapServices(object):
         self.ds_list = DataSourcesList()
 
         data_sources = self.ds_list.data_sources.values()
-        data_sources.sort(key=lambda x: x.alias or x.id)
+        data_sources = sorted(data_sources, key=lambda x: x.alias or x.id)
 
         ds_hide_list = PluginSettings.get_hide_ds_id_list()
 
@@ -263,6 +269,7 @@ class QuickMapServices(object):
         if self.qms_search_action:
             self.iface.webToolBar().removeAction(self.qms_search_action)
             self.iface.layerToolBar().removeAction(self.qms_search_action)
+
     def append_menu_buttons(self):
         """
         Append menus and buttons to appropriate toolbar
@@ -293,7 +300,6 @@ class QuickMapServices(object):
         else:
             self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
             self.iface.webToolBar().addAction(self.qms_search_action)
-
 
     def show_settings_dialog(self):
         settings_dlg = SettingsDialog()

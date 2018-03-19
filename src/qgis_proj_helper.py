@@ -2,7 +2,7 @@ from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsMessageBar
 
 from .plugin_settings import PluginSettings
-
+from .compat2qgis import QGisMessageLevel
 
 class ProjectionHelper:
     CRS_3857 = QgsCoordinateReferenceSystem(3857)
@@ -40,10 +40,10 @@ class ProjectionHelper:
                 layer.setCrs(crs)
         except:
             msg = "Custom crs can't be set for layer {0}!".format(layer.name())
-            self.show_bar_message(msg, QgsMessageBar.WARNING, 4)
+            self.show_bar_message(msg, QGisMessageLevel.Warning, 4)
 
     @classmethod
-    def show_bar_message(cls, text, level=QgsMessageBar.INFO, duration=0, title=None):
+    def show_bar_message(cls, text, level=QGisMessageLevel.Info, duration=0, title=None):
         if PluginSettings.show_messages_in_bar():
             if title is None:
                 title = PluginSettings.product_name()

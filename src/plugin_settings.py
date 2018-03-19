@@ -22,8 +22,10 @@
 """
 import ast
 
-from PyQt4.QtCore import QSettings, QDir, Qt, QByteArray
-from qgis.core import QGis
+from .compat import urlopen
+from .compat2qgis import QGis
+
+from qgis.PyQt.QtCore import QSettings, QDir, Qt, QByteArray
 
 
 class PluginSettings(object):
@@ -145,8 +147,10 @@ class PluginSettings(object):
 
     @classmethod
     def use_native_tms(cls):
-        if QGis.QGIS_VERSION_INT >= 21808:
-            return cls.get_settings().value('tile_layer/use_native_tms', False, bool)
+        if QGis.QGIS_VERSION_INT >= 30000:
+            return True
+        elif QGis.QGIS_VERSION_INT >= 21808:
+            return cls.get_settings().value('tile_layer/use_native_tms', True, bool)
         else:
             return False
 

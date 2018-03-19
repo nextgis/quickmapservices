@@ -27,14 +27,16 @@ import tempfile
 from zipfile import ZipFile
 import shutil
 
-from PyQt4.QtCore import QUrl, QEventLoop, QFile, QIODevice
-from PyQt4.QtNetwork import QNetworkRequest, QNetworkReply
-from qgis.core import QgsApplication, QgsNetworkAccessManager
+from qgis.PyQt.QtCore import QUrl, QEventLoop, QFile, QIODevice
+from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
+from qgis.core import QgsNetworkAccessManager
 
 from .compat import urlopen
+from .compat2qgis import getQGisUserDatabaseFilePath
 from .plugin_settings import PluginSettings
 
-LOCAL_SETTINGS_PATH = os.path.dirname(QgsApplication.qgisUserDbFilePath())
+
+LOCAL_SETTINGS_PATH = os.path.dirname(getQGisUserDatabaseFilePath())
 PLUGIN_SETTINGS_PATH = os.path.join(LOCAL_SETTINGS_PATH, PluginSettings.product_name())
 
 CONTRIBUTE_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, 'Contribute')
@@ -105,7 +107,7 @@ class ExtraSources(object):
     def _get_latest_release_info(self):
         url = '%s/%s/%s' % (CONTRIBUTE_REPO_URL, 'releases', 'latest')
         reply = self.__sync_request(url)
-        latest_release_info = json.loads(reply.data())
+        latest_release_info = json.loads(reply.data().decode("utf-8"))
         return latest_release_info
 
     def _download_file(self, url, out_path):

@@ -6,23 +6,28 @@ import datetime
 
 from os import path
 
-from PyQt4 import uic
-from PyQt4.QtGui import (
+from qgis.PyQt import uic
+
+from qgis.PyQt.QtGui import (
+    QImage,
+    QPixmap,
+    QCursor,
+    QFont,
+)
+
+from qgis.PyQt.QtWidgets import (
     QApplication,
     QWidget,
     QDockWidget,
     QHBoxLayout,
     QLabel,
-    QImage,
-    QPixmap,
     QToolButton,
-    QCursor,
     QSizePolicy,
     QListWidgetItem,
     QGridLayout,
-    QFont)
+)
 
-from PyQt4.QtCore import (
+from qgis.PyQt.QtCore import (
     QThread,
     pyqtSignal,
     Qt,
@@ -34,7 +39,6 @@ from PyQt4.QtCore import (
 from qgis.core import (
     QgsMessageLog,
     QgsCoordinateReferenceSystem,
-    QgsCoordinateTransform,
     QgsGeometry
 )
 
@@ -46,11 +50,12 @@ from .qgis_settings import QGISSettings
 from .plugin_settings import PluginSettings
 from .singleton import singleton
 from .compat import URLError
+from .compat2qgis import QGisMessageLevel, getCanvasDestinationCrs, getCanvasDestinationCrs
 
 from .qms_news import News
 
 
-def plPrint(msg, level=QgsMessageLog.INFO):
+def plPrint(msg, level=QGisMessageLevel.Info):
     QgsMessageLog.logMessage(
         msg,
         "QMS",
@@ -194,10 +199,10 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         else:
             # extent filter
             extent = self.iface.mapCanvas().extent()
-            map_crs = self.iface.mapCanvas().mapRenderer().destinationCrs()
+            map_crs = getCanvasDestinationCrs(self.iface)
             if map_crs.postgisSrid() != 4326:
                 crsDest = QgsCoordinateReferenceSystem(4326)    # WGS 84
-                xform = QgsCoordinateTransform(map_crs, crsDest)
+                xform = getCanvasDestinationCrs(map_crs, crsDest)
                 extent = xform.transform(extent)
             geom_filter = extent.asWktPolygon()
 
@@ -475,7 +480,7 @@ class SearchThread(QThread):
                 # get icon
                 ba = QByteArray()
                 icon_id = result.get("icon")
-                if not self.img_cach.has_key(icon_id):
+                if self.img_cach.get(icon_id) is None:
                     if icon_id:
                         ba = QByteArray(self.searcher.get_icon_content(icon_id, 24, 24))
                     else:
@@ -485,7 +490,8 @@ class SearchThread(QThread):
                     ba = self.img_cach[icon_id]
                 # get extent
                 extent = result['extent']
-                area = None
+                # area = None
+                area = 0.0
                 if extent:
                     if extent.startswith('SRID'):
                         extent = extent.split(';')[1]

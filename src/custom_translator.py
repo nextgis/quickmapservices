@@ -21,17 +21,15 @@
  ***************************************************************************/
 """
 from __future__ import absolute_import
-from PyQt4.QtCore import QTranslator
+from qgis.PyQt.QtCore import QTranslator
 from .singleton import singleton
 
 
 @singleton
 class CustomTranslator(QTranslator):
-
     def __init__(self):
         QTranslator.__init__(self)
         self.__translates = {}
-
 
     def append(self, text, translation):
         if text and translation:
@@ -40,10 +38,10 @@ class CustomTranslator(QTranslator):
     def clear_translations(self):
         self.__translates.clear()
 
-    def translate(self, context, text, disambiguation):
+    def translate(self, context, text, disambiguation, n=-1):
         try:
-            if (isinstance(text, str) or isinstance(text, unicode)) and text in self.__translates.keys():
+            if (isinstance(text, str) or isinstance(text, unicode)) and text in self.__translates:
                 return self.__translates[text]
-            return ''
+            return None
         except:
-            return ''
+            return None

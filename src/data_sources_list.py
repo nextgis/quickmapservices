@@ -24,8 +24,9 @@ from __future__ import absolute_import
 import codecs
 import os
 import sys
-from PyQt4.QtCore import QCoreApplication
-from PyQt4.QtGui import QIcon, QAction
+from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QAction
 from qgis.core import QgsMessageLog
 from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
@@ -34,8 +35,9 @@ from . import extra_sources
 from .data_source_serializer import DataSourceSerializer
 from .plugin_locale import Locale
 from .supported_drivers import KNOWN_DRIVERS
+from .compat import get_file_dir
 
-CURR_PATH = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
+CURR_PATH = get_file_dir(__file__)
 
 INTERNAL_DS_PATHS = [os.path.join(CURR_PATH, extra_sources.DATA_SOURCES_DIR_NAME), ]
 CONTRIBUTE_DS_PATHS = [os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME), ]

@@ -20,7 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import pyqtWrapperType
+from qgis.PyQt.QtCore import pyqtWrapperType
+from .compat2qgis import QGis
+
+if QGis.QGIS_VERSION_INT >= 30000:
+    from qgis.PyQt.QtCore import QObject as QParentClass
+else:
+  from qgis.PyQt.QtCore import pyqtWrapperType as QParentClass
+
 
 def singleton(class_):
   instances = {}
@@ -33,7 +40,7 @@ def singleton(class_):
   return getinstance
 
 
-class QSingleton(pyqtWrapperType):
+class QSingleton(QParentClass):
     def __init__(cls, name, bases, dict):
         super(QSingleton, cls).__init__(cls, bases, dict)
         cls._instance = None

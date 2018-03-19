@@ -25,16 +25,19 @@ from __future__ import absolute_import
 import os
 import sys
 
-from PyQt4 import uic
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import *
+from qgis.PyQt.QtGui import *
+from qgis.PyQt.QtWidgets import *
 
-from qgis.core import QgsApplication, QGis
+from qgis.core import QgsApplication
 
 from .extra_sources import ExtraSources
 from .plugin_settings import PluginSettings
 from .qgis_settings import QGISSettings
 from .data_sources_model import DSManagerModel
+from .compat2qgis import QGis, imageActionShowAllLayers, imageActionHideAllLayers
+
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'settings_dialog_base.ui'), from_imports=False)
@@ -52,15 +55,22 @@ class SettingsDialog(QDialog, FORM_CLASS):
         # init services visibility tab
         self.dsManagerViewModel = DSManagerModel()
         self.treeViewForDS.setModel(self.dsManagerViewModel)
-        self.treeViewForDS.header().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch)
+
+        if hasattr(self.treeViewForDS.header(), "setResizeMode"):
+            # Qt4
+            self.treeViewForDS.header().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch) # !!! need to check
+        else:
+            # Qt5
+            self.treeViewForDS.header().setSectionResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch) # !!! need to check
+        
         showAllAction = self.toolBarForDSTreeView.addAction(
-            QIcon(":/images/themes/default/mActionShowAllLayers.png"),
+            QIcon(imageActionShowAllLayers),
             self.tr("Show all")
         )
         showAllAction.triggered.connect(self.dsManagerViewModel.checkAll)
 
         hideAllAction = self.toolBarForDSTreeView.addAction(
-            QIcon(":images/themes/default/mActionHideAllLayers.png"),
+            QIcon(imageActionHideAllLayers),
             self.tr("Hide all")
         )
         hideAllAction.triggered.connect(self.dsManagerViewModel.uncheckAll)
@@ -78,7 +88,10 @@ class SettingsDialog(QDialog, FORM_CLASS):
         self.spnConnCount.setValue(PluginSettings.default_tile_layer_conn_count())
         self.spnCacheExp.setValue(QGISSettings.get_default_tile_expiry())
         self.spnNetworkTimeout.setValue(QGISSettings.get_default_network_timeout())
-        if QGis.QGIS_VERSION_INT >= 21808:
+        if QGis.QGIS_VERSION_INT >= 30000:
+            self.chkUseNativeRenderer.setChecked(True)
+            self.chkUseNativeRenderer.setEnabled(False)
+        elif QGis.QGIS_VERSION_INT >= 21808:
             self.chkUseNativeRenderer.setChecked(PluginSettings.use_native_tms())
         else:
             self.chkUseNativeRenderer.setChecked(False)

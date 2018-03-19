@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
 import sys
 
 
@@ -33,7 +34,13 @@ else:
     urlparse = parse
     from urllib.request import urlopen, URLError
 
-try:
+if PY3:
     import configparser
-except ImportError:
-    import ConfigParser as configparser
+else:
+    import ConfigParser as configparser 
+
+def get_file_dir(filename):
+    if PY2:
+        return os.path.dirname(filename).decode(sys.getfilesystemencoding())
+    else:
+        return os.path.dirname(filename)

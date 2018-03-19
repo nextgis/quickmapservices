@@ -1,17 +1,19 @@
 from __future__ import absolute_import
 import os
+import sys
 import shutil
 
-import sys
-from PyQt4 import uic
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QTreeView, QHeaderView
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QVBoxLayout, QTreeView, QHeaderView
 
 from .data_sources_list import DataSourcesList, USER_DS_PATHS
 from .ds_edit_dialog import DsEditDialog
 from .data_sources_model import DSManagerModel
+from .compat import get_file_dir
 
-plugin_dir = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
+plugin_dir = get_file_dir(__file__)
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_services_box.ui'))
@@ -43,7 +45,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
     def feel_list(self):
         self.lstServices.clear()
         ds_list = DataSourcesList(USER_DS_PATHS)
-        for ds in ds_list.data_sources.itervalues():
+        for ds in ds_list.data_sources.values():
             item = QListWidgetItem(ds.action.icon(), ds.action.text())
             item.setData(Qt.UserRole, ds)
             self.lstServices.addItem(item)

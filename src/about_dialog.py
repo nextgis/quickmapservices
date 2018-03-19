@@ -22,8 +22,9 @@
 """
 import os
 
-from PyQt4 import uic
-from PyQt4.QtGui import QDialog, QDialogButtonBox, QPixmap
+from qgis.PyQt import uic
+from qgis.PyQt.QtGui import QPixmap
+from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
 
 from .compat import configparser
 
@@ -43,7 +44,7 @@ class AboutDialog(QDialog, FORM_CLASS):
 
         self.lblLogo.setPixmap(QPixmap(os.path.join(CURR_PATH, 'icons/mapservices.png')))
 
-        cfg = configparser.SafeConfigParser()
+        cfg = configparser.ConfigParser()
         cfg.read(os.path.join(os.path.dirname(__file__), 'metadata.txt'))
         version = cfg.get('general', 'version')
 
