@@ -89,8 +89,10 @@ class SettingsDialog(QDialog, FORM_CLASS):
         self.spnCacheExp.setValue(QGISSettings.get_default_tile_expiry())
         self.spnNetworkTimeout.setValue(QGISSettings.get_default_network_timeout())
         if QGis.QGIS_VERSION_INT >= 30000:
+            self.useNativeRenderer2188AndHigherLabel.setVisible(False)
             self.chkUseNativeRenderer.setChecked(True)
             self.chkUseNativeRenderer.setEnabled(False)
+            self.chkUseNativeRenderer.setVisible(False)
         elif QGis.QGIS_VERSION_INT >= 21808:
             self.chkUseNativeRenderer.setChecked(PluginSettings.use_native_tms())
         else:
