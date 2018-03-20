@@ -74,10 +74,8 @@ class QuickMapServices(object):
             self.plugin_dir,
             'i18n',
             'QuickMapServices_{}.qm'.format(self.locale))
-        print("locale_path: %s" % locale_path)
         if os.path.exists(locale_path):
             r = self.translator.load(locale_path)
-            print("Load translator result: %s" % r)
             if qVersion() > '4.3.3':
                 QCoreApplication.installTranslator(self.translator)
 
