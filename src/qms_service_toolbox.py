@@ -50,12 +50,12 @@ from .qgis_settings import QGISSettings
 from .plugin_settings import PluginSettings
 from .singleton import singleton
 from .compat import URLError
-from .compat2qgis import QGisMessageLevel, getCanvasDestinationCrs, getCanvasDestinationCrs
+from .compat2qgis import QGisMessageLogLevel, getCanvasDestinationCrs, QgsCoordinateTransform
 
 from .qms_news import News
 
 
-def plPrint(msg, level=QGisMessageLevel.Info):
+def plPrint(msg, level=QGisMessageLogLevel.Info):
     QgsMessageLog.logMessage(
         msg,
         "QMS",
@@ -202,7 +202,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             map_crs = getCanvasDestinationCrs(self.iface)
             if map_crs.postgisSrid() != 4326:
                 crsDest = QgsCoordinateReferenceSystem(4326)    # WGS 84
-                xform = getCanvasDestinationCrs(map_crs, crsDest)
+                xform = QgsCoordinateTransform(map_crs, crsDest)
                 extent = xform.transform(extent)
             geom_filter = extent.asWktPolygon()
 

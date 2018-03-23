@@ -78,7 +78,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
 
     def init_groups_cmb(self):
         ds_groups = GroupsList()
-        for ds_group in ds_groups.groups.itervalues():
+        for ds_group in ds_groups.groups.values():
             self.cmbGroup.addItem(QIcon(ds_group.icon), self.tr(ds_group.alias), ds_group)
 
     def init_types_cmb(self):
@@ -154,7 +154,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
         # set type
         self.cmbType.setCurrentIndex(self.cmbType.findData(self.ds_info.type))
         # feel widgets
-        for spec_widget in self.DRV_WIDGETS.itervalues():
+        for spec_widget in self.DRV_WIDGETS.values():
             spec_widget.feel_form(self.ds_info)
 
 

@@ -1,5 +1,7 @@
 from __future__ import absolute_import
+
 import ast
+import random
 
 
 from qgis.PyQt.QtCore import QCoreApplication
@@ -9,7 +11,7 @@ from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 from .compat import urlparse
-from .compat2qgis import addMapLayer, QGisMessageLevel
+from .compat2qgis import addMapLayer, QGisMessageLogLevel, QGisMessageBarLevel
 from .plugin_settings import PluginSettings
 from .supported_drivers import KNOWN_DRIVERS
 from .py_tiled_layer.tiles import TileServiceInfo, TileDefaultSettings
@@ -27,8 +29,13 @@ def add_layer_to_map(ds):
     layers4add = []
 
     if ds.type.lower() == KNOWN_DRIVERS.TMS.lower():
+        if len(ds.alt_tms_urls) == 0:
+            tms_url = ds.tms_url
+        else:
+            tms_url = ds.alt_tms_urls[random.randint(0, len(ds.alt_tms_urls)-1)]
+
         if PluginSettings.use_native_tms():     # add version check
-            service_url = ds.tms_url.replace("=", "%3D").replace("&", "%26")
+            service_url = tms_url.replace("=", "%3D").replace("&", "%26")
             if ds.tms_y_origin_top is not None and ds.tms_y_origin_top==False:
                 service_url = service_url.replace('{y}', '{-y}')
 
@@ -43,7 +50,7 @@ def add_layer_to_map(ds):
             ProjectionHelper.set_tile_layer_proj(layer, ds.tms_epsg_crs_id, ds.tms_postgis_crs_id, ds.tms_custom_proj)
             layers4add.append(layer)
         else:
-            service_info = TileServiceInfo(tr(ds.alias), ds.copyright_text, ds.tms_url)
+            service_info = TileServiceInfo(tr(ds.alias), ds.copyright_text, tms_url)
             service_info.zmin = ds.tms_zmin or service_info.zmin
             service_info.zmax = ds.tms_zmax or service_info.zmax
             if ds.tms_y_origin_top is not None:
@@ -132,8 +139,8 @@ def add_layer_to_map(ds):
             error_message = tr('Layer %s can\'t be added to the map!') % ds.alias
             iface.messageBar().pushMessage(tr('Error'),
                                            error_message,
-                                           level=QGisMessageLevel.Critical)
-            QgsMessageLog.logMessage(error_message, level=QGisMessageLevel.Critical)
+                                           level=QGisMessageBarLevel.Critical)
+            QgsMessageLog.logMessage(error_message, level=QGisMessageLogLevel.Critical)
         else:
             # Set attribs
             layer.setAttribution(ds.copyright_text)

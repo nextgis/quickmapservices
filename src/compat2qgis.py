@@ -35,11 +35,12 @@ if QGis.QGIS_VERSION_INT >= 30000:
     
     addMapLayer =  core.QgsProject.instance().addMapLayer
     
-    message_levels = {
+    message_log_levels = {
         "Info": QGis.Info,
         "Warning": QGis.Warning,
         "Critical": QGis.Critical,
     }
+    message_bar_levels = message_log_levels
 
     geometry_types = {
         "Point": core.QgsWkbTypes.PointGeometry,
@@ -55,7 +56,13 @@ else:
     addMapLayer =  core.QgsMapLayerRegistry.instance().addMapLayer
 
     from qgis.gui import QgsMessageBar    
-    message_levels = {
+    from qgis.core import QgsMessageLog    
+    message_log_levels = {
+        "Info": QgsMessageLog.INFO,
+        "Warning": QgsMessageLog.WARNING,
+        "Critical": QgsMessageLog.CRITICAL,
+    }
+    message_bar_levels = {
         "Info": QgsMessageBar.INFO,
         "Warning": QgsMessageBar.WARNING,
         "Critical": QgsMessageBar.CRITICAL,
@@ -70,7 +77,8 @@ else:
     imageActionShowAllLayers = ":/images/themes/default/mActionShowAllLayers.png"
     imageActionHideAllLayers = ":images/themes/default/mActionHideAllLayers.png"
 
-QGisMessageLevel = type('QGisMessageLevel', (), (message_levels)) 
+QGisMessageLogLevel = type('QGisMessageLogLevel', (), (message_log_levels)) 
+QGisMessageBarLevel = type('QGisMessageBarLevel', (), (message_bar_levels)) 
 QGisGeometryType = type('QGisGeometryType', (), (geometry_types))
 
 
@@ -80,11 +88,16 @@ def getCanvasDestinationCrs(iface):
     else:
         return iface.mapCanvas().mapRenderer().destinationCrs()
 
-def getQgsCoordinateTransform(src_crs, dst_crs):
-    if QGis.QGIS_VERSION_INT >= 30000:
-        transformation = core.QgsCoordinateTransform()
-        transformation.setSourceCrs(src_crs)
-        transformation.setDestinationCrs(dst_crs)
-        return transformation
-    else:
-        return core.QgsCoordinateTransform(src_crs, dst_crs)
+
+class QgsCoordinateTransform(core.QgsCoordinateTransform):
+    def __init__(self, src_crs, dst_crs):
+        super(QgsCoordinateTransform, self).__init__()
+        
+        self.setSourceCrs(src_crs)
+        self.setDestinationCrs(dst_crs)
+
+    def setDestinationCrs(self, dst_crs):
+        if QGis.QGIS_VERSION_INT >= 30000:
+            super(QgsCoordinateTransform, self).setDestinationCrs(dst_crs)
+        else:
+            self.setDestCRS(dst_crs)

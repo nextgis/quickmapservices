@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+import re
+import itertools
 
 
 class DataSourceCategory(object):
@@ -46,7 +48,7 @@ class DataSourceInfo(object):
         self.copyright_link = None
         self.terms_of_use = None
 
-        self.tms_url = None
+        self.__tms_url = None
         self.tms_zmin = None
         self.tms_zmax = None
         self.tms_y_origin_top = None
@@ -79,3 +81,34 @@ class DataSourceInfo(object):
         self.icon_path = None
         self.action = None
         self.category = None
+
+    def _parse_tms_url(self, url):
+        switch_re = r"{switch:[^\}]*}"
+        switches = re.findall(switch_re, url)
+
+        url_pattern = url
+        for switch in switches:
+            url_pattern = url_pattern.replace(switch, '%s', 1)
+
+        switch_variants = []
+        for switch in switches:
+            switch_variants.append(switch[8:-1].split(','))
+
+        urls = []
+        for variants in list(itertools.product(*switch_variants)):
+            urls.append(
+                url_pattern % variants
+            )
+        return urls
+
+    @property
+    def tms_url(self):
+        return self.__tms_url
+
+    @property
+    def alt_tms_urls(self):
+        return self._parse_tms_url(self.__tms_url)
+
+    @tms_url.setter
+    def tms_url(self, url):
+        self.__tms_url = url

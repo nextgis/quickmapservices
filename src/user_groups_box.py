@@ -93,11 +93,18 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         layout.addWidget(groups_list_view)
         groups_list_view.setModel(self.ds_model)
         groups_list_view.setColumnHidden(DSManagerModel.COLUMN_VISIBILITY, True)
-        groups_list_view.horizontalHeader().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch)
         groups_list_view.setSelectionMode(QTableView.NoSelection)
         groups_list_view.setAlternatingRowColors(True)
         groups_list_view.setShowGrid(False)
-        groups_list_view.verticalHeader().setResizeMode(QHeaderView.ResizeToContents)
+        if hasattr(groups_list_view.horizontalHeader(), "setResizeMode"):
+            # Qt4
+            groups_list_view.horizontalHeader().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch)
+            groups_list_view.verticalHeader().setResizeMode(QHeaderView.ResizeToContents)
+        else:
+            # Qt5
+            groups_list_view.horizontalHeader().setSectionResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch)
+            groups_list_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+
         groups_list_view.verticalHeader().hide()
         groups_list_view.clicked.connect(
             lambda index: select_group_dialog.accept() \

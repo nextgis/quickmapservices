@@ -29,7 +29,7 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
             self.spnCustomProj: self.rbCustomProj
         }
 
-        for cont, rb in remap.iteritems():
+        for cont, rb in remap.items():
             if new_w == cont:
                 rb.setChecked(True)
 

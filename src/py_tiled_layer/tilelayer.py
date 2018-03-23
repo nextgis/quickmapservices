@@ -34,7 +34,7 @@ from qgis.utils import iface
 from ..plugin_settings import PluginSettings
 from ..qgis_settings import QGISSettings
 from ..qgis_proj_helper import ProjectionHelper
-from ..compat2qgis import QGisMessageLevel
+from ..compat2qgis import QGisMessageBarLevel
 
 from .tiles import *
 from .downloader import Downloader
@@ -211,7 +211,7 @@ class TileLayer(QgsPluginLayer):
             msg = self.tr("Current zoom level ({0}) is smaller than zmin ({1}): {2}").format(zoom,
                                                                                              self.layerDef.zmin,
                                                                                              self.layerDef.title)
-            self.emitShowBarMessage(msg, QGisMessageLevel.Info, 2)
+            self.emitShowBarMessage(msg, QGisMessageBarLevel.Info, 2)
             return True
 
         while True:
@@ -251,7 +251,7 @@ class TileLayer(QgsPluginLayer):
                 # if the zoom level is less than the minimum, do not draw
                 if zoom < self.layerDef.zmin:
                     msg = self.tr("Tile count is over limit ({0}, max={1})").format(tileCount, self.MAX_TILE_COUNT)
-                    self.emitShowBarMessage(msg, QGisMessageLevel.Warning, 4)
+                    self.emitShowBarMessage(msg, QGisMessageBarLevel.Warning, 4)
                     return True
                 continue
 
@@ -313,7 +313,7 @@ class TileLayer(QgsPluginLayer):
                                     self.downloader.fetchErrors, self.name())
                     self.showStatusMessage(msg, 5000)
                     if barmsg:
-                        self.emitShowBarMessage(barmsg, QGisMessageLevel.Warning, 4)
+                        self.emitShowBarMessage(barmsg, QGisMessageBarLevel.Warning, 4)
 
             # apply layer style
             oldOpacity = painter.opacity()
@@ -386,7 +386,7 @@ class TileLayer(QgsPluginLayer):
     def drawTilesOnTheFly(self, renderContext, tiles, sdx=1.0, sdy=1.0):
         if not hasGdal:
             msg = self.tr("Reprojection requires python-gdal")
-            self.emitShowBarMessage(msg, QGisMessageLevel.Info, 2)
+            self.emitShowBarMessage(msg, QGisMessageBarLevel.Info, 2)
             return
 
         transform = renderContext.coordinateTransform()
@@ -721,7 +721,7 @@ class TileLayer(QgsPluginLayer):
     def showStatusMessageSlot(self, msg, timeout):
         self.iface.mainWindow().statusBar().showMessage(msg, timeout)
 
-    def emitShowBarMessage(self, text, level=QGisMessageLevel.Info, duration=0, title=None):
+    def emitShowBarMessage(self, text, level=QGisMessageBarLevel.Info, duration=0, title=None):
         if PluginSettings.show_messages_in_bar():
             if title is None:
                 title = PluginSettings.product_name()

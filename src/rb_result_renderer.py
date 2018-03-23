@@ -25,7 +25,7 @@ from qgis.gui import QgsRubberBand
 from qgis.core import QgsRectangle, QgsCoordinateReferenceSystem
 from qgis.utils import iface
 
-from .compat2qgis import QGisGeometryType, getCanvasDestinationCrs, getQgsCoordinateTransform
+from .compat2qgis import QGisGeometryType, getCanvasDestinationCrs, QgsCoordinateTransform
 
 class RubberBandResultRenderer():
 
@@ -33,7 +33,7 @@ class RubberBandResultRenderer():
         self.iface = iface
 
         self.srs_wgs84 = QgsCoordinateReferenceSystem(4326)
-        self.transformation = getQgsCoordinateTransform(self.srs_wgs84, self.srs_wgs84)
+        self.transform_decorator = QgsCoordinateTransform(self.srs_wgs84, self.srs_wgs84)
 
         self.rb = QgsRubberBand(self.iface.mapCanvas(), QGisGeometryType.Point)
         self.rb.setColor(QColor('magenta'))
@@ -64,9 +64,9 @@ class RubberBandResultRenderer():
     def transform_point(self, point):
         #dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
         #self.transformation.setDestCRSID(dest_srs_id)
-        self.transformation.setDestinationCrs(getCanvasDestinationCrs(self.iface))
+        self.transform_decorator.setDestinationCrs(getCanvasDestinationCrs(self.iface))
         try:
-            return self.transformation.transform(point)
+            return self.transform_decorator.transform(point)
         except:
             print('Error on transform!')  # DEBUG! need message???
             return
@@ -74,9 +74,9 @@ class RubberBandResultRenderer():
     def transform_bbox(self, bbox):
         #dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
         #self.transformation.setDestCRSID(dest_srs_id)
-        self.transformation.setDestinationCrs(getCanvasDestinationCrs(self.iface))
+        self.transform_decorator.setDestinationCrs(getCanvasDestinationCrs(self.iface))
         try:
-            return self.transformation.transformBoundingBox(bbox)
+            return self.transform_decorator.transformBoundingBox(bbox)
         except:
             print('Error on transform!')  # DEBUG! need message???
             return
@@ -84,12 +84,12 @@ class RubberBandResultRenderer():
     def transform_geom(self, geom):
         #dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
         #self.transformation.setDestCRSID(dest_srs_id)
-        self.transformation.setDestinationCrs(getCanvasDestinationCrs(self.iface))
+        self.transform_decorator.setDestinationCrs(getCanvasDestinationCrs(self.iface))
         try:
-            geom.transform(self.transformation)
+            geom.transform(self.transform_decorator)
             return geom
-        except:
-            print('Error on transform!')  # DEBUG! need message???
+        except Exception as e:
+            print('Error on transform! %s' % e)  # DEBUG! need message???
             return
 
     def center_to_point(self, point):

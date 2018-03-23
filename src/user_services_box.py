@@ -98,7 +98,14 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         #list_view.expandAll()
         list_view.setColumnHidden(DSManagerModel.COLUMN_VISIBILITY, True)
         list_view.setAlternatingRowColors(True)
-        list_view.header().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.ResizeToContents)
+        
+        if hasattr(list_view.header(), "setResizeMode"):
+            # Qt4
+            list_view.header().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.ResizeToContents)
+        else:
+            # Qt5
+            list_view.header().setSectionResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.ResizeToContents)
+
         list_view.clicked.connect(
             lambda index: select_data_sources_dialog.accept() \
                 if not self.ds_model.isGroup(index) and \
