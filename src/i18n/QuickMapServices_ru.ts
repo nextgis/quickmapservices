@@ -621,7 +621,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../settings_dialog_base.ui" line="136"/>
         <source>Use native renderer (2.18.8 and higher):</source>
         <translation>Использовать встроенный рендерер
-(QGIS 2.8.8 и выше):</translation>
+(QGIS 2.18.8 и выше):</translation>
     </message>
 </context>
 <context>
