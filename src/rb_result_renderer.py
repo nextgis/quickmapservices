@@ -20,10 +20,12 @@
 """
 from __future__ import print_function
 
-from PyQt4.QtGui import QColor
+from qgis.PyQt.QtGui import QColor
 from qgis.gui import QgsRubberBand
-from qgis.core import QGis, QgsRectangle, QgsCoordinateReferenceSystem, QgsCoordinateTransform
+from qgis.core import QgsRectangle, QgsCoordinateReferenceSystem
 from qgis.utils import iface
+
+from .compat2qgis import QGisGeometryType, getCanvasDestinationCrs, QgsCoordinateTransform
 
 class RubberBandResultRenderer():
 
@@ -31,13 +33,13 @@ class RubberBandResultRenderer():
         self.iface = iface
 
         self.srs_wgs84 = QgsCoordinateReferenceSystem(4326)
-        self.transformation = QgsCoordinateTransform(self.srs_wgs84, self.srs_wgs84)
+        self.transform_decorator = QgsCoordinateTransform(self.srs_wgs84, self.srs_wgs84)
 
-        self.rb = QgsRubberBand(self.iface.mapCanvas(), QGis.Point)
+        self.rb = QgsRubberBand(self.iface.mapCanvas(), QGisGeometryType.Point)
         self.rb.setColor(QColor('magenta'))
         self.rb.setIconSize(12)
 
-        self.features_rb = QgsRubberBand(self.iface.mapCanvas(), QGis.Point)
+        self.features_rb = QgsRubberBand(self.iface.mapCanvas(), QGisGeometryType.Point)
         magenta_transp = QColor('#3388ff')
         magenta_transp.setAlpha(120)
         self.features_rb.setColor(magenta_transp)
@@ -54,37 +56,40 @@ class RubberBandResultRenderer():
             self.center_to_point(point)
 
     def clear(self):
-        self.rb.reset(QGis.Point)
+        self.rb.reset(QGisGeometryType.Point)
 
     def need_transform(self):
-        return self.iface.mapCanvas().mapRenderer().destinationCrs().postgisSrid() != 4326
+        return getCanvasDestinationCrs(self.iface).postgisSrid() != 4326
 
     def transform_point(self, point):
-        dest_srs_id = self.iface.mapCanvas().mapRenderer().destinationCrs().srsid()
-        self.transformation.setDestCRSID(dest_srs_id)
+        #dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
+        #self.transformation.setDestCRSID(dest_srs_id)
+        self.transform_decorator.setDestinationCrs(getCanvasDestinationCrs(self.iface))
         try:
-            return self.transformation.transform(point)
+            return self.transform_decorator.transform(point)
         except:
             print('Error on transform!')  # DEBUG! need message???
             return
 
     def transform_bbox(self, bbox):
-        dest_srs_id = self.iface.mapCanvas().mapRenderer().destinationCrs().srsid()
-        self.transformation.setDestCRSID(dest_srs_id)
+        #dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
+        #self.transformation.setDestCRSID(dest_srs_id)
+        self.transform_decorator.setDestinationCrs(getCanvasDestinationCrs(self.iface))
         try:
-            return self.transformation.transformBoundingBox(bbox)
+            return self.transform_decorator.transformBoundingBox(bbox)
         except:
             print('Error on transform!')  # DEBUG! need message???
             return
 
     def transform_geom(self, geom):
-        dest_srs_id = self.iface.mapCanvas().mapRenderer().destinationCrs().srsid()
-        self.transformation.setDestCRSID(dest_srs_id)
+        #dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
+        #self.transformation.setDestCRSID(dest_srs_id)
+        self.transform_decorator.setDestinationCrs(getCanvasDestinationCrs(self.iface))
         try:
-            geom.transform(self.transformation)
+            geom.transform(self.transform_decorator)
             return geom
-        except:
-            print('Error on transform!')  # DEBUG! need message???
+        except Exception as e:
+            print('Error on transform! %s' % e)  # DEBUG! need message???
             return
 
     def center_to_point(self, point):
@@ -107,4 +112,4 @@ class RubberBandResultRenderer():
         self.features_rb.setToGeometry(geom, None)
 
     def clear_feature(self):
-        self.features_rb.reset(QGis.Point)
+        self.features_rb.reset(QGisGeometryType.Point)

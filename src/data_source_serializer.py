@@ -48,73 +48,76 @@ class DataSourceSerializer(object):
         locale = Locale.get_locale()
 
         dir_path = os.path.abspath(os.path.join(ini_file_path, os.path.pardir))
-        ini_file = codecs.open(ini_file_path, 'r', 'utf-8')
 
-        parser = configparser.ConfigParser()
-        parser.readfp(ini_file)
+        with codecs.open(ini_file_path, 'r', 'utf-8') as ini_file:
+            parser = configparser.ConfigParser()
+            if hasattr(parser, "read_file"):
+                parser.read_file(ini_file)
+            else:
+                parser.readfp(ini_file)
 
-        ds = DataSourceInfo()
+            ds = DataSourceInfo()
 
-        # Required
-        ds.id = ConfigReaderHelper.try_read_config(parser, 'general', 'id', reraise=True)
-        ds.type = ConfigReaderHelper.try_read_config(parser, 'general', 'type', reraise=True)
+            # Required
+            ds.id = ConfigReaderHelper.try_read_config(parser, 'general', 'id', reraise=True)
+            ds.type = ConfigReaderHelper.try_read_config(parser, 'general', 'type', reraise=True)
 
-        ds.group = ConfigReaderHelper.try_read_config(parser, 'ui', 'group', reraise=True)
-        ds.alias = ConfigReaderHelper.try_read_config(parser, 'ui', 'alias', reraise=True)
-        ds.icon = ConfigReaderHelper.try_read_config(parser, 'ui', 'icon')
+            ds.group = ConfigReaderHelper.try_read_config(parser, 'ui', 'group', reraise=True)
+            ds.alias = ConfigReaderHelper.try_read_config(parser, 'ui', 'alias', reraise=True)
+            ds.icon = ConfigReaderHelper.try_read_config(parser, 'ui', 'icon')
 
-        # Lic & Terms
-        ds.lic_name = ConfigReaderHelper.try_read_config(parser, 'license', 'name')
-        ds.lic_link = ConfigReaderHelper.try_read_config(parser, 'license', 'link')
-        ds.copyright_text = ConfigReaderHelper.try_read_config(parser, 'license', 'copyright_text')
-        ds.copyright_link = ConfigReaderHelper.try_read_config(parser, 'license', 'copyright_link')
-        ds.terms_of_use = ConfigReaderHelper.try_read_config(parser, 'license', 'terms_of_use')
+            # Lic & Terms
+            ds.lic_name = ConfigReaderHelper.try_read_config(parser, 'license', 'name')
+            ds.lic_link = ConfigReaderHelper.try_read_config(parser, 'license', 'link')
+            ds.copyright_text = ConfigReaderHelper.try_read_config(parser, 'license', 'copyright_text')
+            ds.copyright_link = ConfigReaderHelper.try_read_config(parser, 'license', 'copyright_link')
+            ds.terms_of_use = ConfigReaderHelper.try_read_config(parser, 'license', 'terms_of_use')
 
-        #TMS
-        ds.tms_url = ConfigReaderHelper.try_read_config(parser, 'tms', 'url', reraise=(ds.type == KNOWN_DRIVERS.TMS))
-        ds.tms_zmin = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'zmin')
-        ds.tms_zmax = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'zmax')
-        ds.tms_y_origin_top = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'y_origin_top')
-        ds.tms_epsg_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'epsg_crs_id')
-        ds.tms_postgis_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'postgis_crs_id')
-        ds.tms_custom_proj = ConfigReaderHelper.try_read_config(parser, 'tms', 'custom_proj')
-        ds.tms_tile_ranges = ConfigReaderHelper.try_read_config(parser, 'tms', 'tile_ranges')
-        ds.tms_tsize1 = ConfigReaderHelper.try_read_config_float(parser, 'tms', 'tsize1')
-        ds.tms_origin_x = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'origin_x')
-        ds.tms_origin_y = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'origin_y')
+            #TMS
+            ds.tms_url = ConfigReaderHelper.try_read_config(parser, 'tms', 'url', reraise=(ds.type == KNOWN_DRIVERS.TMS))
+            ds.tms_zmin = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'zmin')
+            ds.tms_zmax = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'zmax')
+            ds.tms_y_origin_top = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'y_origin_top')
+            ds.tms_epsg_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'epsg_crs_id')
+            ds.tms_postgis_crs_id = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'postgis_crs_id')
+            ds.tms_custom_proj = ConfigReaderHelper.try_read_config(parser, 'tms', 'custom_proj')
+            ds.tms_tile_ranges = ConfigReaderHelper.try_read_config(parser, 'tms', 'tile_ranges')
+            ds.tms_tsize1 = ConfigReaderHelper.try_read_config_float(parser, 'tms', 'tsize1')
+            ds.tms_origin_x = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'origin_x')
+            ds.tms_origin_y = ConfigReaderHelper.try_read_config_int(parser, 'tms', 'origin_y')
 
-        #WMS
-        ds.wms_layers = ConfigReaderHelper.try_read_config(parser, 'wms', 'layers')
+            #WMS
+            ds.wms_layers = ConfigReaderHelper.try_read_config(parser, 'wms', 'layers')
 
-        ds.wms_url, ds.wms_params, ds.wms_url_params = parse_wms_url_parameter(
-            ConfigReaderHelper.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS), default=""),
-            ConfigReaderHelper.try_read_config(parser, 'wms', 'params', default=""),
-            (ds.wms_layers is not None)
-        )
+            ds.wms_url, ds.wms_params, ds.wms_url_params = parse_wms_url_parameter(
+                ConfigReaderHelper.try_read_config(parser, 'wms', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMS), default=""),
+                ConfigReaderHelper.try_read_config(parser, 'wms', 'params', default=""),
+                (ds.wms_layers is not None)
+            )
 
-        ds.wms_turn_over = ConfigReaderHelper.try_read_config_bool(parser, 'wms', 'turn_over')
+            ds.wms_turn_over = ConfigReaderHelper.try_read_config_bool(parser, 'wms', 'turn_over')
 
-        #GDAL
-        if ds.type == KNOWN_DRIVERS.GDAL:
-            gdal_conf = ConfigReaderHelper.try_read_config(parser, 'gdal', 'source_file', reraise=(ds.type == KNOWN_DRIVERS.GDAL))
-            ds.gdal_source_file = os.path.join(dir_path, gdal_conf)
+            #GDAL
+            if ds.type == KNOWN_DRIVERS.GDAL:
+                gdal_conf = ConfigReaderHelper.try_read_config(parser, 'gdal', 'source_file', reraise=(ds.type == KNOWN_DRIVERS.GDAL))
+                ds.gdal_source_file = os.path.join(dir_path, gdal_conf)
 
-        #WFS
-        ds.wfs_url = ConfigReaderHelper.try_read_config(parser, 'wfs', 'url', reraise=(ds.type == KNOWN_DRIVERS.WFS))
-        ds.wfs_params = ConfigReaderHelper.try_read_config(parser, 'wfs', 'params')
-        wfs_layers = ConfigReaderHelper.try_read_config(parser, 'wfs', 'layers')
-        if wfs_layers is not None:
-            ds.wfs_layers = wfs_layers.split()
+            #WFS
+            ds.wfs_url = ConfigReaderHelper.try_read_config(parser, 'wfs', 'url', reraise=(ds.type == KNOWN_DRIVERS.WFS))
+            ds.wfs_params = ConfigReaderHelper.try_read_config(parser, 'wfs', 'params')
+            wfs_layers = ConfigReaderHelper.try_read_config(parser, 'wfs', 'layers')
+            if wfs_layers is not None:
+                ds.wfs_layers = wfs_layers.split()
 
-        # WFS
-        ds.geojson_url = ConfigReaderHelper.try_read_config(parser, 'geojson', 'url', reraise=(ds.type == KNOWN_DRIVERS.GEOJSON))
+            # WFS
+            ds.geojson_url = ConfigReaderHelper.try_read_config(parser, 'geojson', 'url', reraise=(ds.type == KNOWN_DRIVERS.GEOJSON))
 
-        #try read translations
-        posible_trans = parser.items('ui')
-        for key, val in posible_trans:
-            if type(key) is unicode and key == 'alias[%s]' % locale:
-                translator.append(ds.alias, val)
-                break
+            #try read translations
+            posible_trans = parser.items('ui')
+            for key, val in posible_trans:
+                if type(key) is unicode and key == 'alias[%s]' % locale:
+                    translator.append(ds.alias, val)
+                    break
 
         #internal stuff
         ds.file_path = ini_file_path

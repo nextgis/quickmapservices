@@ -21,9 +21,9 @@
 """
 import os
 
-from PyQt4 import uic
-from PyQt4.QtCore import QObject, SIGNAL
-from PyQt4.QtGui import QDialog, QDialogButtonBox, QPainter
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import QObject, SIGNAL
+from qgis.PyQt.QtGui import QDialog, QDialogButtonBox, QPainter
 
 
 CURR_PATH = os.path.dirname(__file__)

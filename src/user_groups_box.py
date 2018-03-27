@@ -1,20 +1,22 @@
 from __future__ import absolute_import
 import os
+import sys
 import shutil
 
-import sys
-from PyQt4 import uic
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QGroupBox, QListWidgetItem, QDialog, QMessageBox, QIcon, QVBoxLayout, QTableView, QHeaderView
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QGroupBox, QListWidgetItem, QDialog, QVBoxLayout, QTableView, QHeaderView, QMessageBox
 
 from .groups_list import GroupsList, USER_GROUP_PATHS
 from .group_edit_dialog import GroupEditDialog
 from .data_sources_model import DSManagerModel
+from .compat import get_file_dir
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_groups_box.ui'))
 
-plugin_dir = os.path.dirname(__file__).decode(sys.getfilesystemencoding())
+plugin_dir = get_file_dir(__file__)
 
 class UserGroupsBox(QGroupBox, FORM_CLASS):
 
@@ -42,7 +44,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
     def feel_list(self):
         self.lstGroups.clear()
         ds_groups = GroupsList(USER_GROUP_PATHS)
-        for ds_group in ds_groups.groups.itervalues():
+        for ds_group in ds_groups.groups.values():
             item = QListWidgetItem(QIcon(ds_group.icon), self.tr(ds_group.alias))
             item.setData(Qt.UserRole, ds_group)
             self.lstGroups.addItem(item)
@@ -91,11 +93,18 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         layout.addWidget(groups_list_view)
         groups_list_view.setModel(self.ds_model)
         groups_list_view.setColumnHidden(DSManagerModel.COLUMN_VISIBILITY, True)
-        groups_list_view.horizontalHeader().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch)
         groups_list_view.setSelectionMode(QTableView.NoSelection)
         groups_list_view.setAlternatingRowColors(True)
         groups_list_view.setShowGrid(False)
-        groups_list_view.verticalHeader().setResizeMode(QHeaderView.ResizeToContents)
+        if hasattr(groups_list_view.horizontalHeader(), "setResizeMode"):
+            # Qt4
+            groups_list_view.horizontalHeader().setResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch)
+            groups_list_view.verticalHeader().setResizeMode(QHeaderView.ResizeToContents)
+        else:
+            # Qt5
+            groups_list_view.horizontalHeader().setSectionResizeMode(DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch)
+            groups_list_view.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+
         groups_list_view.verticalHeader().hide()
         groups_list_view.clicked.connect(
             lambda index: select_group_dialog.accept() \

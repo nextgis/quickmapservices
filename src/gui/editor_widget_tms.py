@@ -1,7 +1,8 @@
 import os
 
-from PyQt4 import uic
-from PyQt4.QtGui import QWidget, QIntValidator, QMessageBox, QApplication
+from qgis.PyQt import uic
+from qgis.PyQt.QtGui import QIntValidator
+from qgis.PyQt.QtWidgets import QWidget, QMessageBox, QApplication
 
 from .line_edit_color_validator import LineEditColorValidator
 
@@ -28,7 +29,7 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
             self.spnCustomProj: self.rbCustomProj
         }
 
-        for cont, rb in remap.iteritems():
+        for cont, rb in remap.items():
             if new_w == cont:
                 rb.setChecked(True)
 

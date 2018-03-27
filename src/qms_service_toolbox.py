@@ -2,27 +2,31 @@ from __future__ import absolute_import
 
 import ast
 import sys
-import datetime
 
 from os import path
 
-from PyQt4 import uic
-from PyQt4.QtGui import (
+from qgis.PyQt import uic
+
+from qgis.PyQt.QtGui import (
+    QImage,
+    QPixmap,
+    QCursor,
+    QFont,
+)
+
+from qgis.PyQt.QtWidgets import (
     QApplication,
     QWidget,
     QDockWidget,
     QHBoxLayout,
     QLabel,
-    QImage,
-    QPixmap,
     QToolButton,
-    QCursor,
     QSizePolicy,
     QListWidgetItem,
     QGridLayout,
-    QFont)
+)
 
-from PyQt4.QtCore import (
+from qgis.PyQt.QtCore import (
     QThread,
     pyqtSignal,
     Qt,
@@ -34,7 +38,6 @@ from PyQt4.QtCore import (
 from qgis.core import (
     QgsMessageLog,
     QgsCoordinateReferenceSystem,
-    QgsCoordinateTransform,
     QgsGeometry
 )
 
@@ -46,11 +49,12 @@ from .qgis_settings import QGISSettings
 from .plugin_settings import PluginSettings
 from .singleton import singleton
 from .compat import URLError
+from .compat2qgis import QGisMessageLogLevel, getCanvasDestinationCrs, QgsCoordinateTransform
 
 from .qms_news import News
 
 
-def plPrint(msg, level=QgsMessageLog.INFO):
+def plPrint(msg, level=QGisMessageLogLevel.Info):
     QgsMessageLog.logMessage(
         msg,
         "QMS",
@@ -124,6 +128,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
     def __init__(self, iface):
         QDockWidget.__init__(self, iface.mainWindow())
         self.setupUi(self)
+        self.newsFrame.setVisible(False)
 
         self.iface = iface
         self.search_threads = None  # []
@@ -146,18 +151,22 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.one_process_work = QMutex()
 
         self.add_last_used_services()
-
-        self.news =  News(
-            self.tr('Help QMS <a href="http://nextgis.com/qms-plugin-crowdfunding">upgrade to QGIS3</a>'),
-            datetime.datetime(2018, 3, 5),
-            datetime.datetime(2018, 3, 15),
-        )
         
         self.show_news()
 
     def show_news(self):
-        if self.news.date_finish > datetime.datetime.now():
-            self.newsLabel.setText(self.news.html)
+        client = Client()
+        client.set_proxy(*QGISSettings.get_qgis_proxy())
+        qms_news = client.get_news()
+
+        if qms_news is None:
+            self.newsFrame.setVisible(False)
+            return
+
+        news = News(qms_news)
+
+        if news.is_time_to_show():
+            self.newsLabel.setText(news.html)
             self.newsFrame.setVisible(True)
         else:
             self.newsFrame.setVisible(False)
@@ -194,7 +203,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         else:
             # extent filter
             extent = self.iface.mapCanvas().extent()
-            map_crs = self.iface.mapCanvas().mapRenderer().destinationCrs()
+            map_crs = getCanvasDestinationCrs(self.iface)
             if map_crs.postgisSrid() != 4326:
                 crsDest = QgsCoordinateReferenceSystem(4326)    # WGS 84
                 xform = QgsCoordinateTransform(map_crs, crsDest)
@@ -475,7 +484,7 @@ class SearchThread(QThread):
                 # get icon
                 ba = QByteArray()
                 icon_id = result.get("icon")
-                if not self.img_cach.has_key(icon_id):
+                if self.img_cach.get(icon_id) is None:
                     if icon_id:
                         ba = QByteArray(self.searcher.get_icon_content(icon_id, 24, 24))
                     else:
@@ -485,7 +494,8 @@ class SearchThread(QThread):
                     ba = self.img_cach[icon_id]
                 # get extent
                 extent = result['extent']
-                area = None
+                # area = None
+                area = 0.0
                 if extent:
                     if extent.startswith('SRID'):
                         extent = extent.split(';')[1]

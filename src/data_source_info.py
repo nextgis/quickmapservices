@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+import re
+import itertools
 
 
 class DataSourceCategory(object):
@@ -46,7 +48,7 @@ class DataSourceInfo(object):
         self.copyright_link = None
         self.terms_of_use = None
 
-        self.tms_url = None
+        self.tms = None
         self.tms_zmin = None
         self.tms_zmax = None
         self.tms_y_origin_top = None

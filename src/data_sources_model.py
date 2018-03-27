@@ -26,8 +26,9 @@ from __future__ import absolute_import
 from .data_sources_list import DataSourcesList
 from .groups_list import GroupsList
 
-from PyQt4.QtCore import Qt, QAbstractItemModel, QModelIndex
-from PyQt4.QtGui import QIcon, QTreeWidgetItem
+from qgis.PyQt.QtCore import Qt, QAbstractItemModel, QModelIndex
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QTreeWidgetItem
 from .plugin_settings import PluginSettings
 
 from .singleton import QSingleton
@@ -238,9 +239,11 @@ class DSManagerModel(QAbstractItemModel):
             role = Qt.DisplayRole
 
         if order == Qt.AscendingOrder:
-            compareFunc = lambda a, b: True if cmp(a, b) < 0 else False
+            # compareFunc = lambda a, b: True if cmp(a, b) < 0 else False
+            compareFunc = lambda a, b: a < b # need to check
         else:
-            compareFunc = lambda a, b: True if cmp(a, b) > 0 else False
+            # compareFunc = lambda a, b: True if cmp(a, b) > 0 else False
+            compareFunc = lambda a, b: a >= b # need to check
 
         for groupIndexI in range(0, self.rootItem.childCount()):
             for groupIndexJ in range(0, groupIndexI):

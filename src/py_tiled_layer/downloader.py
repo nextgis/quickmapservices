@@ -20,8 +20,8 @@
  ***************************************************************************/
 """
 import threading
-from PyQt4.QtCore import QObject, QTimer, QEventLoop, QDateTime, qDebug, SIGNAL, QUrl
-from PyQt4.QtNetwork import QNetworkRequest, QNetworkReply
+from qgis.PyQt.QtCore import QObject, QTimer, QEventLoop, QDateTime, qDebug, QUrl, pyqtSignal
+from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
 from qgis.core import QgsNetworkAccessManager
 
 
@@ -34,6 +34,8 @@ class Downloader(QObject):
     NO_ERROR = 0
     TIMEOUT_ERROR = 4
     UNKNOWN_ERROR = -1
+
+    replyFinished = pyqtSignal(str, int, int)
 
     def __init__(self, parent=None):
         QObject.__init__(self, parent)
@@ -75,10 +77,10 @@ class Downloader(QObject):
             reply.abort()
         self.errorStatus = Downloader.UNKNOWN_ERROR
 
-    def replyFinished(self):
+    def replyFinishedSlot(self):
         reply = self.sender()
         url = reply.request().url().toString()
-        self.log("replyFinished: %s" % url)
+        self.log("replyFinishedSlot: %s" % url)
         if not url in self.fetchedFiles:
             self.fetchedFiles[url] = None
         self.requestingUrls.remove(url)
@@ -115,7 +117,8 @@ class Downloader(QObject):
                 else:
                     qDebug("http status code: " + str(httpStatusCode))
 
-                self.emit(SIGNAL('replyFinished(QString, int, int)'), url, reply.error(), isFromCache)
+                # self.emit(SIGNAL('replyFinished(QString, int, int)'), url, reply.error(), isFromCache)
+                self.replyFinished.emit(url, reply.error(), isFromCache)
         else:
             if self.sync and httpStatusCode == 404:
                 self.fetchedFiles[url] = self.NOT_FOUND
@@ -138,7 +141,7 @@ class Downloader(QObject):
         elif len(self.queue) > 0:
             # start fetching the next file
             self.fetchNext()
-        self.log("replyFinished End: %s" % url)
+        self.log("replyFinishedSlot End: %s" % url)
 
     def fetchNext(self):
         if len(self.queue) == 0:
@@ -149,7 +152,7 @@ class Downloader(QObject):
         request = QNetworkRequest(QUrl(url))
         request.setRawHeader("User-Agent", self.userAgent)
         reply = QgsNetworkAccessManager.instance().get(request)
-        reply.finished.connect(self.replyFinished)
+        reply.finished.connect(self.replyFinishedSlot)
         self.requestingUrls.append(url)
         self.replies.append(reply)
         return reply
