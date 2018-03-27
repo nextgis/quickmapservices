@@ -2,7 +2,6 @@ from __future__ import absolute_import
 
 import ast
 import sys
-import datetime
 
 from os import path
 
@@ -129,6 +128,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
     def __init__(self, iface):
         QDockWidget.__init__(self, iface.mainWindow())
         self.setupUi(self)
+        self.newsFrame.setVisible(False)
 
         self.iface = iface
         self.search_threads = None  # []
@@ -151,18 +151,22 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.one_process_work = QMutex()
 
         self.add_last_used_services()
-
-        self.news =  News(
-            self.tr('Help QMS <a href="http://nextgis.com/qms-plugin-crowdfunding">upgrade to QGIS3</a>'),
-            datetime.datetime(2018, 3, 5),
-            datetime.datetime(2018, 3, 15),
-        )
         
         self.show_news()
 
     def show_news(self):
-        if self.news.date_finish > datetime.datetime.now():
-            self.newsLabel.setText(self.news.html)
+        client = Client()
+        client.set_proxy(*QGISSettings.get_qgis_proxy())
+        qms_news = client.get_news()
+
+        if qms_news is None:
+            self.newsFrame.setVisible(False)
+            return
+
+        news = News(qms_news)
+
+        if news.is_time_to_show():
+            self.newsLabel.setText(news.html)
             self.newsFrame.setVisible(True)
         else:
             self.newsFrame.setVisible(False)

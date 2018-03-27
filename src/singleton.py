@@ -20,7 +20,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import pyqtWrapperType
 from .compat2qgis import QGis
 
 if QGis.QGIS_VERSION_INT >= 30000:
