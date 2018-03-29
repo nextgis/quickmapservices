@@ -46,6 +46,7 @@ DATA_SOURCES_DIR_NAME = 'data_sources'
 GROUPS_DIR_NAME = 'groups'
 
 CONTRIBUTE_REPO_URL = 'https://api.github.com/repos/nextgis/quickmapservices_contrib'
+CONTRIBUTE_ZIP_DIRECT_URL = 'http://nextgis.ru/programs/qms/quickmapservices_contrib.zip'
 
 
 class ExtraSources(object):
@@ -82,7 +83,8 @@ class ExtraSources(object):
 
         # download zip file
         zip_file_path = os.path.join(tmp_dir, 'contrib.zip')
-        self._download_file(zip_url, zip_file_path)
+        # self._download_file(zip_url, zip_file_path)
+        self._download_file(CONTRIBUTE_ZIP_DIRECT_URL, zip_file_path)
 
         # extract zip to tmp dir
         tmp_extract_dir = os.path.join(tmp_dir, 'contrib')
