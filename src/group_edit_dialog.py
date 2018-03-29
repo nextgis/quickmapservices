@@ -1,18 +1,19 @@
 from __future__ import absolute_import
-import codecs
 import os
 import shutil
+import codecs
+from os import path
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QPixmap
-from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox
-from os import path
+from qgis.PyQt.QtWidgets import QDialog, QMessageBox
 
 from . import extra_sources
 from .fixed_config_parser import FixedConfigParser
 from .groups_list import GroupsList
 from .gui.line_edit_color_validator import LineEditColorValidator
 from .plugin_settings import PluginSettings
+from .compat2qgis import getOpenFileName
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'group_edit_dialog.ui'))
@@ -70,12 +71,15 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         self.set_icon(self.group_info.icon)
 
     def choose_icon(self):
-        icon_path = QFileDialog.getOpenFileName(
+        print(PluginSettings.get_default_user_icon_path())
+        icon_path = getOpenFileName(
             self,
             self.tr('Select icon for group'),
             PluginSettings.get_default_user_icon_path(),
             self.tr('All icon files (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)')
         )
+
+        print(icon_path)
         if icon_path != "":
             PluginSettings.set_default_user_icon_path(icon_path)
             self.set_icon(icon_path)

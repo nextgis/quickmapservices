@@ -113,7 +113,10 @@ class PluginSettings(object):
 
     @classmethod
     def get_default_user_icon_path(cls):
-        return cls.get_settings().value('/ui/default_user_icon_path', '')
+        result = cls.get_settings().value('/ui/default_user_icon_path', '')
+        if type(result) == tuple:
+            return result[0]
+        return result
 
     @classmethod
     def set_default_user_icon_path(cls, val):

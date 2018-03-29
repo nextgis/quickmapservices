@@ -23,6 +23,8 @@ import os
 import sys
 
 from qgis import core
+from qgis.PyQt.QtWidgets import QFileDialog
+
 
 if hasattr(core, "QGis"):
     from qgis.core import QGis
@@ -101,3 +103,15 @@ class QgsCoordinateTransform(core.QgsCoordinateTransform):
             super(QgsCoordinateTransform, self).setDestinationCrs(dst_crs)
         else:
             self.setDestCRS(dst_crs)
+
+def getOpenFileName(parent, caption, filedir, search_filter):
+    result = QFileDialog.getOpenFileName(
+        parent,
+        caption,
+        filedir,
+        search_filter
+    )
+
+    if type(result) == tuple:
+        return result[0]
+    return result

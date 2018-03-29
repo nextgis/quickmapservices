@@ -4,7 +4,7 @@ import shutil
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QIcon, QPixmap
-from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox
+from qgis.PyQt.QtWidgets import QDialog, QMessageBox
 from os import path
 
 from . import extra_sources
@@ -21,6 +21,7 @@ from .gui.editor_widget_wfs import EditorWidgetWfs
 from .gui.editor_widget_geojson import EditorWidgetGeoJson
 from .gui.line_edit_color_validator import LineEditColorValidator
 from .plugin_settings import PluginSettings
+from .compat2qgis import getOpenFileName
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ds_edit_dialog.ui'))
@@ -108,7 +109,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
         self.feel_specific_fields()
 
     def choose_icon(self):
-        icon_path = QFileDialog.getOpenFileName(
+        icon_path = getOpenFileName(
             self,
             self.tr('Select icon for data source'),
             PluginSettings.get_default_user_icon_path(),
