@@ -32,7 +32,7 @@ import os
 from qgis.PyQt.QtWidgets import QFileDialog, QWidget, QHBoxLayout, QLineEdit, QToolButton
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt import QtCore
-
+from .compat2qgis import getOpenFileName
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -71,7 +71,7 @@ class FileSelectionWidget(QWidget):
                 self.leText.setText(folder)
                 PluginSettings.set_last_icon_path(os.path.dirname(folder))
         else:
-            filename = QFileDialog.getOpenFileName(self, self.dialog_title, path, self.ext)
+            filename = getOpenFileName(self, self.dialog_title, path, self.ext)
             if filename:
                 self.leText.setText(filename)
                 PluginSettings.set_last_icon_path(os.path.dirname(filename))
