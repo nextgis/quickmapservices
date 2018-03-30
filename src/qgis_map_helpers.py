@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import ast
+import random
 
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsMessageLog, QgsProject
@@ -27,8 +28,13 @@ def add_layer_to_map(ds):
     layers4add = []
 
     if ds.type.lower() == KNOWN_DRIVERS.TMS.lower():
+        if ds.alt_tms_urls:
+            tms_url = ds.alt_tms_urls[random.randint(0, len(ds.alt_tms_urls)-1)]
+        else:
+            tms_url = ds.tms_url
+
         if PluginSettings.use_native_tms():     # add version check
-            service_url = ds.tms_url.replace("=", "%3D").replace("&", "%26")
+            service_url = tms_url.replace("=", "%3D").replace("&", "%26")
             if ds.tms_y_origin_top is not None and ds.tms_y_origin_top==False:
                 service_url = service_url.replace('{y}', '{-y}')
 
@@ -37,13 +43,12 @@ def add_layer_to_map(ds):
                 ds.tms_zmax or TileDefaultSettings.ZMAX,
                 service_url
             )
-            #print ">>> qgis_tms_uri: ", qgis_tms_uri
 
             layer = QgsRasterLayer(qgis_tms_uri, tr(ds.alias), KNOWN_DRIVERS.WMS.lower())
             ProjectionHelper.set_tile_layer_proj(layer, ds.tms_epsg_crs_id, ds.tms_postgis_crs_id, ds.tms_custom_proj)
             layers4add.append(layer)
         else:
-            service_info = TileServiceInfo(tr(ds.alias), ds.copyright_text, ds.tms_url)
+            service_info = TileServiceInfo(tr(ds.alias), ds.copyright_text, tms_url)
             service_info.zmin = ds.tms_zmin or service_info.zmin
             service_info.zmax = ds.tms_zmax or service_info.zmax
             if ds.tms_y_origin_top is not None:
@@ -77,8 +82,6 @@ def add_layer_to_map(ds):
                     layers.reverse()
                 qgis_wms_uri += '&layers=' + '&layers='.join(layers) + '&styles=' * len(layers)
         qgis_wms_uri += '&url=' + ds.wms_url + "?" + ds.wms_url_params.replace("=","%3D").replace("&","%26")
-
-        # print ">>> qgis_wms_uri: ", qgis_wms_uri
 
         layer = QgsRasterLayer(qgis_wms_uri, tr(ds.alias), KNOWN_DRIVERS.WMS.lower())
         layers4add.append(layer)

@@ -145,7 +145,8 @@ class DataSourceSerializer(object):
 
         #TMS
         if ds.type.lower() == KNOWN_DRIVERS.TMS.lower():
-            ds.tms_url = json_data['url']
+            # ds.tms_url = json_data['url']
+            ds.tms_url = json_data.get('origin_url', json_data['url'])
             ds.tms_zmin = json_data['z_min']
             ds.tms_zmax = json_data['z_max']
 
