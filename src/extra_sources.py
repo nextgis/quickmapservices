@@ -45,7 +45,7 @@ USER_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, 'User')
 DATA_SOURCES_DIR_NAME = 'data_sources'
 GROUPS_DIR_NAME = 'groups'
 
-CONTRIBUTE_REPO_URL = 'https://api.github.com/repos/nextgis/quickmapservices_contrib'
+# CONTRIBUTE_REPO_URL = 'https://api.github.com/repos/nextgis/quickmapservices_contrib'
 CONTRIBUTE_ZIP_DIRECT_URL = 'http://nextgis.ru/programs/qms/quickmapservices_contrib.zip'
 
 
@@ -74,9 +74,9 @@ class ExtraSources(object):
         self.check_extra_dirs()
 
         # get info
-        latest_release_info = self._get_latest_release_info()
-        name = latest_release_info['name']
-        zip_url = latest_release_info['zipball_url']
+        # latest_release_info = self._get_latest_release_info()
+        # name = latest_release_info['name']
+        # zip_url = latest_release_info['zipball_url']
 
         # create temp dir
         tmp_dir = tempfile.mkdtemp()
@@ -101,16 +101,16 @@ class ExtraSources(object):
         # remove tmp dir
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
-    def _get_releases_info(self):
-        response = urlopen('%s/%s' % (CONTRIBUTE_REPO_URL, 'releases'))
-        releases_info = json.loads(response.read().decode('utf-8'))
-        return releases_info
+    # def _get_releases_info(self):
+    #     response = urlopen('%s/%s' % (CONTRIBUTE_REPO_URL, 'releases'))
+    #     releases_info = json.loads(response.read().decode('utf-8'))
+    #     return releases_info
 
-    def _get_latest_release_info(self):
-        url = '%s/%s/%s' % (CONTRIBUTE_REPO_URL, 'releases', 'latest')
-        reply = self.__sync_request(url)
-        latest_release_info = json.loads(reply.data().decode("utf-8"))
-        return latest_release_info
+    # def _get_latest_release_info(self):
+    #     url = '%s/%s/%s' % (CONTRIBUTE_REPO_URL, 'releases', 'latest')
+    #     reply = self.__sync_request(url)
+    #     latest_release_info = json.loads(reply.data().decode("utf-8"))
+    #     return latest_release_info
 
     def _download_file(self, url, out_path):
         reply = self.__sync_request(url)
