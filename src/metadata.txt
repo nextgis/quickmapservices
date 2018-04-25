@@ -3,10 +3,10 @@ name=QuickMapServices
 qgisMinimumVersion=2.14
 qgisMaximumVersion=3.1
 description=Collection of easy to add basemaps
-version=0.19.8
+version=0.19.9
 author=NextGIS
 email=info@nextgis.com
-about=Convenient list of services + search for finding datasets and basemaps. Please contribute new services via http://qms.nextgis.com!
+about=Convenient list of services + search for finding datasets and basemaps. Please contribute new services via <a href='http://qms.nextgis.com'>http://qms.nextgis.com</a>! Built by NextGIS.
 
 
 # End of mandatory metadata
@@ -15,6 +15,8 @@ about=Convenient list of services + search for finding datasets and basemaps. Pl
 
 # Uncomment the following line and add your changelog:
 changelog=
+      0.19.9
+        * Fix bugs (<a href="https://github.com/nextgis/quickmapservices/issues/161">161</a>, <a href="https://github.com/nextgis/quickmapservices/issues/162">162</a>) 
       0.19.8
         * Add subdomain support for TMS url
         * Fix contributed services package download
