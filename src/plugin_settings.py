@@ -133,6 +133,9 @@ class PluginSettings(object):
 
             service_json_str = settings.value(service_key + "/json", None)
             service_json = ast.literal_eval(service_json_str)
+            if not isinstance(service_json.get(u'name'), unicode):
+                continue
+
             image_ba = settings.value(service_key + "/image", type=QByteArray)
 
             services.append((service_json, image_ba))

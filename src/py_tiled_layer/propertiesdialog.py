@@ -22,7 +22,7 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QObject, SIGNAL
+from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.PyQt.QtGui import QDialog, QDialogButtonBox, QPainter
 
 
@@ -31,6 +31,8 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(CURR_PATH, 'propertiesdialog_base.ui
 
 
 class PropertiesDialog(QDialog):
+    applyClicked = pyqtSignal()
+
     def __init__(self, layer):
         QDialog.__init__(self)
         # set up the user interface
@@ -47,8 +49,8 @@ class PropertiesDialog(QDialog):
         self.ui.horizontalSlider_Contrast.valueChanged.connect(lambda x: self.ui.doubleSpinBox_Contrast.setValue(x/100.0))
         self.ui.doubleSpinBox_Contrast.valueChanged.connect(lambda x: self.ui.horizontalSlider_Contrast.setValue(x*100))
 
-        QObject.connect(self.ui.buttonBox.button(QDialogButtonBox.Apply), SIGNAL("clicked()"), self,
-                        SIGNAL("applyClicked()"))
+        self.ui.buttonBox.button(QDialogButtonBox.Apply).clicked.connect(self.applyClicked.emit)
+
         # set init values
         self.initBlendingCombo()
         self.ui.textEdit_Properties.setText(layer.metadata())
