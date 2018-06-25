@@ -1,7 +1,8 @@
 [general]
 name=QuickMapServices
 qgisMinimumVersion=2.14
-qgisMaximumVersion=3.1
+# workaround for qgis 3.2
+qgisMaximumVersion=3.99
 description=Collection of easy to add basemaps
 version=0.19.9
 author=NextGIS
