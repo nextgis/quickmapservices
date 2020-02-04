@@ -32,7 +32,7 @@ class RubberBandResultRenderer():
     def __init__(self):
         self.iface = iface
 
-        self.srs_wgs84 = QgsCoordinateReferenceSystem(4326)
+        self.srs_wgs84 = QgsCoordinateReferenceSystem.fromEpsgId(4326)
         self.transform_decorator = QgsCoordinateTransform(self.srs_wgs84, self.srs_wgs84)
 
         self.rb = QgsRubberBand(self.iface.mapCanvas(), QGisGeometryType.Point)
