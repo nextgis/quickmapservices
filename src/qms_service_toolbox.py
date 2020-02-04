@@ -205,7 +205,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             extent = self.iface.mapCanvas().extent()
             map_crs = getCanvasDestinationCrs(self.iface)
             if map_crs.postgisSrid() != 4326:
-                crsDest = QgsCoordinateReferenceSystem(4326)    # WGS 84
+                crsDest = QgsCoordinateReferenceSystem.fromEpsgId(4326)    # WGS 84
                 xform = QgsCoordinateTransform(map_crs, crsDest)
                 extent = xform.transform(extent)
             geom_filter = extent.asWktPolygon()
