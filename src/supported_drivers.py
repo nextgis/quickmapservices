@@ -24,6 +24,7 @@
 
 class KNOWN_DRIVERS(object):
     WMS = 'WMS'
+    WMTS = 'WMTS'
     TMS = 'TMS'
     GDAL = 'GDAL'
     WFS = 'WFS'
@@ -31,6 +32,7 @@ class KNOWN_DRIVERS(object):
 
     ALL_DRIVERS = [
         WMS,
+        WMTS,
         TMS,
         GDAL,
         WFS,

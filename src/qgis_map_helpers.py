@@ -129,6 +129,16 @@ def add_layer_to_map(ds):
             tr(ds.alias),
             "ogr")
         layers4add.append(layer)
+        
+    if ds.type.lower() == KNOWN_DRIVERS.WMTS.lower():
+        qgis_wmts_uri = 'url=' + ds.wmts_url
+        if ds.wmts_layer:
+            qgis_wmts_uri += '&layers=' + ds.wmts_layer
+        if ds.wmts_params:
+            qgis_wmts_uri += '&' + ds.wmts_params
+            
+        layer = QgsRasterLayer(qgis_wmts_uri, tr(ds.alias), KNOWN_DRIVERS.WMS.lower())
+        layers4add.append(layer)
 
     for layer in layers4add:
         if not layer.isValid():

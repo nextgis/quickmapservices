@@ -17,6 +17,7 @@ from .supported_drivers import KNOWN_DRIVERS
 from .gui.editor_widget_gdal import EditorWidgetGdal
 from .gui.editor_widget_tms import EditorWidgetTms
 from .gui.editor_widget_wms import EditorWidgetWms
+from .gui.editor_widget_wmts import EditorWidgetWmts
 from .gui.editor_widget_wfs import EditorWidgetWfs
 from .gui.editor_widget_geojson import EditorWidgetGeoJson
 from .gui.line_edit_color_validator import LineEditColorValidator
@@ -43,6 +44,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
             KNOWN_DRIVERS.GDAL: EditorWidgetGdal(),
             KNOWN_DRIVERS.TMS: EditorWidgetTms(),
             KNOWN_DRIVERS.WMS: EditorWidgetWms(),
+            KNOWN_DRIVERS.WMTS: EditorWidgetWmts(),
             KNOWN_DRIVERS.WFS: EditorWidgetWfs(),
             KNOWN_DRIVERS.GEOJSON: EditorWidgetGeoJson(),
         }

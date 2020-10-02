@@ -384,6 +384,24 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>EditorWidgetWmts</name>
+    <message>
+        <location filename="../gui/editor_widget_wmts.py" line="37"/>
+        <source>Error on save data source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/editor_widget_wmts.py" line="33"/>
+        <source>Please, enter WMTS url</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/editor_widget_wmts.py" line="37"/>
+        <source>Please, enter correct value for WMTS url</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FileSelectionWidget</name>
     <message>
         <location filename="../file_selection_widget.py" line="51"/>
@@ -405,6 +423,16 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../gui/editor_widget_wms.ui" line="23"/>
+        <source>URL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/editor_widget_wmts.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/editor_widget_wmts.ui" line="23"/>
         <source>URL</source>
         <translation type="unfinished"></translation>
     </message>
@@ -461,6 +489,16 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../gui/editor_widget_wms.ui" line="53"/>
         <source>Turn over</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/editor_widget_wmts.ui" line="33"/>
+        <source>Params</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/editor_widget_wmts.ui" line="43"/>
+        <source>Layer</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -67,6 +67,10 @@ class DataSourceInfo(object):
         self.wms_layers = None
         self.wms_turn_over = None
 
+        self.wmts_url = None
+        self.wmts_params = None
+        self.wmts_layer = None
+
         self.gdal_source_file = None
 
         self.wfs_url = None
