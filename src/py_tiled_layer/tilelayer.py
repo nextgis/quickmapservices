@@ -27,14 +27,14 @@ import threading
 from qgis.PyQt.QtCore import QObject, qDebug, Qt, QFile, QRectF, QPointF, QPoint, QTimer, QEventLoop, pyqtSignal
 
 from qgis.PyQt.QtGui import QFont, QColor, QBrush
-from qgis.core import QgsPluginLayer, QgsCoordinateReferenceSystem, QgsPluginLayerType, QgsImageOperation
+from qgis.core import QgsPluginLayer, QgsPluginLayerType, QgsImageOperation
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
 from ..plugin_settings import PluginSettings
 from ..qgis_settings import QGISSettings
 from ..qgis_proj_helper import ProjectionHelper
-from ..compat2qgis import QGisMessageBarLevel
+from ..compat2qgis import QGisMessageBarLevel, QgsCoordinateReferenceSystem
 
 from .tiles import *
 from .downloader import Downloader
@@ -61,7 +61,7 @@ class LayerDefaultSettings(object):
 
 class TileLayer(QgsPluginLayer):
 
-    CRS_3857 = QgsCoordinateReferenceSystem.fromEpsgId(3857)
+    CRS_3857 = QgsCoordinateReferenceSystem(3857)
 
     LAYER_TYPE = "PyTiledLayer"
     MAX_TILE_COUNT = 256

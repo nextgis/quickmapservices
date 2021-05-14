@@ -22,17 +22,17 @@ from __future__ import print_function
 
 from qgis.PyQt.QtGui import QColor
 from qgis.gui import QgsRubberBand
-from qgis.core import QgsRectangle, QgsCoordinateReferenceSystem
+from qgis.core import QgsRectangle
 from qgis.utils import iface
 
-from .compat2qgis import QGisGeometryType, getCanvasDestinationCrs, QgsCoordinateTransform
+from .compat2qgis import QGisGeometryType, getCanvasDestinationCrs, QgsCoordinateTransform, QgsCoordinateReferenceSystem
 
 class RubberBandResultRenderer():
 
     def __init__(self):
         self.iface = iface
 
-        self.srs_wgs84 = QgsCoordinateReferenceSystem.fromEpsgId(4326)
+        self.srs_wgs84 = QgsCoordinateReferenceSystem(4326)
         self.transform_decorator = QgsCoordinateTransform(self.srs_wgs84, self.srs_wgs84)
 
         self.rb = QgsRubberBand(self.iface.mapCanvas(), QGisGeometryType.Point)

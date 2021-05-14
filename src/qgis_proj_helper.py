@@ -1,11 +1,10 @@
-from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsMessageBar
 
 from .plugin_settings import PluginSettings
-from .compat2qgis import QGisMessageBarLevel
+from .compat2qgis import QGisMessageBarLevel, QgsCoordinateReferenceSystem
 
 class ProjectionHelper:
-    CRS_3857 = QgsCoordinateReferenceSystem.fromEpsgId(3857)
+    CRS_3857 = QgsCoordinateReferenceSystem(3857)
 
     @classmethod
     def set_tile_layer_proj(cls, layer, epsg_crs_id, postgis_crs_id, custom_proj):

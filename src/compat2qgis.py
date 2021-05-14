@@ -115,3 +115,10 @@ def getOpenFileName(parent, caption, filedir, search_filter):
     if type(result) == tuple:
         return result[0]
     return result
+
+class QgsCoordinateReferenceSystem(core.QgsCoordinateReferenceSystem):
+    def __init__(self, param):
+        if QGis.QGIS_VERSION_INT >= 30000:
+            super(QgsCoordinateReferenceSystem, self).fromEpsgId(param)
+        else:
+            super(QgsCoordinateReferenceSystem, self).__init__(param)
