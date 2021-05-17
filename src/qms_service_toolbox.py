@@ -471,64 +471,41 @@ class SearchThread(QThread):
         # search
         try:
             self.mutex.lock()
+            results = self.searcher.get_geoservices(
+                search_str=self.search_text,
+                intersects_boundary=self.geom_filter,
+                cumulative_status=self.status_filter
+            )
 
-            limit = 10
-            offset = 0 
-            total_count = None
-            downloaded_count = 0
-
-            while True:
-                results = self.searcher.get_geoservices(
-                    search_str=self.search_text,
-                    intersects_boundary=self.geom_filter,
-                    cumulative_status=self.status_filter,
-                    limit=limit,
-                    offset=offset
-                )
-
-                if total_count is None:
-                    total_count = results['count']
-
-                ext_results = []
-                for result in results['results']:
-                    if self.need_stop:
-                        break
-                    # get icon
-                    ba = QByteArray()
-                    
-                    icon_id = result.get("icon")
-                    if self.img_cach.get(icon_id) is None:
-                        if icon_id:
-                            ba = QByteArray(self.searcher.get_icon_content(icon_id, 24, 24))
-                        else:
-                            ba = QByteArray(self.searcher.get_default_icon(24, 24))
-                        self.img_cach[icon_id] = ba
-                    else:
-                        ba = self.img_cach[icon_id]
-                    # get extent
-                    extent = result['extent']
-                    # area = None
-                    area = 0.0
-
-                    if extent:
-                        if extent.startswith('SRID'):
-                            extent = extent.split(';')[1]
-                        area = QgsGeometry.fromWkt(extent).area()
-
-                    ext_results.append([area, result, ba])
-
-                ext_results.sort(key=lambda x: x[0])
-                for result in ext_results:
-                    self.data_downloaded.emit(result[1], result[2])
-
-                downloaded_count = downloaded_count + len(ext_results)
-                all_downloaded = (total_count <= downloaded_count)
-
-                if all_downloaded or self.need_stop:
+            ext_results = []
+            for result in results:
+                if self.need_stop:
                     break
+                # get icon
+                ba = QByteArray()
+                icon_id = result.get("icon")
+                if self.img_cach.get(icon_id) is None:
+                    if icon_id:
+                        ba = QByteArray(self.searcher.get_icon_content(icon_id, 24, 24))
+                    else:
+                        ba = QByteArray(self.searcher.get_default_icon(24, 24))
+                    self.img_cach[icon_id] = ba
+                else:
+                    ba = self.img_cach[icon_id]
+                # get extent
+                extent = result['extent']
+                # area = None
+                area = 0.0
+                if extent:
+                    if extent.startswith('SRID'):
+                        extent = extent.split(';')[1]
+                    area = QgsGeometry.fromWkt(extent).area()
 
-                offset = offset + limit
+                ext_results.append([area, result, ba])
 
+            ext_results.sort(key=lambda x: x[0])
+            for result in ext_results:
+                self.data_downloaded.emit(result[1], result[2])
             self.search_finished.emit()
         except URLError:
                         error_text = (self.tr("Network error!\n{0}")).format(unicode(sys.exc_info()[1]))
