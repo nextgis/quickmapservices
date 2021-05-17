@@ -146,7 +146,11 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.delay_timer.setInterval(250)
 
         self.delay_timer.timeout.connect(self.start_search)
-        self.txtSearch.textChanged.connect(self.delay_timer.start)
+
+        self.txtSearch.textChanged.connect(
+            lambda text: self.delay_timer.start() if len(text) > 3 else None
+        )
+        
         self.btnFilterByExtent.toggled.connect(self.toggle_filter_button)
         self.one_process_work = QMutex()
 
