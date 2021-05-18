@@ -37,7 +37,6 @@ from qgis.PyQt.QtCore import (
 
 from qgis.core import (
     QgsMessageLog,
-    QgsCoordinateReferenceSystem,
     QgsGeometry
 )
 
@@ -49,7 +48,7 @@ from .qgis_settings import QGISSettings
 from .plugin_settings import PluginSettings
 from .singleton import singleton
 from .compat import URLError
-from .compat2qgis import QGisMessageLogLevel, getCanvasDestinationCrs, QgsCoordinateTransform
+from .compat2qgis import QGisMessageLogLevel, getCanvasDestinationCrs, QgsCoordinateTransform, QgsCoordinateReferenceSystem
 
 from .qms_news import News
 
@@ -202,9 +201,17 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         if not self.btnFilterByExtent.isChecked():
             # text search
             search_text = unicode(self.txtSearch.text())
+
             if not search_text:
                 self.lstSearchResult.clear()
                 self.add_last_used_services()
+                return
+
+            if len(search_text) < min_search_text_len:
+                if self.search_threads:
+                    self.stop_search_thread()
+                self.lstSearchResult.clear()
+                self.lstSearchResult.insertItem(0, self.tr('Need at least 3 symbols to start searching...'))
                 return
         else:
             # extent filter
@@ -215,13 +222,6 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
                 xform = QgsCoordinateTransform(map_crs, crsDest)
                 extent = xform.transform(extent)
             geom_filter = extent.asWktPolygon()
-
-        if len(search_text) < min_search_text_len:
-            if self.search_threads:
-                self.stop_search_thread()
-            self.lstSearchResult.clear()
-            self.lstSearchResult.insertItem(0, self.tr('Need at least 3 symbols to start searching...'))
-            return
 
         if self.search_threads:
             self.stop_search_thread()
