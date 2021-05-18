@@ -146,11 +146,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.delay_timer.setInterval(250)
 
         self.delay_timer.timeout.connect(self.start_search)
-
-        self.txtSearch.textChanged.connect(
-            lambda text: self.delay_timer.start() if len(text) > 3 else None
-        )
-        
+        self.txtSearch.textChanged.connect(self.delay_timer.start)
         self.btnFilterByExtent.toggled.connect(self.toggle_filter_button)
         self.one_process_work = QMutex()
 
@@ -185,10 +181,17 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             self.iface.mapCanvas().extentsChanged.disconnect(self.start_search)
             self.iface.mapCanvas().destinationCrsChanged.disconnect(self.start_search)
 
+    def stop_search_thread(self):
+        self.search_threads.data_downloaded.disconnect()
+        self.search_threads.search_finished.disconnect()
+        self.search_threads.stop()
+        self.search_threads.wait()
+        self.search_threads = None
 
     def start_search(self):
         search_text = None
         geom_filter = None
+        min_search_text_len = 3
 
         # status filter
         status_filter = None
@@ -201,7 +204,6 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             search_text = unicode(self.txtSearch.text())
             if not search_text:
                 self.lstSearchResult.clear()
-                # self.clearSearchResult()
                 self.add_last_used_services()
                 return
         else:
@@ -214,14 +216,16 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
                 extent = xform.transform(extent)
             geom_filter = extent.asWktPolygon()
 
-        if self.search_threads:
-            self.search_threads.data_downloaded.disconnect()
-            self.search_threads.search_finished.disconnect()
-            self.search_threads.stop()
-            self.search_threads.wait()
-            
+        if len(search_text) < min_search_text_len:
+            if self.search_threads:
+                self.stop_search_thread()
             self.lstSearchResult.clear()
-            # self.clearSearchResult()
+            self.lstSearchResult.insertItem(0, self.tr('Need at least 3 symbols to start searching...'))
+            return
+
+        if self.search_threads:
+            self.stop_search_thread()
+            self.lstSearchResult.clear()
 
         searcher = SearchThread(search_text,
                                 self.one_process_work,
