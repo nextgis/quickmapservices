@@ -15,6 +15,8 @@ about=Convenient list of services + search for finding datasets and basemaps. Pl
 
 # Uncomment the following line and add your changelog:
 changelog=
+      0.19.13
+        * Bug fix: Removed the double slash from the URL in qms_external_api_python
       0.19.12
         * Optimizing the search speed of geoservices
         * Fix bugs
