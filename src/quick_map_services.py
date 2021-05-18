@@ -244,7 +244,7 @@ class QuickMapServices(object):
         self.menu.addAction(settings_act)
 
         icon_about_path = self.plugin_dir + '/icons/mActionAbout.svg'
-        info_act = QAction(QIcon(icon_about_path), self.tr('About QuickMapServices'), self.iface.mainWindow())
+        info_act = QAction(QIcon(icon_about_path), self.tr('About'), self.iface.mainWindow())
         self.service_actions.append(info_act)
         info_act.triggered.connect(self.info_dlg.show)
         self.menu.addAction(info_act)
