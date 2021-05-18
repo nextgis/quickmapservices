@@ -1,4 +1,5 @@
 from qgis.gui import QgsMessageBar
+from qgis.utils import iface
 
 from .plugin_settings import PluginSettings
 from .compat2qgis import QGisMessageBarLevel, QgsCoordinateReferenceSystem
@@ -39,7 +40,7 @@ class ProjectionHelper:
                 layer.setCrs(crs)
         except:
             msg = "Custom crs can't be set for layer {0}!".format(layer.name())
-            self.show_bar_message(msg, QGisMessageBarLevel.Warning, 4)
+            cls.show_bar_message(msg, QGisMessageBarLevel.Warning, 4)
 
     @classmethod
     def show_bar_message(cls, text, level=QGisMessageBarLevel.Info, duration=0, title=None):
