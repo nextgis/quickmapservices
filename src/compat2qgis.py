@@ -118,6 +118,12 @@ def getOpenFileName(parent, caption, filedir, search_filter):
 
 class QgsCoordinateReferenceSystem(core.QgsCoordinateReferenceSystem):
 
+    def __init__(self, id, type):
+        if QGis.QGIS_VERSION_INT >= 30000:
+            super(QgsCoordinateReferenceSystem, self).__init__(core.QgsCoordinateReferenceSystem.fromEpsgId(id))
+        else:
+            super(QgsCoordinateReferenceSystem, self).__init__(id, type)
+
     @staticmethod
     def fromEpsgId(id):
         if QGis.QGIS_VERSION_INT >= 30000:
