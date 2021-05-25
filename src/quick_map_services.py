@@ -273,15 +273,12 @@ class QuickMapServices(object):
         Append menus and buttons to appropriate toolbar
         :return:
         """
-        # add to QGIS menu
-        if PluginSettings.move_to_layers_menu():
-            self.iface.addLayerMenu().addMenu(self.menu)
-        else:
-            # need workaround for WebMenu
-            _temp_act = QAction('temp', self.iface.mainWindow())
-            self.iface.addPluginToWebMenu("_tmp", _temp_act)
-            self.iface.webMenu().addMenu(self.menu)
-            self.iface.removePluginWebMenu("_tmp", _temp_act)
+
+        # need workaround for WebMenu
+        _temp_act = QAction('temp', self.iface.mainWindow())
+        self.iface.addPluginToWebMenu("_tmp", _temp_act)
+        self.iface.webMenu().addMenu(self.menu)
+        self.iface.removePluginWebMenu("_tmp", _temp_act)
 
         # add to QGIS toolbar
         toolbutton = QToolButton()
@@ -292,12 +289,9 @@ class QuickMapServices(object):
         toolbutton.setToolTip(self.menu.title())
         # self.tb_action = toolbutton.defaultAction()
         # print "self.tb_action: ", self.tb_action
-        if PluginSettings.move_to_layers_menu():
-            self.tb_action = self.iface.layerToolBar().addWidget(toolbutton)
-            self.iface.layerToolBar().addAction(self.qms_search_action)
-        else:
-            self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
-            self.iface.webToolBar().addAction(self.qms_search_action)
+
+        self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
+        self.iface.webToolBar().addAction(self.qms_search_action)
 
     def show_settings_dialog(self):
         settings_dlg = SettingsDialog()

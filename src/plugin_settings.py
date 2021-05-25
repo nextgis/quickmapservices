@@ -58,14 +58,6 @@ class PluginSettings(object):
         return cls.get_settings().setValue('show_messages_in_bar', bool_val)
 
     @classmethod
-    def move_to_layers_menu(cls):
-        return cls.get_settings().value('move_to_layers_menu', False, bool)
-
-    @classmethod
-    def set_move_to_layers_menu(cls, bool_val):
-        return cls.get_settings().setValue('move_to_layers_menu', bool_val)
-
-    @classmethod
     def enable_otf_3857(cls):
         return cls.get_settings().value('enable_otf_3857', False, bool)
 

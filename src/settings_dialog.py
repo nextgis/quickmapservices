@@ -81,7 +81,6 @@ class SettingsDialog(QDialog, FORM_CLASS):
 
     def fill_pages(self):
         # common
-        self.chkMoveToLayersMenu.setChecked(PluginSettings.move_to_layers_menu())
         self.chkEnableOTF3857.setChecked(PluginSettings.enable_otf_3857())
         self.chkShowMessagesInBar.setChecked(PluginSettings.show_messages_in_bar())
         # tiled layers
@@ -103,7 +102,6 @@ class SettingsDialog(QDialog, FORM_CLASS):
 
     def save_settings(self):
         # common
-        PluginSettings.set_move_to_layers_menu(self.chkMoveToLayersMenu.isChecked())
         PluginSettings.set_enable_otf_3857(self.chkEnableOTF3857.isChecked())
         PluginSettings.set_show_messages_in_bar(self.chkShowMessagesInBar.isChecked())
         # tiled layers
