@@ -355,7 +355,7 @@ class QmsSearchResultItemWidget(QWidget):
         self.service_icon.setPixmap(pixmap)
         self.layout.addWidget(self.service_icon)
 
-        self.service_desc_layout = QGridLayout(self)
+        self.service_desc_layout = QGridLayout()
         self.service_desc_layout.setSpacing(0)
         self.layout.addLayout(self.service_desc_layout)
 
