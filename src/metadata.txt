@@ -2,11 +2,11 @@
 name=QuickMapServices
 qgisMinimumVersion=2.14
 qgisMaximumVersion=3.99
-description=Collection of easy to add basemaps
+description=Easy to add basemaps
 version=0.19.17
 author=NextGIS
 email=info@nextgis.com
-about=Convenient list of services + search for finding datasets and basemaps. Please contribute new services via <a href='http://qms.nextgis.com'>http://qms.nextgis.com</a>! Built by NextGIS.
+about=Easy to use list of services and search for finding datasets and basemaps. Please contribute new services via <a href='https://qms.nextgis.com'>http://qms.nextgis.com</a>! Developed by NextGIS.
 
 
 # End of mandatory metadata
@@ -25,19 +25,19 @@ changelog=
         * Fixed deprecated CRS constructor
         * Disabled InsecureRequestWarning
       0.19.14
-        * Fix bugs after "Optimizing the search speed of geoservices"
+        * Fix bugs after "Optimizing the geoservices search speed"
       0.19.13
         * Bug fix: Removed the double slash from the URL in qms_external_api_python
       0.19.12
-        * Optimizing the search speed of geoservices
+        * Optimizing the geoservices search speed
         * Fix bugs
       0.19.11
         * Update internal data sources
       0.19.10
         * Set qgisMaximumVersion to 3.99
       0.19.9
-        * Fix no native tile layer property dialog (for QGIS 2.18) <a href="https://github.com/nextgis/quickmapservices/issues/162">#162</a>
-        * Fix Search QMS panel for previously saved services <a href="https://github.com/nextgis/quickmapservices/issues/161">#161</a>
+        * Fix no native tile layer property dialog (for QGIS 2.18)
+        * Fix Search QMS panel for previously saved services
       0.19.8
         * Add subdomain support for TMS url
         * Fix contributed services package download
