@@ -145,7 +145,7 @@ def add_layer_to_map(ds):
             toc_root = QgsProject.instance().layerTreeRoot()
 
             selected_node = iface.layerTreeView().currentNode()
-            if selected_node.nodeType() == selected_node.NodeGroup:
+            if selected_node and selected_node.nodeType() == selected_node.NodeGroup:
                 toc_root =  selected_node
 
             if ds.type.lower() in (KNOWN_DRIVERS.WMS.lower(), KNOWN_DRIVERS.TMS.lower()):
