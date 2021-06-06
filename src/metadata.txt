@@ -17,7 +17,7 @@ about=Easy to use list of services and search for finding datasets and basemaps.
 changelog=
       0.19.18
         * Fixed ignoring the 'Enable OTF 3857' settings option when adding a geoservice via search panel.
-        * Fixed a bug when adding a geoservice
+        * Fixed a no attribute 'nodeType' bug when adding a geoservice
         * Default services clean-up
       0.19.17
         * Fixed QmsSearchResultItemWidget layout
