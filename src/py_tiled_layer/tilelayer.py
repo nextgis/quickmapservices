@@ -60,8 +60,8 @@ class LayerDefaultSettings(object):
 
 
 class TileLayer(QgsPluginLayer):
-
-    CRS_3857 = QgsCoordinateReferenceSystem.fromEpsgId(3857)
+    CRS_ID_3857 = 3857
+    CRS_3857 = QgsCoordinateReferenceSystem.fromEpsgId(CRS_ID_3857)
 
     LAYER_TYPE = "PyTiledLayer"
     MAX_TILE_COUNT = 256

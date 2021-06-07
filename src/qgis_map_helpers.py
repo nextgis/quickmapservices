@@ -160,7 +160,7 @@ def add_layer_to_map(ds):
             # Save link
             service_layers.append(layer)
             # Set OTF CRS Transform for map
-            if PluginSettings.enable_otf_3857() and ds.type.lower() == KNOWN_DRIVERS.TMS.lower():
+            if PluginSettings.enable_otf_3857() and ds.type.lower() == KNOWN_DRIVERS.TMS.lower() and ds.tms_epsg_crs_id == TileLayer.CRS_ID_3857:
                 if hasattr(iface.mapCanvas(), "setCrsTransformEnabled"):
                     # Need for QGIS2. In QGIS3 CRS transformation is always enabled
                     iface.mapCanvas().setCrsTransformEnabled(True)
