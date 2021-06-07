@@ -3,7 +3,7 @@ name=QuickMapServices
 qgisMinimumVersion=2.14
 qgisMaximumVersion=3.99
 description=Easy to add basemaps
-version=0.19.18
+version=0.19.19
 author=NextGIS
 email=info@nextgis.com
 about=Easy to use list of services and search for finding datasets and basemaps. Please contribute new services via <a href='https://qms.nextgis.com'>http://qms.nextgis.com</a>! Developed by NextGIS.
@@ -15,6 +15,9 @@ about=Easy to use list of services and search for finding datasets and basemaps.
 
 # Uncomment the following line and add your changelog:
 changelog=
+      0.19.19
+        * The settings option 'Enable EPSG:3857 (OTF) on adding TMS' is ignored if a geoservice is added that has a different CRS
+        * Updated translation
       0.19.18
         * Fixed ignoring the 'Enable OTF 3857' settings option when adding a geoservice via search panel.
         * Fixed a no attribute 'nodeType' bug when adding a geoservice
