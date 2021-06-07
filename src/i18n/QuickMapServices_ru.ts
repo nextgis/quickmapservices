@@ -534,7 +534,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../settings_dialog_base.ui" line="44"/>
-        <source>Enable OTF EPSG:3857 on tiled layer add:</source>
+        <source>Enable EPSG:3857 (OTF) on adding TMS:</source>
         <translation>Вкл. перепроецирование при доб. тайлового слоя:</translation>
     </message>
     <message>
