@@ -26,6 +26,8 @@ from qgis.core import QgsNetworkAccessManager
 
 class QGISSettings(object):
 
+    NEW_PROJECT_USE_PRESET_CRS = 'UsePresetCrs'
+
     @classmethod
     def get_settings(cls):
         return QSettings()
@@ -88,3 +90,7 @@ class QGISSettings(object):
                 )
 
         return ("", "", "", "")
+
+    @classmethod
+    def get_new_project_crs_behavior(cls, def_value=''):
+        return QGISSettings.get_settings().value('/app/projections/newProjectCrsBehavior', def_value, type=str)

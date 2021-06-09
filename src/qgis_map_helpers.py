@@ -16,6 +16,7 @@ from .supported_drivers import KNOWN_DRIVERS
 from .py_tiled_layer.tiles import TileServiceInfo, TileDefaultSettings
 from .py_tiled_layer.tilelayer import TileLayer
 from .qgis_proj_helper import ProjectionHelper
+from .qgis_settings import QGISSettings
 
 service_layers = []
 
@@ -165,3 +166,6 @@ def add_layer_to_map(ds):
                     # Need for QGIS2. In QGIS3 CRS transformation is always enabled
                     iface.mapCanvas().setCrsTransformEnabled(True)
                 iface.mapCanvas().setDestinationCrs(TileLayer.CRS_3857)
+
+                if QGISSettings.get_new_project_crs_behavior() == QGISSettings.NEW_PROJECT_USE_PRESET_CRS:
+                    QgsProject.instance().setCrs(TileLayer.CRS_3857)
