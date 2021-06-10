@@ -20,11 +20,12 @@ def parse_wms_url_parameter(url, parameters_str, ignore_layers=False):
     wms_params = []
     wms_url_params = []
 
-    for parameter in parameters_str.strip("&").split("&"):
-        if parameter.find("=") == -1:
-            continue
-        k,v = parameter.split("=")
-        parameters.update({k: v})
+    if parameters_str:
+        for parameter in parameters_str.strip("&").split("&"):
+            if parameter.find("=") == -1:
+                continue
+            k,v = parameter.split("=")
+            parameters.update({k: v})
 
     for k,v in parameters.items():
         if ignore_layers and k.upper() in  ["LAYERS", "STYLES"]:
