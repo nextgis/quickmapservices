@@ -80,7 +80,6 @@ class QuickMapServices(object):
                 QCoreApplication.installTranslator(self.translator)
 
         self.custom_translator = CustomTranslator()
-        QCoreApplication.installTranslator(self.custom_translator)
 
         # Create the dialog (after translation) and keep reference
         self.info_dlg = AboutDialog()
@@ -104,7 +103,7 @@ class QuickMapServices(object):
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('QuickMapServices', message)
+        return self.custom_translator.translate('QuickMapServices', message)
 
     def initGui(self):
         #import pydevd

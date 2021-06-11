@@ -116,4 +116,4 @@ class GroupsList(object):
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('QuickMapServices', message)
+        return self.translator.translate('QuickMapServices', message)

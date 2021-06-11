@@ -91,5 +91,5 @@ class DataSourcesList(object):
         except:
             return message
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate('QuickMapServices', message)
+        return CustomTranslator().translate('QuickMapServices', message)
 
