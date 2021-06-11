@@ -20,11 +20,10 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QSettings
-
+from qgis.PyQt.QtCore import QSettings, QLocale
 
 class Locale(object):
 
     @classmethod
     def get_locale(cls):
-        return QSettings().value('locale/userLocale')[0:2]
+        return QSettings().value('locale/userLocale', QLocale().name())[0:2]
