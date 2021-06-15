@@ -26,4 +26,7 @@ class Locale(object):
 
     @classmethod
     def get_locale(cls):
-        return QSettings().value('locale/userLocale', QLocale().name())[0:2]
+        locale = QSettings().value('locale/userLocale', QLocale().name(), type=str)
+        if len(locale) > 2:
+            locale = locale[0:2]
+        return locale
