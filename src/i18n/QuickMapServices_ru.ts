@@ -747,8 +747,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../quick_map_services.py" line="247"/>
-        <source>About</source>
-        <translation>Инфо</translation>
+        <source>About QMS</source>
+        <translation>О QMS</translation>
     </message>
     <message>
         <location filename="../quick_map_services.py" line="160"/>

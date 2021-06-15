@@ -189,6 +189,13 @@ class QuickMapServices(object):
         # # Unregister plugin layer type
         qgisRegistryInstance.removePluginLayerType(TileLayer.LAYER_TYPE)
 
+
+    qms_create_service_action = None
+    set_nearest_scale_act = None
+    scales_act = None
+    settings_act = None
+    info_act = None
+
     def build_menu_tree(self):
         # Main Menu
         self.menu.clear()
@@ -216,37 +223,43 @@ class QuickMapServices(object):
         self.service_actions.append(self.qms_search_action)
         self.menu.addAction(self.qms_search_action)
 
-        icon_create_service_path = self.plugin_dir + '/icons/mActionCreate.svg'
-        qms_create_service_action = QAction(self.tr('Add to Search'), self.iface.mainWindow())
-        qms_create_service_action.setIcon(QIcon(icon_create_service_path))
-        qms_create_service_action.triggered.connect(self.openURL)
-        self.menu.addAction(qms_create_service_action)
+        if not self.qms_create_service_action:
+            icon_create_service_path = self.plugin_dir + '/icons/mActionCreate.svg'
+            self.qms_create_service_action = QAction(self.tr('Add to Search'), self.iface.mainWindow())
+            self.qms_create_service_action.setIcon(QIcon(icon_create_service_path))
+            self.qms_create_service_action.triggered.connect(self.openURL)
+        self.menu.addAction(self.qms_create_service_action)
 
         # Scales, Settings and About actions
         self.menu.addSeparator()
-        icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.svg'  # TODO change icon
-        set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'), self.iface.mainWindow())
-        set_nearest_scale_act.triggered.connect(self.set_nearest_scale)
-        self.menu.addAction(set_nearest_scale_act)  # TODO: uncomment after fix
-        self.service_actions.append(set_nearest_scale_act)
+        
+        if not self.set_nearest_scale_act:
+            icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.svg'  # TODO change icon
+            self.set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'), self.iface.mainWindow())
+            self.set_nearest_scale_act.triggered.connect(self.set_nearest_scale)
+            self.service_actions.append(self.set_nearest_scale_act)
+        self.menu.addAction(self.set_nearest_scale_act)  # TODO: uncomment after fix
 
-        icon_scales_path = self.plugin_dir + '/icons/mActionSettings.svg'  # TODO change icon
-        scales_act = QAction(QIcon(icon_scales_path), self.tr('Set SlippyMap scales'), self.iface.mainWindow())
-        scales_act.triggered.connect(self.set_tms_scales)
+        if not self.scales_act:
+            icon_scales_path = self.plugin_dir + '/icons/mActionSettings.svg'  # TODO change icon
+            self.scales_act = QAction(QIcon(icon_scales_path), self.tr('Set SlippyMap scales'), self.iface.mainWindow())
+            self.scales_act.triggered.connect(self.set_tms_scales)
+            self.service_actions.append(self.scales_act)
         #self.menu.addAction(scales_act)  # TODO: uncomment after fix
-        self.service_actions.append(scales_act)
 
-        icon_settings_path = self.plugin_dir + '/icons/mActionSettings.svg'
-        settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
-        self.service_actions.append(settings_act)
-        settings_act.triggered.connect(self.show_settings_dialog)
-        self.menu.addAction(settings_act)
+        if not self.settings_act:
+            icon_settings_path = self.plugin_dir + '/icons/mActionSettings.svg'
+            self.settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
+            self.service_actions.append(self.settings_act)
+            self.settings_act.triggered.connect(self.show_settings_dialog)
+        self.menu.addAction(self.settings_act)
 
-        icon_about_path = self.plugin_dir + '/icons/mActionAbout.svg'
-        info_act = QAction(QIcon(icon_about_path), self.tr('About'), self.iface.mainWindow())
-        self.service_actions.append(info_act)
-        info_act.triggered.connect(self.info_dlg.show)
-        self.menu.addAction(info_act)
+        if not self.info_act:
+            icon_about_path = self.plugin_dir + '/icons/mActionAbout.svg'
+            self.info_act = QAction(QIcon(icon_about_path), self.tr('About QMS'), self.iface.mainWindow())
+            self.service_actions.append(self.info_act)
+            self.info_act.triggered.connect(self.info_dlg.show)
+        self.menu.addAction(self.info_act)
 
     def remove_menu_buttons(self):
         """
