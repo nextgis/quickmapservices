@@ -128,7 +128,7 @@ class SettingsDialog(QDialog, FORM_CLASS):
             QMessageBox.information(self, PluginSettings.product_name(), info_message)
 
             self.dsManagerViewModel.resetModel()
-        except:
+        except Exception as e:
             QgsApplication.restoreOverrideCursor()
-            error_message = self.tr('Error on getting contrib pack: %s %s') % (sys.exc_type, sys.exc_value)
+            error_message = self.tr('Error on getting contrib pack: %s') % str(e)
             QMessageBox.critical(self, PluginSettings.product_name(), error_message)
