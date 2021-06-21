@@ -3,7 +3,7 @@ name=QuickMapServices
 qgisMinimumVersion=2.14
 qgisMaximumVersion=3.99
 description=Easy to add basemaps
-version=0.19.24
+version=0.19.25
 author=NextGIS
 email=info@nextgis.com
 about=Easy to use list of services and search for finding datasets and basemaps. Please contribute new services via <a href='https://qms.nextgis.com'>http://qms.nextgis.com</a>! Developed by NextGIS.
@@ -15,6 +15,8 @@ about=Easy to use list of services and search for finding datasets and basemaps.
 
 # Uncomment the following line and add your changelog:
 changelog=
+      0.19.25
+        * Added request timeout
       0.19.24
         * Fixed bug when getting user locales
         * Fixed error: 'sys' has no attribute 'exc_type'
