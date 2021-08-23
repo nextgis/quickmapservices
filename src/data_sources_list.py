@@ -36,6 +36,7 @@ from .data_source_serializer import DataSourceSerializer
 from .plugin_locale import Locale
 from .supported_drivers import KNOWN_DRIVERS
 from .compat import get_file_dir
+from .compat2qgis import message_log_levels
 
 CURR_PATH = get_file_dir(__file__)
 
@@ -82,7 +83,7 @@ class DataSourcesList(object):
 
                     except Exception as e:
                         error_message = 'INI file can\'t be parsed: ' + e.message
-                        QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
+                        QgsMessageLog.logMessage(error_message, level=message_log_levels["Critical"])
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):

@@ -35,6 +35,7 @@ from .custom_translator import CustomTranslator
 from .group_info import GroupInfo, GroupCategory
 from .plugin_locale import Locale
 from .compat import configparser, get_file_dir
+from .compat2qgis import message_log_levels
 
 
 CURR_PATH = get_file_dir(__file__)
@@ -103,7 +104,7 @@ class GroupsList(object):
             self.groups[group_id] = GroupInfo(group_id, group_alias, group_icon_path, ini_full_path, group_menu, category)
         except Exception as e:
             error_message = self.tr('Group INI file can\'t be parsed: ') + e.message
-            QgsMessageLog.logMessage(error_message, level=QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(error_message, level=message_log_levels["Critical"])
 
     def get_group_menu(self, group_id):
         if group_id in self.groups:

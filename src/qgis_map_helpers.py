@@ -17,6 +17,7 @@ from .py_tiled_layer.tiles import TileServiceInfo, TileDefaultSettings
 from .py_tiled_layer.tilelayer import TileLayer
 from .qgis_proj_helper import ProjectionHelper
 from .qgis_settings import QGISSettings
+from .compat2qgis import message_log_levels
 
 service_layers = []
 
@@ -137,7 +138,7 @@ def add_layer_to_map(ds):
             iface.messageBar().pushMessage(tr('Error'),
                                            error_message,
                                            level=QGisMessageBarLevel.Critical)
-            QgsMessageLog.logMessage(error_message, level=QGisMessageLogLevel.Critical)
+            QgsMessageLog.logMessage(error_message, level=message_log_levels["Critical"])
         else:
             # Set attribs
             layer.setAttribution(ds.copyright_text)
