@@ -87,6 +87,8 @@ class DataSourceInfo(object):
         if url is None:
             return []
 
+        url = url.replace('%', '%%') #escaping percent symbols before string formatting below
+
         switch_re = r"{switch:[^\}]*}"
         switches = re.findall(switch_re, url)
 
