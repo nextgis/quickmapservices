@@ -46,7 +46,7 @@ DATA_SOURCES_DIR_NAME = 'data_sources'
 GROUPS_DIR_NAME = 'groups'
 
 # CONTRIBUTE_REPO_URL = 'https://api.github.com/repos/nextgis/quickmapservices_contrib'
-CONTRIBUTE_ZIP_DIRECT_URL = 'http://nextgis.ru/programs/qms/quickmapservices_contrib.zip'
+CONTRIBUTE_ZIP_DIRECT_URL = 'https://github.com/nextgis/quickmapservices_contrib/archive/refs/tags/v1.18.zip'
 
 
 class ExtraSources(object):

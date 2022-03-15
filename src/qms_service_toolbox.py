@@ -44,6 +44,7 @@ from .rb_result_renderer import RubberBandResultRenderer
 from .data_source_serializer import DataSourceSerializer
 from .qgis_map_helpers import add_layer_to_map
 from .qms_external_api_python.client import Client
+from .qms_external_api_python.api.api_abstract import QmsNews
 from .qgis_settings import QGISSettings
 from .plugin_settings import PluginSettings
 from .singleton import singleton
@@ -156,7 +157,9 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
     def show_news(self):
         client = Client()
         client.set_proxy(*QGISSettings.get_qgis_proxy())
-        qms_news = client.get_news()
+        
+        #qms_news = client.get_news()
+        qms_news = QmsNews({'ru': u'<a href="https://data.nextgis.com/ru?source=qgis">\u0421\u0432\u0435\u0436\u0438\u0435 \u0433\u0435\u043e\u0434\u0430\u043d\u043d\u044b\u0435 \u0434\u043b\u044f \u043f\u0440\u043e\u0435\u043a\u0442\u0430</a>', 'en': u'<a href="https://data.nextgis.com/en?source=qgis">Fresh geodata</a> for your project'})
 
         if qms_news is None:
             self.newsFrame.setVisible(False)
