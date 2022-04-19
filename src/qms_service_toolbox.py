@@ -160,8 +160,8 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         
         #qms_news = client.get_news()
         qms_news = QmsNews({
-            'ru': u'<a href="https://data.nextgis.com/ru?source=qgis&utm_source=qgis_plugin&utm_medium=banner">\u0421\u0432\u0435\u0436\u0438\u0435 \u0433\u0435\u043e\u0434\u0430\u043d\u043d\u044b\u0435 \u0434\u043b\u044f \u043f\u0440\u043e\u0435\u043a\u0442\u0430</a>',
-            'en': u'<a href="https://data.nextgis.com/en?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Fresh geodata</a> for your project',
+            'ru': u'<a href="https://data.nextgis.com/ru?source=qgis&utm_source=qgis_plugin&utm_medium=banner">\u0421\u043a\u0430\u0447\u0430\u0439\u0442\u0435 \u0433\u0435\u043e\u0434\u0430\u043d\u043d\u044b\u0435</a> \u0434\u043b\u044f \u043f\u0440\u043e\u0435\u043a\u0442\u0430',
+            'en': u'<a href="https://data.nextgis.com/en?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Download geodata</a> for your project',
         })
 
         if qms_news is None:
