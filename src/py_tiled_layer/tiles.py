@@ -181,9 +181,9 @@ class TileServiceInfo(object):
                 bit = zoom - i
                 digit = ord('0')
                 mask = 1 << (bit - 1)  # if (bit - 1) > 0 else 1 >> (bit - 1)
-                if (x & mask) is not 0:
+                if (x & mask) != 0:
                     digit += 1
-                if (y & mask) is not 0:
+                if (y & mask) != 0:
                     digit += 2
                 quadkey += chr(digit)
             return self.serviceUrl.replace("{q}", str(quadkey))
