@@ -574,7 +574,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../settings_dialog_base.ui" line="358"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Contributed services definitions are provided &apos;as is&apos; and are not validated by plugin authors. These are proof-of-concept and for testing only. Visit &lt;a href=&quot;https://github.com/nextgis/quickmapservices_contrib&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://github.com/nextgis/quickmapservices_contrib&lt;/span&gt;&lt;/a&gt; to add new services. Use at your own risk!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Contributed services definitions are provided &apos;as is&apos; and are not validated by plugin authors. These are proof-of-concept and for testing only. Visit &lt;a href=&quot;https://qms.nextgis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://qms.nextgis.com&lt;/span&gt;&lt;/a&gt; to add new services. Use at your own risk!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
