@@ -2,11 +2,11 @@
 name=QuickMapServices
 qgisMinimumVersion=2.14
 qgisMaximumVersion=3.99
-description=Easy to add basemaps
+description=Easy to add basemaps and geoservices
+about=Easy to use list of services and search for finding datasets and basemaps. Please contribute new services via https://qms.nextgis.com. Developed by NextGIS. Any feedback is welcome at https://nextgis.com/contact
 version=0.19.32
 author=NextGIS
 email=info@nextgis.com
-about=Easy to use list of services and search for finding datasets and basemaps. Please contribute new services via <a href='https://qms.nextgis.com'>http://qms.nextgis.com</a>! Developed by NextGIS.
 
 
 # End of mandatory metadata
