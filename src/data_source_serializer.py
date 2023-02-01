@@ -98,6 +98,11 @@ class DataSourceSerializer(object):
 
             ds.wms_turn_over = ConfigReaderHelper.try_read_config_bool(parser, 'wms', 'turn_over')
 
+            #WMTS
+            ds.wmts_url = ConfigReaderHelper.try_read_config(parser, 'wmts', 'url', reraise=(ds.type == KNOWN_DRIVERS.WMTS), default="")
+            ds.wmts_params = ConfigReaderHelper.try_read_config(parser, 'wmts', 'params', default="")
+            ds.wmts_layer = ConfigReaderHelper.try_read_config(parser, 'wmts', 'layer', default="")
+
             #GDAL
             if ds.type == KNOWN_DRIVERS.GDAL:
                 gdal_conf = ConfigReaderHelper.try_read_config(parser, 'gdal', 'source_file', reraise=(ds.type == KNOWN_DRIVERS.GDAL))
@@ -181,6 +186,12 @@ class DataSourceSerializer(object):
             if epsg is not None:
                 ds.wms_params += '&crs=EPSG:' + str(epsg)
 
+        #WMTS
+        if ds.type.lower() == KNOWN_DRIVERS.WMTS.lower():
+            ds.wmts_url = json_data['url']
+            ds.wmts_layer = json_data['layer']
+            ds.wmts_params = json_data['params']
+
         #WFS
         if ds.type.lower() == KNOWN_DRIVERS.WFS.lower():
             ds.wfs_url = json_data['url']
@@ -247,6 +258,11 @@ class DataSourceSerializer(object):
             config.set('wms', 'params', ds_info.wms_params)
             config.set('wms', 'layers', ds_info.wms_layers)
             config.set('wms', 'turn_over', ds_info.wms_turn_over)
+
+        if ds_info.type == KNOWN_DRIVERS.WMTS:
+            config.set('wmts', 'url', ds_info.wmts_url)
+            config.set('wmts', 'params', ds_info.wmts_params)
+            config.set('wmts', 'layer', ds_info.wmts_layer)
 
         if ds_info.type == KNOWN_DRIVERS.GDAL:
             config.set('gdal', 'source_file', os.path.basename(ds_info.gdal_source_file))
