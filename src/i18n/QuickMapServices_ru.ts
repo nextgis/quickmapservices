@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="ru">
+<TS version="2.1" language="ru_RU">
 <context>
     <name>@default</name>
     <message>
-        <location filename="../qgis_map_helpers.py" line="135"/>
+        <location filename="../qgis_map_helpers.py" line="137"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation>Слой %s невозможно добавить на карту!</translation>
     </message>
     <message>
-        <location filename="../qgis_map_helpers.py" line="136"/>
+        <location filename="../qgis_map_helpers.py" line="138"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -19,17 +19,61 @@
     <message>
         <location filename="../about_dialog.py" line="51"/>
         <source>Version: %s</source>
-        <translation>Версия: %s</translation>
+        <translation type="obsolete">Версия: %s</translation>
     </message>
     <message>
         <location filename="../about_dialog.py" line="69"/>
         <source>&lt;p&gt;&lt;strong&gt;Python tile layer:&lt;/strong&gt; &lt;a href=&quot;https://github.com/minorua/TileLayerPlugin&quot;&gt;TileLayer Plugin by Minoru Akagi&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Some icons from QGIS:&lt;/strong&gt; &lt;a href=&quot;https://github.com/qgis/QGIS&quot;&gt;QGIS GitHub&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;&lt;strong&gt;Провайдер тайлового слоя (Python):&lt;/strong&gt; &lt;a href=&quot;https://github.com/minorua/TileLayerPlugin&quot;&gt;TileLayer Plugin от Minoru Akagi&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Иконки QGIS:&lt;/strong&gt; &lt;a href=&quot;https://github.com/qgis/QGIS&quot;&gt;QGIS GitHub&lt;/a&gt;&lt;/p&gt;</translation>
+        <translation type="obsolete">&lt;p&gt;&lt;strong&gt;Провайдер тайлового слоя (Python):&lt;/strong&gt; &lt;a href=&quot;https://github.com/minorua/TileLayerPlugin&quot;&gt;TileLayer Plugin от Minoru Akagi&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Иконки QGIS:&lt;/strong&gt; &lt;a href=&quot;https://github.com/qgis/QGIS&quot;&gt;QGIS GitHub&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../about_dialog.py" line="59"/>
         <source>&lt;p&gt;Convenient list of basemaps + seach string for finding datasets and basemaps. Please contribute new services via &lt;a href=&quot;http://qms.nextgis.com&quot;&gt;http://qms.nextgis.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Developers:&lt;/strong&gt; &lt;a href=&quot;http://nextgis.com&quot;&gt;NextGIS&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Issue tracker:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices/issues&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Source code:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;p&gt;Удобный каталог базовых карт и сервисов с поиском. Добавляйте новые сервисы здесь: &lt;a href=&quot;http://qms.nextgis.com&quot;&gt;http://qms.nextgis.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Разработка:&lt;/strong&gt; &lt;a href=&quot;http://nextgis.com&quot;&gt;NextGIS&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Трекер:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices/issues&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Исходный код:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;</translation>
+        <translation type="obsolete">&lt;p&gt;Удобный каталог базовых карт и сервисов с поиском. Добавляйте новые сервисы здесь: &lt;a href=&quot;http://qms.nextgis.com&quot;&gt;http://qms.nextgis.com&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Разработка:&lt;/strong&gt; &lt;a href=&quot;http://nextgis.com&quot;&gt;NextGIS&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Трекер:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices/issues&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Исходный код:&lt;/strong&gt; &lt;a href=&quot;https://github.com/nextgis/quickmapservices&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;</translation>
+    </message>
+</context>
+<context>
+    <name>AboutDialogBase</name>
+    <message>
+        <location filename="../about_dialog_base.ui" line="14"/>
+        <source>About {plugin_name}</source>
+        <translation>О {plugin_name}</translation>
+    </message>
+    <message>
+        <location filename="../about_dialog_base.ui" line="27"/>
+        <source>&lt;p align=&quot;center&quot;&gt;{plugin_name}&lt;/p&gt;</source>
+        <translation>&lt;p align=&quot;center&quot;&gt;{plugin_name}&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <location filename="../about_dialog_base.ui" line="40"/>
+        <source>&lt;p&gt;{description}&lt;/p&gt;
+&lt;p&gt;{about}&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Developers:&lt;/b&gt; &lt;a href=&quot;{main_url}&quot;&gt;{authors}&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Homepage:&lt;/b&gt; &lt;a href=&quot;{homepage_url}&quot;&gt;{homepage_url}&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Video with an overview of the plugin:&lt;/b&gt; &lt;a href=&quot;{video_url}&quot;&gt;
+{video_url}&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Please report bugs at&lt;/b&gt; &lt;a href=&quot;{tracker_url}&quot;&gt;bugtracker&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Other helpful services by NextGIS:
+&lt;ul&gt;&lt;li&gt;&lt;b&gt;Convenient up-to-date data extracts for any place in the world:
+&lt;a href=&quot;{main_url}&quot;&gt;{main_url}&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Fully featured Web GIS service:
+&lt;a href=&quot;{main_url}/nextgis-com/plans&quot;&gt;
+{main_url}/nextgis-com/plans&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;/p&gt;</source>
+        <translation>&lt;p&gt;{description}&lt;/p&gt;
+&lt;p&gt;{about}&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Разработчики:&lt;/b&gt; &lt;a href=&quot;{main_url}&quot;&gt;{authors}&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Домашняя страница:&lt;/b&gt; &lt;a href=&quot;{homepage_url}&quot;&gt;{homepage_url}&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Видео с обзором плагина:&lt;/b&gt; &lt;a href=&quot;{video_url}&quot;&gt;
+{video_url}&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Пожалуйста, сообщайте о багах в&lt;/b&gt; &lt;a href=&quot;{tracker_url}&quot;&gt;багтрекер&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Другие полезные сервисы NextGIS:
+&lt;ul&gt;&lt;li&gt;&lt;b&gt;Удобная выборка актуальных данных из любой точки мира:
+&lt;a href=&quot;{main_url}&quot;&gt;{main_url}&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Полнофункциональный веб-ГИС-сервис:
+&lt;a href=&quot;{main_url}/nextgis-com/plans&quot;&gt;
+{main_url}/nextgis-com/plans&lt;/a&gt;&lt;/b&gt;&lt;/li&gt;&lt;/ul&gt;
+&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -60,26 +104,17 @@
     <message>
         <location filename="../about_dialog_base.ui" line="14"/>
         <source>About QuickMapServices</source>
-        <translation>О QuickMapServices</translation>
+        <translation type="obsolete">О QuickMapServices</translation>
     </message>
     <message>
         <location filename="../about_dialog_base.ui" line="125"/>
         <source>TextLabel</source>
-        <translation>TextLabel</translation>
+        <translation type="obsolete">TextLabel</translation>
     </message>
     <message>
         <location filename="../about_dialog_base.ui" line="67"/>
         <source>Info</source>
-        <translation>Информация</translation>
-    </message>
-    <message>
-        <location filename="../about_dialog_base.ui" line="76"/>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation></translation>
+        <translation type="obsolete">Информация</translation>
     </message>
     <message>
         <location filename="../ds_edit_dialog.ui" line="130"/>
@@ -89,7 +124,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../about_dialog_base.ui" line="108"/>
         <source>Third-party Components</source>
-        <translation>Сторонние компоненты</translation>
+        <translation type="obsolete">Сторонние компоненты</translation>
     </message>
     <message>
         <location filename="../about_dialog_base.ui" line="30"/>
@@ -98,7 +133,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Droid Sans&apos;; font-size:16pt; font-weight:600;&quot;&gt;QuickMapServices&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans Serif&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -404,7 +439,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../gui/editor_widget_wms.ui" line="14"/>
+        <location filename="../gui/editor_widget_tms.ui" line="14"/>
         <source>Form</source>
         <translation>Форма</translation>
     </message>
@@ -414,7 +449,7 @@ p, li { white-space: pre-wrap; }
         <translation>Файл GDAL</translation>
     </message>
     <message>
-        <location filename="../gui/editor_widget_wms.ui" line="23"/>
+        <location filename="../gui/editor_widget_tms.ui" line="20"/>
         <source>URL</source>
         <translation>URL</translation>
     </message>
@@ -515,7 +550,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>GroupsList</name>
     <message>
-        <location filename="../groups_list.py" line="105"/>
+        <location filename="../groups_list.py" line="106"/>
         <source>Group INI file can&apos;t be parsed: </source>
         <translation>INI файл группы не может быть разобран: </translation>
     </message>
@@ -530,56 +565,56 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../settings_dialog_base.ui" line="30"/>
         <source>Move plugin to &quot;Manage Layers&quot; menu/panel:</source>
-        <translation>Показывать в меню/панели &quot;Управление слоями&quot;:</translation>
+        <translation type="obsolete">Показывать в меню/панели &quot;Управление слоями&quot;:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="44"/>
+        <location filename="../settings_dialog_base.ui" line="33"/>
         <source>Enable EPSG:3857 (OTF) on adding TMS:</source>
         <translation>Вкл. перепроецирование при доб. тайлового слоя:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="58"/>
+        <location filename="../settings_dialog_base.ui" line="47"/>
         <source>Show info/error in message bar:</source>
         <translation>Показывать инфо/ошибки в панели сообщений:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="91"/>
+        <location filename="../settings_dialog_base.ui" line="80"/>
         <source>Max connection count:</source>
         <translation>Макс кол-во соединений:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="105"/>
+        <location filename="../settings_dialog_base.ui" line="94"/>
         <source>Cache expiration (hours)*:</source>
         <translation>Срок хранения кэша (часов)*:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="119"/>
+        <location filename="../settings_dialog_base.ui" line="108"/>
         <source>Tiles download timeout (ms)*:</source>
         <translation>Таймаут загрузки тайлов (мc)*:</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="167"/>
+        <location filename="../settings_dialog_base.ui" line="156"/>
         <source>*: Common QGIS settings</source>
         <translation>*: Общие настройки QGIS</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="181"/>
+        <location filename="../settings_dialog_base.ui" line="170"/>
         <source>Settings will be applied for newly added layers</source>
         <translation>Настройки будут применяться для вновь добавленных слоев</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="387"/>
+        <location filename="../settings_dialog_base.ui" line="376"/>
         <source>Get contributed pack</source>
         <translation>Получить дополнительные источники данных</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="348"/>
+        <location filename="../settings_dialog_base.ui" line="337"/>
         <source>Attention!</source>
         <translation>Внимание!</translation>
     </message>
     <message>
         <location filename="../settings_dialog_base.ui" line="347"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Contributed services definitions are provided 'as is' and are not validated by plugin authors. These are proof-of-concept and for testing only. Visit &lt;a href=&quot;https://qms.nextgis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://qms.nextgis.com&lt;/span&gt;&lt;/a&gt; to add new services. Use at your own risk!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Contributed services definitions are provided &apos;as is&apos; and are not validated by plugin authors. These are proof-of-concept and for testing only. Visit &lt;a href=&quot;https://qms.nextgis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://qms.nextgis.com&lt;/span&gt;&lt;/a&gt; to add new services. Use at your own risk!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Эти сервисы предоставляются &quot;как есть&quot;, только для целей тестирования. Используйте на свой страх и риск. Добавить новые сервисы можно по ссылке: &lt;a href=&quot;https://qms.nextgis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://qms.nextgis.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
@@ -588,37 +623,37 @@ p, li { white-space: pre-wrap; }
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="73"/>
+        <location filename="../settings_dialog_base.ui" line="62"/>
         <source>Tiles</source>
         <translation>Тайлы</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="196"/>
+        <location filename="../settings_dialog_base.ui" line="185"/>
         <source>Add\Edit\Remove</source>
         <translation>Добавить\Редактировать\Удалить</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="217"/>
+        <location filename="../settings_dialog_base.ui" line="206"/>
         <source>Visibility</source>
         <translation>Видимость</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="271"/>
+        <location filename="../settings_dialog_base.ui" line="260"/>
         <source>More services</source>
         <translation>Загрузить сервисы</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="202"/>
+        <location filename="../settings_dialog_base.ui" line="191"/>
         <source>My groups</source>
         <translation>Мои группы</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="209"/>
+        <location filename="../settings_dialog_base.ui" line="198"/>
         <source>My services</source>
         <translation>Мои сервисы</translation>
     </message>
     <message>
-        <location filename="../settings_dialog_base.ui" line="136"/>
+        <location filename="../settings_dialog_base.ui" line="125"/>
         <source>Use native renderer (2.18.8 and higher):</source>
         <translation>Использовать встроенный рендерер
 (QGIS 2.18.8 и выше):</translation>
@@ -635,17 +670,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QmsSearchResultItemWidget</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="378"/>
+        <location filename="../qms_service_toolbox.py" line="384"/>
         <source>details</source>
         <translation>подробнее</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="388"/>
+        <location filename="../qms_service_toolbox.py" line="394"/>
         <source>report a problem</source>
         <translation>сообщить о проблеме</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="412"/>
+        <location filename="../qms_service_toolbox.py" line="418"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
@@ -658,17 +693,17 @@ p, li { white-space: pre-wrap; }
         <translation>Поиск геосервиса...</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="272"/>
+        <location filename="../qms_service_toolbox.py" line="278"/>
         <source>Searching...</source>
         <translation>Поиск...</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="312"/>
+        <location filename="../qms_service_toolbox.py" line="318"/>
         <source>No results!</source>
         <translation>Нет результатов!</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="247"/>
+        <location filename="../qms_service_toolbox.py" line="253"/>
         <source>Last used:</source>
         <translation>Недавно использованы:</translation>
     </message>
@@ -683,12 +718,12 @@ p, li { white-space: pre-wrap; }
         <translation>Введите часть имени сервиса</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="282"/>
+        <location filename="../qms_service_toolbox.py" line="288"/>
         <source>No results.</source>
         <translation>Ничего не найдено.</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="282"/>
+        <location filename="../qms_service_toolbox.py" line="288"/>
         <source>You can add a service to become searchable. Start &lt;a href=&apos;{}&apos;&gt;here&lt;/a&gt;.</source>
         <translation>Вы можете &lt;a href=&apos;{}&apos;&gt;добавить сервис&lt;/a&gt; самостоятельно, и он станет доступен через поиск.</translation>
     </message>
@@ -703,7 +738,7 @@ p, li { white-space: pre-wrap; }
         <translation>Все</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="324"/>
+        <location filename="../qms_service_toolbox.py" line="330"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -713,7 +748,7 @@ p, li { white-space: pre-wrap; }
         <translation>Рабочие</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="223"/>
+        <location filename="../qms_service_toolbox.py" line="220"/>
         <source>Need at least 3 symbols to start searching...</source>
         <translation type="unfinished">Для поиска нужно минимум 3 символа...</translation>
     </message>
@@ -726,69 +761,74 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="../quick_map_services.py" line="160"/>
+        <location filename="../quick_map_services.py" line="159"/>
         <source>QuickMapServices</source>
         <translation>QuickMapServices</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="229"/>
+        <location filename="../quick_map_services.py" line="238"/>
         <source>Set proper scale</source>
         <translation>Ближайший масштаб</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="235"/>
+        <location filename="../quick_map_services.py" line="245"/>
         <source>Set SlippyMap scales</source>
         <translation>Установить масштабы SlippyMap</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="241"/>
+        <location filename="../quick_map_services.py" line="252"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="247"/>
+        <location filename="../quick_map_services.py" line="259"/>
         <source>About QMS</source>
-        <translation>О QMS</translation>
+        <translation type="obsolete">О модуле...</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="160"/>
+        <location filename="../quick_map_services.py" line="159"/>
         <source>Set SlippyMap scales for current project? 
 The previous settings will be overwritten!</source>
         <translation>Установить масштабный ряд SlippyMap для текущего проекта?
 Предыдущие настройки будут перезаписаны!</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="95"/>
+        <location filename="../quick_map_services.py" line="94"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="92"/>
+        <location filename="../quick_map_services.py" line="91"/>
         <source>Extra dirs for %s can&apos;t be created: %s %s</source>
         <translation>Невозможно создать дополнительные директории для  %s: %s %s</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="324"/>
+        <location filename="../quick_map_services.py" line="330"/>
         <source>Search QMS</source>
         <translation>Поиск в QMS</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="221"/>
+        <location filename="../quick_map_services.py" line="228"/>
         <source>Add to Search</source>
         <translation>Добавить в Поиск</translation>
+    </message>
+    <message>
+        <location filename="../quick_map_services.py" line="259"/>
+        <source>About</source>
+        <translation>О модуле...</translation>
     </message>
 </context>
 <context>
     <name>SearchThread</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="519"/>
+        <location filename="../qms_service_toolbox.py" line="525"/>
         <source>Network error!
 {0}</source>
         <translation>Сетевая ошибка!
 {0}</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="523"/>
+        <location filename="../qms_service_toolbox.py" line="529"/>
         <source>Error of processing!
 {0}: {1}</source>
         <translation>Ошибка обработки!
@@ -798,14 +838,14 @@ The previous settings will be overwritten!</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../settings_dialog.py" line="129"/>
+        <location filename="../settings_dialog.py" line="127"/>
         <source>Last version of contrib pack was downloaded!</source>
         <translation>Последняя версия пакета с источниками данных была успешно загружена!</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="135"/>
         <source>Error on getting contrib pack: %s %s</source>
-        <translation>Ошибка при получении пакета: %s %s</translation>
+        <translation type="obsolete">Ошибка при получении пакета: %s %s</translation>
     </message>
     <message>
         <location filename="../settings_dialog.py" line="66"/>
@@ -816,6 +856,11 @@ The previous settings will be overwritten!</source>
         <location filename="../settings_dialog.py" line="72"/>
         <source>Hide all</source>
         <translation>Скрыть все</translation>
+    </message>
+    <message>
+        <location filename="../settings_dialog.py" line="133"/>
+        <source>Error on getting contrib pack: %s</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -904,7 +949,7 @@ The previous settings will be overwritten!</source>
 <context>
     <name>UserGroupsBox</name>
     <message>
-        <location filename="../user_groups_box.ui" line="76"/>
+        <location filename="../user_groups_box.py" line="74"/>
         <source>Delete group</source>
         <translation>Удалить группу</translation>
     </message>
@@ -934,17 +979,17 @@ The previous settings will be overwritten!</source>
         <translation>Выберите группу</translation>
     </message>
     <message>
-        <location filename="../user_groups_box.ui" line="38"/>
+        <location filename="../user_groups_box.py" line="59"/>
         <source>Create group</source>
         <translation>Создать группу</translation>
     </message>
     <message>
-        <location filename="../user_groups_box.ui" line="63"/>
+        <location filename="../user_groups_box.py" line="67"/>
         <source>Edit group</source>
         <translation>Редактировать группу</translation>
     </message>
     <message>
-        <location filename="../user_groups_box.ui" line="28"/>
+        <location filename="../user_groups_box.py" line="120"/>
         <source>Create group from existing</source>
         <translation>Создать группу на основе существующей</translation>
     </message>
@@ -967,22 +1012,22 @@ The previous settings will be overwritten!</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../user_services_box.ui" line="28"/>
+        <location filename="../user_services_box.py" line="120"/>
         <source>Create service from existing</source>
         <translation>Создать сервис на основе существующего</translation>
     </message>
     <message>
-        <location filename="../user_services_box.ui" line="38"/>
+        <location filename="../user_services_box.py" line="60"/>
         <source>Create service</source>
         <translation>Создать сервис</translation>
     </message>
     <message>
-        <location filename="../user_services_box.ui" line="51"/>
+        <location filename="../user_services_box.py" line="68"/>
         <source>Edit service</source>
         <translation>Редактировать сервис</translation>
     </message>
     <message>
-        <location filename="../user_services_box.ui" line="64"/>
+        <location filename="../user_services_box.py" line="75"/>
         <source>Delete service</source>
         <translation>Удалить сервис</translation>
     </message>

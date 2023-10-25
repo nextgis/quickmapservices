@@ -23,7 +23,7 @@ Configuration
 BUILD_UI_FOR_TATGET_BUILD = False
 IGNORE_PATTERNS_FOR_TARGET_INSTALL = (
     '*.pyc', '*.ts', '*.qrc', '.git'
-    #'*.ui',
+    # '*.ui',
 )
 
 qgis_root = os.getenv("QGIS_BASE_DIR", None)
@@ -31,20 +31,22 @@ if qgis_root is None:
     sys.exit("QGIS_BASE_DIR env var not found!")
 QGIS_PLUGINS_DIST_DIR = os.path.join(qgis_root, "apps", "qgis", "python", "plugins")
 
-# TS_FILE_NAME = "%s_ru.ts" % plugin_name
+TS_FILE_NAME = "%s_ru.ts" % plugin_name
 TS_FILE_NAME = "QuickMapServices_ru.ts"
 
 """
 Work section:
 """
+
+
 def process_ui():
     print("process ui ...")
-    
+
     ui_dir = os.path.join(plugin_dir, "src", "ui")
     if not os.path.exists(ui_dir):
         print("there is no ui dir? ui files not found")
         return
-    
+
     ui_files = [f for f in os.listdir(ui_dir) if os.path.splitext(f)[1] == ".ui"]
 
     for ui_file in ui_files:
@@ -111,7 +113,8 @@ def make_zip():
             continue
 
         for f in files:
-            if f.endswith(('.gitignore', '.pyc', '.ts', '.qrc', '.sublime-project', '.sublime-workspace', 'Makefile.py', '.zip', 'bat', 'pro')):
+            if f.endswith(('.gitignore', '.pyc', '.ts', '.qrc', '.sublime-project', '.sublime-workspace', 'Makefile.py',
+                           '.zip', 'bat', 'pro')):
                 continue
             filename = os.path.join(root, f)
             zipFile.write(filename, os.path.join(plugin_name.lower(), os.path.relpath(filename, src_dir)))
@@ -132,6 +135,7 @@ def make_ts_file():
 
     pprint.pprint(cmd)
     subprocess.call(cmd)
+
 
 if 'rc' in targets:
     process_qrc()
