@@ -1,72 +1,68 @@
-# -*- coding: utf-8 -*-
-"""
-/***************************************************************************
- AboutDialog
-                                 A QGIS plugin
- Collection of internet map services
-                             -------------------
-        begin                : 2014-11-21
-        git sha              : $Format:%H$
-        copyright            : (C) 2014 by NextGIS
-        email                : info@nextgis.com
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
-"""
 import os
+from typing import Dict, Optional
 
+from qgis.PyQt.QtCore import QLocale
+from qgis.PyQt.QtWidgets import QWidget, QDialog
 from qgis.PyQt import uic
-from qgis.PyQt.QtGui import QPixmap
-from qgis.PyQt.QtWidgets import QDialog, QDialogButtonBox
+from qgis.core import QgsSettings
+from qgis.utils import pluginMetadata
 
-from .compat import configparser
-
-
-CURR_PATH = os.path.dirname(__file__)
-
-FORM_CLASS, _ = uic.loadUiType(os.path.join(CURR_PATH, 'about_dialog_base.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "about_dialog_base.ui")
+)
 
 
 class AboutDialog(QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
-        """Constructor."""
-        super(AboutDialog, self).__init__(parent)
+    def __init__(self, package_name: str, parent: Optional[QWidget] = None):
+        super().__init__(parent)
         self.setupUi(self)
+        self.__package_name = package_name
 
-        self.btnHelp = self.buttonBox.button(QDialogButtonBox.Help)
+        replacemens = self.__replacemens()
+        self.pluginName.setText(self.pluginName.text().replace(
+            "{plugin_name}", replacemens["{plugin_name}"])
+        )
+        self.setWindowTitle(self.windowTitle().format(
+            plugin_name=replacemens["{plugin_name}"]
+        ))
+        html = self.textBrowser.toHtml()
+        for key, value in replacemens.items():
+            html = html.replace(key, value)
+        self.textBrowser.setHtml(html)
 
-        self.lblLogo.setPixmap(QPixmap(os.path.join(CURR_PATH, 'icons/mapservices.png')))
+    def __locale(self) -> str:
+        override_locale = QgsSettings().value(
+            "locale/overrideFlag", False, type=bool
+        )
+        if not override_locale:
+            locale_full_name = QLocale.system().name()
+        else:
+            locale_full_name = QgsSettings().value("locale/userLocale", "")
 
-        cfg = configparser.ConfigParser()
-        cfg.read(os.path.join(os.path.dirname(__file__), 'metadata.txt'))
-        version = cfg.get('general', 'version')
+        return locale_full_name[0:2]
 
-        self.lblVersion.setText(self.tr('Version: %s') % (version))
+    def __replacemens(self) -> Dict[str, str]:
+        locale = self.__locale()
+        is_ru = locale in ["ru", "uk"]
 
-        self.tbInfo.setHtml(self.get_about_text())
-        self.tbLicense.setPlainText(self.get_license_text())
-        self.tb3rd.setHtml(self.get_3rd_text())
+        def metadata_value(key: str) -> str:
+            value = pluginMetadata(self.__package_name, f"{key}[{locale}]")
+            if value == '__error__':
+                value = pluginMetadata(self.__package_name, key)
+            return value
 
+        about = metadata_value("about")
+        about_stop_phrase = "Разработан компанией" if is_ru else "Developed by"
+        if about.find(about_stop_phrase) > 0:
+            about = about[:about.find(about_stop_phrase)]
 
-    def get_about_text(self):
-        return self.tr('<p>Convenient list of basemaps + seach string for finding datasets and basemaps. Please contribute new services via <a href="http://qms.nextgis.com">http://qms.nextgis.com</a></p>'
-                       '<p><strong>Developers:</strong> <a href="http://nextgis.com">NextGIS</a></p>'
-                       '<p><strong>Issue tracker:</strong> <a href="https://github.com/nextgis/quickmapservices/issues">GitHub</a></p>'
-                       '<p><strong>Source code:</strong> <a href="https://github.com/nextgis/quickmapservices">GitHub</a></p>')
-
-    def get_license_text(self):
-        with open(os.path.join(CURR_PATH, 'LICENSE')) as f:
-            return f.read()
-
-    def get_3rd_text(self):
-        return self.tr('<p><strong>Python tile layer:</strong> <a href="https://github.com/minorua/TileLayerPlugin">TileLayer Plugin by Minoru Akagi</a></p>'
-                       '<p><strong>Some icons from QGIS:</strong> <a href="https://github.com/qgis/QGIS">QGIS GitHub</a></p>')
-
-
+        return {
+            "{plugin_name}": metadata_value("name"),
+            "{description}": metadata_value("description"),
+            "{about}": about,
+            "{authors}": metadata_value("author"),
+            "{video_url}": metadata_value("video"),
+            "{homepage_url}": metadata_value("repository"),
+            "{tracker_url}": metadata_value("tracker"),
+            "{main_url}": f"https://nextgis.{'ru' if is_ru else 'com'}",
+        }

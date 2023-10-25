@@ -25,11 +25,11 @@ import os.path
 import xml.etree.ElementTree as ET
 
 from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt, QUrl
-from qgis.PyQt.QtWidgets import QAction, QToolButton, QMenu,QMessageBox, QDialog
+from qgis.PyQt.QtWidgets import QAction, QToolButton, QMenu, QMessageBox, QDialog
 from qgis.PyQt.QtGui import QIcon, QDesktopServices
 
 # Initialize Qt resources from file resources.py
-#import resources_rc
+# import resources_rc
 # Import the code for the dialog
 from qgis.core import QgsProject
 from qgis.gui import QgsMessageBar
@@ -41,13 +41,13 @@ from .qgis_map_helpers import add_layer_to_map
 from .qms_service_toolbox import QmsServiceToolbox
 
 from .settings_dialog import SettingsDialog
-from .about_dialog import AboutDialog
 from .py_tiled_layer.tilelayer import TileLayer, TileLayerType
 from .data_sources_list import DataSourcesList
 from .groups_list import GroupsList
 from .custom_translator import CustomTranslator, QTranslator
 from .compat import get_file_dir
 from .compat2qgis import qgisRegistryInstance
+from . import about_dialog
 
 
 class QuickMapServices(object):
@@ -82,15 +82,15 @@ class QuickMapServices(object):
         self.custom_translator = CustomTranslator()
 
         # Create the dialog (after translation) and keep reference
-        self.info_dlg = AboutDialog()
+        self.info_dlg = about_dialog.AboutDialog(os.path.basename(self.plugin_dir))
 
         # Check Contrib and User dirs
         try:
             ExtraSources.check_extra_dirs()
         except:
             error_message = self.tr('Extra dirs for %s can\'t be created: %s %s') % (PluginSettings.product_name(),
-                                                                                      sys.exc_type,
-                                                                                      sys.exc_value)
+                                                                                     sys.exc_type,
+                                                                                     sys.exc_value)
             self.iface.messageBar().pushMessage(self.tr('Error'),
                                                 error_message,
                                                 level=QgsMessageBar.CRITICAL)
@@ -106,8 +106,8 @@ class QuickMapServices(object):
         return self.custom_translator.translate('QuickMapServices', message)
 
     def initGui(self):
-        #import pydevd
-        #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
+        # import pydevd
+        # pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
         # Register plugin layer type
         self.tileLayerType = TileLayerType(self)
@@ -141,17 +141,17 @@ class QuickMapServices(object):
         return self._scales_list
 
     def set_nearest_scale(self):
-        #get current scale
+        # get current scale
         curr_scale = self.iface.mapCanvas().scale()
-        #find nearest
+        # find nearest
         nearest_scale = sys.maxsize
         for scale_str in self.scales_list:
             scale = scale_str.split(':')[1]
             scale_int = int(scale)
-            if abs(scale_int-curr_scale) < abs(nearest_scale - curr_scale):
+            if abs(scale_int - curr_scale) < abs(nearest_scale - curr_scale):
                 nearest_scale = scale_int
 
-        #set new scale
+        # set new scale
         if nearest_scale != sys.maxsize:
             self.iface.mapCanvas().zoomScale(nearest_scale)
 
@@ -188,7 +188,6 @@ class QuickMapServices(object):
         self.service_layers = None
         # # Unregister plugin layer type
         qgisRegistryInstance.removePluginLayerType(TileLayer.LAYER_TYPE)
-
 
     qms_create_service_action = None
     set_nearest_scale_act = None
@@ -232,10 +231,11 @@ class QuickMapServices(object):
 
         # Scales, Settings and About actions
         self.menu.addSeparator()
-        
+
         if not self.set_nearest_scale_act:
             icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.svg'  # TODO change icon
-            self.set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'), self.iface.mainWindow())
+            self.set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'),
+                                                 self.iface.mainWindow())
             self.set_nearest_scale_act.triggered.connect(self.set_nearest_scale)
             self.service_actions.append(self.set_nearest_scale_act)
         self.menu.addAction(self.set_nearest_scale_act)  # TODO: uncomment after fix
@@ -245,7 +245,7 @@ class QuickMapServices(object):
             self.scales_act = QAction(QIcon(icon_scales_path), self.tr('Set SlippyMap scales'), self.iface.mainWindow())
             self.scales_act.triggered.connect(self.set_tms_scales)
             self.service_actions.append(self.scales_act)
-        #self.menu.addAction(scales_act)  # TODO: uncomment after fix
+        # self.menu.addAction(scales_act)  # TODO: uncomment after fix
 
         if not self.settings_act:
             icon_settings_path = self.plugin_dir + '/icons/mActionSettings.svg'
@@ -256,7 +256,7 @@ class QuickMapServices(object):
 
         if not self.info_act:
             icon_about_path = self.plugin_dir + '/icons/mActionAbout.svg'
-            self.info_act = QAction(QIcon(icon_about_path), self.tr('About QMS'), self.iface.mainWindow())
+            self.info_act = QAction(QIcon(icon_about_path), self.tr('About'), self.iface.mainWindow())
             self.service_actions.append(self.info_act)
             self.info_act.triggered.connect(self.info_dlg.show)
         self.menu.addAction(self.info_act)

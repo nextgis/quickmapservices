@@ -3,7 +3,9 @@ name=QuickMapServices
 qgisMinimumVersion=2.14
 qgisMaximumVersion=3.99
 description=Easy to add basemaps and geoservices
+description[ru]=Легко добавляйте базовые карты и геосервисы
 about=Easy to use list of services and search for finding datasets and basemaps. Please contribute new services via https://qms.nextgis.com. Developed by NextGIS. Any feedback is welcome at https://nextgis.com/contact
+about[ru]=Простой в использовании список сервисов и поиск наборов данных и базовых карт. Пожалуйста, предлагайте новые услуги через https://qms.nextgis.com. Разработан компанией NextGIS. Любые отзывы приветствуются на https://nextgis.com/contact.
 version=0.19.32
 author=NextGIS
 email=info@nextgis.com
@@ -190,6 +192,8 @@ homepage=http://nextgis.com/blog/quickmapservices/
 tracker=https://github.com/nextgis/quickmapservices/issues
 repository=https://github.com/nextgis/quickmapservices
 icon=icons/mapservices.png
+video=https://youtu.be/lw_v0GlZzcE
+video[ru]=https://youtu.be/maXTAbfssd0
 # experimental flag
 experimental=False
 
