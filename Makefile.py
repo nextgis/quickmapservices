@@ -27,11 +27,11 @@ IGNORE_PATTERNS_FOR_TARGET_INSTALL = (
 )
 
 qgis_root = os.getenv("QGIS_BASE_DIR", None)
-# if qgis_root is None:
-#     sys.exit("QGIS_BASE_DIR env var not found!")
-# QGIS_PLUGINS_DIST_DIR = os.path.join(qgis_root, "apps", "qgis", "python", "plugins")
+if qgis_root is None:
+    sys.exit("QGIS_BASE_DIR env var not found!")
+QGIS_PLUGINS_DIST_DIR = os.path.join(qgis_root, "apps", "qgis", "python", "plugins")
 
-# TS_FILE_NAME = "%s_ru.ts" % plugin_name
+TS_FILE_NAME = "%s_ru.ts" % plugin_name
 TS_FILE_NAME = "QuickMapServices_ru.ts"
 
 """
