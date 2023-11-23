@@ -4,7 +4,7 @@ qgisMinimumVersion=3.00
 qgisMaximumVersion=3.99
 description=Easy to add basemaps and geoservices
 about=Easy to use list of services and search for finding datasets and basemaps. Please contribute new services via https://qms.nextgis.com. Developed by NextGIS. Any feedback is welcome at https://nextgis.com/contact
-version=0.19.33
+version=0.19.34
 author=NextGIS
 email=info@nextgis.com
 
@@ -15,9 +15,11 @@ email=info@nextgis.com
 
 # Uncomment the following line and add your changelog:
 changelog=
-      0.19.33
+      0.19.34
         * Update contrib package link
         * Set minimum qgis version to 3.00
+      0.19.33
+        * Update link to contrib package
       0.19.32
         * Fix add new services link
       0.19.31
