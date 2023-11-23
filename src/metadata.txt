@@ -1,10 +1,10 @@
 [general]
 name=QuickMapServices
-qgisMinimumVersion=2.14
+qgisMinimumVersion=3.00
 qgisMaximumVersion=3.99
 description=Easy to add basemaps and geoservices
 about=Easy to use list of services and search for finding datasets and basemaps. Please contribute new services via https://qms.nextgis.com. Developed by NextGIS. Any feedback is welcome at https://nextgis.com/contact
-version=0.19.32
+version=0.19.33
 author=NextGIS
 email=info@nextgis.com
 
@@ -15,6 +15,9 @@ email=info@nextgis.com
 
 # Uncomment the following line and add your changelog:
 changelog=
+      0.19.33
+        * Update contrib package link
+        * Set minimum qgis version to 3.00
       0.19.32
         * Fix add new services link
       0.19.31
@@ -119,7 +122,7 @@ changelog=
         * Add service to a group, if selected
         * Support for custom tiling grids (experimental)
         * Fix work with qgis proxy
-        * Fix local wfs service creation 
+        * Fix local wfs service creation
         * Fix loading wfs services from qms.nextgis.com
       0.17.8
         * Fix saving and restoring grayscale parameter of a basemap with a project
@@ -195,4 +198,3 @@ experimental=False
 
 # deprecated flag (applies to the whole plugin, not just a single version)
 deprecated=False
-

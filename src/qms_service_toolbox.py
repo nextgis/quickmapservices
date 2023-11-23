@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import ast
 import sys
+from datetime import datetime, timezone
 
 from os import path
 
@@ -97,17 +98,17 @@ class CachedServices(object):
     def __init__(self):
         self.geoservices = []
         self.load_last_used_services()
-    
+
     def load_last_used_services(self):
         for geoservice, image_ba in PluginSettings.get_last_used_services():
-            geoservice = Geoservice( geoservice, image_ba)
+            geoservice = Geoservice(geoservice, image_ba)
             if geoservice.isValid:
                 self.geoservices.append(geoservice)
 
     def add_service(self, geoservice, image_ba):
         new_gs = Geoservice(geoservice, image_ba)
         geoservices4store = [new_gs]
-        
+
         for gs in self.geoservices:
             if gs.id == new_gs.id:
                 continue
@@ -151,30 +152,42 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.one_process_work = QMutex()
 
         self.add_last_used_services()
-        
+
         self.show_news()
 
     def show_news(self):
-        client = Client()
-        client.set_proxy(*QGISSettings.get_qgis_proxy())
-        
-        #qms_news = client.get_news()
+        # client = Client()
+        # client.set_proxy(*QGISSettings.get_qgis_proxy())
+
+        # qms_news = client.get_news()
+        qms_black_friday_news = QmsNews({
+            'ru': '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Свежие геоданные</a> для проекта. <b>Экономия 50%!</b>',
+            'en': '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Fresh geodata</a> for your project <b>(50% off!)</b>',
+        })
         qms_news = QmsNews({
-            'ru': u'<a href="https://data.nextgis.com/ru?source=qgis&utm_source=qgis_plugin&utm_medium=banner">\u0421\u043a\u0430\u0447\u0430\u0439\u0442\u0435 \u0433\u0435\u043e\u0434\u0430\u043d\u043d\u044b\u0435</a> \u0434\u043b\u044f \u043f\u0440\u043e\u0435\u043a\u0442\u0430',
-            'en': u'<a href="https://data.nextgis.com/en?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Download geodata</a> for your project',
+            'ru': '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Скачайте геоданные</a> для проекта',
+            'en': '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Download geodata</a> for your project',
         })
 
-        if qms_news is None:
-            self.newsFrame.setVisible(False)
+        self.newsFrame.setVisible(False)
+
+        if qms_black_friday_news is None and qms_news is None:
             return
 
-        news = News(qms_news)
+        black_friday_finish = datetime(2023, 11, 25, 6, 0, tzinfo=timezone.utc)
+        black_friday_news = News(
+            qms_black_friday_news,
+            date_finish=black_friday_finish,
+            icon='fire.png'
+        )
+        ordinary_news = News(qms_news)
 
-        if news.is_time_to_show():
-            self.newsLabel.setText(news.html)
-            self.newsFrame.setVisible(True)
-        else:
-            self.newsFrame.setVisible(False)
+        self.newsFrame.setVisible(False)
+        for news in [black_friday_news, ordinary_news]:
+            if news.is_time_to_show():
+                self.newsLabel.setText(news.html)
+                self.newsFrame.setVisible(True)
+                break
 
     def toggle_filter_button(self, checked):
         self.txtSearch.setDisabled(checked)
@@ -277,7 +290,6 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.lstSearchResult.clear()
         self.lstSearchResult.insertItem(0, self.tr('Searching...'))
 
-
     def search_finished_progress(self):
         self.lstSearchResult.takeItem(0)
         if self.lstSearchResult.count() == 0:
@@ -301,7 +313,6 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
                 new_widget
             )
 
-
     def show_result(self, geoservice, image_ba):
         if geoservice:
             custom_widget = QmsSearchResultItemWidget(geoservice, image_ba, extent_renderer=self.extent_renderer)
@@ -319,7 +330,6 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             new_item.setData(Qt.UserRole, None)
             self.lstSearchResult.addItem(new_item)
         self.lstSearchResult.update()
-
 
     def show_error(self, error_text):
         self.lstSearchResult.clear()
@@ -418,7 +428,7 @@ class QmsSearchResultItemWidget(QWidget):
         self.addButton.setText(self.tr("Add"))
         self.addButton.clicked.connect(self.addToMap)
         self.layout.addWidget(self.addButton)
-        
+
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
 
         self.geoservice = geoservice
