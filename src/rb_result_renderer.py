@@ -18,6 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from __future__ import print_function
 
 from qgis.PyQt.QtGui import QColor
@@ -25,29 +26,38 @@ from qgis.gui import QgsRubberBand
 from qgis.core import QgsRectangle
 from qgis.utils import iface
 
-from .compat2qgis import QGisGeometryType, getCanvasDestinationCrs, QgsCoordinateTransform, QgsCoordinateReferenceSystem
+from .compat2qgis import (
+    QGisGeometryType,
+    getCanvasDestinationCrs,
+    QgsCoordinateTransform,
+    QgsCoordinateReferenceSystem,
+)
 
-class RubberBandResultRenderer():
 
+class RubberBandResultRenderer:
     def __init__(self):
         self.iface = iface
 
         self.srs_wgs84 = QgsCoordinateReferenceSystem.fromEpsgId(4326)
-        self.transform_decorator = QgsCoordinateTransform(self.srs_wgs84, self.srs_wgs84)
+        self.transform_decorator = QgsCoordinateTransform(
+            self.srs_wgs84, self.srs_wgs84
+        )
 
         self.rb = QgsRubberBand(self.iface.mapCanvas(), QGisGeometryType.Point)
-        self.rb.setColor(QColor('magenta'))
+        self.rb.setColor(QColor("magenta"))
         self.rb.setIconSize(12)
 
-        self.features_rb = QgsRubberBand(self.iface.mapCanvas(), QGisGeometryType.Point)
-        magenta_transp = QColor('#3388ff')
+        self.features_rb = QgsRubberBand(
+            self.iface.mapCanvas(), QGisGeometryType.Point
+        )
+        magenta_transp = QColor("#3388ff")
         magenta_transp.setAlpha(120)
         self.features_rb.setColor(magenta_transp)
         self.features_rb.setIconSize(12)
         self.features_rb.setWidth(2)
 
     def show_point(self, point, center=False):
-        #check srs
+        # check srs
         if self.need_transform():
             point = self.transform_point(point)
 
@@ -62,34 +72,40 @@ class RubberBandResultRenderer():
         return getCanvasDestinationCrs(self.iface).postgisSrid() != 4326
 
     def transform_point(self, point):
-        #dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
-        #self.transformation.setDestCRSID(dest_srs_id)
-        self.transform_decorator.setDestinationCrs(getCanvasDestinationCrs(self.iface))
+        # dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
+        # self.transformation.setDestCRSID(dest_srs_id)
+        self.transform_decorator.setDestinationCrs(
+            getCanvasDestinationCrs(self.iface)
+        )
         try:
             return self.transform_decorator.transform(point)
         except:
-            print('Error on transform!')  # DEBUG! need message???
+            print("Error on transform!")  # DEBUG! need message???
             return
 
     def transform_bbox(self, bbox):
-        #dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
-        #self.transformation.setDestCRSID(dest_srs_id)
-        self.transform_decorator.setDestinationCrs(getCanvasDestinationCrs(self.iface))
+        # dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
+        # self.transformation.setDestCRSID(dest_srs_id)
+        self.transform_decorator.setDestinationCrs(
+            getCanvasDestinationCrs(self.iface)
+        )
         try:
             return self.transform_decorator.transformBoundingBox(bbox)
         except:
-            print('Error on transform!')  # DEBUG! need message???
+            print("Error on transform!")  # DEBUG! need message???
             return
 
     def transform_geom(self, geom):
-        #dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
-        #self.transformation.setDestCRSID(dest_srs_id)
-        self.transform_decorator.setDestinationCrs(getCanvasDestinationCrs(self.iface))
+        # dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
+        # self.transformation.setDestCRSID(dest_srs_id)
+        self.transform_decorator.setDestinationCrs(
+            getCanvasDestinationCrs(self.iface)
+        )
         try:
             geom.transform(self.transform_decorator)
             return geom
         except Exception as e:
-            print('Error on transform! %s' % e)  # DEBUG! need message???
+            print("Error on transform! %s" % e)  # DEBUG! need message???
             return
 
     def center_to_point(self, point):
@@ -104,7 +120,6 @@ class RubberBandResultRenderer():
             bbox = self.transform_bbox(bbox)
         self.iface.mapCanvas().setExtent(bbox)
         self.iface.mapCanvas().refresh()
-
 
     def show_feature(self, geom):
         if self.need_transform():

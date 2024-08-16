@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 import sys
 
@@ -31,13 +32,15 @@ if PY2:
     from urllib2 import urlopen, URLError
 else:
     from urllib import parse
+
     urlparse = parse
     from urllib.request import urlopen, URLError
 
 if PY3:
     import configparser
 else:
-    import ConfigParser as configparser 
+    import ConfigParser as configparser
+
 
 def get_file_dir(filename):
     if PY2:

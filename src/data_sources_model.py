@@ -20,9 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from __future__ import absolute_import
+
 # from data_source_info import DataSourceCategory
-# from group_info import 
+# from group_info import
 from .data_sources_list import DataSourcesList
 from .groups_list import GroupsList
 
@@ -83,17 +85,29 @@ class DSManagerModel(QAbstractItemModel):
                 group_item = groupsItems[groups.index(ds.group)]
             else:
                 group_item = QTreeWidgetItem()
-                group_item.setData(self.COLUMN_GROUP_DS, Qt.DisplayRole, ds.group)
+                group_item.setData(
+                    self.COLUMN_GROUP_DS, Qt.DisplayRole, ds.group
+                )
                 group_item.setData(self.COLUMN_VISIBILITY, Qt.DisplayRole, "")
-                group_item.setData(self.COLUMN_SOURCE, Qt.DisplayRole, ds.category)
+                group_item.setData(
+                    self.COLUMN_SOURCE, Qt.DisplayRole, ds.category
+                )
                 group_item.setCheckState(self.COLUMN_VISIBILITY, Qt.Unchecked)
 
                 groupInfo = groupInfoList.get(ds.group)
                 if groupInfo is not None:
-                    group_item.setIcon(self.COLUMN_GROUP_DS, QIcon(groupInfo.icon))
+                    group_item.setIcon(
+                        self.COLUMN_GROUP_DS, QIcon(groupInfo.icon)
+                    )
                 else:
-                    group_item.setData(self.COLUMN_GROUP_DS, Qt.DisplayRole, ds.group + " (%s!)" % self.tr("group not found"))
-                group_item.setData(self.COLUMN_GROUP_DS, Qt.UserRole, groupInfo)
+                    group_item.setData(
+                        self.COLUMN_GROUP_DS,
+                        Qt.DisplayRole,
+                        ds.group + " (%s!)" % self.tr("group not found"),
+                    )
+                group_item.setData(
+                    self.COLUMN_GROUP_DS, Qt.UserRole, groupInfo
+                )
 
                 groups.append(ds.group)
                 groupsItems.append(group_item)
@@ -111,14 +125,19 @@ class DSManagerModel(QAbstractItemModel):
                 ds_check_state = Qt.Unchecked
             ds_item.setCheckState(self.COLUMN_VISIBILITY, ds_check_state)
 
-            if group_item.childCount() != 0 and group_item.checkState(1) != ds_check_state:
-                group_item.setCheckState(self.COLUMN_VISIBILITY, Qt.PartiallyChecked)
+            if (
+                group_item.childCount() != 0
+                and group_item.checkState(1) != ds_check_state
+            ):
+                group_item.setCheckState(
+                    self.COLUMN_VISIBILITY, Qt.PartiallyChecked
+                )
             else:
-                group_item.setCheckState(self.COLUMN_VISIBILITY, ds_check_state)
+                group_item.setCheckState(
+                    self.COLUMN_VISIBILITY, ds_check_state
+                )
 
-            group_item.addChild(
-                ds_item
-            )
+            group_item.addChild(ds_item)
 
     def setData(self, index, value, role):
         if not index.isValid():
@@ -129,10 +148,7 @@ class DSManagerModel(QAbstractItemModel):
         if role == Qt.CheckStateRole:
             item.setData(self.COLUMN_VISIBILITY, role, value)
 
-            self.dataChanged.emit(
-                index,
-                index
-            )
+            self.dataChanged.emit(index, index)
 
             self.updateChecks(index, value)
         return True
@@ -145,7 +161,7 @@ class DSManagerModel(QAbstractItemModel):
 
             self.dataChanged.emit(
                 self.index(0, index.column(), index),
-                self.index(row, index.column(), index)
+                self.index(row, index.column(), index),
             )
         else:
             parentIndex = self.parent(index)
@@ -163,10 +179,7 @@ class DSManagerModel(QAbstractItemModel):
             else:
                 parentItem.setCheckState(index.column(), checkState)
 
-            self.dataChanged.emit(
-                parentIndex,
-                parentIndex
-            )
+            self.dataChanged.emit(parentIndex, parentIndex)
 
     def columnCount(self, parent):
         if parent.isValid():
@@ -178,7 +191,12 @@ class DSManagerModel(QAbstractItemModel):
         if not index.isValid():
             return None
 
-        if role not in [Qt.DisplayRole, Qt.CheckStateRole, Qt.DecorationRole, Qt.UserRole]:
+        if role not in [
+            Qt.DisplayRole,
+            Qt.CheckStateRole,
+            Qt.DecorationRole,
+            Qt.UserRole,
+        ]:
             return None
 
         item = index.internalPointer()
@@ -221,7 +239,11 @@ class DSManagerModel(QAbstractItemModel):
         if parentItem == self.rootItem:
             return QModelIndex()
 
-        return self.createIndex(parentItem.parent().indexOfChild(parentItem), index.column(), parentItem)
+        return self.createIndex(
+            parentItem.parent().indexOfChild(parentItem),
+            index.column(),
+            parentItem,
+        )
 
     def rowCount(self, parent):
         if not parent.isValid():
@@ -240,17 +262,22 @@ class DSManagerModel(QAbstractItemModel):
 
         if order == Qt.AscendingOrder:
             # compareFunc = lambda a, b: True if cmp(a, b) < 0 else False
-            compareFunc = lambda a, b: a < b # need to check
+            compareFunc = lambda a, b: a < b  # need to check
         else:
             # compareFunc = lambda a, b: True if cmp(a, b) > 0 else False
-            compareFunc = lambda a, b: a >= b # need to check
+            compareFunc = lambda a, b: a >= b  # need to check
 
         for groupIndexI in range(0, self.rootItem.childCount()):
             for groupIndexJ in range(0, groupIndexI):
                 groupItemI = self.rootItem.child(groupIndexI)
                 groupItemJ = self.rootItem.child(groupIndexJ)
-                if compareFunc(groupItemI.data(column, role), groupItemJ.data(column, role)):
-                    self.rootItem.insertChild(groupIndexJ, self.rootItem.takeChild(groupIndexI))
+                if compareFunc(
+                    groupItemI.data(column, role),
+                    groupItemJ.data(column, role),
+                ):
+                    self.rootItem.insertChild(
+                        groupIndexJ, self.rootItem.takeChild(groupIndexI)
+                    )
                     break
 
         self.layoutChanged.emit()
@@ -258,13 +285,17 @@ class DSManagerModel(QAbstractItemModel):
     def checkAll(self):
         for row in range(0, self.rootItem.childCount()):
             groupItem = self.rootItem.child(row)
-            groupIndex = self.createIndex(row, self.COLUMN_VISIBILITY, groupItem)
+            groupIndex = self.createIndex(
+                row, self.COLUMN_VISIBILITY, groupItem
+            )
             self.setData(groupIndex, Qt.Checked, Qt.CheckStateRole)
 
     def uncheckAll(self):
         for row in range(0, self.rootItem.childCount()):
             groupItem = self.rootItem.child(row)
-            groupIndex = self.createIndex(row, self.COLUMN_VISIBILITY, groupItem)
+            groupIndex = self.createIndex(
+                row, self.COLUMN_VISIBILITY, groupItem
+            )
             self.setData(groupIndex, Qt.Unchecked, Qt.CheckStateRole)
 
     def saveSettings(self):
@@ -274,7 +305,9 @@ class DSManagerModel(QAbstractItemModel):
             for dsIndex in range(0, groupItem.childCount()):
                 dsItem = groupItem.child(dsIndex)
                 if dsItem.checkState(self.COLUMN_VISIBILITY) == Qt.Unchecked:
-                    hideDSidList.append(dsItem.data(self.COLUMN_GROUP_DS, Qt.UserRole).id)
+                    hideDSidList.append(
+                        dsItem.data(self.COLUMN_GROUP_DS, Qt.UserRole).id
+                    )
         PluginSettings.set_hide_ds_id_list(hideDSidList)
 
     def isGroup(self, index):

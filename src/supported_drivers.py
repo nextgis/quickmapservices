@@ -23,11 +23,11 @@
 
 
 class KNOWN_DRIVERS(object):
-    WMS = 'WMS'
-    TMS = 'TMS'
-    GDAL = 'GDAL'
-    WFS = 'WFS'
-    GEOJSON = 'GeoJSON'
+    WMS = "WMS"
+    TMS = "TMS"
+    GDAL = "GDAL"
+    WFS = "WFS"
+    GEOJSON = "GeoJSON"
 
     ALL_DRIVERS = [
         WMS,

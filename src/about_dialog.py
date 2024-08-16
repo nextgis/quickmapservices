@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 
 from qgis.PyQt import uic
@@ -31,7 +32,7 @@ from .compat import configparser
 
 CURR_PATH = os.path.dirname(__file__)
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(CURR_PATH, 'about_dialog_base.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(CURR_PATH, "about_dialog_base.ui"))
 
 
 class AboutDialog(QDialog, FORM_CLASS):
@@ -42,31 +43,34 @@ class AboutDialog(QDialog, FORM_CLASS):
 
         self.btnHelp = self.buttonBox.button(QDialogButtonBox.Help)
 
-        self.lblLogo.setPixmap(QPixmap(os.path.join(CURR_PATH, 'icons/mapservices.png')))
+        self.lblLogo.setPixmap(
+            QPixmap(os.path.join(CURR_PATH, "icons/mapservices.png"))
+        )
 
         cfg = configparser.ConfigParser()
-        cfg.read(os.path.join(os.path.dirname(__file__), 'metadata.txt'))
-        version = cfg.get('general', 'version')
+        cfg.read(os.path.join(os.path.dirname(__file__), "metadata.txt"))
+        version = cfg.get("general", "version")
 
-        self.lblVersion.setText(self.tr('Version: %s') % (version))
+        self.lblVersion.setText(self.tr("Version: %s") % (version))
 
         self.tbInfo.setHtml(self.get_about_text())
         self.tbLicense.setPlainText(self.get_license_text())
         self.tb3rd.setHtml(self.get_3rd_text())
 
-
     def get_about_text(self):
-        return self.tr('<p>Convenient list of basemaps + seach string for finding datasets and basemaps. Please contribute new services via <a href="http://qms.nextgis.com">http://qms.nextgis.com</a></p>'
-                       '<p><strong>Developers:</strong> <a href="http://nextgis.com">NextGIS</a></p>'
-                       '<p><strong>Issue tracker:</strong> <a href="https://github.com/nextgis/quickmapservices/issues">GitHub</a></p>'
-                       '<p><strong>Source code:</strong> <a href="https://github.com/nextgis/quickmapservices">GitHub</a></p>')
+        return self.tr(
+            '<p>Convenient list of basemaps + seach string for finding datasets and basemaps. Please contribute new services via <a href="http://qms.nextgis.com">http://qms.nextgis.com</a></p>'
+            '<p><strong>Developers:</strong> <a href="http://nextgis.com">NextGIS</a></p>'
+            '<p><strong>Issue tracker:</strong> <a href="https://github.com/nextgis/quickmapservices/issues">GitHub</a></p>'
+            '<p><strong>Source code:</strong> <a href="https://github.com/nextgis/quickmapservices">GitHub</a></p>'
+        )
 
     def get_license_text(self):
-        with open(os.path.join(CURR_PATH, 'LICENSE')) as f:
+        with open(os.path.join(CURR_PATH, "LICENSE")) as f:
             return f.read()
 
     def get_3rd_text(self):
-        return self.tr('<p><strong>Python tile layer:</strong> <a href="https://github.com/minorua/TileLayerPlugin">TileLayer Plugin by Minoru Akagi</a></p>'
-                       '<p><strong>Some icons from QGIS:</strong> <a href="https://github.com/qgis/QGIS">QGIS GitHub</a></p>')
-
-
+        return self.tr(
+            '<p><strong>Python tile layer:</strong> <a href="https://github.com/minorua/TileLayerPlugin">TileLayer Plugin by Minoru Akagi</a></p>'
+            '<p><strong>Some icons from QGIS:</strong> <a href="https://github.com/qgis/QGIS">QGIS GitHub</a></p>'
+        )

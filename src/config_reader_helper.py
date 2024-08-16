@@ -1,8 +1,7 @@
-__author__ = 'yellow'
+__author__ = "yellow"
 
 
 class ConfigReaderHelper(object):
-
     @staticmethod
     def try_read_config(parser, section, param, reraise=False, default=None):
         try:

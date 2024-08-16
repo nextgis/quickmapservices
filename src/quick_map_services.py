@@ -20,16 +20,30 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from __future__ import absolute_import
 import os.path
 import xml.etree.ElementTree as ET
 
-from qgis.PyQt.QtCore import QSettings, QTranslator, qVersion, QCoreApplication, Qt, QUrl
-from qgis.PyQt.QtWidgets import QAction, QToolButton, QMenu,QMessageBox, QDialog
+from qgis.PyQt.QtCore import (
+    QSettings,
+    QTranslator,
+    qVersion,
+    QCoreApplication,
+    Qt,
+    QUrl,
+)
+from qgis.PyQt.QtWidgets import (
+    QAction,
+    QToolButton,
+    QMenu,
+    QMessageBox,
+    QDialog,
+)
 from qgis.PyQt.QtGui import QIcon, QDesktopServices
 
 # Initialize Qt resources from file resources.py
-#import resources_rc
+# import resources_rc
 # Import the code for the dialog
 from qgis.core import QgsProject
 from qgis.gui import QgsMessageBar
@@ -72,11 +86,12 @@ class QuickMapServices(object):
         self.locale = Locale.get_locale()
         locale_path = os.path.join(
             self.plugin_dir,
-            'i18n',
-            'QuickMapServices_{}.qm'.format(self.locale))
+            "i18n",
+            "QuickMapServices_{}.qm".format(self.locale),
+        )
         if os.path.exists(locale_path):
             r = self.translator.load(locale_path)
-            if qVersion() > '4.3.3':
+            if qVersion() > "4.3.3":
                 QCoreApplication.installTranslator(self.translator)
 
         self.custom_translator = CustomTranslator()
@@ -88,12 +103,12 @@ class QuickMapServices(object):
         try:
             ExtraSources.check_extra_dirs()
         except:
-            error_message = self.tr('Extra dirs for %s can\'t be created: %s %s') % (PluginSettings.product_name(),
-                                                                                      sys.exc_type,
-                                                                                      sys.exc_value)
-            self.iface.messageBar().pushMessage(self.tr('Error'),
-                                                error_message,
-                                                level=QgsMessageBar.CRITICAL)
+            error_message = self.tr(
+                "Extra dirs for %s can't be created: %s %s"
+            ) % (PluginSettings.product_name(), sys.exc_type, sys.exc_value)
+            self.iface.messageBar().pushMessage(
+                self.tr("Error"), error_message, level=QgsMessageBar.CRITICAL
+            )
 
         # Declare instance attributes
         self.service_actions = []
@@ -103,19 +118,19 @@ class QuickMapServices(object):
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return self.custom_translator.translate('QuickMapServices', message)
+        return self.custom_translator.translate("QuickMapServices", message)
 
     def initGui(self):
-        #import pydevd
-        #pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
+        # import pydevd
+        # pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
 
         # Register plugin layer type
         self.tileLayerType = TileLayerType(self)
         qgisRegistryInstance.addPluginLayerType(self.tileLayerType)
 
         # Create menu
-        icon_path = self.plugin_dir + '/icons/mActionAddLayer.svg'
-        self.menu = QMenu(self.tr(u'QuickMapServices'))
+        icon_path = self.plugin_dir + "/icons/mActionAddLayer.svg"
+        self.menu = QMenu(self.tr("QuickMapServices"))
         self.menu.setIcon(QIcon(icon_path))
         self.init_server_panel()
 
@@ -125,13 +140,13 @@ class QuickMapServices(object):
         self.append_menu_buttons()
 
     def _load_scales_list(self):
-        scales_filename = os.path.join(self.plugin_dir, 'scales.xml')
+        scales_filename = os.path.join(self.plugin_dir, "scales.xml")
         scales_list = []
         # TODO: remake when fix: http://hub.qgis.org/issues/11915
         # QgsScaleUtils.loadScaleList(scales_filename, scales_list, importer_message)
         xml_root = ET.parse(scales_filename).getroot()
-        for scale_el in xml_root.findall('scale'):
-            scales_list.append(scale_el.get('value'))
+        for scale_el in xml_root.findall("scale"):
+            scales_list.append(scale_el.get("value"))
         return scales_list
 
     @property
@@ -141,31 +156,38 @@ class QuickMapServices(object):
         return self._scales_list
 
     def set_nearest_scale(self):
-        #get current scale
+        # get current scale
         curr_scale = self.iface.mapCanvas().scale()
-        #find nearest
+        # find nearest
         nearest_scale = sys.maxsize
         for scale_str in self.scales_list:
-            scale = scale_str.split(':')[1]
+            scale = scale_str.split(":")[1]
             scale_int = int(scale)
-            if abs(scale_int-curr_scale) < abs(nearest_scale - curr_scale):
+            if abs(scale_int - curr_scale) < abs(nearest_scale - curr_scale):
                 nearest_scale = scale_int
 
-        #set new scale
+        # set new scale
         if nearest_scale != sys.maxsize:
             self.iface.mapCanvas().zoomScale(nearest_scale)
 
     def set_tms_scales(self):
         res = QMessageBox.question(
             self.iface.mainWindow(),
-            self.tr('QuickMapServices'),
-            self.tr('Set SlippyMap scales for current project? \nThe previous settings will be overwritten!'),
-            QMessageBox.Yes | QMessageBox.No)
+            self.tr("QuickMapServices"),
+            self.tr(
+                "Set SlippyMap scales for current project? \nThe previous settings will be overwritten!"
+            ),
+            QMessageBox.Yes | QMessageBox.No,
+        )
         if res == QMessageBox.Yes:
             # set scales
-            QgsProject.instance().writeEntry('Scales', '/ScalesList', self.scales_list)
+            QgsProject.instance().writeEntry(
+                "Scales", "/ScalesList", self.scales_list
+            )
             # activate
-            QgsProject.instance().writeEntry('Scales', '/useProjectScales', True)
+            QgsProject.instance().writeEntry(
+                "Scales", "/useProjectScales", True
+            )
             # update in main window
             # ???? no way to update: http://hub.qgis.org/issues/11917
 
@@ -188,7 +210,6 @@ class QuickMapServices(object):
         self.service_layers = None
         # # Unregister plugin layer type
         qgisRegistryInstance.removePluginLayerType(TileLayer.LAYER_TYPE)
-
 
     qms_create_service_action = None
     set_nearest_scale_act = None
@@ -224,39 +245,69 @@ class QuickMapServices(object):
         self.menu.addAction(self.qms_search_action)
 
         if not self.qms_create_service_action:
-            icon_create_service_path = self.plugin_dir + '/icons/mActionCreate.svg'
-            self.qms_create_service_action = QAction(self.tr('Add to Search'), self.iface.mainWindow())
-            self.qms_create_service_action.setIcon(QIcon(icon_create_service_path))
+            icon_create_service_path = (
+                self.plugin_dir + "/icons/mActionCreate.svg"
+            )
+            self.qms_create_service_action = QAction(
+                self.tr("Add to Search"), self.iface.mainWindow()
+            )
+            self.qms_create_service_action.setIcon(
+                QIcon(icon_create_service_path)
+            )
             self.qms_create_service_action.triggered.connect(self.openURL)
         self.menu.addAction(self.qms_create_service_action)
 
         # Scales, Settings and About actions
         self.menu.addSeparator()
-        
+
         if not self.set_nearest_scale_act:
-            icon_set_nearest_scale_path = self.plugin_dir + '/icons/mActionSettings.svg'  # TODO change icon
-            self.set_nearest_scale_act = QAction(QIcon(icon_set_nearest_scale_path), self.tr('Set proper scale'), self.iface.mainWindow())
-            self.set_nearest_scale_act.triggered.connect(self.set_nearest_scale)
+            icon_set_nearest_scale_path = (
+                self.plugin_dir + "/icons/mActionSettings.svg"
+            )  # TODO change icon
+            self.set_nearest_scale_act = QAction(
+                QIcon(icon_set_nearest_scale_path),
+                self.tr("Set proper scale"),
+                self.iface.mainWindow(),
+            )
+            self.set_nearest_scale_act.triggered.connect(
+                self.set_nearest_scale
+            )
             self.service_actions.append(self.set_nearest_scale_act)
-        self.menu.addAction(self.set_nearest_scale_act)  # TODO: uncomment after fix
+        self.menu.addAction(
+            self.set_nearest_scale_act
+        )  # TODO: uncomment after fix
 
         if not self.scales_act:
-            icon_scales_path = self.plugin_dir + '/icons/mActionSettings.svg'  # TODO change icon
-            self.scales_act = QAction(QIcon(icon_scales_path), self.tr('Set SlippyMap scales'), self.iface.mainWindow())
+            icon_scales_path = (
+                self.plugin_dir + "/icons/mActionSettings.svg"
+            )  # TODO change icon
+            self.scales_act = QAction(
+                QIcon(icon_scales_path),
+                self.tr("Set SlippyMap scales"),
+                self.iface.mainWindow(),
+            )
             self.scales_act.triggered.connect(self.set_tms_scales)
             self.service_actions.append(self.scales_act)
-        #self.menu.addAction(scales_act)  # TODO: uncomment after fix
+        # self.menu.addAction(scales_act)  # TODO: uncomment after fix
 
         if not self.settings_act:
-            icon_settings_path = self.plugin_dir + '/icons/mActionSettings.svg'
-            self.settings_act = QAction(QIcon(icon_settings_path), self.tr('Settings'), self.iface.mainWindow())
+            icon_settings_path = self.plugin_dir + "/icons/mActionSettings.svg"
+            self.settings_act = QAction(
+                QIcon(icon_settings_path),
+                self.tr("Settings"),
+                self.iface.mainWindow(),
+            )
             self.service_actions.append(self.settings_act)
             self.settings_act.triggered.connect(self.show_settings_dialog)
         self.menu.addAction(self.settings_act)
 
         if not self.info_act:
-            icon_about_path = self.plugin_dir + '/icons/mActionAbout.svg'
-            self.info_act = QAction(QIcon(icon_about_path), self.tr('About QMS'), self.iface.mainWindow())
+            icon_about_path = self.plugin_dir + "/icons/mActionAbout.svg"
+            self.info_act = QAction(
+                QIcon(icon_about_path),
+                self.tr("About QMS"),
+                self.iface.mainWindow(),
+            )
             self.service_actions.append(self.info_act)
             self.info_act.triggered.connect(self.info_dlg.show)
         self.menu.addAction(self.info_act)
@@ -287,7 +338,7 @@ class QuickMapServices(object):
         """
 
         # need workaround for WebMenu
-        _temp_act = QAction('temp', self.iface.mainWindow())
+        _temp_act = QAction("temp", self.iface.mainWindow())
         self.iface.addPluginToWebMenu("_tmp", _temp_act)
         self.iface.webMenu().addMenu(self.menu)
         self.iface.removePluginWebMenu("_tmp", _temp_act)
@@ -315,8 +366,12 @@ class QuickMapServices(object):
 
     def init_server_panel(self):
         self.server_toolbox = QmsServiceToolbox(self.iface)
-        self.iface.addDockWidget(PluginSettings.server_dock_area(), self.server_toolbox)
-        self.server_toolbox.setWindowIcon(QIcon(self.plugin_dir + '/icons/mActionSearch.svg'))
+        self.iface.addDockWidget(
+            PluginSettings.server_dock_area(), self.server_toolbox
+        )
+        self.server_toolbox.setWindowIcon(
+            QIcon(self.plugin_dir + "/icons/mActionSearch.svg")
+        )
         self.server_toolbox.setVisible(PluginSettings.server_dock_visibility())
         # self.server_toolbox.setFloating(PluginSettings.dock_floating())
         # self.server_toolbox.resize(PluginSettings.dock_size())
@@ -324,15 +379,19 @@ class QuickMapServices(object):
         # self.server_toolbox.setWindowIcon(QIcon(path.join(_current_path, 'edit-find-project.png')))
 
         # QMS search action
-        icon_settings_path = self.plugin_dir + '/icons/mActionSearch.svg'
+        icon_settings_path = self.plugin_dir + "/icons/mActionSearch.svg"
         self.qms_search_action = self.server_toolbox.toggleViewAction()
         self.qms_search_action.setIcon(QIcon(icon_settings_path))
-        self.qms_search_action.setText(self.tr('Search QMS'))
+        self.qms_search_action.setText(self.tr("Search QMS"))
 
     def remove_server_panel(self):
         mw = self.iface.mainWindow()
-        PluginSettings.set_server_dock_area(mw.dockWidgetArea(self.server_toolbox))
-        PluginSettings.set_server_dock_visibility(self.server_toolbox.isVisible())
+        PluginSettings.set_server_dock_area(
+            mw.dockWidgetArea(self.server_toolbox)
+        )
+        PluginSettings.set_server_dock_visibility(
+            self.server_toolbox.isVisible()
+        )
         # PluginSettings.set_dock_floating(self.__quick_tlb.isFloating())
         # PluginSettings.set_dock_pos(self.__quick_tlb.pos())
         # PluginSettings.set_dock_size(self.__quick_tlb.size())

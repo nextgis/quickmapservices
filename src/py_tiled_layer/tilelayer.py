@@ -19,12 +19,25 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from __future__ import absolute_import
+
 # Import the PyQt and QGIS libraries
 import os
 import threading
 
-from qgis.PyQt.QtCore import QObject, qDebug, Qt, QFile, QRectF, QPointF, QPoint, QTimer, QEventLoop, pyqtSignal
+from qgis.PyQt.QtCore import (
+    QObject,
+    qDebug,
+    Qt,
+    QFile,
+    QRectF,
+    QPointF,
+    QPoint,
+    QTimer,
+    QEventLoop,
+    pyqtSignal,
+)
 
 from qgis.PyQt.QtGui import QFont, QColor, QBrush
 from qgis.core import QgsPluginLayer, QgsPluginLayerType, QgsImageOperation
@@ -81,7 +94,9 @@ class TileLayer(QgsPluginLayer):
 
         # set custom properties
         self.setCustomProperty("title", layerDef.title)
-        self.setCustomProperty("credit", layerDef.credit)  # TODO: need to remove
+        self.setCustomProperty(
+            "credit", layerDef.credit
+        )  # TODO: need to remove
         self.setCustomProperty("serviceUrl", layerDef.serviceUrl)
         self.setCustomProperty("yOriginTop", layerDef.yOriginTop)
         self.setCustomProperty("zmin", layerDef.zmin)
@@ -91,16 +106,25 @@ class TileLayer(QgsPluginLayer):
         self.setCustomProperty("creditVisibility", self.creditVisibility)
 
         # set standard/custom crs
-        ProjectionHelper.set_tile_layer_proj(self, layerDef.epsg_crs_id, layerDef.postgis_crs_id, layerDef.custom_proj)
+        ProjectionHelper.set_tile_layer_proj(
+            self,
+            layerDef.epsg_crs_id,
+            layerDef.postgis_crs_id,
+            layerDef.custom_proj,
+        )
 
         if layerDef.bbox:
-            self.setExtent(BoundingBox.degreesToMercatorMeters(layerDef.bbox).toQgsRectangle())
+            self.setExtent(
+                BoundingBox.degreesToMercatorMeters(
+                    layerDef.bbox
+                ).toQgsRectangle()
+            )
         else:
             if self.layerDef.tile_ranges is not None:
                 zmin = sorted(self.layerDef.tile_ranges.keys())[0]
                 tbbox = self.layerDef.tile_ranges[zmin]
 
-                size = self.layerDef.tsize1 / 2**(zmin - 1)
+                size = self.layerDef.tsize1 / 2 ** (zmin - 1)
                 xmin = self.layerDef.originX + tbbox[0] * size
                 xmax = self.layerDef.originX + (tbbox[1] + 1) * size
                 ymin = self.layerDef.originY - (tbbox[3] + 1) * size
@@ -134,17 +158,21 @@ class TileLayer(QgsPluginLayer):
         # downloader
         self.downloader = Downloader(self)
         self.downloader.userAgent = QGISSettings.get_default_user_agent()
-        self.downloader.default_cache_expiration = QGISSettings.get_default_tile_expiry()
-        self.downloader.max_connection = PluginSettings.default_tile_layer_conn_count()  #TODO: Move to INI files
+        self.downloader.default_cache_expiration = (
+            QGISSettings.get_default_tile_expiry()
+        )
+        self.downloader.max_connection = (
+            PluginSettings.default_tile_layer_conn_count()
+        )  # TODO: Move to INI files
         self.downloader.replyFinished.connect(self.networkReplyFinished)
         # QObject.connect(self.downloader, SIGNAL("replyFinished(QString, int, int)"), self.networkReplyFinished)
 
-        #network
+        # network
         self.downloadTimeout = QGISSettings.get_default_network_timeout()
 
         # multi-thread rendering
         self.eventLoop = None
-        
+
         self.fetchRequest.connect(self.fetchRequestSlot)
         # QObject.connect(self, SIGNAL("fetchRequest(QStringList)"), self.fetchRequest)
         if self.iface:
@@ -184,7 +212,6 @@ class TileLayer(QgsPluginLayer):
         self.setCustomProperty("contrast", contrast)
 
     def draw(self, renderContext):
-
         self.renderContext = renderContext
         extent = renderContext.extent()
         if extent.isEmpty() or extent.width() == float("inf"):
@@ -193,13 +220,21 @@ class TileLayer(QgsPluginLayer):
 
         mapSettings = self.iface.mapCanvas().mapSettings()
         painter = renderContext.painter()
-        isDpiEqualToCanvas = painter.device().logicalDpiX() == mapSettings.outputDpi()
+        isDpiEqualToCanvas = (
+            painter.device().logicalDpiX() == mapSettings.outputDpi()
+        )
         if isDpiEqualToCanvas or not self.useLastZoomForPrint:
             # calculate zoom level
-            tile_mpp1 = self.layerDef.tsize1 / self.layerDef.TILE_SIZE # should be attribute, not method call..
+            tile_mpp1 = (
+                self.layerDef.tsize1 / self.layerDef.TILE_SIZE
+            )  # should be attribute, not method call..
             viewport_mpp = extent.width() / painter.viewport().width()
             lg = math.log(float(tile_mpp1) / float(viewport_mpp), 2)
-            zoom = int(math.modf(lg)[1]) + 1*(math.modf(lg)[0] > self.CHANGE_SCALE_VALUE) + 1
+            zoom = (
+                int(math.modf(lg)[1])
+                + 1 * (math.modf(lg)[0] > self.CHANGE_SCALE_VALUE)
+                + 1
+            )
             zoom = max(0, min(zoom, self.layerDef.zmax))
             # zoom = max(self.layerDef.zmin, zoom)
         else:
@@ -208,32 +243,58 @@ class TileLayer(QgsPluginLayer):
 
         # zoom limit
         if zoom < self.layerDef.zmin:
-            msg = self.tr("Current zoom level ({0}) is smaller than zmin ({1}): {2}").format(zoom,
-                                                                                             self.layerDef.zmin,
-                                                                                             self.layerDef.title)
+            msg = self.tr(
+                "Current zoom level ({0}) is smaller than zmin ({1}): {2}"
+            ).format(zoom, self.layerDef.zmin, self.layerDef.title)
             self.emitShowBarMessage(msg, QGisMessageBarLevel.Info, 2)
             return True
 
         while True:
             # calculate tile range (yOrigin is top)
             size = self.layerDef.tsize1 / 2 ** (zoom - 1)
-            if self.layerDef.tile_ranges is None: # should add xOffset & yOffset in first part of conditional
-                matrixSize = 2 ** zoom
-                ulx = max(0, int((extent.xMinimum() + self.layerDef.tsize1) / size))
-                uly = max(0, int((self.layerDef.tsize1 - extent.yMaximum()) / size))
-                lrx = min(int((extent.xMaximum() + self.layerDef.tsize1) / size), matrixSize - 1)
-                lry = min(int((self.layerDef.tsize1 - extent.yMinimum()) / size), matrixSize - 1)
-            else: # for tile_ranges
+            if (
+                self.layerDef.tile_ranges is None
+            ):  # should add xOffset & yOffset in first part of conditional
+                matrixSize = 2**zoom
+                ulx = max(
+                    0, int((extent.xMinimum() + self.layerDef.tsize1) / size)
+                )
+                uly = max(
+                    0, int((self.layerDef.tsize1 - extent.yMaximum()) / size)
+                )
+                lrx = min(
+                    int((extent.xMaximum() + self.layerDef.tsize1) / size),
+                    matrixSize - 1,
+                )
+                lry = min(
+                    int((self.layerDef.tsize1 - extent.yMinimum()) / size),
+                    matrixSize - 1,
+                )
+            else:  # for tile_ranges
                 xmin, xmax, ymin, ymax = self.layerDef.tile_ranges[zoom]
 
-                ulx = max(int((extent.xMinimum() - self.layerDef.originX)/ size), xmin)
-                uly = max(int((self.layerDef.originY - extent.yMaximum())/ size), ymin)
-                lrx = min(int((extent.xMaximum() - self.layerDef.originX)/ size), xmax)
-                lry = min(int((self.layerDef.originY - extent.yMinimum())/ size), ymax)
+                ulx = max(
+                    int((extent.xMinimum() - self.layerDef.originX) / size),
+                    xmin,
+                )
+                uly = max(
+                    int((self.layerDef.originY - extent.yMaximum()) / size),
+                    ymin,
+                )
+                lrx = min(
+                    int((extent.xMaximum() - self.layerDef.originX) / size),
+                    xmax,
+                )
+                lry = min(
+                    int((self.layerDef.originY - extent.yMinimum()) / size),
+                    ymax,
+                )
 
             # bounding box limit
             if self.layerDef.bbox:
-                trange = self.layerDef.bboxDegreesToTileRange(zoom, self.layerDef.bbox)
+                trange = self.layerDef.bboxDegreesToTileRange(
+                    zoom, self.layerDef.bbox
+                )
                 ulx = max(ulx, trange.xmin)
                 uly = max(uly, trange.ymin)
                 lrx = min(lrx, trange.xmax)
@@ -250,15 +311,23 @@ class TileLayer(QgsPluginLayer):
 
                 # if the zoom level is less than the minimum, do not draw
                 if zoom < self.layerDef.zmin:
-                    msg = self.tr("Tile count is over limit ({0}, max={1})").format(tileCount, self.MAX_TILE_COUNT)
-                    self.emitShowBarMessage(msg, QGisMessageBarLevel.Warning, 4)
+                    msg = self.tr(
+                        "Tile count is over limit ({0}, max={1})"
+                    ).format(tileCount, self.MAX_TILE_COUNT)
+                    self.emitShowBarMessage(
+                        msg, QGisMessageBarLevel.Warning, 4
+                    )
                     return True
                 continue
 
             # zoom level has been determined
             break
 
-        self.logT("TileLayer.draw: {0} {1} {2} {3} {4}".format(zoom, ulx, uly, lrx, lry))
+        self.logT(
+            "TileLayer.draw: {0} {1} {2} {3} {4}".format(
+                zoom, ulx, uly, lrx, lry
+            )
+        )
 
         # save painter state
         painter.save()
@@ -281,7 +350,11 @@ class TileLayer(QgsPluginLayer):
                 for tx in range(ulx, lrx + 1):
                     data = None
                     url = self.layerDef.tileUrl(zoom, tx, ty)
-                    if self.tiles and zoom == self.tiles.zoom and url in self.tiles.tiles:
+                    if (
+                        self.tiles
+                        and zoom == self.tiles.zoom
+                        and url in self.tiles.tiles
+                    ):
                         data = self.tiles.tiles[url].data
                     tiles.addTile(url, Tile(zoom, tx, ty, data))
                     if data is None:
@@ -300,25 +373,44 @@ class TileLayer(QgsPluginLayer):
 
                 if self.iface:
                     cacheHits += self.downloader.cacheHits
-                    downloadedCount = self.downloader.fetchSuccesses - self.downloader.cacheHits
-                    msg = self.tr("{0} files downloaded. {1} cache hits.").format(downloadedCount, cacheHits)
+                    downloadedCount = (
+                        self.downloader.fetchSuccesses
+                        - self.downloader.cacheHits
+                    )
+                    msg = self.tr(
+                        "{0} files downloaded. {1} cache hits."
+                    ).format(downloadedCount, cacheHits)
                     barmsg = None
                     if self.downloader.errorStatus != Downloader.NO_ERROR:
-                        if self.downloader.errorStatus == Downloader.TIMEOUT_ERROR:
-                            barmsg = self.tr("Download Timeout - {}").format(self.name())
+                        if (
+                            self.downloader.errorStatus
+                            == Downloader.TIMEOUT_ERROR
+                        ):
+                            barmsg = self.tr("Download Timeout - {}").format(
+                                self.name()
+                            )
                         else:
-                            msg += self.tr(" {} files failed.").format(self.downloader.fetchErrors)
+                            msg += self.tr(" {} files failed.").format(
+                                self.downloader.fetchErrors
+                            )
                             if self.downloader.fetchSuccesses == 0:
-                                barmsg = self.tr("Failed to download all {0} files. - {1}").format(
-                                    self.downloader.fetchErrors, self.name())
+                                barmsg = self.tr(
+                                    "Failed to download all {0} files. - {1}"
+                                ).format(
+                                    self.downloader.fetchErrors, self.name()
+                                )
                     self.showStatusMessage(msg, 5000)
                     if barmsg:
-                        self.emitShowBarMessage(barmsg, QGisMessageBarLevel.Warning, 4)
+                        self.emitShowBarMessage(
+                            barmsg, QGisMessageBarLevel.Warning, 4
+                        )
 
             # apply layer style
             oldOpacity = painter.opacity()
             painter.setOpacity(0.01 * (100 - self.transparency))
-            oldSmoothRenderHint = painter.testRenderHint(QPainter.SmoothPixmapTransform)
+            oldSmoothRenderHint = painter.testRenderHint(
+                QPainter.SmoothPixmapTransform
+            )
             if self.smoothRender:
                 painter.setRenderHint(QPainter.SmoothPixmapTransform)
 
@@ -334,7 +426,9 @@ class TileLayer(QgsPluginLayer):
             # restore layer style
             painter.setOpacity(oldOpacity)
             if self.smoothRender:
-                painter.setRenderHint(QPainter.SmoothPixmapTransform, oldSmoothRenderHint)
+                painter.setRenderHint(
+                    QPainter.SmoothPixmapTransform, oldSmoothRenderHint
+                )
 
             # draw credit on the bottom right corner
             if self.creditVisibility and self.layerDef.credit:
@@ -346,12 +440,24 @@ class TileLayer(QgsPluginLayer):
 
                 visibleSWidth = painter.viewport().width() * scaleX / scale
                 visibleSHeight = painter.viewport().height() * scaleY / scale
-                rect = QRect(0, 0, visibleSWidth - margin, visibleSHeight - margin)
-                textRect = painter.boundingRect(rect, Qt.AlignBottom | Qt.AlignRight, self.layerDef.credit)
-                bgRect = QRect(textRect.left() - paddingH, textRect.top() - paddingV, textRect.width() + 2 * paddingH,
-                               textRect.height() + 2 * paddingV)
-                painter.fillRect(bgRect, QColor(240, 240, 240, 150))  # 197, 234, 243, 150))
-                painter.drawText(rect, Qt.AlignBottom | Qt.AlignRight, self.layerDef.credit)
+                rect = QRect(
+                    0, 0, visibleSWidth - margin, visibleSHeight - margin
+                )
+                textRect = painter.boundingRect(
+                    rect, Qt.AlignBottom | Qt.AlignRight, self.layerDef.credit
+                )
+                bgRect = QRect(
+                    textRect.left() - paddingH,
+                    textRect.top() - paddingV,
+                    textRect.width() + 2 * paddingH,
+                    textRect.height() + 2 * paddingV,
+                )
+                painter.fillRect(
+                    bgRect, QColor(240, 240, 240, 150)
+                )  # 197, 234, 243, 150))
+                painter.drawText(
+                    rect, Qt.AlignBottom | Qt.AlignRight, self.layerDef.credit
+                )
 
         # restore painter state
         painter.restore()
@@ -366,16 +472,23 @@ class TileLayer(QgsPluginLayer):
         image = tiles.image()
         if self.grayscaleRender:
             QgsImageOperation.convertToGrayscale(image)
-        if self.brigthness != LayerDefaultSettings.BRIGTNESS or self.contrast != LayerDefaultSettings.CONTRAST:
-            QgsImageOperation.adjustBrightnessContrast(image, self.brigthness, self.contrast)
+        if (
+            self.brigthness != LayerDefaultSettings.BRIGTNESS
+            or self.contrast != LayerDefaultSettings.CONTRAST
+        ):
+            QgsImageOperation.adjustBrightnessContrast(
+                image, self.brigthness, self.contrast
+            )
 
         # tile extent to pixel
         map2pixel = renderContext.mapToPixel()
         extent = tiles.extent()
         topLeft = map2pixel.transform(extent.xMinimum(), extent.yMaximum())
         bottomRight = map2pixel.transform(extent.xMaximum(), extent.yMinimum())
-        rect = QRectF(QPointF(topLeft.x() * sdx, topLeft.y() * sdy),
-                      QPointF(bottomRight.x() * sdx, bottomRight.y() * sdy))
+        rect = QRectF(
+            QPointF(topLeft.x() * sdx, topLeft.y() * sdy),
+            QPointF(bottomRight.x() * sdx, bottomRight.y() * sdy),
+        )
 
         # draw the image on the map canvas
         renderContext.painter().drawImage(rect, image)
@@ -397,30 +510,54 @@ class TileLayer(QgsPluginLayer):
         image = tiles.image()
         if self.grayscaleRender:
             QgsImageOperation.convertToGrayscale(image)
-        if self.brigthness != LayerDefaultSettings.BRIGTNESS or self.contrast != LayerDefaultSettings.CONTRAST:
-            QgsImageOperation.adjustBrightnessContrast(image, self.brigthness, self.contrast)
+        if (
+            self.brigthness != LayerDefaultSettings.BRIGTNESS
+            or self.contrast != LayerDefaultSettings.CONTRAST
+        ):
+            QgsImageOperation.adjustBrightnessContrast(
+                image, self.brigthness, self.contrast
+            )
 
         # tile extent
         extent = tiles.extent()
-        geotransform = [extent.xMinimum(), extent.width() / image.width(), 0, extent.yMaximum(), 0,
-                        -extent.height() / image.height()]
+        geotransform = [
+            extent.xMinimum(),
+            extent.width() / image.width(),
+            0,
+            extent.yMaximum(),
+            0,
+            -extent.height() / image.height(),
+        ]
 
         driver = gdal.GetDriverByName("MEM")
-        tile_ds = driver.Create("", image.width(), image.height(), 1, gdal.GDT_UInt32)
+        tile_ds = driver.Create(
+            "", image.width(), image.height(), 1, gdal.GDT_UInt32
+        )
         tile_ds.SetProjection(str(transform.sourceCrs().toWkt()))
         tile_ds.SetGeoTransform(geotransform)
 
         # QImage to raster
         ba = image.bits().asstring(image.numBytes())
-        tile_ds.GetRasterBand(1).WriteRaster(0, 0, image.width(), image.height(), ba)
+        tile_ds.GetRasterBand(1).WriteRaster(
+            0, 0, image.width(), image.height(), ba
+        )
 
         # canvas extent
         m2p = renderContext.mapToPixel()
         viewport = renderContext.painter().viewport()
         width = viewport.width()
         height = viewport.height()
-        extent = QgsRectangle(m2p.toMapCoordinatesF(0, 0), m2p.toMapCoordinatesF(width, height))
-        geotransform = [extent.xMinimum(), extent.width() / width, 0, extent.yMaximum(), 0, -extent.height() / height]
+        extent = QgsRectangle(
+            m2p.toMapCoordinatesF(0, 0), m2p.toMapCoordinatesF(width, height)
+        )
+        geotransform = [
+            extent.xMinimum(),
+            extent.width() / width,
+            0,
+            extent.yMaximum(),
+            0,
+            -extent.height() / height,
+        ]
 
         canvas_ds = driver.Create("", width, height, 1, gdal.GDT_UInt32)
         canvas_ds.SetProjection(str(transform.destCRS().toWkt()))
@@ -431,17 +568,27 @@ class TileLayer(QgsPluginLayer):
 
         # raster to QImage
         ba = canvas_ds.GetRasterBand(1).ReadRaster(0, 0, width, height)
-        reprojected_image = QImage(ba, width, height, QImage.Format_ARGB32_Premultiplied)
+        reprojected_image = QImage(
+            ba, width, height, QImage.Format_ARGB32_Premultiplied
+        )
 
         # draw the image on the map canvas
-        rect = QRectF(QPointF(0, 0), QPointF(viewport.width() * sdx, viewport.height() * sdy))
+        rect = QRectF(
+            QPointF(0, 0),
+            QPointF(viewport.width() * sdx, viewport.height() * sdy),
+        )
         renderContext.painter().drawImage(rect, reprojected_image)
 
     def drawTilesDirectly(self, renderContext, tiles, sdx=1.0, sdy=1.0):
         p = renderContext.painter()
         for url, tile in tiles.tiles.items():
-            self.log("Draw tile: zoom: %d, x:%d, y:%d, data:%s" % (tile.zoom, tile.x, tile.y, str(tile.data)))
-            rect = self.getTileRect(renderContext, tile.zoom, tile.x, tile.y, sdx, sdy)
+            self.log(
+                "Draw tile: zoom: %d, x:%d, y:%d, data:%s"
+                % (tile.zoom, tile.x, tile.y, str(tile.data))
+            )
+            rect = self.getTileRect(
+                renderContext, tile.zoom, tile.x, tile.y, sdx, sdy
+            )
             if tile.data:
                 image = QImage()
                 image.loadFromData(tile.data)
@@ -453,9 +600,27 @@ class TileLayer(QgsPluginLayer):
         painter.scale(scaleX, scaleY)
 
         if "frame" in self.layerDef.serviceUrl:
-            self.drawFrames(renderContext, zoom, ulx, uly, lrx, lry, 1.0 / scaleX, 1.0 / scaleY)
+            self.drawFrames(
+                renderContext,
+                zoom,
+                ulx,
+                uly,
+                lrx,
+                lry,
+                1.0 / scaleX,
+                1.0 / scaleY,
+            )
         if "number" in self.layerDef.serviceUrl:
-            self.drawNumbers(renderContext, zoom, ulx, uly, lrx, lry, 1.0 / scaleX, 1.0 / scaleY)
+            self.drawNumbers(
+                renderContext,
+                zoom,
+                ulx,
+                uly,
+                lrx,
+                lry,
+                1.0 / scaleX,
+                1.0 / scaleY,
+            )
         if "info" in self.layerDef.serviceUrl:
             self.drawInfo(renderContext, zoom, ulx, uly, lrx, lry)
 
@@ -463,11 +628,19 @@ class TileLayer(QgsPluginLayer):
         rect = self.getTileRect(renderContext, zoom, x, y, sdx, sdy)
         p = renderContext.painter()
         # p.drawRect(rect)   # A slash appears on the top-right tile without Antialiasing render hint.
-        pts = [rect.topLeft(), rect.topRight(), rect.bottomRight(), rect.bottomLeft(), rect.topLeft()]
+        pts = [
+            rect.topLeft(),
+            rect.topRight(),
+            rect.bottomRight(),
+            rect.bottomLeft(),
+            rect.topLeft(),
+        ]
         for i in range(4):
             p.drawLine(pts[i], pts[i + 1])
 
-    def drawFrames(self, renderContext, zoom, xmin, ymin, xmax, ymax, sdx, sdy):
+    def drawFrames(
+        self, renderContext, zoom, xmin, ymin, xmax, ymax, sdx, sdy
+    ):
         for y in range(ymin, ymax + 1):
             for x in range(xmin, xmax + 1):
                 self.drawFrame(renderContext, zoom, x, y, sdx, sdy)
@@ -476,10 +649,12 @@ class TileLayer(QgsPluginLayer):
         rect = self.getTileRect(renderContext, zoom, x, y, sdx, sdy)
         p = renderContext.painter()
         if not self.layerDef.yOriginTop:
-            y = (2 ** zoom - 1) - y
-        p.drawText(rect, Qt.AlignCenter, "(%d, %d)\nzoom: %d" % (x, y, zoom));
+            y = (2**zoom - 1) - y
+        p.drawText(rect, Qt.AlignCenter, "(%d, %d)\nzoom: %d" % (x, y, zoom))
 
-    def drawNumbers(self, renderContext, zoom, xmin, ymin, xmax, ymax, sdx, sdy):
+    def drawNumbers(
+        self, renderContext, zoom, xmin, ymin, xmax, ymax, sdx, sdy
+    ):
         for y in range(ymin, ymax + 1):
             for x in range(xmin, xmax + 1):
                 self.drawNumber(renderContext, zoom, x, y, sdx, sdy)
@@ -489,51 +664,98 @@ class TileLayer(QgsPluginLayer):
         mapSettings = self.iface.mapCanvas().mapSettings()
         lines = []
         lines.append("TileLayer")
-        lines.append(" zoom: %d, tile matrix extent: (%d, %d) - (%d, %d), tile count: %d * %d" % (
-        zoom, xmin, ymin, xmax, ymax, xmax - xmin, ymax - ymin))
+        lines.append(
+            " zoom: %d, tile matrix extent: (%d, %d) - (%d, %d), tile count: %d * %d"
+            % (zoom, xmin, ymin, xmax, ymax, xmax - xmin, ymax - ymin)
+        )
         extent = renderContext.extent()
         lines.append(" map extent (renderContext): %s" % extent.toString())
-        lines.append(" map center: %lf, %lf" % (extent.center().x(), extent.center().y() ))
-        lines.append(" map size: %f, %f" % (extent.width(), extent.height() ))
-        lines.append(" map extent (map canvas): %s" % self.iface.mapCanvas().extent().toString())
+        lines.append(
+            " map center: %lf, %lf"
+            % (extent.center().x(), extent.center().y())
+        )
+        lines.append(" map size: %f, %f" % (extent.width(), extent.height()))
+        lines.append(
+            " map extent (map canvas): %s"
+            % self.iface.mapCanvas().extent().toString()
+        )
         m2p = renderContext.mapToPixel()
         painter = renderContext.painter()
         viewport = painter.viewport()
-        mapExtent = QgsRectangle(m2p.toMapCoordinatesF(0, 0),
-                                 m2p.toMapCoordinatesF(viewport.width(), viewport.height()))
+        mapExtent = QgsRectangle(
+            m2p.toMapCoordinatesF(0, 0),
+            m2p.toMapCoordinatesF(viewport.width(), viewport.height()),
+        )
         lines.append(" map extent (calculated): %s" % mapExtent.toString())
-        lines.append(" viewport size (pixel): %d, %d" % (viewport.width(), viewport.height() ))
-        lines.append(" window size (pixel): %d, %d" % (painter.window().width(), painter.window().height() ))
         lines.append(
-            " outputSize (pixel): %d, %d" % (mapSettings.outputSize().width(), mapSettings.outputSize().height() ))
+            " viewport size (pixel): %d, %d"
+            % (viewport.width(), viewport.height())
+        )
+        lines.append(
+            " window size (pixel): %d, %d"
+            % (painter.window().width(), painter.window().height())
+        )
+        lines.append(
+            " outputSize (pixel): %d, %d"
+            % (
+                mapSettings.outputSize().width(),
+                mapSettings.outputSize().height(),
+            )
+        )
         device = painter.device()
-        lines.append(" deviceSize (pixel): %f, %f" % (device.width(), device.height() ))
-        lines.append(" logicalDpi: %f, %f" % (device.logicalDpiX(), device.logicalDpiY()))
+        lines.append(
+            " deviceSize (pixel): %f, %f" % (device.width(), device.height())
+        )
+        lines.append(
+            " logicalDpi: %f, %f"
+            % (device.logicalDpiX(), device.logicalDpiY())
+        )
         lines.append(" outputDpi: %f" % mapSettings.outputDpi())
         lines.append(" mapToPixel: %s" % m2p.showParameters())
-        lines.append(" meters per pixel: %f" % (extent.width() / viewport.width()))
+        lines.append(
+            " meters per pixel: %f" % (extent.width() / viewport.width())
+        )
         lines.append(" scaleFactor: %f" % renderContext.scaleFactor())
         lines.append(" rendererScale: %f" % renderContext.rendererScale())
         scaleX, scaleY = self.getScaleToVisibleExtent(renderContext)
         lines.append(" scale: %f, %f" % (scaleX, scaleY))
 
         # draw information
-        textRect = painter.boundingRect(QRect(QPoint(0, 0), viewport.size()), Qt.AlignLeft, "Q")
+        textRect = painter.boundingRect(
+            QRect(QPoint(0, 0), viewport.size()), Qt.AlignLeft, "Q"
+        )
         for i, line in enumerate(lines):
             painter.drawText(10, (i + 1) * textRect.height(), line)
             self.log(line)
 
         # diagonal
-        painter.drawLine(QPointF(0, 0), QPointF(painter.viewport().width(), painter.viewport().height()))
-        painter.drawLine(QPointF(painter.viewport().width(), 0), QPointF(0, painter.viewport().height()))
+        painter.drawLine(
+            QPointF(0, 0),
+            QPointF(painter.viewport().width(), painter.viewport().height()),
+        )
+        painter.drawLine(
+            QPointF(painter.viewport().width(), 0),
+            QPointF(0, painter.viewport().height()),
+        )
 
         # credit label
         margin, paddingH, paddingV = (3, 4, 3)
         credit = "This is credit"
-        rect = QRect(0, 0, painter.viewport().width() - margin, painter.viewport().height() - margin)
-        textRect = painter.boundingRect(rect, Qt.AlignBottom | Qt.AlignRight, credit)
-        bgRect = QRect(textRect.left() - paddingH, textRect.top() - paddingV, textRect.width() + 2 * paddingH,
-                       textRect.height() + 2 * paddingV)
+        rect = QRect(
+            0,
+            0,
+            painter.viewport().width() - margin,
+            painter.viewport().height() - margin,
+        )
+        textRect = painter.boundingRect(
+            rect, Qt.AlignBottom | Qt.AlignRight, credit
+        )
+        bgRect = QRect(
+            textRect.left() - paddingH,
+            textRect.top() - paddingV,
+            textRect.width() + 2 * paddingH,
+            textRect.height() + 2 * paddingV,
+        )
         painter.drawRect(bgRect)
         painter.drawText(rect, Qt.AlignBottom | Qt.AlignRight, credit)
 
@@ -549,7 +771,7 @@ class TileLayer(QgsPluginLayer):
             # FIX ME: want to get original visible extent in project CRS or visible view size in pixels
 
             # extent = ct.transformBoundingBox(extent)
-            #xmax, ymin = extent.xMaximum(), extent.yMinimum()
+            # xmax, ymin = extent.xMaximum(), extent.yMinimum()
 
             pt1 = ct.transform(extent.xMaximum(), extent.yMaximum())
             pt2 = ct.transform(extent.xMaximum(), extent.yMinimum())
@@ -564,18 +786,26 @@ class TileLayer(QgsPluginLayer):
         scaleY = bottomRight.y() / viewport.height()
         return scaleX, scaleY
 
-    def getTileRect(self, renderContext, zoom, x, y, sdx=1.0, sdy=1.0, toInt=True):
-        """ get tile pixel rect in the render context """
+    def getTileRect(
+        self, renderContext, zoom, x, y, sdx=1.0, sdy=1.0, toInt=True
+    ):
+        """get tile pixel rect in the render context"""
         r = self.layerDef.getTileRect(zoom, x, y)
         map2pix = renderContext.mapToPixel()
         topLeft = map2pix.transform(r.xMinimum(), r.yMaximum())
         bottomRight = map2pix.transform(r.xMaximum(), r.yMinimum())
         if toInt:
-            return QRect(QPoint(round(topLeft.x() * sdx), round(topLeft.y() * sdy)),
-                         QPoint(round(bottomRight.x() * sdx), round(bottomRight.y() * sdy)))
+            return QRect(
+                QPoint(round(topLeft.x() * sdx), round(topLeft.y() * sdy)),
+                QPoint(
+                    round(bottomRight.x() * sdx), round(bottomRight.y() * sdy)
+                ),
+            )
         else:
-            return QRectF(QPointF(topLeft.x() * sdx, topLeft.y() * sdy),
-                          QPointF(bottomRight.x() * sdx, bottomRight.y() * sdy))
+            return QRectF(
+                QPointF(topLeft.x() * sdx, topLeft.y() * sdy),
+                QPointF(bottomRight.x() * sdx, bottomRight.y() * sdy),
+            )
 
     def isProjectCrsWebMercator(self):
         mapSettings = self.iface.mapCanvas().mapSettings()
@@ -589,12 +819,17 @@ class TileLayer(QgsPluginLayer):
             # self.emit(SIGNAL("allRepliesFinished()"))
             self.allRepliesFinished.emit()
 
-
-        downloadedCount = self.downloader.fetchSuccesses - self.downloader.cacheHits
+        downloadedCount = (
+            self.downloader.fetchSuccesses - self.downloader.cacheHits
+        )
         totalCount = self.downloader.finishedCount() + unfinishedCount
-        msg = self.tr("{0} of {1} files downloaded.").format(downloadedCount, totalCount)
+        msg = self.tr("{0} of {1} files downloaded.").format(
+            downloadedCount, totalCount
+        )
         if self.downloader.fetchErrors:
-            msg += self.tr(" {} files failed.").format(self.downloader.fetchErrors)
+            msg += self.tr(" {} files failed.").format(
+                self.downloader.fetchErrors
+            )
         self.showStatusMessage(msg)
 
     def readXml(self, node):
@@ -602,30 +837,70 @@ class TileLayer(QgsPluginLayer):
         self.layerDef.title = self.customProperty("title", "")
         self.layerDef.credit = self.customProperty("credit", "")
         if self.layerDef.credit == "":
-            self.layerDef.credit = self.customProperty("providerName", "")  # for compatibility with 0.11
+            self.layerDef.credit = self.customProperty(
+                "providerName", ""
+            )  # for compatibility with 0.11
         self.layerDef.serviceUrl = self.customProperty("serviceUrl", "")
         self.layerDef.yOriginTop = int(self.customProperty("yOriginTop", 1))
-        self.layerDef.zmin = int(self.customProperty("zmin", TileDefaultSettings.ZMIN))
-        self.layerDef.zmax = int(self.customProperty("zmax", TileDefaultSettings.ZMAX))
+        self.layerDef.zmin = int(
+            self.customProperty("zmin", TileDefaultSettings.ZMIN)
+        )
+        self.layerDef.zmax = int(
+            self.customProperty("zmax", TileDefaultSettings.ZMAX)
+        )
         bbox = self.customProperty("bbox", None)
         if bbox:
             self.layerDef.bbox = BoundingBox.fromString(bbox)
-            self.setExtent(BoundingBox.degreesToMercatorMeters(self.layerDef.bbox).toQgsRectangle())
+            self.setExtent(
+                BoundingBox.degreesToMercatorMeters(
+                    self.layerDef.bbox
+                ).toQgsRectangle()
+            )
         # layer style
-        self.setTransparency(int(self.customProperty("transparency", LayerDefaultSettings.TRANSPARENCY)))
-        self.setBlendModeByName(self.customProperty("blendMode", LayerDefaultSettings.BLEND_MODE))
-        self.setSmoothRender(int(self.customProperty("smoothRender", LayerDefaultSettings.SMOOTH_RENDER)))
+        self.setTransparency(
+            int(
+                self.customProperty(
+                    "transparency", LayerDefaultSettings.TRANSPARENCY
+                )
+            )
+        )
+        self.setBlendModeByName(
+            self.customProperty("blendMode", LayerDefaultSettings.BLEND_MODE)
+        )
+        self.setSmoothRender(
+            int(
+                self.customProperty(
+                    "smoothRender", LayerDefaultSettings.SMOOTH_RENDER
+                )
+            )
+        )
         self.creditVisibility = int(self.customProperty("creditVisibility", 1))
-        self.setGrayscaleRender(int(self.customProperty("grayscaleRender", LayerDefaultSettings.GRAYSCALE_RENDER)))
-        self.setBrigthness(int(self.customProperty("brigthness", LayerDefaultSettings.BRIGTNESS)))
-        self.setContrast(float(self.customProperty("contrast", LayerDefaultSettings.CONTRAST)))
+        self.setGrayscaleRender(
+            int(
+                self.customProperty(
+                    "grayscaleRender", LayerDefaultSettings.GRAYSCALE_RENDER
+                )
+            )
+        )
+        self.setBrigthness(
+            int(
+                self.customProperty(
+                    "brigthness", LayerDefaultSettings.BRIGTNESS
+                )
+            )
+        )
+        self.setContrast(
+            float(
+                self.customProperty("contrast", LayerDefaultSettings.CONTRAST)
+            )
+        )
 
         return True
 
     def writeXml(self, node, doc):
-        element = node.toElement();
+        element = node.toElement()
         element.setAttribute("type", "plugin")
-        element.setAttribute("name", TileLayer.LAYER_TYPE);
+        element.setAttribute("name", TileLayer.LAYER_TYPE)
         return True
 
     def readSymbology(self, node, errorMessage):
@@ -636,17 +911,32 @@ class TileLayer(QgsPluginLayer):
 
     def metadata(self):
         lines = []
-        fmt = u"%s:\t%s"
+        fmt = "%s:\t%s"
         lines.append(fmt % (self.tr("Title"), self.layerDef.title))
         lines.append(fmt % (self.tr("Credit"), self.layerDef.credit))
         lines.append(fmt % (self.tr("URL"), self.layerDef.serviceUrl))
-        lines.append(fmt % (self.tr("yOrigin"), u"%s (yOriginTop=%d)" % (
-        ("Bottom", "Top")[self.layerDef.yOriginTop], self.layerDef.yOriginTop)))
+        lines.append(
+            fmt
+            % (
+                self.tr("yOrigin"),
+                "%s (yOriginTop=%d)"
+                % (
+                    ("Bottom", "Top")[self.layerDef.yOriginTop],
+                    self.layerDef.yOriginTop,
+                ),
+            )
+        )
         if self.layerDef.bbox:
             extent = self.layerDef.bbox.toString()
         else:
             extent = self.tr("Not set")
-        lines.append(fmt % (self.tr("Zoom range"), "%d - %d" % (self.layerDef.zmin, self.layerDef.zmax)))
+        lines.append(
+            fmt
+            % (
+                self.tr("Zoom range"),
+                "%d - %d" % (self.layerDef.zmin, self.layerDef.zmax),
+            )
+        )
         lines.append(fmt % (self.tr("Layer Extent"), extent))
         return "\n".join(lines)
 
@@ -689,9 +979,15 @@ class TileLayer(QgsPluginLayer):
 
             if debug_mode:
                 qDebug("watchTimerTick: %d" % tick)
-                qDebug("unfinished downloads: %d" % self.downloader.unfinishedCount())
+                qDebug(
+                    "unfinished downloads: %d"
+                    % self.downloader.unfinishedCount()
+                )
 
-            if self.downloader.unfinishedCount() == 0 or self.renderContext.renderingStopped():
+            if (
+                self.downloader.unfinishedCount() == 0
+                or self.renderContext.renderingStopped()
+            ):
                 break
             tick += 1
         watchTimer.stop()
@@ -721,7 +1017,9 @@ class TileLayer(QgsPluginLayer):
     def showStatusMessageSlot(self, msg, timeout):
         self.iface.mainWindow().statusBar().showMessage(msg, timeout)
 
-    def emitShowBarMessage(self, text, level=QGisMessageBarLevel.Info, duration=0, title=None):
+    def emitShowBarMessage(
+        self, text, level=QGisMessageBarLevel.Info, duration=0, title=None
+    ):
         if PluginSettings.show_messages_in_bar():
             if title is None:
                 title = PluginSettings.product_name()
@@ -736,6 +1034,7 @@ class TileLayer(QgsPluginLayer):
 #    qDebug("createMapRenderer")
 #    self.renderer = QgsPluginLayerRenderer(self, renderContext)
 #    return self.renderer
+
 
 class TileLayerType(QgsPluginLayerType):
     def __init__(self, plugin):
@@ -764,7 +1063,9 @@ class TileLayerType(QgsPluginLayerType):
         layer.setTransparency(dialog.ui.spinBox_Transparency.value())
         layer.setBlendModeByName(dialog.ui.comboBox_BlendingMode.currentText())
         layer.setSmoothRender(dialog.ui.checkBox_SmoothRender.isChecked())
-        layer.setCreditVisibility(dialog.ui.checkBox_CreditVisibility.isChecked())
+        layer.setCreditVisibility(
+            dialog.ui.checkBox_CreditVisibility.isChecked()
+        )
         layer.setGrayscaleRender(dialog.ui.checkBox_Grayscale.isChecked())
         layer.setBrigthness(dialog.ui.spinBox_Brightness.value())
         layer.setContrast(dialog.ui.doubleSpinBox_Contrast.value())

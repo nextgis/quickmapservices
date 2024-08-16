@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from __future__ import absolute_import
 import json
 import os
@@ -37,20 +38,21 @@ from .plugin_settings import PluginSettings
 
 
 LOCAL_SETTINGS_PATH = os.path.dirname(getQGisUserDatabaseFilePath())
-PLUGIN_SETTINGS_PATH = os.path.join(LOCAL_SETTINGS_PATH, PluginSettings.product_name())
+PLUGIN_SETTINGS_PATH = os.path.join(
+    LOCAL_SETTINGS_PATH, PluginSettings.product_name()
+)
 
-CONTRIBUTE_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, 'Contribute')
-USER_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, 'User')
+CONTRIBUTE_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, "Contribute")
+USER_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, "User")
 
-DATA_SOURCES_DIR_NAME = 'data_sources'
-GROUPS_DIR_NAME = 'groups'
+DATA_SOURCES_DIR_NAME = "data_sources"
+GROUPS_DIR_NAME = "groups"
 
 # CONTRIBUTE_REPO_URL = 'https://api.github.com/repos/nextgis/quickmapservices_contrib'
-CONTRIBUTE_ZIP_DIRECT_URL = 'https://github.com/nextgis/quickmapservices_contrib/archive/refs/tags/v1.22.zip'
+CONTRIBUTE_ZIP_DIRECT_URL = "https://github.com/nextgis/quickmapservices_contrib/archive/refs/tags/v1.22.zip"
 
 
 class ExtraSources(object):
-
     __replies = []
 
     @classmethod
@@ -82,15 +84,15 @@ class ExtraSources(object):
         tmp_dir = tempfile.mkdtemp()
 
         # download zip file
-        zip_file_path = os.path.join(tmp_dir, 'contrib.zip')
+        zip_file_path = os.path.join(tmp_dir, "contrib.zip")
         # self._download_file(zip_url, zip_file_path)
         self._download_file(CONTRIBUTE_ZIP_DIRECT_URL, zip_file_path)
 
         # extract zip to tmp dir
-        tmp_extract_dir = os.path.join(tmp_dir, 'contrib')
+        tmp_extract_dir = os.path.join(tmp_dir, "contrib")
         self._extract_zip(zip_file_path, tmp_extract_dir)
 
-        #first dir - our content
+        # first dir - our content
         src_dir_name = os.listdir(tmp_extract_dir)[0]
         src_dir = os.path.join(tmp_extract_dir, src_dir_name)
 
@@ -128,7 +130,9 @@ class ExtraSources(object):
         _request = QNetworkRequest(_url)
         self.__replies.append(_request)
 
-        QgsNetworkAccessManager.instance().sslErrors.connect(self.__supress_ssl_errors)
+        QgsNetworkAccessManager.instance().sslErrors.connect(
+            self.__supress_ssl_errors
+        )
 
         _reply = QgsNetworkAccessManager.instance().get(_request)
 
@@ -137,7 +141,9 @@ class ExtraSources(object):
         _reply.finished.connect(loop.quit)
         loop.exec_()
         _reply.finished.disconnect(loop.quit)
-        QgsNetworkAccessManager.instance().sslErrors.disconnect(self.__supress_ssl_errors)
+        QgsNetworkAccessManager.instance().sslErrors.disconnect(
+            self.__supress_ssl_errors
+        )
         loop = None
 
         error = _reply.error()
@@ -151,7 +157,9 @@ class ExtraSources(object):
         _reply.deleteLater()
 
         if result_code in [301, 302, 307]:
-            redirect_url = _reply.attribute(QNetworkRequest.RedirectionTargetAttribute)
+            redirect_url = _reply.attribute(
+                QNetworkRequest.RedirectionTargetAttribute
+            )
             return self.__sync_request(redirect_url)
         else:
             return result

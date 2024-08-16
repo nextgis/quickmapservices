@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from __future__ import absolute_import
 import codecs
 import os
@@ -40,20 +41,30 @@ from .compat2qgis import message_log_levels
 
 CURR_PATH = get_file_dir(__file__)
 
-INTERNAL_DS_PATHS = [os.path.join(CURR_PATH, extra_sources.DATA_SOURCES_DIR_NAME), ]
-CONTRIBUTE_DS_PATHS = [os.path.join(extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME), ]
-USER_DS_PATHS = [os.path.join(extra_sources.USER_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME), ]
+INTERNAL_DS_PATHS = [
+    os.path.join(CURR_PATH, extra_sources.DATA_SOURCES_DIR_NAME),
+]
+CONTRIBUTE_DS_PATHS = [
+    os.path.join(
+        extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME
+    ),
+]
+USER_DS_PATHS = [
+    os.path.join(
+        extra_sources.USER_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME
+    ),
+]
 
 ALL_DS_PATHS = INTERNAL_DS_PATHS + CONTRIBUTE_DS_PATHS + USER_DS_PATHS
 
 ROOT_MAPPING = {
     INTERNAL_DS_PATHS[0]: DataSourceCategory.BASE,
     CONTRIBUTE_DS_PATHS[0]: DataSourceCategory.CONTRIB,
-    USER_DS_PATHS[0]: DataSourceCategory.USER
+    USER_DS_PATHS[0]: DataSourceCategory.USER,
 }
 
-class DataSourcesList(object):
 
+class DataSourcesList(object):
     def __init__(self, ds_paths=ALL_DS_PATHS):
         self.data_sources = {}
         self.ds_paths = ds_paths
@@ -63,7 +74,7 @@ class DataSourcesList(object):
         self.data_sources = {}
         for ds_path in self.ds_paths:
             for root, dirs, files in os.walk(ds_path):
-                for ini_file in [f for f in files if f.endswith('.ini')]:
+                for ini_file in [f for f in files if f.endswith(".ini")]:
                     try:
                         ini_full_path = os.path.join(root, ini_file)
                         ds = DataSourceSerializer.read_from_ini(ini_full_path)
@@ -75,15 +86,21 @@ class DataSourcesList(object):
                             ds.category = DataSourceCategory.USER
 
                         # action
-                        ds.action = QAction(QIcon(ds.icon_path), self.tr(ds.alias), None)
+                        ds.action = QAction(
+                            QIcon(ds.icon_path), self.tr(ds.alias), None
+                        )
                         ds.action.setData(ds)
 
                         # append to array
                         self.data_sources[ds.id] = ds
 
                     except Exception as e:
-                        error_message = 'INI file can\'t be parsed: ' + e.message
-                        QgsMessageLog.logMessage(error_message, level=message_log_levels["Critical"])
+                        error_message = (
+                            "INI file can't be parsed: " + e.message
+                        )
+                        QgsMessageLog.logMessage(
+                            error_message, level=message_log_levels["Critical"]
+                        )
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -92,5 +109,4 @@ class DataSourcesList(object):
         except:
             return message
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return CustomTranslator().translate('QuickMapServices', message)
-
+        return CustomTranslator().translate("QuickMapServices", message)

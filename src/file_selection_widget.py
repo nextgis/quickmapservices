@@ -16,20 +16,27 @@
 *                                                                         *
 ***************************************************************************
 """
+
 from __future__ import absolute_import
 from .plugin_settings import PluginSettings
 
-__author__ = 'Victor Olaya'
-__date__ = 'August 2012'
-__copyright__ = '(C) 2012, Victor Olaya'
+__author__ = "Victor Olaya"
+__date__ = "August 2012"
+__copyright__ = "(C) 2012, Victor Olaya"
 
 # This will get replaced with a git SHA1 when you do a git archive
 
-__revision__ = '$Format:%H$'
+__revision__ = "$Format:%H$"
 
 import os
 
-from qgis.PyQt.QtWidgets import QFileDialog, QWidget, QHBoxLayout, QLineEdit, QToolButton
+from qgis.PyQt.QtWidgets import (
+    QFileDialog,
+    QWidget,
+    QHBoxLayout,
+    QLineEdit,
+    QToolButton,
+)
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt import QtCore
 from .compat2qgis import getOpenFileName
@@ -37,22 +44,21 @@ from .compat2qgis import getOpenFileName
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
+
     def _fromUtf8(s):
         return s
 
 
 class FileSelectionWidget(QWidget):
-
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super(FileSelectionWidget, self).__init__(None)
         self.setupUi(self)
 
-        self.ext = '*'
-        self.dialog_title = self.tr('Select folder')
+        self.ext = "*"
+        self.dialog_title = self.tr("Select folder")
         self.is_folder = False
 
         self.btnSelect.clicked.connect(self.show_selection_dialog)
-
 
     def show_selection_dialog(self):
         # Find the file dialog's working directory
@@ -66,7 +72,9 @@ class FileSelectionWidget(QWidget):
             path = PluginSettings.last_icon_path()
 
         if self.is_folder:
-            folder = QFileDialog.getExistingDirectory(self, self.dialog_title, path)
+            folder = QFileDialog.getExistingDirectory(
+                self, self.dialog_title, path
+            )
             if folder:
                 self.leText.setText(folder)
                 PluginSettings.set_last_icon_path(os.path.dirname(folder))
@@ -78,8 +86,8 @@ class FileSelectionWidget(QWidget):
 
     def get_path(self):
         s = self.leText.text()
-        if os.name == 'nt':
-            s = s.replace('\\', '/')
+        if os.name == "nt":
+            s = s.replace("\\", "/")
         return s
 
     def set_path(self, text):
@@ -110,5 +118,5 @@ class FileSelectionWidget(QWidget):
         QtCore.QMetaObject.connectSlotsByName(Form)
 
     def retranslateUi(self, Form):
-        #Form.setWindowTitle(self.tr(self.dialog_title))
+        # Form.setWindowTitle(self.tr(self.dialog_title))
         self.btnSelect.setText(self.tr("..."))

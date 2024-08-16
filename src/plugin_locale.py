@@ -20,15 +20,18 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from qgis.PyQt.QtCore import QSettings, QLocale
 
-class Locale(object):
 
+class Locale(object):
     @classmethod
     def get_locale(cls):
         locale = ""
         try:
-            locale = QSettings().value('locale/userLocale', QLocale().name(), type=str)
+            locale = QSettings().value(
+                "locale/userLocale", QLocale().name(), type=str
+            )
             if len(locale) > 2:
                 locale = locale[0:2]
         except:

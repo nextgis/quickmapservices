@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 
 from qgis.PyQt import uic
@@ -27,7 +28,9 @@ from qgis.PyQt.QtGui import QDialog, QDialogButtonBox, QPainter
 
 
 CURR_PATH = os.path.dirname(__file__)
-FORM_CLASS, _ = uic.loadUiType(os.path.join(CURR_PATH, 'propertiesdialog_base.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(CURR_PATH, "propertiesdialog_base.ui")
+)
 
 
 class PropertiesDialog(QDialog):
@@ -38,18 +41,34 @@ class PropertiesDialog(QDialog):
         # set up the user interface
         self.ui = FORM_CLASS()
         self.ui.setupUi(self)
-        self.setWindowTitle(u"%s - %s" % (self.tr("Layer Properties"), layer.name()))
+        self.setWindowTitle(
+            "%s - %s" % (self.tr("Layer Properties"), layer.name())
+        )
 
         self.layer = layer
         # signals
-        self.ui.horizontalSlider_Transparency.valueChanged.connect(self.ui.spinBox_Transparency.setValue)
-        self.ui.spinBox_Transparency.valueChanged.connect(self.ui.horizontalSlider_Transparency.setValue)
-        self.ui.horizontalSlider_Brightness.valueChanged.connect(self.ui.spinBox_Brightness.setValue)
-        self.ui.spinBox_Brightness.valueChanged.connect(self.ui.horizontalSlider_Brightness.setValue)
-        self.ui.horizontalSlider_Contrast.valueChanged.connect(lambda x: self.ui.doubleSpinBox_Contrast.setValue(x/100.0))
-        self.ui.doubleSpinBox_Contrast.valueChanged.connect(lambda x: self.ui.horizontalSlider_Contrast.setValue(x*100))
+        self.ui.horizontalSlider_Transparency.valueChanged.connect(
+            self.ui.spinBox_Transparency.setValue
+        )
+        self.ui.spinBox_Transparency.valueChanged.connect(
+            self.ui.horizontalSlider_Transparency.setValue
+        )
+        self.ui.horizontalSlider_Brightness.valueChanged.connect(
+            self.ui.spinBox_Brightness.setValue
+        )
+        self.ui.spinBox_Brightness.valueChanged.connect(
+            self.ui.horizontalSlider_Brightness.setValue
+        )
+        self.ui.horizontalSlider_Contrast.valueChanged.connect(
+            lambda x: self.ui.doubleSpinBox_Contrast.setValue(x / 100.0)
+        )
+        self.ui.doubleSpinBox_Contrast.valueChanged.connect(
+            lambda x: self.ui.horizontalSlider_Contrast.setValue(x * 100)
+        )
 
-        self.ui.buttonBox.button(QDialogButtonBox.Apply).clicked.connect(self.applyClicked.emit)
+        self.ui.buttonBox.button(QDialogButtonBox.Apply).clicked.connect(
+            self.applyClicked.emit
+        )
 
         # set init values
         self.initBlendingCombo()
@@ -70,5 +89,3 @@ class PropertiesDialog(QDialog):
         for attr in attrs:
             if attr.startswith("CompositionMode_"):
                 self.ui.comboBox_BlendingMode.addItem(attr[16:])
-
-

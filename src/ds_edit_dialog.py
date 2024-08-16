@@ -23,17 +23,18 @@ from .gui.line_edit_color_validator import LineEditColorValidator
 from .plugin_settings import PluginSettings
 from .compat2qgis import getOpenFileName
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ds_edit_dialog.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    os.path.join(os.path.dirname(__file__), "ds_edit_dialog.ui")
+)
 
 
 def is_same(file1, file2):
-    return os.path.normcase(os.path.normpath(file1)) == \
-                os.path.normcase(os.path.normpath(file2))
+    return os.path.normcase(os.path.normpath(file1)) == os.path.normcase(
+        os.path.normpath(file2)
+    )
 
 
 class DsEditDialog(QDialog, FORM_CLASS):
-
     def __init__(self, parent=None):
         """Constructor."""
         super(DsEditDialog, self).__init__(parent)
@@ -58,8 +59,14 @@ class DsEditDialog(QDialog, FORM_CLASS):
         self.change_spec_tab()
 
         # validators
-        self.id_validator = LineEditColorValidator(self.txtId, '^[A-Za-z0-9_]+$', error_tooltip=self.tr('Any text'))
-        self.alias_validator = LineEditColorValidator(self.txtAlias, '^[A-Za-z0-9_ ]+$', error_tooltip=self.tr('Any text'))
+        self.id_validator = LineEditColorValidator(
+            self.txtId, "^[A-Za-z0-9_]+$", error_tooltip=self.tr("Any text")
+        )
+        self.alias_validator = LineEditColorValidator(
+            self.txtAlias,
+            "^[A-Za-z0-9_ ]+$",
+            error_tooltip=self.tr("Any text"),
+        )
 
         # events
         self.cmbType.currentIndexChanged.connect(self.change_spec_tab)
@@ -70,17 +77,15 @@ class DsEditDialog(QDialog, FORM_CLASS):
         self._editor_tab = None
 
         self.set_icon(
-            os.path.join(
-                os.path.dirname(__file__),
-                'icons',
-                'mapservices.png'
-            )
+            os.path.join(os.path.dirname(__file__), "icons", "mapservices.png")
         )
 
     def init_groups_cmb(self):
         ds_groups = GroupsList()
         for ds_group in ds_groups.groups.values():
-            self.cmbGroup.addItem(QIcon(ds_group.icon), self.tr(ds_group.alias), ds_group)
+            self.cmbGroup.addItem(
+                QIcon(ds_group.icon), self.tr(ds_group.alias), ds_group
+            )
 
     def init_types_cmb(self):
         for drv in KNOWN_DRIVERS.ALL_DRIVERS:
@@ -92,7 +97,6 @@ class DsEditDialog(QDialog, FORM_CLASS):
 
         drv = self.cmbType.itemData(self.cmbType.currentIndex())
         self.tabWidget.addTab(self.DRV_WIDGETS[drv], drv)
-
 
     def set_ds_info(self, ds_info):
         self.ds_info = ds_info
@@ -111,9 +115,9 @@ class DsEditDialog(QDialog, FORM_CLASS):
     def choose_icon(self):
         icon_path = getOpenFileName(
             self,
-            self.tr('Select icon for data source'),
+            self.tr("Select icon for data source"),
             PluginSettings.get_default_user_icon_path(),
-            self.tr('Icons (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)')
+            self.tr("Icons (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)"),
         )
         if icon_path != "":
             PluginSettings.set_default_user_icon_path(icon_path)
@@ -121,9 +125,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
 
     def set_icon(self, icon_path):
         self.__ds_icon = icon_path
-        self.iconPreview.setPixmap(
-            QPixmap(self.__ds_icon)
-        )
+        self.iconPreview.setPixmap(QPixmap(self.__ds_icon))
 
     def feel_common_fields(self):
         self.txtId.setText(self.ds_info.id)
@@ -149,7 +151,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
         else:
             non_ex_group = GroupInfo(group_id=self.ds_info.group)
             self.cmbGroup.addItem(self.ds_info.group, non_ex_group)
-            self.cmbGroup.setCurrentIndex(self.cmbGroup.count()-1)
+            self.cmbGroup.setCurrentIndex(self.cmbGroup.count() - 1)
 
     def feel_specific_fields(self):
         # set type
@@ -157,7 +159,6 @@ class DsEditDialog(QDialog, FORM_CLASS):
         # feel widgets
         for spec_widget in self.DRV_WIDGETS.values():
             spec_widget.feel_form(self.ds_info)
-
 
     def accept(self):
         new_ds_info = DataSourceInfo()
@@ -172,9 +173,10 @@ class DsEditDialog(QDialog, FORM_CLASS):
         if res:
             super(DsEditDialog, self).accept()
 
-
     def save_existing(self, ds_info):
-        if ds_info.id != self.ds_info.id and not self.check_existing_id(ds_info.id):
+        if ds_info.id != self.ds_info.id and not self.check_existing_id(
+            ds_info.id
+        ):
             return False
 
         if ds_info == self.ds_info:
@@ -212,13 +214,16 @@ class DsEditDialog(QDialog, FORM_CLASS):
 
         return True
 
-
     def create_new(self, ds_info):
         if not self.check_existing_id(ds_info.id):
             return False
 
         # set paths
-        dir_path = path.join(extra_sources.USER_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME, ds_info.id)
+        dir_path = path.join(
+            extra_sources.USER_DIR_PATH,
+            extra_sources.DATA_SOURCES_DIR_NAME,
+            ds_info.id,
+        )
 
         if path.exists(dir_path):
             salt = 0
@@ -226,7 +231,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
                 salt += 1
             dir_path += str(salt)
 
-        ini_path = path.join(dir_path, 'metadata.ini')
+        ini_path = path.join(dir_path, "metadata.ini")
         ico_path = path.join(dir_path, ds_info.icon)
 
         # create dir
@@ -246,15 +251,18 @@ class DsEditDialog(QDialog, FORM_CLASS):
 
         return True
 
-
     def check_existing_id(self, ds_id):
         gl = DataSourcesList()
         if ds_id in gl.data_sources.keys():
-            QMessageBox.critical(self, self.tr('Error on save group'),
-                                 self.tr('Data source with such id already exists! Select new id for data source!'))
+            QMessageBox.critical(
+                self,
+                self.tr("Error on save group"),
+                self.tr(
+                    "Data source with such id already exists! Select new id for data source!"
+                ),
+            )
             return False
         return True
-
 
     def feel_ds_info(self, ds_info):
         ds_info.id = self.txtId.text()
@@ -279,26 +287,40 @@ class DsEditDialog(QDialog, FORM_CLASS):
     def validate(self, ds_info):
         # validate common fields
         checks = [
-            (ds_info.id, self.tr('Please, enter data source id')),
-            (ds_info.alias, self.tr('Please, enter data source alias')),
-            (ds_info.icon, self.tr('Please, select icon for data source')),
-            (ds_info.group, self.tr('Please, select group for data source')),
-            (ds_info.type, self.tr('Please, select type for data source')),
+            (ds_info.id, self.tr("Please, enter data source id")),
+            (ds_info.alias, self.tr("Please, enter data source alias")),
+            (ds_info.icon, self.tr("Please, select icon for data source")),
+            (ds_info.group, self.tr("Please, select group for data source")),
+            (ds_info.type, self.tr("Please, select type for data source")),
         ]
 
         for val, comment in checks:
             if not val:
-                QMessageBox.critical(self, self.tr('Error on save data source'), self.tr(comment))
+                QMessageBox.critical(
+                    self,
+                    self.tr("Error on save data source"),
+                    self.tr(comment),
+                )
                 return False
 
         checks_correct = [
-            (self.id_validator, self.tr('Please, enter correct value for data source id')),
-            (self.alias_validator, self.tr('Please, enter correct value for data source alias')),
+            (
+                self.id_validator,
+                self.tr("Please, enter correct value for data source id"),
+            ),
+            (
+                self.alias_validator,
+                self.tr("Please, enter correct value for data source alias"),
+            ),
         ]
 
         for val, comment in checks_correct:
             if not val.is_valid():
-                QMessageBox.critical(self, self.tr('Error on save data source'), self.tr(comment))
+                QMessageBox.critical(
+                    self,
+                    self.tr("Error on save data source"),
+                    self.tr(comment),
+                )
                 return False
 
         # validate special fields
