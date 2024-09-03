@@ -20,14 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from __future__ import absolute_import
 from qgis.PyQt.QtCore import QTranslator, QCoreApplication
 from .singleton import singleton
 
 
-
 @singleton
-class CustomTranslator():
+class CustomTranslator:
     def __init__(self):
         self.__translates = {}
 
@@ -40,7 +40,9 @@ class CustomTranslator():
 
     def translate(self, context, text):
         try:
-            if (isinstance(text, str) or isinstance(text, unicode)) and text in self.__translates:
+            if (
+                isinstance(text, str) or isinstance(text, unicode)
+            ) and text in self.__translates:
                 return self.__translates[text]
         finally:
             return QCoreApplication.translate(context, text)

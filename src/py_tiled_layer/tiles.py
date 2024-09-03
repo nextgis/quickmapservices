@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 # Import the PyQt and QGIS libraries
 import math
 from qgis.PyQt.QtCore import QRect, Qt
@@ -29,6 +30,7 @@ from qgis.core import QgsRectangle
 R = 6378137
 
 debug_mode = 0
+
 
 class TileDefaultSettings(object):
     ZMIN = 0
@@ -55,7 +57,12 @@ class BoundingBox(object):
     def toString(self, digitsAfterPoint=None):
         if digitsAfterPoint is None:
             return "%f,%f,%f,%f" % (self.xmin, self.ymin, self.xmax, self.ymax)
-        return "%.{0}f,%.{0}f,%.{0}f,%.{0}f".format(digitsAfterPoint) % (self.xmin, self.ymin, self.xmax, self.ymax)
+        return "%.{0}f,%.{0}f,%.{0}f,%.{0}f".format(digitsAfterPoint) % (
+            self.xmin,
+            self.ymin,
+            self.xmax,
+            self.ymax,
+        )
 
     @classmethod
     def degreesToMercatorMeters(cls, bbox):
@@ -100,18 +107,23 @@ class Tiles(object):
     def image(self):
         width = (self.xmax - self.xmin + 1) * self.TILE_SIZE
         height = (self.ymax - self.ymin + 1) * self.TILE_SIZE
-        
+
         image = QImage(width, height, QImage.Format_ARGB32_Premultiplied)
         image.fill(Qt.transparent)
         p = QPainter(image)
-        
+
         for tile in self.tiles.values():
             if not tile.data:
                 continue
 
             x = tile.x - self.xmin
             y = tile.y - self.ymin
-            rect = QRect(x * self.TILE_SIZE, y * self.TILE_SIZE, self.TILE_SIZE, self.TILE_SIZE)
+            rect = QRect(
+                x * self.TILE_SIZE,
+                y * self.TILE_SIZE,
+                self.TILE_SIZE,
+                self.TILE_SIZE,
+            )
 
             timg = QImage()
             res = timg.loadFromData(tile.data)
@@ -124,7 +136,7 @@ class Tiles(object):
                     rect,
                     Qt.AlignBottom | Qt.AlignRight,
                     # "x: %s, y:%s\nz: %s, data: %s" % (x, y, tile.zoom, tile.data.size())
-                    "z: %s, data: %s" % (tile.zoom, tile.data.size())
+                    "z: %s, data: %s" % (tile.zoom, tile.data.size()),
                 )
                 if not res:
                     p.setPen(Qt.darkRed)
@@ -138,21 +150,44 @@ class Tiles(object):
     def extent(self):
         size = self.tsize1 / 2 ** (self.zoom - 1)
         if self.serviceInfo.tile_ranges is None:
-            return QgsRectangle(self.xmin * size - self.tsize1, self.tsize1 - (self.ymax + 1) * size,
-                                (self.xmax + 1) * size - self.tsize1, self.tsize1 - self.ymin * size)
+            return QgsRectangle(
+                self.xmin * size - self.tsize1,
+                self.tsize1 - (self.ymax + 1) * size,
+                (self.xmax + 1) * size - self.tsize1,
+                self.tsize1 - self.ymin * size,
+            )
         else:
             originX = self.serviceInfo.originX
             originY = self.serviceInfo.originY
-            return QgsRectangle(originX + self.xmin * size, originY - (self.ymax + 1) * size,
-                                originX + (self.xmax + 1) * size, originY - self.ymin * size)
+            return QgsRectangle(
+                originX + self.xmin * size,
+                originY - (self.ymax + 1) * size,
+                originX + (self.xmax + 1) * size,
+                originY - self.ymin * size,
+            )
+
 
 class TileServiceInfo(object):
     TILE_SIZE = 256
     # TSIZE1 = 20037508.342789244 # (R * math.pi)
 
-    def __init__(self, title, credit, serviceUrl, yOriginTop=1, zmin=TileDefaultSettings.ZMIN,
-                 zmax=TileDefaultSettings.ZMAX, bbox=None, epsg_crs_id=None, postgis_crs_id=None,
-                 custom_proj=None, tile_ranges=None, tsize1=R * math.pi, originX= -R * math.pi, originY = R * math.pi):
+    def __init__(
+        self,
+        title,
+        credit,
+        serviceUrl,
+        yOriginTop=1,
+        zmin=TileDefaultSettings.ZMIN,
+        zmax=TileDefaultSettings.ZMAX,
+        bbox=None,
+        epsg_crs_id=None,
+        postgis_crs_id=None,
+        custom_proj=None,
+        tile_ranges=None,
+        tsize1=R * math.pi,
+        originX=-R * math.pi,
+        originY=R * math.pi,
+    ):
         self.title = title
         self.credit = credit
         self.serviceUrl = serviceUrl
@@ -170,16 +205,16 @@ class TileServiceInfo(object):
 
     def tileUrl(self, zoom, x, y):
         if not self.yOriginTop:
-            y = (2 ** zoom - 1) - y
+            y = (2**zoom - 1) - y
         # Added the form to obtain the quadkey and remplace to use.
         # With the following change using the quadkey allowed, take the variable {q} to represent quadkey field.
         # Source and credits of procedure https://github.com/buckheroux/QuadKey/blob/master/quadkey/tile_system.py
         # Adapting code Nelson Ugalde Araya nugaldea@gmail.com
-        if '{q}' in self.serviceUrl:
-            quadkey = ''
+        if "{q}" in self.serviceUrl:
+            quadkey = ""
             for i in xrange(zoom):
                 bit = zoom - i
-                digit = ord('0')
+                digit = ord("0")
                 mask = 1 << (bit - 1)  # if (bit - 1) > 0 else 1 >> (bit - 1)
                 if (x & mask) != 0:
                     digit += 1
@@ -188,12 +223,20 @@ class TileServiceInfo(object):
                 quadkey += chr(digit)
             return self.serviceUrl.replace("{q}", str(quadkey))
 
-        return self.serviceUrl.replace("{z}", str(zoom)).replace("{x}", str(x)).replace("{y}", str(y))
+        return (
+            self.serviceUrl.replace("{z}", str(zoom))
+            .replace("{x}", str(x))
+            .replace("{y}", str(y))
+        )
 
     def getTileRect(self, zoom, x, y):
         size = self.tsize1 / 2 ** (zoom - 1)
-        return QgsRectangle(x * size - self.tsize1, self.tsize1 - y * size, (x + 1) * size - self.tsize1,
-                            self.tsize1 - (y + 1) * size)
+        return QgsRectangle(
+            x * size - self.tsize1,
+            self.tsize1 - y * size,
+            (x + 1) * size - self.tsize1,
+            self.tsize1 - (y + 1) * size,
+        )
 
     def degreesToTile(self, zoom, lon, lat):
         x, y = degreesToMercatorMeters(lon, lat)
@@ -214,7 +257,14 @@ class TileServiceInfo(object):
         extent = ""
         if self.bbox:
             extent = self.bbox.toString(2)
-        return [self.title, self.credit, self.serviceUrl, "%d-%d" % (self.zmin, self.zmax), extent, self.yOriginTop]
+        return [
+            self.title,
+            self.credit,
+            self.serviceUrl,
+            "%d-%d" % (self.zmin, self.zmax),
+            extent,
+            self.yOriginTop,
+        ]
 
     @classmethod
     def createEmptyInfo(cls):

@@ -20,20 +20,20 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import re
 import itertools
 
 
 class DataSourceCategory(object):
-    BASE = 'base'
-    CONTRIB = 'contributed'
-    USER = 'user'
+    BASE = "base"
+    CONTRIB = "contributed"
+    USER = "user"
 
     all = [BASE, CONTRIB, USER]
 
 
 class DataSourceInfo(object):
-
     def __init__(self):
         self.id = None
         self.type = None
@@ -87,24 +87,24 @@ class DataSourceInfo(object):
         if url is None:
             return []
 
-        url = url.replace('%', '%%') #escaping percent symbols before string formatting below
+        url = url.replace(
+            "%", "%%"
+        )  # escaping percent symbols before string formatting below
 
         switch_re = r"{switch:[^\}]*}"
         switches = re.findall(switch_re, url)
 
         url_pattern = url
         for switch in switches:
-            url_pattern = url_pattern.replace(switch, '%s', 1)
+            url_pattern = url_pattern.replace(switch, "%s", 1)
 
         switch_variants = []
         for switch in switches:
-            switch_variants.append(switch[8:-1].split(','))
+            switch_variants.append(switch[8:-1].split(","))
 
         urls = []
         for variants in list(itertools.product(*switch_variants)):
-            urls.append(
-                url_pattern % variants
-            )
+            urls.append(url_pattern % variants)
         return urls
 
     @property
@@ -115,6 +115,7 @@ class DataSourceInfo(object):
     def tms_url(self, url):
         self.__tms_url = url
         self.__alt_tms_url = self._parse_tms_url(self.__tms_url)
+
     @property
     def alt_tms_urls(self):
-        return self.__alt_tms_url 
+        return self.__alt_tms_url

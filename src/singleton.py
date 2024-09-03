@@ -20,23 +20,24 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from .compat2qgis import QGis
 
 if QGis.QGIS_VERSION_INT >= 30000:
     from qgis.PyQt.QtCore import QObject as QParentClass
 else:
-  from qgis.PyQt.QtCore import pyqtWrapperType as QParentClass
+    from qgis.PyQt.QtCore import pyqtWrapperType as QParentClass
 
 
 def singleton(class_):
-  instances = {}
+    instances = {}
 
-  def getinstance(*args, **kwargs):
-    if class_ not in instances:
-        instances[class_] = class_(*args, **kwargs)
-    return instances[class_]
+    def getinstance(*args, **kwargs):
+        if class_ not in instances:
+            instances[class_] = class_(*args, **kwargs)
+        return instances[class_]
 
-  return getinstance
+    return getinstance
 
 
 class QSingleton(QParentClass):

@@ -19,8 +19,17 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import threading
-from qgis.PyQt.QtCore import QObject, QTimer, QEventLoop, QDateTime, qDebug, QUrl, pyqtSignal
+from qgis.PyQt.QtCore import (
+    QObject,
+    QTimer,
+    QEventLoop,
+    QDateTime,
+    qDebug,
+    QUrl,
+    pyqtSignal,
+)
 from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
 from qgis.core import QgsNetworkAccessManager
 
@@ -29,7 +38,6 @@ debug_mode = 0
 
 
 class Downloader(QObject):
-
     NOT_FOUND = 0
     NO_ERROR = 0
     TIMEOUT_ERROR = 4
@@ -86,7 +94,9 @@ class Downloader(QObject):
         self.requestingUrls.remove(url)
         self.replies.remove(reply)
         isFromCache = 0
-        httpStatusCode = reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)
+        httpStatusCode = reply.attribute(
+            QNetworkRequest.HttpStatusCodeAttribute
+        )
         if reply.error() == QNetworkReply.NoError:
             if httpStatusCode == 301:
                 new_url = str(reply.rawHeader("Location"))
@@ -103,10 +113,15 @@ class Downloader(QObject):
                         # self.log("Expiration date: " + metadata.expirationDate().toString().encode("utf-8"))
                         if metadata.expirationDate().isNull():
                             metadata.setExpirationDate(
-                                QDateTime.currentDateTime().addSecs(self.default_cache_expiration * 60 * 60))
+                                QDateTime.currentDateTime().addSecs(
+                                    self.default_cache_expiration * 60 * 60
+                                )
+                            )
                             cache.updateMetaData(metadata)
                             self.log(
-                                "Default expiration date has been set: %s (%d h)" % (url, self.default_cache_expiration))
+                                "Default expiration date has been set: %s (%d h)"
+                                % (url, self.default_cache_expiration)
+                            )
 
                 if reply.isReadable():
                     data = reply.readAll()
@@ -129,7 +144,10 @@ class Downloader(QObject):
         reply.deleteLater()
 
         if debug_mode:
-            qDebug("queue: %d, requesting: %d" % (len(self.queue), len(self.requestingUrls)))
+            qDebug(
+                "queue: %d, requesting: %d"
+                % (len(self.queue), len(self.requestingUrls))
+            )
 
         if len(self.queue) + len(self.requestingUrls) == 0:
             # all replies have been received
@@ -161,7 +179,7 @@ class Downloader(QObject):
         self.log("fetchFiles()")
         self.sync = True
         self.queue = []
-        self.redirected_urls = {} 
+        self.redirected_urls = {}
         self.clearCounts()
         self.errorStatus = Downloader.NO_ERROR
         self.fetchedFiles = {}

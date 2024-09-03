@@ -1,0 +1,66 @@
+[tool.pyright]
+include = ["src"]
+pythonVersion = "3.7"
+
+reportOptionalCall = false
+reportOptionalMemberAccess = false
+
+[tool.ruff]
+line-length = 79
+target-version = "py37"
+
+[tool.ruff.lint]
+select = [
+    # "A",    # flake8-builtins
+    # "ARG",  # flake8-unused-arguments
+    # "B",    # flake8-bugbear
+    # "C90",  # mccabe complexity
+    # "COM",  # flake8-commas
+    # "E",    # pycodestyle errors
+    # "F",    # pyflakes
+    # "FBT",  # flake8-boolean-trap
+    # "FLY",  # flynt
+    # "I",    # isort
+    # "ISC",  #  flake8-implicit-str-concat
+    # "LOG",  # flake8-logging
+    # "N",    # pep8-naming
+    # "PERF", # Perflint
+    # "PGH",  # pygrep-hooks
+    # "PIE", # flake8-pie
+    # "PL",  # pylint
+    # "PTH", # flake8-use-pathlib
+    # "PYI", # flake8-pyi
+    # "Q",   # flake8-quotes
+    # "RET", # flake8-return
+    # "RSE", # flake8-raise
+    # "RUF",
+    # "SIM", # flake8-simplify
+    # "SLF", # flake8-self
+    # "T10", # flake8-debugger
+    # "T20", # flake8-print
+    # "TCH", # flake8-type-checking
+    # "TD",  # flake8-todos
+    # "TID", # flake8-tidy-imports
+    # "TRY", # tryceratops
+    # "UP",  # pyupgrade
+    # "W",   # pycodesytle warnings
+    # "ANN",  # flake8-annotations
+    # "CPY",  # flake8-copyright
+    # "D",  # pydocstyle
+    # "FIX",  # flake8-fixme
+]
+ignore = ["TD003", "FBT003", "ISC001", "COM812", "E501", "C901", "F403",
+          "F405", "PERF102", "PYI024", "RET504", "SIM105", "TD002", "TRY003"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.pep8-naming]
+extend-ignore-names = [
+    "setLevel",
+    "classFactory",
+    "initGui",
+    "sizeHint",
+    "createWidget",
+    "*Event",
+]

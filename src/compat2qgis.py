@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 import sys
 
@@ -34,9 +35,9 @@ else:
 
 if QGis.QGIS_VERSION_INT >= 30000:
     getQGisUserDatabaseFilePath = core.QgsApplication.qgisUserDatabaseFilePath
-    
-    addMapLayer =  core.QgsProject.instance().addMapLayer
-    
+
+    addMapLayer = core.QgsProject.instance().addMapLayer
+
     message_log_levels = {
         "Info": QGis.Info,
         "Warning": QGis.Warning,
@@ -50,15 +51,20 @@ if QGis.QGIS_VERSION_INT >= 30000:
 
     qgisRegistryInstance = core.QgsApplication.pluginLayerRegistry()
 
-    imageActionShowAllLayers = ":/images/themes/default/mActionShowAllLayers.svg"
-    imageActionHideAllLayers = ":images/themes/default/mActionHideAllLayers.svg"
+    imageActionShowAllLayers = (
+        ":/images/themes/default/mActionShowAllLayers.svg"
+    )
+    imageActionHideAllLayers = (
+        ":images/themes/default/mActionHideAllLayers.svg"
+    )
 else:
     getQGisUserDatabaseFilePath = core.QgsApplication.qgisUserDbFilePath
-    
-    addMapLayer =  core.QgsMapLayerRegistry.instance().addMapLayer
 
-    from qgis.gui import QgsMessageBar    
-    from qgis.core import QgsMessageLog    
+    addMapLayer = core.QgsMapLayerRegistry.instance().addMapLayer
+
+    from qgis.gui import QgsMessageBar
+    from qgis.core import QgsMessageLog
+
     message_log_levels = {
         "Info": QgsMessageLog.INFO,
         "Warning": QgsMessageLog.WARNING,
@@ -72,16 +78,20 @@ else:
 
     geometry_types = {
         "Point": QGis.Point,
-    }   
+    }
 
     qgisRegistryInstance = core.QgsPluginLayerRegistry.instance()
 
-    imageActionShowAllLayers = ":/images/themes/default/mActionShowAllLayers.png"
-    imageActionHideAllLayers = ":images/themes/default/mActionHideAllLayers.png"
+    imageActionShowAllLayers = (
+        ":/images/themes/default/mActionShowAllLayers.png"
+    )
+    imageActionHideAllLayers = (
+        ":images/themes/default/mActionHideAllLayers.png"
+    )
 
-QGisMessageLogLevel = type('QGisMessageLogLevel', (), (message_log_levels)) 
-QGisMessageBarLevel = type('QGisMessageBarLevel', (), (message_bar_levels)) 
-QGisGeometryType = type('QGisGeometryType', (), (geometry_types))
+QGisMessageLogLevel = type("QGisMessageLogLevel", (), (message_log_levels))
+QGisMessageBarLevel = type("QGisMessageBarLevel", (), (message_bar_levels))
+QGisGeometryType = type("QGisGeometryType", (), (geometry_types))
 
 
 def getCanvasDestinationCrs(iface):
@@ -94,7 +104,7 @@ def getCanvasDestinationCrs(iface):
 class QgsCoordinateTransform(core.QgsCoordinateTransform):
     def __init__(self, src_crs, dst_crs):
         super(QgsCoordinateTransform, self).__init__()
-        
+
         self.setSourceCrs(src_crs)
         self.setDestinationCrs(dst_crs)
 
@@ -104,23 +114,23 @@ class QgsCoordinateTransform(core.QgsCoordinateTransform):
         else:
             self.setDestCRS(dst_crs)
 
+
 def getOpenFileName(parent, caption, filedir, search_filter):
     result = QFileDialog.getOpenFileName(
-        parent,
-        caption,
-        filedir,
-        search_filter
+        parent, caption, filedir, search_filter
     )
 
     if type(result) == tuple:
         return result[0]
     return result
 
-class QgsCoordinateReferenceSystem(core.QgsCoordinateReferenceSystem):
 
+class QgsCoordinateReferenceSystem(core.QgsCoordinateReferenceSystem):
     def __init__(self, id, type):
         if QGis.QGIS_VERSION_INT >= 30000:
-            super(QgsCoordinateReferenceSystem, self).__init__(core.QgsCoordinateReferenceSystem.fromEpsgId(id))
+            super(QgsCoordinateReferenceSystem, self).__init__(
+                core.QgsCoordinateReferenceSystem.fromEpsgId(id)
+            )
         else:
             super(QgsCoordinateReferenceSystem, self).__init__(id, type)
 

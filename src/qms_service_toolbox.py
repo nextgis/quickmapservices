@@ -33,13 +33,10 @@ from qgis.PyQt.QtCore import (
     Qt,
     QTimer,
     QMutex,
-    QByteArray
+    QByteArray,
 )
 
-from qgis.core import (
-    QgsMessageLog,
-    QgsGeometry
-)
+from qgis.core import QgsMessageLog, QgsGeometry
 
 from .rb_result_renderer import RubberBandResultRenderer
 from .data_source_serializer import DataSourceSerializer
@@ -50,20 +47,23 @@ from .qgis_settings import QGISSettings
 from .plugin_settings import PluginSettings
 from .singleton import singleton
 from .compat import URLError
-from .compat2qgis import QGisMessageLogLevel, getCanvasDestinationCrs, QgsCoordinateTransform, QgsCoordinateReferenceSystem
+from .compat2qgis import (
+    QGisMessageLogLevel,
+    getCanvasDestinationCrs,
+    QgsCoordinateTransform,
+    QgsCoordinateReferenceSystem,
+)
 
 from .qms_news import News
 
 
 def plPrint(msg, level=QGisMessageLogLevel.Info):
-    QgsMessageLog.logMessage(
-        msg,
-        "QMS",
-        level
-    )
+    QgsMessageLog.logMessage(msg, "QMS", level)
 
-STATUS_FILTER_ALL = 'all'
-STATUS_FILTER_ONLY_WORKS = 'works'
+
+STATUS_FILTER_ALL = "all"
+STATUS_FILTER_ONLY_WORKS = "works"
+
 
 class Geoservice(object):
     def __init__(self, attributes, image_qByteArray):
@@ -78,19 +78,15 @@ class Geoservice(object):
         return self.attributes.get("id")
 
     def saveSelf(self, qSettings):
-        qSettings.setValue(
-            "{}/json".format(self.id),
-            unicode(self.attributes)
-        )
-        qSettings.setValue(
-            "{}/image".format(self.id),
-            self.image_qByteArray
-        )
+        qSettings.setValue("{}/json".format(self.id), unicode(self.attributes))
+        qSettings.setValue("{}/image".format(self.id), self.image_qByteArray)
 
     def loadSelf(self, id, qSettings):
         service_json = qSettings.value("{}/json".format(self.id), None)
         self.attributes = ast.literal_eval(service_json)
-        self.image_qByteArray = settings.value("{}/image".format(self.id), type=QByteArray)
+        self.image_qByteArray = settings.value(
+            "{}/image".format(self.id), type=QByteArray
+        )
 
 
 @singleton
@@ -118,11 +114,15 @@ class CachedServices(object):
         PluginSettings.set_last_used_services(self.geoservices)
 
     def get_cached_services(self):
-        return [(geoservice.attributes, geoservice.image_qByteArray) for geoservice in self.geoservices]
+        return [
+            (geoservice.attributes, geoservice.image_qByteArray)
+            for geoservice in self.geoservices
+        ]
 
 
-FORM_CLASS, _ = uic.loadUiType(path.join(
-    path.dirname(__file__), 'qms_service_toolbox.ui'))
+FORM_CLASS, _ = uic.loadUiType(
+    path.join(path.dirname(__file__), "qms_service_toolbox.ui")
+)
 
 
 class QmsServiceToolbox(QDockWidget, FORM_CLASS):
@@ -135,11 +135,13 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.search_threads = None  # []
         self.extent_renderer = RubberBandResultRenderer()
 
-        self.cmbStatusFilter.addItem(self.tr('All'), STATUS_FILTER_ALL)
-        self.cmbStatusFilter.addItem(self.tr('Valid'), STATUS_FILTER_ONLY_WORKS)
+        self.cmbStatusFilter.addItem(self.tr("All"), STATUS_FILTER_ALL)
+        self.cmbStatusFilter.addItem(
+            self.tr("Valid"), STATUS_FILTER_ONLY_WORKS
+        )
         self.cmbStatusFilter.currentIndexChanged.connect(self.start_search)
 
-        if hasattr(self.txtSearch, 'setPlaceholderText'):
+        if hasattr(self.txtSearch, "setPlaceholderText"):
             self.txtSearch.setPlaceholderText(self.tr("Search string..."))
 
         self.delay_timer = QTimer(self)
@@ -160,14 +162,18 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         # client.set_proxy(*QGISSettings.get_qgis_proxy())
 
         # qms_news = client.get_news()
-        qms_black_friday_news = QmsNews({
-            'ru': '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Свежие геоданные</a> для проекта. <b>Экономия 50%!</b>',
-            'en': '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Fresh geodata</a> for your project <b>(50% off!)</b>',
-        })
-        qms_news = QmsNews({
-            'ru': '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Скачайте геоданные</a> для проекта',
-            'en': '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Download geodata</a> for your project',
-        })
+        qms_black_friday_news = QmsNews(
+            {
+                "ru": '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Свежие геоданные</a> для проекта. <b>Экономия 50%!</b>',
+                "en": '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Fresh geodata</a> for your project <b>(50% off!)</b>',
+            }
+        )
+        qms_news = QmsNews(
+            {
+                "ru": '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Скачайте геоданные</a> для проекта',
+                "en": '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Download geodata</a> for your project',
+            }
+        )
 
         self.newsFrame.setVisible(False)
 
@@ -178,7 +184,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         black_friday_news = News(
             qms_black_friday_news,
             date_finish=black_friday_finish,
-            icon='fire.png'
+            icon="fire.png",
         )
         ordinary_news = News(qms_news)
 
@@ -193,11 +199,15 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.txtSearch.setDisabled(checked)
         if checked:
             self.iface.mapCanvas().extentsChanged.connect(self.start_search)
-            self.iface.mapCanvas().destinationCrsChanged.connect(self.start_search)
+            self.iface.mapCanvas().destinationCrsChanged.connect(
+                self.start_search
+            )
             self.start_search()
         else:
             self.iface.mapCanvas().extentsChanged.disconnect(self.start_search)
-            self.iface.mapCanvas().destinationCrsChanged.disconnect(self.start_search)
+            self.iface.mapCanvas().destinationCrsChanged.disconnect(
+                self.start_search
+            )
 
     def stop_search_thread(self):
         self.search_threads.data_downloaded.disconnect()
@@ -213,7 +223,9 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
         # status filter
         status_filter = None
-        sel_value = self.cmbStatusFilter.itemData(self.cmbStatusFilter.currentIndex())
+        sel_value = self.cmbStatusFilter.itemData(
+            self.cmbStatusFilter.currentIndex()
+        )
         if sel_value != STATUS_FILTER_ALL:
             status_filter = sel_value
 
@@ -230,14 +242,18 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
                 if self.search_threads:
                     self.stop_search_thread()
                 self.lstSearchResult.clear()
-                self.lstSearchResult.insertItem(0, self.tr('Need at least 3 symbols to start searching...'))
+                self.lstSearchResult.insertItem(
+                    0, self.tr("Need at least 3 symbols to start searching...")
+                )
                 return
         else:
             # extent filter
             extent = self.iface.mapCanvas().extent()
             map_crs = getCanvasDestinationCrs(self.iface)
             if map_crs.postgisSrid() != 4326:
-                crsDest = QgsCoordinateReferenceSystem.fromEpsgId(4326)    # WGS 84
+                crsDest = QgsCoordinateReferenceSystem.fromEpsgId(
+                    4326
+                )  # WGS 84
                 xform = QgsCoordinateTransform(map_crs, crsDest)
                 extent = xform.transform(extent)
             geom_filter = extent.asWktPolygon()
@@ -246,11 +262,13 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             self.stop_search_thread()
             self.lstSearchResult.clear()
 
-        searcher = SearchThread(search_text,
-                                self.one_process_work,
-                                parent=self.iface.mainWindow(),
-                                geom_filter=geom_filter,
-                                status_filter=status_filter)
+        searcher = SearchThread(
+            search_text,
+            self.one_process_work,
+            parent=self.iface.mainWindow(),
+            geom_filter=geom_filter,
+            status_filter=status_filter,
+        )
         searcher.data_downloaded.connect(self.show_result)
         searcher.error_occurred.connect(self.show_error)
         searcher.search_started.connect(self.search_started_process)
@@ -270,16 +288,12 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
         for attributes, image_qByteArray in services:
             custom_widget = QmsSearchResultItemWidget(
-                attributes,
-                image_qByteArray
+                attributes, image_qByteArray
             )
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(custom_widget.sizeHint())
             self.lstSearchResult.addItem(new_item)
-            self.lstSearchResult.setItemWidget(
-                new_item,
-                custom_widget
-            )
+            self.lstSearchResult.setItemWidget(new_item, custom_widget)
             # self.lSearchResult.addWidget(custom_widget)
 
         # w = QWidget()
@@ -288,7 +302,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
     def search_started_process(self):
         self.lstSearchResult.clear()
-        self.lstSearchResult.insertItem(0, self.tr('Searching...'))
+        self.lstSearchResult.insertItem(0, self.tr("Searching..."))
 
     def search_finished_progress(self):
         self.lstSearchResult.takeItem(0)
@@ -298,35 +312,31 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             new_widget.setOpenExternalLinks(True)
             new_widget.setWordWrap(True)
             new_widget.setText(
-                u"<div align='center'> <strong>{}</strong> </div><div align='center' style='margin-top: 3px'> {} </div>".format(
-                    self.tr(u"No results."),
-                    self.tr(u"You can add a service to become searchable. Start <a href='{}'>here</a>.").format(
-                        u"https://qms.nextgis.com/create"
-                    ),
+                "<div align='center'> <strong>{}</strong> </div><div align='center' style='margin-top: 3px'> {} </div>".format(
+                    self.tr("No results."),
+                    self.tr(
+                        "You can add a service to become searchable. Start <a href='{}'>here</a>."
+                    ).format("https://qms.nextgis.com/create"),
                 )
             )
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(new_widget.sizeHint())
             self.lstSearchResult.addItem(new_item)
-            self.lstSearchResult.setItemWidget(
-                new_item,
-                new_widget
-            )
+            self.lstSearchResult.setItemWidget(new_item, new_widget)
 
     def show_result(self, geoservice, image_ba):
         if geoservice:
-            custom_widget = QmsSearchResultItemWidget(geoservice, image_ba, extent_renderer=self.extent_renderer)
+            custom_widget = QmsSearchResultItemWidget(
+                geoservice, image_ba, extent_renderer=self.extent_renderer
+            )
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(custom_widget.sizeHint())
             self.lstSearchResult.addItem(new_item)
-            self.lstSearchResult.setItemWidget(
-                new_item,
-                custom_widget
-            )
+            self.lstSearchResult.setItemWidget(new_item, custom_widget)
 
         else:
             new_item = QListWidgetItem()
-            new_item.setText(self.tr('No results!'))
+            new_item.setText(self.tr("No results!"))
             new_item.setData(Qt.UserRole, None)
             self.lstSearchResult.addItem(new_item)
         self.lstSearchResult.update()
@@ -338,22 +348,20 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         new_widget.setOpenExternalLinks(True)
         new_widget.setWordWrap(True)
         new_widget.setText(
-            u"<div align='center'> <strong>{}</strong> </div><div align='center' style='margin-top: 3px'> {} </div>".format(
-                self.tr('Error'),
-                error_text
+            "<div align='center'> <strong>{}</strong> </div><div align='center' style='margin-top: 3px'> {} </div>".format(
+                self.tr("Error"), error_text
             )
         )
         new_item = QListWidgetItem(self.lstSearchResult)
         new_item.setSizeHint(new_widget.sizeHint())
         self.lstSearchResult.addItem(new_item)
-        self.lstSearchResult.setItemWidget(
-            new_item,
-            new_widget
-        )
+        self.lstSearchResult.setItemWidget(new_item, new_widget)
 
 
 class QmsSearchResultItemWidget(QWidget):
-    def __init__(self, geoservice, image_ba, parent=None, extent_renderer=None):
+    def __init__(
+        self, geoservice, image_ba, parent=None, extent_renderer=None
+    ):
         QWidget.__init__(self, parent)
 
         self.extent_renderer = extent_renderer
@@ -378,51 +386,54 @@ class QmsSearchResultItemWidget(QWidget):
         self.service_name = QLabel(self)
         self.service_name.setTextFormat(Qt.RichText)
         self.service_name.setWordWrap(True)
-        self.service_name.setText(u"   <strong> {} </strong>".format(geoservice.get('name', u"")))
+        self.service_name.setText(
+            "   <strong> {} </strong>".format(geoservice.get("name", ""))
+        )
         self.service_desc_layout.addWidget(self.service_name, 0, 0, 1, 3)
 
         self.service_type = QLabel(self)
         self.service_type.setTextFormat(Qt.RichText)
         self.service_type.setWordWrap(True)
-        self.service_type.setText(geoservice.get('type', u"").upper() + " ")
+        self.service_type.setText(geoservice.get("type", "").upper() + " ")
         self.service_desc_layout.addWidget(self.service_type, 1, 0)
 
         self.service_deteils = QLabel(self)
         self.service_deteils.setTextFormat(Qt.RichText)
         self.service_deteils.setWordWrap(True)
         self.service_deteils.setOpenExternalLinks(True)
-        self.service_deteils.setText(u"<a href=\"{0}\">{1}</a>, ".format(
-            Client().geoservice_info_url(geoservice.get('id', u"")),
-            self.tr('details')
-        ))
+        self.service_deteils.setText(
+            '<a href="{0}">{1}</a>, '.format(
+                Client().geoservice_info_url(geoservice.get("id", "")),
+                self.tr("details"),
+            )
+        )
         self.service_desc_layout.addWidget(self.service_deteils, 1, 1)
 
         self.service_report = QLabel(self)
         self.service_report.setTextFormat(Qt.RichText)
         self.service_report.setWordWrap(True)
         self.service_report.setOpenExternalLinks(True)
-        self.service_report.setText(u"<a href=\"{0}\">{1}</a><div/>".format(
-            Client().geoservice_report_url(geoservice.get('id', u"")),
-            self.tr('report a problem')
-        ))
+        self.service_report.setText(
+            '<a href="{0}">{1}</a><div/>'.format(
+                Client().geoservice_report_url(geoservice.get("id", "")),
+                self.tr("report a problem"),
+            )
+        )
         self.service_desc_layout.addWidget(self.service_report, 1, 2)
         self.service_desc_layout.setColumnStretch(2, 1)
 
-
         self.status_label = QLabel(self)
         self.status_label.setTextFormat(Qt.RichText)
-        self.status_label.setText(u'\u2022')
+        self.status_label.setText("\u2022")
 
-
-        status = geoservice.get('cumulative_status', u'')
-        if status == 'works':
+        status = geoservice.get("cumulative_status", "")
+        if status == "works":
             self.status_label.setStyleSheet("color: green; font-size: 30px")
-        if status == 'failed':
+        if status == "failed":
             self.status_label.setStyleSheet("color: red; font-size: 30px")
-        if status == 'problematic':
+        if status == "problematic":
             self.status_label.setStyleSheet("color: yellow; font-size: 30px")
         self.layout.addWidget(self.status_label)
-
 
         self.addButton = QToolButton()
         self.addButton.setText(self.tr("Add"))
@@ -454,10 +465,10 @@ class QmsSearchResultItemWidget(QWidget):
         self.addToMap()
 
     def enterEvent(self, event):
-        extent = self.geoservice.get('extent', None)
+        extent = self.geoservice.get("extent", None)
         if self.extent_renderer and extent:
-            if ';' in extent:
-                extent = extent.split(';')[1]
+            if ";" in extent:
+                extent = extent.split(";")[1]
             geom = QgsGeometry.fromWkt(extent)
             self.extent_renderer.show_feature(geom)
 
@@ -467,13 +478,19 @@ class QmsSearchResultItemWidget(QWidget):
 
 
 class SearchThread(QThread):
-
     search_started = pyqtSignal()
     search_finished = pyqtSignal()
     data_downloaded = pyqtSignal(object, QByteArray)
     error_occurred = pyqtSignal(object)
 
-    def __init__(self, search_text, mutex, parent=None, geom_filter=None, status_filter=None):
+    def __init__(
+        self,
+        search_text,
+        mutex,
+        parent=None,
+        geom_filter=None,
+        status_filter=None,
+    ):
         QThread.__init__(self, parent)
         self.search_text = search_text
         self.geom_filter = geom_filter
@@ -498,7 +515,7 @@ class SearchThread(QThread):
             results = self.searcher.get_geoservices(
                 search_str=self.search_text,
                 intersects_boundary=self.geom_filter,
-                cumulative_status=self.status_filter
+                cumulative_status=self.status_filter,
             )
 
             ext_results = []
@@ -510,19 +527,21 @@ class SearchThread(QThread):
                 icon_id = result.get("icon")
                 if self.img_cach.get(icon_id) is None:
                     if icon_id:
-                        ba = QByteArray(self.searcher.get_icon_content(icon_id, 24, 24))
+                        ba = QByteArray(
+                            self.searcher.get_icon_content(icon_id, 24, 24)
+                        )
                     else:
                         ba = QByteArray(self.searcher.get_default_icon(24, 24))
                     self.img_cach[icon_id] = ba
                 else:
                     ba = self.img_cach[icon_id]
                 # get extent
-                extent = result['extent']
+                extent = result["extent"]
                 # area = None
                 area = 0.0
                 if extent:
-                    if extent.startswith('SRID'):
-                        extent = extent.split(';')[1]
+                    if extent.startswith("SRID"):
+                        extent = extent.split(";")[1]
                     area = QgsGeometry.fromWkt(extent).area()
 
                 ext_results.append([area, result, ba])
@@ -532,13 +551,17 @@ class SearchThread(QThread):
                 self.data_downloaded.emit(result[1], result[2])
             self.search_finished.emit()
         except URLError:
-                        error_text = (self.tr("Network error!\n{0}")).format(unicode(sys.exc_info()[1]))
-                        # error_text = 'net'
-                        self.error_occurred.emit(error_text)
+            error_text = (self.tr("Network error!\n{0}")).format(
+                unicode(sys.exc_info()[1])
+            )
+            # error_text = 'net'
+            self.error_occurred.emit(error_text)
         except Exception:
-                        error_text = (self.tr("Error of processing!\n{0}: {1}")).format(unicode(sys.exc_info()[0].__name__), unicode(sys.exc_info()[1]))
-                        # error_text = 'common'
-                        self.error_occurred.emit(error_text)
+            error_text = (self.tr("Error of processing!\n{0}: {1}")).format(
+                unicode(sys.exc_info()[0].__name__), unicode(sys.exc_info()[1])
+            )
+            # error_text = 'common'
+            self.error_occurred.emit(error_text)
 
         self.mutex.unlock()
 

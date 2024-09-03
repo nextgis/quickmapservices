@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from __future__ import absolute_import
 from .supported_drivers import KNOWN_DRIVERS
 
@@ -30,7 +31,6 @@ except ImportError:
 
 
 class GdalUtils(object):
-
     @classmethod
     def get_supported_drivers(cls):
         formats_list = []
@@ -40,5 +40,5 @@ class GdalUtils(object):
             driver_name = driver.ShortName
             if not driver_name in formats_list:
                 formats_list.append(driver_name)
-        if 'WMS' in formats_list:
+        if "WMS" in formats_list:
             return KNOWN_DRIVERS  # all drivers if wms supported. hack. need to remake

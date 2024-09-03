@@ -32,4 +32,5 @@ def classFactory(iface):  # pylint: disable=invalid-name
     """
     #
     from .quick_map_services import QuickMapServices
+
     return QuickMapServices(iface)
