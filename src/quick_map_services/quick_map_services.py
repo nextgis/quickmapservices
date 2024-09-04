@@ -97,7 +97,7 @@ class QuickMapServices(object):
         self.custom_translator = CustomTranslator()
 
         # Create the dialog (after translation) and keep reference
-        self.info_dlg = AboutDialog()
+        self.info_dlg = AboutDialog(os.path.basename(self.plugin_dir))
 
         # Check Contrib and User dirs
         try:

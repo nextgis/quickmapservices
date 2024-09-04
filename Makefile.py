@@ -36,7 +36,7 @@ QGIS_PLUGINS_DIST_DIR = os.path.join(
     qgis_root, "apps", "qgis", "python", "plugins"
 )
 
-# TS_FILE_NAME = "%s_ru.ts" % plugin_name
+TS_FILE_NAME = "%s_ru.ts" % plugin_name
 TS_FILE_NAME = "QuickMapServices_ru.ts"
 
 """
