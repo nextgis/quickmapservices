@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import ast
 import sys
 from datetime import datetime, timezone
@@ -78,7 +76,7 @@ class Geoservice(object):
         return self.attributes.get("id")
 
     def saveSelf(self, qSettings):
-        qSettings.setValue("{}/json".format(self.id), unicode(self.attributes))
+        qSettings.setValue("{}/json".format(self.id), str(self.attributes))
         qSettings.setValue("{}/image".format(self.id), self.image_qByteArray)
 
     def loadSelf(self, id, qSettings):
@@ -231,7 +229,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
         if not self.btnFilterByExtent.isChecked():
             # text search
-            search_text = unicode(self.txtSearch.text())
+            search_text = str(self.txtSearch.text())
 
             if not search_text:
                 self.lstSearchResult.clear()
@@ -424,7 +422,7 @@ class QmsSearchResultItemWidget(QWidget):
 
         self.status_label = QLabel(self)
         self.status_label.setTextFormat(Qt.RichText)
-        self.status_label.setText("\u2022")
+        self.status_label.setText("\\u2022")
 
         status = geoservice.get("cumulative_status", "")
         if status == "works":
@@ -456,7 +454,7 @@ class QmsSearchResultItemWidget(QWidget):
 
             CachedServices().add_service(self.geoservice, self.image_ba)
         except Exception as ex:
-            plPrint(unicode(ex))
+            plPrint(str(ex))
             pass
         finally:
             QApplication.restoreOverrideCursor()
@@ -552,13 +550,13 @@ class SearchThread(QThread):
             self.search_finished.emit()
         except URLError:
             error_text = (self.tr("Network error!\n{0}")).format(
-                unicode(sys.exc_info()[1])
+                str(sys.exc_info()[1])
             )
             # error_text = 'net'
             self.error_occurred.emit(error_text)
         except Exception:
             error_text = (self.tr("Error of processing!\n{0}: {1}")).format(
-                unicode(sys.exc_info()[0].__name__), unicode(sys.exc_info()[1])
+                str(sys.exc_info()[0].__name__), str(sys.exc_info()[1])
             )
             # error_text = 'common'
             self.error_occurred.emit(error_text)

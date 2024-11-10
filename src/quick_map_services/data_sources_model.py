@@ -21,8 +21,6 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
-
 # from data_source_info import DataSourceCategory
 # from group_info import
 from .data_sources_list import DataSourcesList
@@ -36,9 +34,7 @@ from .plugin_settings import PluginSettings
 from .singleton import QSingleton
 
 
-class DSManagerModel(QAbstractItemModel):
-    __metaclass__ = QSingleton
-
+class DSManagerModel(QAbstractItemModel, metaclass=QSingleton):
     COLUMN_GROUP_DS = 0
     COLUMN_VISIBILITY = 1
     COLUMN_SOURCE = 2

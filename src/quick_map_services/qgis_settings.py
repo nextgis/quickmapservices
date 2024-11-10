@@ -85,12 +85,12 @@ class QGISSettings(object):
     @classmethod
     def get_qgis_proxy(cls):
         s = cls.get_settings()
-        proxy_enabled = s.value("proxy/proxyEnabled", "", type=unicode)
-        proxy_type = s.value("proxy/proxyType", "", type=unicode)
-        proxy_host = s.value("proxy/proxyHost", "", type=unicode)
-        proxy_port = s.value("proxy/proxyPort", "", type=unicode)
-        proxy_user = s.value("proxy/proxyUser", "", type=unicode)
-        proxy_password = s.value("proxy/proxyPassword", "", type=unicode)
+        proxy_enabled = s.value("proxy/proxyEnabled", "", type=str)
+        proxy_type = s.value("proxy/proxyType", "", type=str)
+        proxy_host = s.value("proxy/proxyHost", "", type=str)
+        proxy_port = s.value("proxy/proxyPort", "", type=str)
+        proxy_user = s.value("proxy/proxyUser", "", type=str)
+        proxy_password = s.value("proxy/proxyPassword", "", type=str)
 
         if proxy_enabled == "true":
             if proxy_type == "DefaultProxy":

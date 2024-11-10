@@ -20,8 +20,6 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
-
 # Import the PyQt and QGIS libraries
 import os
 import threading

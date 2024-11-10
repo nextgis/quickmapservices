@@ -19,8 +19,6 @@
  ***************************************************************************/
 """
 
-from __future__ import print_function
-
 from qgis.PyQt.QtGui import QColor
 from qgis.gui import QgsRubberBand
 from qgis.core import QgsRectangle

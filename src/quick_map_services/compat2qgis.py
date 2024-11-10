@@ -120,7 +120,7 @@ def getOpenFileName(parent, caption, filedir, search_filter):
         parent, caption, filedir, search_filter
     )
 
-    if type(result) == tuple:
+    if isinstance(result, tuple):
         return result[0]
     return result
 

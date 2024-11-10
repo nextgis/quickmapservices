@@ -125,7 +125,7 @@ class Downloader(QObject):
 
                 if reply.isReadable():
                     data = reply.readAll()
-                    if self.redirected_urls.has_key(url):
+                    if url in self.redirected_urls:
                         url = self.redirected_urls[url]
 
                     self.fetchedFiles[url] = data

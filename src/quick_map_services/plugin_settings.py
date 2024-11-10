@@ -114,7 +114,7 @@ class PluginSettings(object):
     @classmethod
     def get_default_user_icon_path(cls):
         result = cls.get_settings().value("/ui/default_user_icon_path", "")
-        if type(result) == tuple:
+        if isinstance(result, tuple):
             return result[0]
         return result
 
@@ -133,7 +133,7 @@ class PluginSettings(object):
 
             service_json_str = settings.value(service_key + "/json", None)
             service_json = ast.literal_eval(service_json_str)
-            if not isinstance(service_json.get("name"), unicode):
+            if not isinstance(service_json.get("name"), str):
                 continue
 
             image_ba = settings.value(service_key + "/image", type=QByteArray)

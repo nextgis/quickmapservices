@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 import codecs
 import os
 
@@ -195,7 +194,7 @@ class DataSourceSerializer(object):
             # try read translations
             posible_trans = parser.items("ui")
             for key, val in posible_trans:
-                if type(key) is unicode and key == "alias[%s]" % locale:
+                if isinstance(key, str) and key == "alias[%s]" % locale:
                     translator.append(ds.alias, val)
                     break
 
@@ -284,7 +283,7 @@ class DataSourceSerializer(object):
 
     @classmethod
     def write_to_ini(cls, ds_info, ini_file_path):
-        _to_utf = lambda x: x.encode("utf-8") if isinstance(x, unicode) else x
+        _to_utf = lambda x: x.encode("utf-8") if isinstance(x, str) else x
         config = FixedConfigParser()
 
         config.add_section("general")
