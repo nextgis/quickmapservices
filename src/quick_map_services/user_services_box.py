@@ -65,7 +65,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
     def on_add(self):
         edit_dialog = DsEditDialog()
         edit_dialog.setWindowTitle(self.tr("Create service"))
-        if edit_dialog.exec_() == QDialog.Accepted:
+        if edit_dialog.exec() == QDialog.Accepted:
             self.feel_list()
             self.ds_model.resetModel()
 
@@ -74,7 +74,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         edit_dialog = DsEditDialog()
         edit_dialog.setWindowTitle(self.tr("Edit service"))
         edit_dialog.set_ds_info(item)
-        if edit_dialog.exec_() == QDialog.Accepted:
+        if edit_dialog.exec() == QDialog.Accepted:
             self.feel_list()
             self.ds_model.resetModel()
 
@@ -131,7 +131,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
             else None
         )
 
-        if select_data_sources_dialog.exec_() == QDialog.Accepted:
+        if select_data_sources_dialog.exec() == QDialog.Accepted:
             data_source = self.ds_model.data(
                 list_view.currentIndex(), Qt.UserRole
             )
@@ -139,6 +139,6 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
             edit_dialog = DsEditDialog()
             edit_dialog.setWindowTitle(self.tr("Create service from existing"))
             edit_dialog.fill_ds_info(data_source)
-            if edit_dialog.exec_() == QDialog.Accepted:
+            if edit_dialog.exec() == QDialog.Accepted:
                 self.feel_list()
                 self.ds_model.resetModel()

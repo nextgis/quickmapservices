@@ -67,7 +67,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
     def on_add(self):
         edit_dialog = GroupEditDialog()
         edit_dialog.setWindowTitle(self.tr("Create group"))
-        if edit_dialog.exec_() == QDialog.Accepted:
+        if edit_dialog.exec() == QDialog.Accepted:
             self.feel_list()
             self.ds_model.resetModel()
 
@@ -76,7 +76,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         edit_dialog = GroupEditDialog()
         edit_dialog.setWindowTitle(self.tr("Edit group"))
         edit_dialog.set_group_info(item)
-        if edit_dialog.exec_() == QDialog.Accepted:
+        if edit_dialog.exec() == QDialog.Accepted:
             self.feel_list()
             self.ds_model.resetModel()
 
@@ -138,7 +138,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
             else None
         )
 
-        if select_group_dialog.exec_() == QDialog.Accepted:
+        if select_group_dialog.exec() == QDialog.Accepted:
             group_info = self.ds_model.data(
                 groups_list_view.currentIndex(), Qt.UserRole
             )
@@ -146,6 +146,6 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
             edit_dialog = GroupEditDialog()
             edit_dialog.setWindowTitle(self.tr("Create group from existing"))
             edit_dialog.fill_group_info(group_info)
-            if edit_dialog.exec_() == QDialog.Accepted:
+            if edit_dialog.exec() == QDialog.Accepted:
                 self.feel_list()
                 self.ds_model.resetModel()

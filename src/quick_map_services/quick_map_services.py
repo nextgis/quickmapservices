@@ -361,7 +361,7 @@ class QuickMapServices(object):
 
     def show_settings_dialog(self):
         settings_dlg = SettingsDialog()
-        settings_dlg.exec_()
+        settings_dlg.exec()
         # apply settings
         # self.remove_menu_buttons()
         self.build_menu_tree()

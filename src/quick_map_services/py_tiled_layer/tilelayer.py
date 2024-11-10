@@ -973,7 +973,7 @@ class TileLayer(QgsPluginLayer):
         watchTimer.start(interval)
         while tick < timeoutTick:
             # run event loop for 0.5 seconds at maximum
-            eventLoop.exec_()
+            eventLoop.exec()
 
             if debug_mode:
                 qDebug("watchTimerTick: %d" % tick)
@@ -1048,7 +1048,7 @@ class TileLayerType(QgsPluginLayerType):
         # QObject.connect(dialog, SIGNAL("applyClicked()"), self.applyClicked)
         dialog.applyClicked.connect(self.applyClicked)
         dialog.show()
-        accepted = dialog.exec_()
+        accepted = dialog.exec()
         if accepted:
             self.applyProperties(dialog)
         return True

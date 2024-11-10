@@ -138,7 +138,7 @@ class ExtraSources(object):
         # wait
         loop = QEventLoop()
         _reply.finished.connect(loop.quit)
-        loop.exec_()
+        loop.exec()
         _reply.finished.disconnect(loop.quit)
         QgsNetworkAccessManager.instance().sslErrors.disconnect(
             self.__supress_ssl_errors
