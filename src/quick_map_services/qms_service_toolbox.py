@@ -1,58 +1,51 @@
 import ast
 import sys
 from datetime import datetime, timezone
-
 from os import path
 
+from qgis.core import QgsGeometry, QgsMessageLog
 from qgis.PyQt import uic
-
+from qgis.PyQt.QtCore import (
+    QByteArray,
+    QMutex,
+    Qt,
+    QThread,
+    QTimer,
+    pyqtSignal,
+)
 from qgis.PyQt.QtGui import (
+    QCursor,
     QImage,
     QPixmap,
-    QCursor,
-    QFont,
 )
-
 from qgis.PyQt.QtWidgets import (
     QApplication,
-    QWidget,
     QDockWidget,
+    QGridLayout,
     QHBoxLayout,
     QLabel,
-    QToolButton,
-    QSizePolicy,
     QListWidgetItem,
-    QGridLayout,
+    QSizePolicy,
+    QToolButton,
+    QWidget,
 )
 
-from qgis.PyQt.QtCore import (
-    QThread,
-    pyqtSignal,
-    Qt,
-    QTimer,
-    QMutex,
-    QByteArray,
-)
-
-from qgis.core import QgsMessageLog, QgsGeometry
-
-from .rb_result_renderer import RubberBandResultRenderer
-from .data_source_serializer import DataSourceSerializer
-from .qgis_map_helpers import add_layer_to_map
-from .qms_external_api_python.client import Client
-from .qms_external_api_python.api.api_abstract import QmsNews
-from .qgis_settings import QGISSettings
-from .plugin_settings import PluginSettings
-from .singleton import singleton
 from .compat import URLError
 from .compat2qgis import (
     QGisMessageLogLevel,
-    getCanvasDestinationCrs,
-    QgsCoordinateTransform,
     QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    getCanvasDestinationCrs,
 )
-
+from .data_source_serializer import DataSourceSerializer
+from .plugin_settings import PluginSettings
+from .qgis_map_helpers import add_layer_to_map
+from .qgis_settings import QGISSettings
+from .qms_external_api_python.api.api_abstract import QmsNews
+from .qms_external_api_python.client import Client
 from .qms_news import News
+from .rb_result_renderer import RubberBandResultRenderer
+from .singleton import singleton
 
 
 def plPrint(msg, level=QGisMessageLogLevel.Info):
@@ -63,7 +56,7 @@ STATUS_FILTER_ALL = "all"
 STATUS_FILTER_ONLY_WORKS = "works"
 
 
-class Geoservice(object):
+class Geoservice:
     def __init__(self, attributes, image_qByteArray):
         self.attributes = attributes
         self.image_qByteArray = image_qByteArray
@@ -76,19 +69,19 @@ class Geoservice(object):
         return self.attributes.get("id")
 
     def saveSelf(self, qSettings):
-        qSettings.setValue("{}/json".format(self.id), str(self.attributes))
-        qSettings.setValue("{}/image".format(self.id), self.image_qByteArray)
+        qSettings.setValue(f"{self.id}/json", str(self.attributes))
+        qSettings.setValue(f"{self.id}/image", self.image_qByteArray)
 
     def loadSelf(self, id, qSettings):
-        service_json = qSettings.value("{}/json".format(self.id), None)
+        service_json = qSettings.value(f"{self.id}/json", None)
         self.attributes = ast.literal_eval(service_json)
         self.image_qByteArray = settings.value(
-            "{}/image".format(self.id), type=QByteArray
+            f"{self.id}/image", type=QByteArray
         )
 
 
 @singleton
-class CachedServices(object):
+class CachedServices:
     def __init__(self):
         self.geoservices = []
         self.load_last_used_services()
@@ -422,7 +415,7 @@ class QmsSearchResultItemWidget(QWidget):
 
         self.status_label = QLabel(self)
         self.status_label.setTextFormat(Qt.RichText)
-        self.status_label.setText("\\u2022")
+        self.status_label.setText("\u2022")
 
         status = geoservice.get("cumulative_status", "")
         if status == "works":

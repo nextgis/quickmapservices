@@ -1,3 +1,30 @@
+[project]
+name = "quick_map_services"
+version = "0.19.34"
+readme = "README.md"
+license = { file = "LICENSE" }
+
+
+[tool.qgspb.package-data]
+"quick_map_services.data_sources" = ["osm_mapnik/*", "nasa_sedac_eq_frequency/*",
+                                     "nasa_sedac_eq_peak_ground_accel/*"]
+"quick_map_services.groups" = ["nasa/*", "osm/*"]                                 
+"quick_map_services.icons" = ["*.svg", "*.png"]
+
+[tool.qgspb.forms]
+ui-files = ["src/quick_map_services/gui/*.ui", "src/quick_map_services/scales.xml",
+            "src/quick_map_services/*.ui", "src/quick_map_services/py_tiled_layer/*.ui"]
+compile = false
+
+[tool.qgspb.translations]
+ts-files = ["src/quick_map_services/i18n/*.ts"]
+exclude-files = ["src/quick_map_services/qms_external_api_python/*"]
+no-obsolete = true
+
+
+[project.optional-dependencies]
+dev = ["ruff", "pre-commit"]
+
 [tool.pyright]
 include = ["src"]
 pythonVersion = "3.7"
@@ -11,16 +38,16 @@ target-version = "py37"
 
 [tool.ruff.lint]
 select = [
-    # "A",    # flake8-builtins
+    # "A", # flake8-builtins
     # "ARG",  # flake8-unused-arguments
-    # "B",    # flake8-bugbear
+    # "B", # flake8-bugbear
     # "C90",  # mccabe complexity
     # "COM",  # flake8-commas
-    # "E",    # pycodestyle errors
-    # "F",    # pyflakes
+    # "E", # pycodestyle errors
+    # "F", # pyflakes
     # "FBT",  # flake8-boolean-trap
     # "FLY",  # flynt
-    # "I",    # isort
+    # "I", # isort
     # "ISC",  #  flake8-implicit-str-concat
     # "LOG",  # flake8-logging
     # "N",    # pep8-naming
@@ -42,15 +69,14 @@ select = [
     # "TD",  # flake8-todos
     # "TID", # flake8-tidy-imports
     # "TRY", # tryceratops
-    # "UP",  # pyupgrade
-    # "W",   # pycodesytle warnings
+    # "UP", # pyupgrade
+    # "W",  # pycodesytle warnings
     # "ANN",  # flake8-annotations
     # "CPY",  # flake8-copyright
     # "D",  # pydocstyle
     # "FIX",  # flake8-fixme
 ]
-ignore = ["TD003", "FBT003", "ISC001", "COM812", "E501", "C901", "F403",
-          "F405", "PERF102", "PYI024", "RET504", "SIM105", "TD002", "TRY003"]
+ignore = ["ANN101", "ANN102", "TD003", "FBT003", "ISC001", "COM812", "E501"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
