@@ -2,11 +2,13 @@ import ast
 import sys
 from datetime import datetime, timezone
 from os import path
+from pathlib import Path
 
-from qgis.core import QgsGeometry, QgsMessageLog
+from qgis.core import QgsGeometry, QgsMessageLog, QgsSettings
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import (
     QByteArray,
+    QLocale,
     QMutex,
     Qt,
     QThread,
@@ -149,31 +151,53 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.show_news()
 
     def show_news(self):
-        # client = Client()
-        # client.set_proxy(*QGISSettings.get_qgis_proxy())
+        self.newsFrame.setVisible(False)
 
-        # qms_news = client.get_news()
+        override_locale = QgsSettings().value(
+            "locale/overrideFlag", defaultValue=False, type=bool
+        )
+        if not override_locale:
+            locale_full_name = QLocale.system().name()
+        else:
+            locale_full_name = QgsSettings().value("locale/userLocale", "")
+
+        short_locale = locale_full_name[0:2]
+
+        utm_template = "&".join([
+            "utm_source=qgis_plugin",
+            "utm_medium=banner",
+            "utm_campaign={campaign}",
+            f"utm_term={Path(__file__).parent.name}",
+            f"utm_content={short_locale}"
+        ])
+
+        utm = utm_template.format(campaign="constant")
+        bf24_utm = utm_template.format(campaign="black-friday24")
+
         qms_black_friday_news = QmsNews(
             {
-                "ru": '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Свежие геоданные</a> для проекта. <b>Экономия 50%!</b>',
-                "en": '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Fresh geodata</a> for your project <b>(50% off!)</b>',
+                "ru": f'<a href="https://data.nextgis.com/?{bf24_utm}">Свежие геоданные</a> для проекта. <b>Экономия 50%!</b>',
+                "en": f'<a href="https://data.nextgis.com/?{bf24_utm}">Fresh geodata</a> for your project <b>(50% off!)</b>',
             }
         )
         qms_news = QmsNews(
             {
-                "ru": '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Скачайте геоданные</a> для проекта',
-                "en": '<a href="https://data.nextgis.com/?source=qgis&utm_source=qgis_plugin&utm_medium=banner">Download geodata</a> for your project',
+                "ru": f'<a href="https://data.nextgis.com/?{utm}">Скачайте геоданные</a> для проекта',
+                "en": f'<a href="https://data.nextgis.com/?{utm}">Download geodata</a> for your project',
             }
         )
-
-        self.newsFrame.setVisible(False)
-
         if qms_black_friday_news is None and qms_news is None:
             return
 
-        black_friday_finish = datetime(2023, 11, 25, 6, 0, tzinfo=timezone.utc)
+        black_friday_start = datetime(
+            year=2024, month=11, day=26, hour=21, minute=1, tzinfo=timezone.utc
+        )
+        black_friday_finish = datetime(
+            year=2024, month=12, day=3, hour=5, minute=59, tzinfo=timezone.utc
+        )
         black_friday_news = News(
             qms_black_friday_news,
+            date_start=black_friday_start,
             date_finish=black_friday_finish,
             icon="fire.png",
         )
