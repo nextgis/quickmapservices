@@ -28,9 +28,9 @@
      <property name="documentMode">
       <bool>false</bool>
      </property>
-     <widget class="QWidget" name="about_tab">
+     <widget class="QWidget" name="information_tab">
       <attribute name="title">
-       <string>About</string>
+       <string>Information</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout">
        <property name="leftMargin">
@@ -192,7 +192,7 @@ p, li { white-space: pre-wrap; }
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="support_us_button">
+      <widget class="QPushButton" name="get_involved_button">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -200,7 +200,7 @@ p, li { white-space: pre-wrap; }
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Support us</string>
+        <string>Get involved</string>
        </property>
       </widget>
      </item>

@@ -1,13 +1,13 @@
+from enum import IntEnum
 from pathlib import Path
 from typing import Dict, Optional
-from enum import IntEnum
 
 from qgis.core import QgsSettings
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QLocale, QSize, pyqtSlot, Qt
-from qgis.PyQt.QtWidgets import QDialog, QWidget, QLabel
-from qgis.PyQt.QtGui import QPixmap
+from qgis.PyQt.QtCore import QLocale, QSize, Qt, QUrl
+from qgis.PyQt.QtGui import QDesktopServices, QIcon, QPixmap
 from qgis.PyQt.QtSvg import QSvgWidget
+from qgis.PyQt.QtWidgets import QDialog, QLabel, QWidget
 from qgis.utils import pluginMetadata
 
 FORM_CLASS, _ = uic.loadUiType(
@@ -15,13 +15,14 @@ FORM_CLASS, _ = uic.loadUiType(
 )
 
 
-class AboutDialog(QDialog, FORM_CLASS):
-    class Tab(IntEnum):
-        About = 0
-        License = 1
-        Components = 2
-        Contributors = 3
+class AboutTab(IntEnum):
+    Information = 0
+    License = 1
+    Components = 2
+    Contributors = 3
 
+
+class AboutDialog(QDialog, FORM_CLASS):
     def __init__(self, package_name: str, parent: Optional[QWidget] = None):
         super().__init__(parent)
         self.setupUi(self)
@@ -29,23 +30,22 @@ class AboutDialog(QDialog, FORM_CLASS):
 
         self.tab_widget.setCurrentIndex(0)
 
-        self.support_us_button.clicked.connect(self.__support_us)
-        self.support_us_button.hide()
-
         metadata = self.__metadata()
         self.__set_icon(metadata)
         self.__fill_headers(metadata)
+        self.__fill_get_involved(metadata)
         self.__fill_about(metadata)
         self.__fill_license()
         self.__fill_components()
         self.__fill_contributors()
 
-    @pyqtSlot()
-    def __support_us(self) -> None:
-        pass
-
     def __fill_headers(self, metadata: Dict[str, Optional[str]]) -> None:
-        self.setWindowTitle(self.windowTitle().format_map(metadata))
+        plugin_name = metadata["plugin_name"]
+        assert isinstance(plugin_name, str)
+        if "NextGIS" not in plugin_name:
+            plugin_name += self.tr(" by NextGIS")
+
+        self.setWindowTitle(self.windowTitle().format(plugin_name=plugin_name))
         self.plugin_name_label.setText(
             self.plugin_name_label.text().format_map(metadata)
         )
@@ -88,23 +88,38 @@ class AboutDialog(QDialog, FORM_CLASS):
         icon_widget.setFixedSize(icon_size)
         self.header_layout.insertWidget(0, icon_widget)
 
+    def __fill_get_involved(self, metadata: Dict[str, Optional[str]]) -> None:
+        icon = QIcon(f":/plugins/{self.__package_name}/icons/nextgis_logo.svg")
+        if icon.isNull():
+            plugin_path = Path(__file__).parent
+            icon = QIcon(str(plugin_path / "icons" / "nextgis_logo.svg"))
+
+        if not icon.isNull():
+            self.get_involved_button.setIcon(icon)
+
+        self.get_involved_button.clicked.connect(
+            lambda: QDesktopServices.openUrl(
+                QUrl(metadata["get_involved_url"])
+            )
+        )
+
     def __fill_about(self, metadata: Dict[str, Optional[str]]) -> None:
         self.about_text_browser.setHtml(self.__html(metadata))
 
     def __fill_license(self) -> None:
         license_path = Path(__file__).parent / "LICENSE"
         if not license_path.exists():
-            self.tab_widget.setTabVisible(self.Tab.License, False)
+            self.tab_widget.setTabVisible(AboutTab.License, False)
             return
 
-        self.tab_widget.setTabVisible(self.Tab.License, True)
+        self.tab_widget.setTabVisible(AboutTab.License, True)
         self.license_text_browser.setPlainText(license_path.read_text())
 
     def __fill_components(self) -> None:
-        self.tab_widget.setTabVisible(self.Tab.Components, False)
+        self.tab_widget.setTabVisible(AboutTab.Components, False)
 
     def __fill_contributors(self) -> None:
-        self.tab_widget.setTabVisible(self.Tab.Contributors, False)
+        self.tab_widget.setTabVisible(AboutTab.Contributors, False)
 
     def __locale(self) -> str:
         override_locale = QgsSettings().value(
@@ -119,7 +134,7 @@ class AboutDialog(QDialog, FORM_CLASS):
 
     def __metadata(self) -> Dict[str, Optional[str]]:
         locale = self.__locale()
-        is_ru = locale in ["ru", "uk"]
+        speaks_russian = locale in ["be", "kk", "ky", "ru", "uk"]
 
         def metadata_value(key: str) -> Optional[str]:
             value = pluginMetadata(self.__package_name, f"{key}[{locale}]")
@@ -142,7 +157,8 @@ class AboutDialog(QDialog, FORM_CLASS):
             if about.find(about_stop_phrase) > 0:
                 about = about[: about.find(about_stop_phrase)]
 
-        url = f"https://nextgis.{'ru' if is_ru else 'com'}"
+        main_url = f"https://nextgis.{'ru' if speaks_russian else 'com'}"
+        utm = f"utm_source=qgis_plugin&utm_medium=about&utm_campaign=constant&utm_term={self.__package_name}&utm_content={locale}"
 
         return {
             "plugin_name": metadata_value("name"),
@@ -154,10 +170,11 @@ class AboutDialog(QDialog, FORM_CLASS):
             "video_url": metadata_value("video"),
             "homepage_url": metadata_value("homepage"),
             "tracker_url": metadata_value("tracker"),
-            "main_url": url,
-            "data_url": url.replace("://", "://data."),
-            "utm": "?utm_source=qgis_plugin&utm_medium=about&utm_campaign="
-            + self.__package_name,
+            "main_url": main_url,
+            "data_url": main_url.replace("://", "://data."),
+            "get_involved_url": f"https://nextgis.com/redirect/{locale}/ak45prp5?{utm}",
+            "utm": f"?{utm}",
+            "speaks_russian": str(speaks_russian),
         }
 
     def __html(self, metadata: Dict[str, Optional[str]]) -> str:
