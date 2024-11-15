@@ -405,7 +405,7 @@ class QmsSearchResultItemWidget(QWidget):
         self.service_report.setWordWrap(True)
         self.service_report.setOpenExternalLinks(True)
         self.service_report.setText(
-            '<a href="{0}">{1}</a><div/>'.format(
+            '<a href="{0}">{1}</a>'.format(
                 Client().geoservice_report_url(geoservice.get("id", "")),
                 self.tr("report a problem"),
             )
