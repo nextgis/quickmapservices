@@ -212,7 +212,7 @@ class TileServiceInfo(object):
         # Adapting code Nelson Ugalde Araya nugaldea@gmail.com
         if "{q}" in self.serviceUrl:
             quadkey = ""
-            for i in xrange(zoom):
+            for i in range(zoom):
                 bit = zoom - i
                 digit = ord("0")
                 mask = 1 << (bit - 1)  # if (bit - 1) > 0 else 1 >> (bit - 1)

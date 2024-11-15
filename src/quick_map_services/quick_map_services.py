@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
 import os.path
 import xml.etree.ElementTree as ET
 
@@ -105,7 +104,11 @@ class QuickMapServices(object):
         except:
             error_message = self.tr(
                 "Extra dirs for %s can't be created: %s %s"
-            ) % (PluginSettings.product_name(), sys.exc_type, sys.exc_value)
+            ) % (
+                PluginSettings.product_name(),
+                sys.exc_info()[0],
+                sys.exc_info()[1],
+            )
             self.iface.messageBar().pushMessage(
                 self.tr("Error"), error_message, level=QgsMessageBar.CRITICAL
             )
@@ -358,7 +361,7 @@ class QuickMapServices(object):
 
     def show_settings_dialog(self):
         settings_dlg = SettingsDialog()
-        settings_dlg.exec_()
+        settings_dlg.exec()
         # apply settings
         # self.remove_menu_buttons()
         self.build_menu_tree()

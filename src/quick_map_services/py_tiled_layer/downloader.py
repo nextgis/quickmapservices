@@ -125,7 +125,7 @@ class Downloader(QObject):
 
                 if reply.isReadable():
                     data = reply.readAll()
-                    if self.redirected_urls.has_key(url):
+                    if url in self.redirected_urls:
                         url = self.redirected_urls[url]
 
                     self.fetchedFiles[url] = data
@@ -197,8 +197,8 @@ class Downloader(QObject):
             self.timer.setInterval(timeout_ms)
             self.timer.start()
 
-        self.logT("eventLoop.exec_(): " + str(self.eventLoop))
-        self.eventLoop.exec_()
+        self.logT("eventLoop.exec(): " + str(self.eventLoop))
+        self.eventLoop.exec()
         self.log("fetchFiles() End: %d" % self.errorStatus)
         if timeout_ms > 0:
             self.timer.stop()

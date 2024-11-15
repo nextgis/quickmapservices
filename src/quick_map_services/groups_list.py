@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
 import codecs
 import os
 import sys
@@ -106,7 +105,7 @@ class GroupsList(object):
                 posible_trans = parser.items("ui")
 
             for key, val in posible_trans:
-                if type(key) is unicode and key == "alias[%s]" % self.locale:
+                if isinstance(key, str) and key == "alias[%s]" % self.locale:
                     self.translator.append(group_alias, val)
                     break
             # create menu

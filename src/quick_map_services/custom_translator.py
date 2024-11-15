@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
 from qgis.PyQt.QtCore import QTranslator, QCoreApplication
 from .singleton import singleton
 

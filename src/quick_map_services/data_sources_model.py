@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  QuickMapServices
@@ -21,18 +20,15 @@
  ***************************************************************************/
 """
 
-from __future__ import absolute_import
-
 # from data_source_info import DataSourceCategory
 # from group_info import
-from .data_sources_list import DataSourcesList
-from .groups_list import GroupsList
-
-from qgis.PyQt.QtCore import Qt, QAbstractItemModel, QModelIndex
+from qgis.PyQt.QtCore import QAbstractItemModel, QModelIndex, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QTreeWidgetItem
-from .plugin_settings import PluginSettings
 
+from .data_sources_list import DataSourcesList
+from .groups_list import GroupsList
+from .plugin_settings import PluginSettings
 from .singleton import QSingleton
 
 
