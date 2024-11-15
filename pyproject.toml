@@ -1,6 +1,6 @@
 [project]
 name = "quick_map_services"
-version = "0.19.34"
+version = "0.19.35"
 readme = "README.md"
 license = { file = "LICENSE" }
 
@@ -8,7 +8,7 @@ license = { file = "LICENSE" }
 [tool.qgspb.package-data]
 "quick_map_services.data_sources" = ["osm_mapnik/*", "nasa_sedac_eq_frequency/*",
                                      "nasa_sedac_eq_peak_ground_accel/*"]
-"quick_map_services.groups" = ["nasa/*", "osm/*"]                                 
+"quick_map_services.groups" = ["nasa/*", "osm/*"]
 "quick_map_services.icons" = ["*.svg", "*.png"]
 
 [tool.qgspb.forms]
@@ -47,7 +47,7 @@ select = [
     # "F", # pyflakes
     # "FBT",  # flake8-boolean-trap
     # "FLY",  # flynt
-    # "I", # isort
+    "I", # isort
     # "ISC",  #  flake8-implicit-str-concat
     # "LOG",  # flake8-logging
     # "N",    # pep8-naming
