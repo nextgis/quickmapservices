@@ -4,7 +4,7 @@ from typing import Dict, Optional
 
 from qgis.core import QgsSettings
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QLocale, QSize, Qt, QUrl
+from qgis.PyQt.QtCore import QFile, QLocale, QSize, Qt, QUrl
 from qgis.PyQt.QtGui import QDesktopServices, QIcon, QPixmap
 from qgis.PyQt.QtSvg import QSvgWidget
 from qgis.PyQt.QtWidgets import QDialog, QLabel, QWidget
@@ -89,13 +89,16 @@ class AboutDialog(QDialog, FORM_CLASS):
         self.header_layout.insertWidget(0, icon_widget)
 
     def __fill_get_involved(self, metadata: Dict[str, Optional[str]]) -> None:
-        icon = QIcon(f":/plugins/{self.__package_name}/icons/nextgis_logo.svg")
-        if icon.isNull():
-            plugin_path = Path(__file__).parent
-            icon = QIcon(str(plugin_path / "icons" / "nextgis_logo.svg"))
+        plugin_path = Path(__file__).parent
+        file_path = str(plugin_path / "icons" / "nextgis_logo.svg")
+        resources_path = (
+            f":/plugins/{self.__package_name}/icons/nextgis_logo.svg"
+        )
 
-        if not icon.isNull():
-            self.get_involved_button.setIcon(icon)
+        if QFile(resources_path).exists():
+            self.get_involved_button.setIcon(QIcon(resources_path))
+        elif QFile(file_path).exists():
+            self.get_involved_button.setIcon(QIcon(file_path))
 
         self.get_involved_button.clicked.connect(
             lambda: QDesktopServices.openUrl(
