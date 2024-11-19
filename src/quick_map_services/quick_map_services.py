@@ -301,6 +301,7 @@ class QuickMapServices(object):
             )
             self.service_actions.append(self.settings_act)
             self.settings_act.triggered.connect(self.show_settings_dialog)
+
         self.menu.addAction(self.settings_act)
 
         if not self.info_act:
@@ -313,6 +314,16 @@ class QuickMapServices(object):
             self.service_actions.append(self.info_act)
             self.info_act.triggered.connect(self.info_dlg.show)
         self.menu.addAction(self.info_act)
+
+        self.__help_action = QAction(
+            QIcon(self.plugin_dir + "/icons/qms_logo.svg"),
+            "QuickMapServices",
+        )
+        self.__help_action.triggered.connect(self.info_dlg.show)
+
+        plugin_help_menu = self.iface.pluginHelpMenu()
+        assert plugin_help_menu is not None
+        plugin_help_menu.addAction(self.__help_action)
 
     def remove_menu_buttons(self):
         """
