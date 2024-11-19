@@ -4,12 +4,12 @@
 <context>
     <name>@default</name>
     <message>
-        <location filename="../qgis_map_helpers.py" line="160"/>
+        <location filename="../qgis_map_helpers.py" line="163"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation>Слой %s невозможно добавить на карту!</translation>
     </message>
     <message>
-        <location filename="../qgis_map_helpers.py" line="163"/>
+        <location filename="../qgis_map_helpers.py" line="166"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -436,12 +436,12 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>FileSelectionWidget</name>
     <message>
-        <location filename="../file_selection_widget.py" line="57"/>
+        <location filename="../file_selection_widget.py" line="58"/>
         <source>Select folder</source>
         <translation>Выберите директорию</translation>
     </message>
     <message>
-        <location filename="../file_selection_widget.py" line="121"/>
+        <location filename="../file_selection_widget.py" line="122"/>
         <source>...</source>
         <translation>...</translation>
     </message>
@@ -667,7 +667,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PropertiesDialog</name>
     <message>
-        <location filename="../py_tiled_layer/propertiesdialog.py" line="44"/>
+        <location filename="../py_tiled_layer/propertiesdialog.py" line="43"/>
         <source>Layer Properties</source>
         <translation>Свойства слоя</translation>
     </message>
@@ -730,7 +730,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../qms_service_toolbox.py" line="329"/>
         <source>You can add a service to become searchable. Start &lt;a href=&apos;{}&apos;&gt;here&lt;/a&gt;.</source>
-        <translation>Вы можете &lt;a href=&apos;{}&apos;&gt;добавить сервис&lt;/a&gt; самостоятельно, и он станет доступен через поиск.</translation>
+        <translation>Вы можете &lt;a href='{}'&gt;добавить сервис&lt;/a&gt; самостоятельно, и он станет доступен через поиск.</translation>
     </message>
     <message>
         <location filename="../qms_service_toolbox.ui" line="85"/>
@@ -761,22 +761,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="../quick_map_services.py" line="177"/>
+        <location filename="../quick_map_services.py" line="176"/>
         <source>QuickMapServices</source>
         <translation>QuickMapServices</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="270"/>
+        <location filename="../quick_map_services.py" line="269"/>
         <source>Set proper scale</source>
         <translation>Ближайший масштаб</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="287"/>
+        <location filename="../quick_map_services.py" line="286"/>
         <source>Set SlippyMap scales</source>
         <translation>Установить масштабы SlippyMap</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="298"/>
+        <location filename="../quick_map_services.py" line="297"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
@@ -786,29 +786,29 @@ p, li { white-space: pre-wrap; }
         <translation>О QMS</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="177"/>
+        <location filename="../quick_map_services.py" line="176"/>
         <source>Set SlippyMap scales for current project? 
 The previous settings will be overwritten!</source>
         <translation>Установить масштабный ряд SlippyMap для текущего проекта?
 Предыдущие настройки будут перезаписаны!</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="112"/>
+        <location filename="../quick_map_services.py" line="111"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="107"/>
+        <location filename="../quick_map_services.py" line="106"/>
         <source>Extra dirs for %s can&apos;t be created: %s %s</source>
         <translation>Невозможно создать дополнительные директории для  %s: %s %s</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="388"/>
+        <location filename="../quick_map_services.py" line="398"/>
         <source>Search QMS</source>
         <translation>Поиск в QMS</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="254"/>
+        <location filename="../quick_map_services.py" line="253"/>
         <source>Add to Search</source>
         <translation>Добавить в Поиск</translation>
     </message>
@@ -833,22 +833,22 @@ The previous settings will be overwritten!</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../settings_dialog.py" line="149"/>
+        <location filename="../settings_dialog.py" line="147"/>
         <source>Last version of contrib pack was downloaded!</source>
         <translation>Последняя версия пакета с источниками данных была успешно загружена!</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="74"/>
+        <location filename="../settings_dialog.py" line="72"/>
         <source>Show all</source>
         <translation>Показать все</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="79"/>
+        <location filename="../settings_dialog.py" line="77"/>
         <source>Hide all</source>
         <translation>Скрыть все</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="159"/>
+        <location filename="../settings_dialog.py" line="157"/>
         <source>Error on getting contrib pack: %s</source>
         <translation>Ошибка при получении источников данных: %s</translation>
     </message>
@@ -856,77 +856,77 @@ The previous settings will be overwritten!</source>
 <context>
     <name>TileLayer</name>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="244"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="241"/>
         <source>Current zoom level ({0}) is smaller than zmin ({1}): {2}</source>
         <translation>Текущий уровень масштабирования ({0}) меньше чем zmin ({1}): {2}</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="312"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="309"/>
         <source>Tile count is over limit ({0}, max={1})</source>
         <translation>Количество тайлов превысило лимит ({0}, max={1})</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="387"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="384"/>
         <source>Download Timeout - {}</source>
         <translation>Время ожидания скачивания - {}</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="828"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="825"/>
         <source> {} files failed.</source>
         <translation> {} файла(ов) не скачано.</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="395"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="392"/>
         <source>Failed to download all {0} files. - {1}</source>
         <translation>Не удалось загрузить все {0} файла(ов). - {1}</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="499"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="496"/>
         <source>Reprojection requires python-gdal</source>
         <translation>Перепроецирование требует наличие python-gdal</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="824"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="821"/>
         <source>{0} of {1} files downloaded.</source>
         <translation>{0} из {1} файлов скачано.</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="913"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="910"/>
         <source>Title</source>
         <translation>Заголовок</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="914"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="911"/>
         <source>Credit</source>
         <translation>Авторство</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="915"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="912"/>
         <source>URL</source>
         <translation>URL</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="916"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="913"/>
         <source>yOrigin</source>
         <translation>yOrigin</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="930"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="927"/>
         <source>Not set</source>
         <translation>Не установлено</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="931"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="928"/>
         <source>Zoom range</source>
         <translation>Диапазон масштабирования</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="938"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="935"/>
         <source>Layer Extent</source>
         <translation>Границы слоя</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="378"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="375"/>
         <source>{0} files downloaded. {1} cache hits.</source>
         <translation>{0} файлов скачано. {1} попаданий кэша.</translation>
     </message>
