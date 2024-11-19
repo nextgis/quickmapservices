@@ -54,7 +54,16 @@
          <property name="spacing">
           <number>6</number>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -143,7 +152,7 @@
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;img src=&quot;/home/alexander/dev/qgis.quick_map_services/quickmapservices/src/icons/news.png&quot; /&gt;&amp;nbsp;&amp;nbsp;Help QMS upgrade to QGIS3&lt;/body&gt;&lt;/html&gt;</string>
+          <string/>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -166,7 +175,7 @@
   <customwidget>
    <class>QgsFilterLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>qgis.gui</header>
+   <header>qgsfilterlineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
