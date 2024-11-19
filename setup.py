@@ -121,9 +121,23 @@ class QgisPluginBuilder:
         build_directory = Path(__file__).parent / "build"
         build_directory.mkdir(exist_ok=True)
 
+        created_directories = set()
+
+        def create_directories(zip_file: zipfile.ZipFile, path: Path):
+            directory = ""
+            for part in path.parts[:-1]:
+                directory += f"{part}/"
+                if directory in created_directories:
+                    continue
+                zip_file.writestr(directory, "")
+                created_directories.add(directory)
+
         zip_file_path = build_directory / zip_file_name
-        with zipfile.ZipFile(zip_file_path, "w") as zip_file:
+        with zipfile.ZipFile(
+            zip_file_path, "w", zipfile.ZIP_DEFLATED
+        ) as zip_file:
             for source_file, build_path in build_mapping.items():
+                create_directories(zip_file, build_path)
                 zip_file.write(source_file, "/".join(build_path.parts))
 
     def install(
@@ -158,7 +172,8 @@ class QgisPluginBuilder:
             metadata_path = plugin_path / "metadata.txt"
             assert metadata_path.exists()
             metadata = ConfigParser()
-            metadata.read(metadata_path, "utf-8")
+            with open(metadata_path, encoding="utf-8") as f:
+                metadata.read_file(f)
             installed_version = metadata.get("general", "version")
 
             print(
@@ -210,7 +225,8 @@ class QgisPluginBuilder:
         assert metadata_path.exists()
 
         metadata = ConfigParser()
-        metadata.read(metadata_path, "utf-8")
+        with open(metadata_path, encoding="utf-8") as f:
+            metadata.read_file(f)
         installed_version = metadata.get("general", "version")
 
         print(f"Plugin {project_name} {installed_version}\n")
@@ -316,7 +332,8 @@ class QgisPluginBuilder:
         metadata_path = src_directory / project_name / "metadata.txt"
 
         metadata = ConfigParser()
-        metadata.read(metadata_path, "utf-8")
+        with open(metadata_path, encoding="utf-8") as f:
+            metadata.read_file(f)
         assert metadata.get("general", "version") == project_version
 
         build_path = Path(project_name) / metadata_path.name
@@ -362,9 +379,17 @@ class QgisPluginBuilder:
         project_name: str = self.project_settings["name"]
         src_directory = Path(__file__).parent / "src"
 
+        exclude_patterns = self.qgspb_settings.get("exclude-files", [])
+        exclude_paths = set(
+            exclude_path.absolute()
+            for exclude_pattern in exclude_patterns
+            for exclude_path in Path(__file__).parent.rglob(exclude_pattern)
+        )
+
         return {
             py_path.absolute(): py_path.relative_to(src_directory)
             for py_path in (src_directory / project_name).rglob("*.py")
+            if py_path.absolute() not in exclude_paths
         }
 
     def __create_data_mapping(self) -> Dict[Path, Path]:
@@ -457,7 +482,7 @@ class QgisPluginBuilder:
 
     def __update_generated_file(self, file_path: Path) -> None:
         assert file_path.suffix == ".py"
-        content = file_path.read_text()
+        content = file_path.read_text(encoding="utf-8")
         file_path.write_text(content.replace("from PyQt5", "from qgis.PyQt"))
 
     def __profile_path(self, qgis: str, profile: Optional[str]) -> Path:
