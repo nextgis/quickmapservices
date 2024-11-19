@@ -21,18 +21,18 @@
 """
 
 import threading
+
+from qgis.core import QgsNetworkAccessManager
 from qgis.PyQt.QtCore import (
+    QDateTime,
+    QEventLoop,
     QObject,
     QTimer,
-    QEventLoop,
-    QDateTime,
-    qDebug,
     QUrl,
     pyqtSignal,
+    qDebug,
 )
-from qgis.PyQt.QtNetwork import QNetworkRequest, QNetworkReply
-from qgis.core import QgsNetworkAccessManager
-
+from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest
 
 debug_mode = 0
 

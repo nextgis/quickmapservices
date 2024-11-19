@@ -1,26 +1,26 @@
 import os
 import shutil
+from os import path
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QIcon, QPixmap
 from qgis.PyQt.QtWidgets import QDialog, QMessageBox
-from os import path
 
 from . import extra_sources
+from .compat2qgis import getOpenFileName
 from .data_source_info import DataSourceInfo
 from .data_source_serializer import DataSourceSerializer
 from .data_sources_list import DataSourcesList
 from .group_info import GroupInfo
 from .groups_list import GroupsList
-from .supported_drivers import KNOWN_DRIVERS
 from .gui.editor_widget_gdal import EditorWidgetGdal
-from .gui.editor_widget_tms import EditorWidgetTms
-from .gui.editor_widget_wms import EditorWidgetWms
-from .gui.editor_widget_wfs import EditorWidgetWfs
 from .gui.editor_widget_geojson import EditorWidgetGeoJson
+from .gui.editor_widget_tms import EditorWidgetTms
+from .gui.editor_widget_wfs import EditorWidgetWfs
+from .gui.editor_widget_wms import EditorWidgetWms
 from .gui.line_edit_color_validator import LineEditColorValidator
 from .plugin_settings import PluginSettings
-from .compat2qgis import getOpenFileName
+from .supported_drivers import KNOWN_DRIVERS
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "ds_edit_dialog.ui")

@@ -1,6 +1,6 @@
+import codecs
 import os
 import shutil
-import codecs
 from os import path
 
 from qgis.PyQt import uic
@@ -8,11 +8,11 @@ from qgis.PyQt.QtGui import QPixmap
 from qgis.PyQt.QtWidgets import QDialog, QMessageBox
 
 from . import extra_sources
+from .compat2qgis import getOpenFileName
 from .fixed_config_parser import FixedConfigParser
 from .groups_list import GroupsList
 from .gui.line_edit_color_validator import LineEditColorValidator
 from .plugin_settings import PluginSettings
-from .compat2qgis import getOpenFileName
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "group_edit_dialog.ui")

@@ -24,32 +24,29 @@
 import os
 import threading
 
-from qgis.PyQt.QtCore import (
-    QObject,
-    qDebug,
-    Qt,
-    QFile,
-    QRectF,
-    QPointF,
-    QPoint,
-    QTimer,
-    QEventLoop,
-    pyqtSignal,
-)
-
-from qgis.PyQt.QtGui import QFont, QColor, QBrush
-from qgis.core import QgsPluginLayer, QgsPluginLayerType, QgsImageOperation
+from qgis.core import QgsImageOperation, QgsPluginLayer, QgsPluginLayerType
 from qgis.gui import QgsMessageBar
+from qgis.PyQt.QtCore import (
+    QEventLoop,
+    QFile,
+    QObject,
+    QPoint,
+    QPointF,
+    QRectF,
+    Qt,
+    QTimer,
+    pyqtSignal,
+    qDebug,
+)
+from qgis.PyQt.QtGui import QBrush, QColor, QFont
 from qgis.utils import iface
 
-from ..plugin_settings import PluginSettings
-from ..qgis_settings import QGISSettings
-from ..qgis_proj_helper import ProjectionHelper
 from ..compat2qgis import QGisMessageBarLevel, QgsCoordinateReferenceSystem
-
-from .tiles import *
+from ..plugin_settings import PluginSettings
+from ..qgis_proj_helper import ProjectionHelper
+from ..qgis_settings import QGISSettings
 from .downloader import Downloader
-
+from .tiles import *
 
 try:
     from osgeo import gdal

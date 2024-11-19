@@ -19,16 +19,16 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtGui import QColor
-from qgis.gui import QgsRubberBand
 from qgis.core import QgsRectangle
+from qgis.gui import QgsRubberBand
+from qgis.PyQt.QtGui import QColor
 from qgis.utils import iface
 
 from .compat2qgis import (
     QGisGeometryType,
-    getCanvasDestinationCrs,
-    QgsCoordinateTransform,
     QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    getCanvasDestinationCrs,
 )
 
 

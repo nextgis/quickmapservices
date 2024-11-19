@@ -26,7 +26,6 @@ import sys
 from qgis import core
 from qgis.PyQt.QtWidgets import QFileDialog
 
-
 if hasattr(core, "QGis"):
     from qgis.core import QGis
 else:
@@ -62,8 +61,8 @@ else:
 
     addMapLayer = core.QgsMapLayerRegistry.instance().addMapLayer
 
-    from qgis.gui import QgsMessageBar
     from qgis.core import QgsMessageLog
+    from qgis.gui import QgsMessageBar
 
     message_log_levels = {
         "Info": QgsMessageLog.INFO,

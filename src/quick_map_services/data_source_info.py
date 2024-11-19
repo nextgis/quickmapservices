@@ -21,8 +21,8 @@
  ***************************************************************************/
 """
 
-import re
 import itertools
+import re
 
 
 class DataSourceCategory(object):

@@ -1,7 +1,7 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QWidget, QMessageBox
+from qgis.PyQt.QtWidgets import QMessageBox, QWidget
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "editor_widget_gdal.ui")

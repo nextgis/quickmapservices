@@ -21,8 +21,8 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtCore import QSettings
 from qgis.core import QgsNetworkAccessManager
+from qgis.PyQt.QtCore import QSettings
 
 
 class QGISSettings(object):

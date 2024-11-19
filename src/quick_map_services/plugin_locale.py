@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtCore import QSettings, QLocale
+from qgis.PyQt.QtCore import QLocale, QSettings
 
 
 class Locale(object):

@@ -1,8 +1,8 @@
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
-from .plugin_settings import PluginSettings
 from .compat2qgis import QGisMessageBarLevel, QgsCoordinateReferenceSystem
+from .plugin_settings import PluginSettings
 
 
 class ProjectionHelper:

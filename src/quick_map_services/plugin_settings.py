@@ -23,10 +23,10 @@
 
 import ast
 
+from qgis.PyQt.QtCore import QByteArray, QDir, QSettings, Qt
+
 from .compat import urlopen
 from .compat2qgis import QGis
-
-from qgis.PyQt.QtCore import QSettings, QDir, Qt, QByteArray
 
 
 class PluginSettings(object):

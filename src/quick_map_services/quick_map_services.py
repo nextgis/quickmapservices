@@ -22,45 +22,44 @@
 """
 
 import os.path
+import sys
 import xml.etree.ElementTree as ET
-
-from qgis.PyQt.QtCore import (
-    QSettings,
-    QTranslator,
-    qVersion,
-    QCoreApplication,
-    Qt,
-    QUrl,
-)
-from qgis.PyQt.QtWidgets import (
-    QAction,
-    QToolButton,
-    QMenu,
-    QMessageBox,
-    QDialog,
-)
-from qgis.PyQt.QtGui import QIcon, QDesktopServices
 
 # Initialize Qt resources from file resources.py
 # import resources_rc
 # Import the code for the dialog
 from qgis.core import QgsProject
 from qgis.gui import QgsMessageBar
-import sys
-from .extra_sources import ExtraSources
-from .plugin_locale import Locale
-from .plugin_settings import PluginSettings
-from .qgis_map_helpers import add_layer_to_map
-from .qms_service_toolbox import QmsServiceToolbox
+from qgis.PyQt.QtCore import (
+    QCoreApplication,
+    QSettings,
+    Qt,
+    QTranslator,
+    QUrl,
+    qVersion,
+)
+from qgis.PyQt.QtGui import QDesktopServices, QIcon
+from qgis.PyQt.QtWidgets import (
+    QAction,
+    QDialog,
+    QMenu,
+    QMessageBox,
+    QToolButton,
+)
 
-from .settings_dialog import SettingsDialog
 from .about_dialog import AboutDialog
-from .py_tiled_layer.tilelayer import TileLayer, TileLayerType
-from .data_sources_list import DataSourcesList
-from .groups_list import GroupsList
-from .custom_translator import CustomTranslator, QTranslator
 from .compat import get_file_dir
 from .compat2qgis import qgisRegistryInstance
+from .custom_translator import CustomTranslator, QTranslator
+from .data_sources_list import DataSourcesList
+from .extra_sources import ExtraSources
+from .groups_list import GroupsList
+from .plugin_locale import Locale
+from .plugin_settings import PluginSettings
+from .py_tiled_layer.tilelayer import TileLayer, TileLayerType
+from .qgis_map_helpers import add_layer_to_map
+from .qms_service_toolbox import QmsServiceToolbox
+from .settings_dialog import SettingsDialog
 
 
 class QuickMapServices(object):

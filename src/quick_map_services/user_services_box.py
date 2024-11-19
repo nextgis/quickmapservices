@@ -1,24 +1,24 @@
 import os
-import sys
 import shutil
+import sys
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (
-    QGroupBox,
-    QListWidgetItem,
     QDialog,
-    QMessageBox,
-    QVBoxLayout,
-    QTreeView,
+    QGroupBox,
     QHeaderView,
+    QListWidgetItem,
+    QMessageBox,
+    QTreeView,
+    QVBoxLayout,
 )
 
-from .data_sources_list import DataSourcesList, USER_DS_PATHS
-from .ds_edit_dialog import DsEditDialog
-from .data_sources_model import DSManagerModel
 from .compat import get_file_dir
+from .data_sources_list import USER_DS_PATHS, DataSourcesList
+from .data_sources_model import DSManagerModel
+from .ds_edit_dialog import DsEditDialog
 
 plugin_dir = get_file_dir(__file__)
 

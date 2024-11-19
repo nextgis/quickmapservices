@@ -24,19 +24,21 @@
 import codecs
 import os
 import sys
+
+from qgis.core import QgsMessageLog
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
-from qgis.core import QgsMessageLog
+
+from . import extra_sources
+from .compat import get_file_dir
+from .compat2qgis import message_log_levels
 from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
-from .data_source_info import DataSourceInfo, DataSourceCategory
-from . import extra_sources
+from .data_source_info import DataSourceCategory, DataSourceInfo
 from .data_source_serializer import DataSourceSerializer
 from .plugin_locale import Locale
 from .supported_drivers import KNOWN_DRIVERS
-from .compat import get_file_dir
-from .compat2qgis import message_log_levels
 
 CURR_PATH = get_file_dir(__file__)
 

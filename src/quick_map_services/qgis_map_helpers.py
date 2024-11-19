@@ -1,21 +1,24 @@
 import ast
 import random
 
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import QgsRasterLayer, QgsVectorLayer, QgsMessageLog, QgsProject
-
+from qgis.core import QgsMessageLog, QgsProject, QgsRasterLayer, QgsVectorLayer
 from qgis.gui import QgsMessageBar
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.utils import iface
 
 from .compat import urlparse
-from .compat2qgis import addMapLayer, QGisMessageLogLevel, QGisMessageBarLevel
+from .compat2qgis import (
+    QGisMessageBarLevel,
+    QGisMessageLogLevel,
+    addMapLayer,
+    message_log_levels,
+)
 from .plugin_settings import PluginSettings
-from .supported_drivers import KNOWN_DRIVERS
-from .py_tiled_layer.tiles import TileServiceInfo, TileDefaultSettings
 from .py_tiled_layer.tilelayer import TileLayer
+from .py_tiled_layer.tiles import TileDefaultSettings, TileServiceInfo
 from .qgis_proj_helper import ProjectionHelper
 from .qgis_settings import QGISSettings
-from .compat2qgis import message_log_levels
+from .supported_drivers import KNOWN_DRIVERS
 
 service_layers = []
 

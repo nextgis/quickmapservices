@@ -21,7 +21,8 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtCore import QTranslator, QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication, QTranslator
+
 from .singleton import singleton
 
 

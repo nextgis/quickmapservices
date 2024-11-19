@@ -1,7 +1,7 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QWidget, QMessageBox
+from qgis.PyQt.QtWidgets import QMessageBox, QWidget
 
 from .line_edit_color_validator import LineEditColorValidator
 

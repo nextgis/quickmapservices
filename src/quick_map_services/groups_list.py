@@ -24,19 +24,19 @@
 import codecs
 import os
 import sys
+
+from qgis.core import QgsMessageLog
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QMenu
 
-from qgis.core import QgsMessageLog
-from .config_reader_helper import ConfigReaderHelper
 from . import extra_sources
-from .custom_translator import CustomTranslator
-from .group_info import GroupInfo, GroupCategory
-from .plugin_locale import Locale
 from .compat import configparser, get_file_dir
 from .compat2qgis import message_log_levels
-
+from .config_reader_helper import ConfigReaderHelper
+from .custom_translator import CustomTranslator
+from .group_info import GroupCategory, GroupInfo
+from .plugin_locale import Locale
 
 CURR_PATH = get_file_dir(__file__)
 

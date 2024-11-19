@@ -22,10 +22,10 @@
 
 # Import the PyQt and QGIS libraries
 import math
+
+from qgis.core import QgsRectangle
 from qgis.PyQt.QtCore import QRect, Qt
 from qgis.PyQt.QtGui import QImage, QPainter
-from qgis.core import QgsRectangle
-
 
 R = 6378137
 

@@ -29,15 +29,16 @@ __revision__ = "$Format:%H$"
 
 import os
 
+from qgis.PyQt import QtCore
+from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt.QtWidgets import (
     QFileDialog,
-    QWidget,
     QHBoxLayout,
     QLineEdit,
     QToolButton,
+    QWidget,
 )
-from qgis.PyQt.QtCore import QSettings
-from qgis.PyQt import QtCore
+
 from .compat2qgis import getOpenFileName
 
 try:

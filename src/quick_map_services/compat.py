@@ -23,18 +23,17 @@
 import os
 import sys
 
-
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
 if PY2:
     import urlparse
-    from urllib2 import urlopen, URLError
+    from urllib2 import URLError, urlopen
 else:
     from urllib import parse
 
     urlparse = parse
-    from urllib.request import urlopen, URLError
+    from urllib.request import URLError, urlopen
 
 if PY3:
     import configparser

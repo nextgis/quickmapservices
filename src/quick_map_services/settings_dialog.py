@@ -24,23 +24,21 @@
 import os
 import sys
 
+from qgis.core import QgsApplication
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 
-from qgis.core import QgsApplication
-
+from .compat2qgis import (
+    QGis,
+    imageActionHideAllLayers,
+    imageActionShowAllLayers,
+)
+from .data_sources_model import DSManagerModel
 from .extra_sources import ExtraSources
 from .plugin_settings import PluginSettings
 from .qgis_settings import QGISSettings
-from .data_sources_model import DSManagerModel
-from .compat2qgis import (
-    QGis,
-    imageActionShowAllLayers,
-    imageActionHideAllLayers,
-)
-
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "settings_dialog_base.ui"),

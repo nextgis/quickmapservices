@@ -1,24 +1,24 @@
 import os
-import sys
 import shutil
+import sys
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (
-    QGroupBox,
-    QListWidgetItem,
     QDialog,
-    QVBoxLayout,
-    QTableView,
+    QGroupBox,
     QHeaderView,
+    QListWidgetItem,
     QMessageBox,
+    QTableView,
+    QVBoxLayout,
 )
 
-from .groups_list import GroupsList, USER_GROUP_PATHS
-from .group_edit_dialog import GroupEditDialog
-from .data_sources_model import DSManagerModel
 from .compat import get_file_dir
+from .data_sources_model import DSManagerModel
+from .group_edit_dialog import GroupEditDialog
+from .groups_list import USER_GROUP_PATHS, GroupsList
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "user_groups_box.ui")

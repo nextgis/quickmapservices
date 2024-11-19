@@ -26,7 +26,6 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.PyQt.QtGui import QDialog, QDialogButtonBox, QPainter
 
-
 CURR_PATH = os.path.dirname(__file__)
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(CURR_PATH, "propertiesdialog_base.ui")
