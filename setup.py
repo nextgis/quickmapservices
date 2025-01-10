@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 import os
 import platform
+import re
 import shutil
 import subprocess
 import zipfile
@@ -10,7 +12,10 @@ from configparser import ConfigParser
 from pathlib import Path
 from typing import Dict, List, Optional
 
-import tomllib
+try:
+    import tomllib
+except ImportError:
+    import pip._vendor.tomli as tomllib
 
 
 def with_name(
@@ -21,8 +26,8 @@ def with_name(
 
 class QgisPluginBuilder:
     def __init__(self):
-        current_directory = Path(__file__).parent
-        pyproject_file = current_directory / "pyproject.toml"
+        self.current_directory = Path(__file__).parent
+        pyproject_file = self.current_directory / "pyproject.toml"
 
         self.settings = tomllib.loads(pyproject_file.read_text())
         self.project_settings = self.settings.get("project", {})
@@ -590,6 +595,200 @@ class QgisPluginBuilder:
         elif path.is_dir():
             shutil.rmtree(path)
 
+    def config(self, ide: str, qgis: str, profile: Optional[str]) -> None:
+        if ide == "vscode":
+            (self.current_directory / ".vscode").mkdir(exist_ok=True)
+            self.__create_vscode_launch(qgis, profile)
+            self.__create_vscode_tasks()
+            return
+
+        raise NotImplementedError
+
+    def __create_vscode_launch(
+        self, qgis: str, profile: Optional[str]
+    ) -> None:
+        profile_path = self.__profile_path(qgis, profile)
+        plugins_path = profile_path / "python" / "plugins"
+        project_name: str = self.project_settings["name"]
+        plugin_path = plugins_path / project_name
+
+        launch_file = self.current_directory / ".vscode" / "launch.json"
+
+        launch_content = {}
+        need_fill = True
+        if launch_file.exists():
+            try:
+                launch_content = json.loads(self.__read_json(launch_file))
+                need_fill = False
+            except Exception:
+                print(
+                    f"An error occured while reading {launch_file}. This file"
+                    " will be overwrited"
+                )
+                pass
+
+        if need_fill:
+            launch_content["version"] = "0.2.0"
+            launch_content["configurations"] = []
+
+        new_configurations = [
+            {
+                "name": "Attach QGIS",
+                "type": "debugpy",
+                "request": "attach",
+                "connect": {"host": "localhost", "port": 5678},
+                "pathMappings": [
+                    {
+                        "localRoot": f"${{workspaceFolder}}/src/{project_name}",
+                        "remoteRoot": str(plugin_path),
+                    }
+                ],
+                "justMyCode": True,
+            }
+        ]
+
+        for new_config in new_configurations:
+            is_replaced = False
+            for i, current_config in enumerate(
+                launch_content["configurations"]
+            ):
+                if new_config["name"] == current_config["name"]:
+                    launch_content["configurations"][i] = new_config
+                    is_replaced = True
+                    break
+
+            if not is_replaced:
+                launch_content["configurations"].append(new_config)
+
+        launch_file.write_text(json.dumps(launch_content, indent=4))
+
+    def __create_vscode_tasks(self) -> None:
+        tasks_file = self.current_directory / ".vscode" / "tasks.json"
+
+        tasks_conten = {}
+        if tasks_file.exists():
+            tasks_conten = json.loads(self.__read_json(tasks_file))
+        else:
+            tasks_conten["version"] = "2.0.0"
+            tasks_conten["inputs"] = []
+            tasks_conten["tasks"] = []
+
+        new_inputs = [
+            {
+                "id": "qgis",
+                "description": "QGIS build",
+                "type": "pickString",
+                "options": ["Vanilla", "NextGIS"],
+            }
+        ]
+        for new_input in new_inputs:
+            is_replaced = False
+            for i, current_input in enumerate(tasks_conten["inputs"]):
+                if new_input["id"] == current_input["id"]:
+                    tasks_conten["inputs"][i] = new_input
+                    is_replaced = True
+                    break
+
+            if not is_replaced:
+                tasks_conten["inputs"].append(new_input)
+
+        new_tasks = [
+            {
+                "label": "Install plugin",
+                "type": "shell",
+                "group": "build",
+                "command": "${command:python.interpreterPath} "
+                "${workspaceFolder}/setup.py install --force --qgis "
+                "${input:qgis}",
+                "presentation": {
+                    "echo": True,
+                    "reveal": "always",
+                    "focus": True,
+                    "panel": "shared",
+                    "showReuseMessage": True,
+                    "clear": False,
+                },
+            },
+            {
+                "label": "Install plugin [editable]",
+                "type": "shell",
+                "group": "build",
+                "command": "${command:python.interpreterPath} "
+                "${workspaceFolder}/setup.py install --editable --force "
+                "--qgis ${input:qgis}",
+                "presentation": {
+                    "echo": True,
+                    "reveal": "always",
+                    "focus": True,
+                    "panel": "shared",
+                    "showReuseMessage": True,
+                    "clear": False,
+                },
+            },
+            {
+                "label": "Uninstall plugin",
+                "type": "shell",
+                "group": "build",
+                "command": "${command:python.interpreterPath} "
+                "${workspaceFolder}/setup.py uninstall",
+                "presentation": {
+                    "echo": True,
+                    "reveal": "always",
+                    "focus": True,
+                    "panel": "shared",
+                    "showReuseMessage": True,
+                    "clear": False,
+                },
+            },
+            {
+                "label": "Build release zip",
+                "type": "shell",
+                "group": "build",
+                "command": "${command:python.interpreterPath} "
+                "${workspaceFolder}/setup.py build",
+            },
+            {
+                "label": "Update translations",
+                "type": "shell",
+                "group": "build",
+                "command": "${command:python.interpreterPath} "
+                "${workspaceFolder}/setup.py update_ts",
+            },
+            {
+                "label": "Generate resources",
+                "type": "shell",
+                "group": "build",
+                "command": "${command:python.interpreterPath} "
+                "${workspaceFolder}/setup.py bootstrap",
+            },
+            {
+                "label": "Clean generated files",
+                "type": "shell",
+                "group": "build",
+                "command": "${command:python.interpreterPath} "
+                "${workspaceFolder}/setup.py clean",
+            },
+        ]
+
+        for new_task in new_tasks:
+            is_replaced = False
+            for i, current_task in enumerate(tasks_conten["tasks"]):
+                if new_task["label"] == current_task["label"]:
+                    tasks_conten["tasks"][i] = new_task
+                    is_replaced = True
+                    break
+
+            if not is_replaced:
+                tasks_conten["tasks"].append(new_task)
+
+        tasks_file.write_text(json.dumps(tasks_conten, indent=4))
+
+    def __read_json(self, json_path: Path) -> str:
+        text = json_path.read_text()
+        text = re.sub(r",(\s*)(\]|\})", r"\1\2", text, flags=re.MULTILINE)
+        text = re.sub(r"^(\s*)\/\/.*\n", r"", text, flags=re.MULTILINE)
+        return text
+
 
 def create_parser():
     parser = argparse.ArgumentParser(description="QGIS plugins build tool")
@@ -667,6 +866,26 @@ def create_parser():
     # update_ts command
     subparsers.add_parser("update_ts", help="Update translations")
 
+    # config
+    parser_config = subparsers.add_parser(
+        "config", help="Config repo for development"
+    )
+    parser_config.add_argument(
+        "ide",
+        default="vscode",
+        choices=["vscode"],
+        help="IDE",
+    )
+    parser_config.add_argument(
+        "--qgis",
+        default="Vanilla",
+        choices=["Vanilla", "NextGIS"],
+        help="QGIS build",
+    )
+    parser_config.add_argument(
+        "--profile", default=None, help="QGIS profile name"
+    )
+
     return parser
 
 
@@ -693,6 +912,8 @@ def main() -> None:
             builder.clean()
         elif args.command == "update_ts":
             builder.update_ts()
+        elif args.command == "config":
+            builder.config(args.ide, args.qgis, args.profile)
 
     except KeyboardInterrupt:
         print("\nInterrupt signal received")
