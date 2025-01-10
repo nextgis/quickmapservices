@@ -39,7 +39,7 @@
     <message>
         <location filename="../about_dialog.py" line="191"/>
         <source>Please report bugs at</source>
-        <translation>Пожалуйста, сообщайте о багах в</translation>
+        <translation>Пожалуйста, сообщайте об ошибках в</translation>
     </message>
     <message>
         <location filename="../about_dialog.py" line="193"/>
@@ -49,7 +49,7 @@
     <message>
         <location filename="../about_dialog.py" line="194"/>
         <source>Video with an overview of the plugin</source>
-        <translation>Видео с обзором на плагин</translation>
+        <translation>Видео с обзором плагина</translation>
     </message>
     <message>
         <location filename="../about_dialog.py" line="195"/>
@@ -787,7 +787,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../quick_map_services.py" line="176"/>
-        <source>Set SlippyMap scales for current project? 
+        <source>Set SlippyMap scales for current project?
 The previous settings will be overwritten!</source>
         <translation>Установить масштабный ряд SlippyMap для текущего проекта?
 Предыдущие настройки будут перезаписаны!</translation>
