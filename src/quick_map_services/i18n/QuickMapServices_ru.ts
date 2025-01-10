@@ -17,52 +17,52 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../about_dialog.py" line="46"/>
+        <location filename="../about_dialog.py" line="75"/>
         <source> by NextGIS</source>
         <translation> от NextGIS</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="184"/>
+        <location filename="../about_dialog.py" line="214"/>
         <source>REPORT_END</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="189"/>
+        <location filename="../about_dialog.py" line="219"/>
         <source>Developers</source>
         <translation>Разработчики</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="190"/>
+        <location filename="../about_dialog.py" line="220"/>
         <source>Homepage</source>
         <translation>Домашняя страница</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="191"/>
+        <location filename="../about_dialog.py" line="221"/>
         <source>Please report bugs at</source>
         <translation>Пожалуйста, сообщайте об ошибках в</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="193"/>
+        <location filename="../about_dialog.py" line="223"/>
         <source>bugtracker</source>
         <translation>багтрекер</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="194"/>
+        <location filename="../about_dialog.py" line="224"/>
         <source>Video with an overview of the plugin</source>
         <translation>Видео с обзором плагина</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="195"/>
+        <location filename="../about_dialog.py" line="225"/>
         <source>Other helpful services by NextGIS</source>
         <translation>Другие полезные сервисы от NextGIS</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="196"/>
+        <location filename="../about_dialog.py" line="226"/>
         <source>Convenient up-to-date data extracts for any place in the world</source>
         <translation>Удобная выборка актуальных данных из любой точки мира</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="199"/>
+        <location filename="../about_dialog.py" line="229"/>
         <source>Fully featured Web GIS service</source>
         <translation>Полнофункциональный Веб ГИС-сервис</translation>
     </message>
@@ -786,13 +786,6 @@ p, li { white-space: pre-wrap; }
         <translation>О QMS</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="176"/>
-        <source>Set SlippyMap scales for current project?
-The previous settings will be overwritten!</source>
-        <translation>Установить масштабный ряд SlippyMap для текущего проекта?
-Предыдущие настройки будут перезаписаны!</translation>
-    </message>
-    <message>
         <location filename="../quick_map_services.py" line="111"/>
         <source>Error</source>
         <translation>Ошибка</translation>
@@ -811,6 +804,12 @@ The previous settings will be overwritten!</source>
         <location filename="../quick_map_services.py" line="253"/>
         <source>Add to Search</source>
         <translation>Добавить в Поиск</translation>
+    </message>
+    <message>
+        <location filename="../quick_map_services.py" line="176"/>
+        <source>Set SlippyMap scales for current project? 
+The previous settings will be overwritten!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
