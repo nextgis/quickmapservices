@@ -1,4 +1,4 @@
-from enum import IntEnum
+from enum import Enum
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -15,11 +15,11 @@ FORM_CLASS, _ = uic.loadUiType(
 )
 
 
-class AboutTab(IntEnum):
-    Information = 0
-    License = 1
-    Components = 2
-    Contributors = 3
+class AboutTab(str, Enum):
+    Information = "information_tab"
+    License = "license_tab"
+    Components = "components_tab"
+    Contributors = "contributors_tab"
 
 
 class AboutDialog(QDialog, FORM_CLASS):
@@ -112,17 +112,16 @@ class AboutDialog(QDialog, FORM_CLASS):
     def __fill_license(self) -> None:
         license_path = Path(__file__).parent / "LICENSE"
         if not license_path.exists():
-            self.tab_widget.setTabVisible(AboutTab.License, False)
+            self.tab_widget.removeTab(self.__tab_to_index(AboutTab.License))
             return
 
-        self.tab_widget.setTabVisible(AboutTab.License, True)
         self.license_text_browser.setPlainText(license_path.read_text())
 
     def __fill_components(self) -> None:
-        self.tab_widget.setTabVisible(AboutTab.Components, False)
+        self.tab_widget.removeTab(self.__tab_to_index(AboutTab.Components))
 
     def __fill_contributors(self) -> None:
-        self.tab_widget.setTabVisible(AboutTab.Contributors, False)
+        self.tab_widget.removeTab(self.__tab_to_index(AboutTab.Contributors))
 
     def __locale(self) -> str:
         override_locale = QgsSettings().value(
@@ -225,3 +224,7 @@ class AboutDialog(QDialog, FORM_CLASS):
         replacements.update(metadata)
 
         return (description + services).format_map(replacements)
+
+    def __tab_to_index(self, tab_name: AboutTab) -> int:
+        tab = self.tab_widget.findChild(QWidget, tab_name)
+        return self.tab_widget.indexOf(tab)
