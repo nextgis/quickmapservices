@@ -50,6 +50,9 @@ class AboutTab(str, Enum):
     Components = "components_tab"
     Contributors = "contributors_tab"
 
+    def __str__(self) -> str:
+        return str(self.value)
+
 
 class AboutDialog(QDialog, Ui_AboutDialogBase):
     def __init__(self, package_name: str, parent: Optional[QWidget] = None):
@@ -257,5 +260,5 @@ class AboutDialog(QDialog, Ui_AboutDialogBase):
         return (description + services).format_map(replacements)
 
     def __tab_to_index(self, tab_name: AboutTab) -> int:
-        tab = self.tab_widget.findChild(QWidget, tab_name)
+        tab = self.tab_widget.findChild(QWidget, str(tab_name))
         return self.tab_widget.indexOf(tab)
