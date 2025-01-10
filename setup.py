@@ -170,23 +170,34 @@ class QgisPluginBuilder:
 
         if plugin_path.exists():
             metadata_path = plugin_path / "metadata.txt"
-            assert metadata_path.exists()
-            metadata = ConfigParser()
-            with open(metadata_path, encoding="utf-8") as f:
-                metadata.read_file(f)
-            installed_version = metadata.get("general", "version")
+            if not metadata_path.exists():
+                print(
+                    f"Plugin {project_name} is already"
+                    f' installed for "{profile_path.name}" profile'
+                )
+                if not force:
+                    return
 
-            print(
-                f"Plugin {project_name} {installed_version} is already"
-                f' installed for "{profile_path.name}" profile'
-            )
+                print("\n:: Uninstalling broken plugin version...")
+                self.__uninstall_plugin(plugin_path)
 
-            if not force:
-                return
+            else:
+                metadata = ConfigParser()
+                with open(metadata_path, encoding="utf-8") as f:
+                    metadata.read_file(f)
+                installed_version = metadata.get("general", "version")
 
-            print("\n:: Uninstalling previous plugin version...")
+                print(
+                    f"Plugin {project_name} {installed_version} is already"
+                    f' installed for "{profile_path.name}" profile'
+                )
 
-            self.__uninstall_plugin(plugin_path)
+                if not force:
+                    return
+
+                print("\n:: Uninstalling previous plugin version...")
+
+                self.__uninstall_plugin(plugin_path)
 
         self.bootstrap()
 
