@@ -6,7 +6,7 @@ description=Easy to add basemaps and geoservices
 description[ru]=Легко добавляйте базовые карты и геосервисы
 about=Easy to use list of services and search for finding datasets and basemaps. Please contribute new services via https://qms.nextgis.com. Developed by NextGIS. Any feedback is welcome at https://nextgis.com/contact
 about[ru]=Простой в использовании список сервисов и поиск наборов данных и базовых карт. Пожалуйста, предлагайте новые сервисы через https://qms.nextgis.com. Разработан компанией NextGIS. Любые отзывы приветствуются на https://nextgis.com/contact.
-version=0.19.36
+version=0.19.37
 author=NextGIS
 email=info@nextgis.com
 
@@ -23,6 +23,8 @@ experimental=False
 deprecated=False
 
 changelog=
+      0.19.37
+        * Fixed plugin launch with Qt < 5.15
       0.19.36
         * Added plugin item to help menu
         * Updated plugin icon
