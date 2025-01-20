@@ -31,7 +31,6 @@ from qgis.core import QgsNetworkAccessManager
 from qgis.PyQt.QtCore import QEventLoop, QFile, QIODevice, QUrl
 from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest
 
-from .compat import urlopen
 from .compat2qgis import getQGisUserDatabaseFilePath
 from .plugin_settings import PluginSettings
 

@@ -15,7 +15,6 @@ from qgis.PyQt.QtWidgets import (
     QVBoxLayout,
 )
 
-from .compat import get_file_dir
 from .data_sources_model import DSManagerModel
 from .group_edit_dialog import GroupEditDialog
 from .groups_list import USER_GROUP_PATHS, GroupsList
@@ -24,7 +23,7 @@ FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "user_groups_box.ui")
 )
 
-plugin_dir = get_file_dir(__file__)
+plugin_dir = os.path.dirname(__file__)
 
 
 class UserGroupsBox(QGroupBox, FORM_CLASS):

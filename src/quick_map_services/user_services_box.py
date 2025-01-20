@@ -15,12 +15,11 @@ from qgis.PyQt.QtWidgets import (
     QVBoxLayout,
 )
 
-from .compat import get_file_dir
 from .data_sources_list import USER_DS_PATHS, DataSourcesList
 from .data_sources_model import DSManagerModel
 from .ds_edit_dialog import DsEditDialog
 
-plugin_dir = get_file_dir(__file__)
+plugin_dir = os.path.dirname(__file__)
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "user_services_box.ui")

@@ -48,7 +48,6 @@ from qgis.PyQt.QtWidgets import (
 )
 
 from .about_dialog import AboutDialog
-from .compat import get_file_dir
 from .compat2qgis import qgisRegistryInstance
 from .custom_translator import CustomTranslator, QTranslator
 from .data_sources_list import DataSourcesList
@@ -76,7 +75,7 @@ class QuickMapServices(object):
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
-        self.plugin_dir = get_file_dir(__file__)
+        self.plugin_dir = os.path.dirname(__file__)
 
         # initialize locale
         self.translator = QTranslator()

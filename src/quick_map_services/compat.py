@@ -32,7 +32,7 @@ if PY2:
 else:
     from urllib import parse
 
-    urlparse = parse
+    parse = parse
     from urllib.request import URLError, urlopen
 
 if PY3:

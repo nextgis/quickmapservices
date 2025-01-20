@@ -3,6 +3,7 @@ import sys
 from datetime import datetime, timezone
 from os import path
 from pathlib import Path
+from urllib.error import URLError
 
 from qgis.core import QgsGeometry, QgsMessageLog, QgsSettings
 from qgis.PyQt import uic
@@ -32,7 +33,6 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
-from .compat import URLError
 from .compat2qgis import (
     QGisMessageLogLevel,
     QgsCoordinateReferenceSystem,
@@ -163,13 +163,15 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
         short_locale = locale_full_name[0:2]
 
-        utm_template = "&".join([
-            "utm_source=qgis_plugin",
-            "utm_medium=banner",
-            "utm_campaign={campaign}",
-            f"utm_term={Path(__file__).parent.name}",
-            f"utm_content={short_locale}"
-        ])
+        utm_template = "&".join(
+            [
+                "utm_source=qgis_plugin",
+                "utm_medium=banner",
+                "utm_campaign={campaign}",
+                f"utm_term={Path(__file__).parent.name}",
+                f"utm_content={short_locale}",
+            ]
+        )
 
         utm = utm_template.format(campaign="constant")
         bf24_utm = utm_template.format(campaign="black-friday24")
