@@ -325,7 +325,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.lstSearchResult.takeItem(0)
         if self.lstSearchResult.count() == 0:
             new_widget = QLabel()
-            new_widget.setTextFormat(Qt.RichText)
+            new_widget.setTextFormat(Qt.TextFormat.RichText)
             new_widget.setOpenExternalLinks(True)
             new_widget.setWordWrap(True)
             new_widget.setText(
@@ -361,7 +361,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
     def show_error(self, error_text):
         self.lstSearchResult.clear()
         new_widget = QLabel()
-        new_widget.setTextFormat(Qt.RichText)
+        new_widget.setTextFormat(Qt.TextFormat.RichText)
         new_widget.setOpenExternalLinks(True)
         new_widget.setWordWrap(True)
         new_widget.setText(
@@ -388,7 +388,9 @@ class QmsSearchResultItemWidget(QWidget):
         self.setLayout(self.layout)
 
         self.service_icon = QLabel(self)
-        self.service_icon.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.service_icon.setSizePolicy(
+            QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed
+        )
         self.service_icon.resize(24, 24)
 
         qimg = QImage.fromData(image_ba)
@@ -401,7 +403,7 @@ class QmsSearchResultItemWidget(QWidget):
         self.layout.addLayout(self.service_desc_layout)
 
         self.service_name = QLabel(self)
-        self.service_name.setTextFormat(Qt.RichText)
+        self.service_name.setTextFormat(Qt.TextFormat.RichText)
         self.service_name.setWordWrap(True)
         self.service_name.setText(
             "   <strong> {} </strong>".format(geoservice.get("name", ""))
@@ -409,13 +411,13 @@ class QmsSearchResultItemWidget(QWidget):
         self.service_desc_layout.addWidget(self.service_name, 0, 0, 1, 3)
 
         self.service_type = QLabel(self)
-        self.service_type.setTextFormat(Qt.RichText)
+        self.service_type.setTextFormat(Qt.TextFormat.RichText)
         self.service_type.setWordWrap(True)
         self.service_type.setText(geoservice.get("type", "").upper() + " ")
         self.service_desc_layout.addWidget(self.service_type, 1, 0)
 
         self.service_deteils = QLabel(self)
-        self.service_deteils.setTextFormat(Qt.RichText)
+        self.service_deteils.setTextFormat(Qt.TextFormat.RichText)
         self.service_deteils.setWordWrap(True)
         self.service_deteils.setOpenExternalLinks(True)
         self.service_deteils.setText(
@@ -427,7 +429,7 @@ class QmsSearchResultItemWidget(QWidget):
         self.service_desc_layout.addWidget(self.service_deteils, 1, 1)
 
         self.service_report = QLabel(self)
-        self.service_report.setTextFormat(Qt.RichText)
+        self.service_report.setTextFormat(Qt.TextFormat.RichText)
         self.service_report.setWordWrap(True)
         self.service_report.setOpenExternalLinks(True)
         self.service_report.setText(
@@ -440,7 +442,7 @@ class QmsSearchResultItemWidget(QWidget):
         self.service_desc_layout.setColumnStretch(2, 1)
 
         self.status_label = QLabel(self)
-        self.status_label.setTextFormat(Qt.RichText)
+        self.status_label.setTextFormat(Qt.TextFormat.RichText)
         self.status_label.setText("\u2022")
 
         status = geoservice.get("cumulative_status", "")
@@ -457,7 +459,9 @@ class QmsSearchResultItemWidget(QWidget):
         self.addButton.clicked.connect(self.addToMap)
         self.layout.addWidget(self.addButton)
 
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
+        self.setSizePolicy(
+            QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Minimum
+        )
 
         self.geoservice = geoservice
         self.image_ba = image_ba

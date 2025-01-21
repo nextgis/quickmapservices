@@ -91,9 +91,13 @@ class PluginSettings(object):
     @classmethod
     def server_dock_area(cls):
         settings = cls.get_settings()
-        return settings.value(
-            "/ui/dockWidgetArea", Qt.RightDockWidgetArea, type=int
+        dock_area_value = settings.value(
+            "/ui/dockWidgetArea",
+            Qt.DockWidgetArea.RightDockWidgetArea,
+            type=int,
         )
+
+        return Qt.DockWidgetArea(dock_area_value)
 
     @classmethod
     def set_server_dock_area(cls, val):

@@ -249,14 +249,14 @@ class DSManagerModel(QAbstractItemModel):
 
         return parentItem.childCount()
 
-    def sort(self, column, order=Qt.AscendingOrder):
+    def sort(self, column, order=Qt.SortOrder.AscendingOrder):
         self.layoutAboutToBeChanged.emit()
         if column == self.COLUMN_VISIBILITY:
             role = Qt.CheckStateRole
         else:
             role = Qt.DisplayRole
 
-        if order == Qt.AscendingOrder:
+        if order == Qt.SortOrder.AscendingOrder:
             # compareFunc = lambda a, b: True if cmp(a, b) < 0 else False
             compareFunc = lambda a, b: a < b  # need to check
         else:

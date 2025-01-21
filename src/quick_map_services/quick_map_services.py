@@ -357,7 +357,7 @@ class QuickMapServices(object):
 
         # add to QGIS toolbar
         toolbutton = QToolButton()
-        toolbutton.setPopupMode(QToolButton.InstantPopup)
+        toolbutton.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         toolbutton.setMenu(self.menu)
         toolbutton.setIcon(self.menu.icon())
         toolbutton.setText(self.menu.title())
