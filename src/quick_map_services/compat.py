@@ -1,48 +1,12 @@
-# -*- coding: utf-8 -*-
-"""
-/***************************************************************************
- QuickMapServices
-                                 A QGIS plugin
- Collection of internet map services
-                              -------------------
-        begin                : 2014-11-21
-        git sha              : $Format:%H$
-        copyright            : (C) 2014 by NextGIS
-        email                : info@nextgis.com
- ***************************************************************************/
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************/
-"""
+from qgis.PyQt.QtCore import QT_VERSION_STR
 
-import os
-import sys
+qt_major_version = int(QT_VERSION_STR.split(".")[0])
 
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
+if qt_major_version < 6:
+    from qgis.PyQt.QtCore import QIODevice
 
-if PY2:
-    import urlparse
-    from urllib2 import URLError, urlopen
+    OpenModeFlag = QIODevice.OpenModeFlag.WriteOnly
 else:
-    from urllib import parse
+    from qgis.PyQt.QtCore import QIODeviceBase
 
-    parse = parse
-    from urllib.request import URLError, urlopen
-
-if PY3:
-    import configparser
-else:
-    import ConfigParser as configparser
-
-
-def get_file_dir(filename):
-    if PY2:
-        return os.path.dirname(filename).decode(sys.getfilesystemencoding())
-    else:
-        return os.path.dirname(filename)
+    OpenModeFlag = QIODeviceBase.OpenModeFlag.WriteOnly

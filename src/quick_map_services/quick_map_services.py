@@ -178,9 +178,9 @@ class QuickMapServices(object):
             self.tr(
                 "Set SlippyMap scales for current project? \nThe previous settings will be overwritten!"
             ),
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if res == QMessageBox.Yes:
+        if res == QMessageBox.StandardButton.Yes:
             # set scales
             QgsProject.instance().writeEntry(
                 "Scales", "/ScalesList", self.scales_list

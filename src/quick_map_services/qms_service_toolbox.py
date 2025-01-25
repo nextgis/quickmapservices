@@ -354,7 +354,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         else:
             new_item = QListWidgetItem()
             new_item.setText(self.tr("No results!"))
-            new_item.setData(Qt.UserRole, None)
+            new_item.setData(Qt.ItemDataRole.UserRole, None)
             self.lstSearchResult.addItem(new_item)
         self.lstSearchResult.update()
 
@@ -468,7 +468,7 @@ class QmsSearchResultItemWidget(QWidget):
 
     def addToMap(self):
         try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             client = Client()
             client.set_proxy(*QGISSettings.get_qgis_proxy())
             geoservice_info = client.get_geoservice_info(self.geoservice)

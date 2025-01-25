@@ -28,9 +28,10 @@ import tempfile
 from zipfile import ZipFile
 
 from qgis.core import QgsNetworkAccessManager
-from qgis.PyQt.QtCore import QEventLoop, QFile, QIODevice, QUrl
+from qgis.PyQt.QtCore import QEventLoop, QFile, QUrl
 from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest
 
+from .compat import OpenModeFlag
 from .compat2qgis import getQGisUserDatabaseFilePath
 from .plugin_settings import PluginSettings
 
@@ -114,7 +115,7 @@ class ExtraSources(object):
     def _download_file(self, url, out_path):
         reply = self.__sync_request(url)
         local_file = QFile(out_path)
-        local_file.open(QIODevice.WriteOnly)
+        local_file.open(OpenModeFlag)
         local_file.write(reply)
         local_file.close()
 
@@ -144,10 +145,12 @@ class ExtraSources(object):
         loop = None
 
         error = _reply.error()
-        if error != QNetworkReply.NoError:
+        if error != QNetworkReply.NetworkError.NoError:
             raise Exception(error)
 
-        result_code = _reply.attribute(QNetworkRequest.HttpStatusCodeAttribute)
+        result_code = _reply.attribute(
+            QNetworkRequest.Attribute.HttpStatusCodeAttribute
+        )
 
         result = _reply.readAll()
         self.__replies.append(_reply)
@@ -155,7 +158,7 @@ class ExtraSources(object):
 
         if result_code in [301, 302, 307]:
             redirect_url = _reply.attribute(
-                QNetworkRequest.RedirectionTargetAttribute
+                QNetworkRequest.Attribute.RedirectionTargetAttribute
             )
             return self.__sync_request(redirect_url)
         else:

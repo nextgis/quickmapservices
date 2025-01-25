@@ -60,12 +60,12 @@ class SettingsDialog(QDialog, FORM_CLASS):
         if hasattr(self.treeViewForDS.header(), "setResizeMode"):
             # Qt4
             self.treeViewForDS.header().setResizeMode(
-                DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch
+                DSManagerModel.COLUMN_GROUP_DS, QHeaderView.ResizeMode.Stretch
             )  # !!! need to check
         else:
             # Qt5
             self.treeViewForDS.header().setSectionResizeMode(
-                DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch
+                DSManagerModel.COLUMN_GROUP_DS, QHeaderView.ResizeMode.Stretch
             )  # !!! need to check
 
         showAllAction = self.toolBarForDSTreeView.addAction(
@@ -138,7 +138,7 @@ class SettingsDialog(QDialog, FORM_CLASS):
         pass
 
     def get_contrib(self):
-        QgsApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        QgsApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
 
         try:
             ExtraSources().load_contrib_pack()

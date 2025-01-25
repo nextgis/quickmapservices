@@ -109,7 +109,7 @@ class Tiles(object):
         height = (self.ymax - self.ymin + 1) * self.TILE_SIZE
 
         image = QImage(width, height, QImage.Format_ARGB32_Premultiplied)
-        image.fill(Qt.transparent)
+        image.fill(Qt.GlobalColor.transparent)
         p = QPainter(image)
 
         for tile in self.tiles.values():
@@ -131,18 +131,18 @@ class Tiles(object):
                 p.drawImage(rect, timg)
 
             if debug_mode:
-                p.setPen(Qt.black)
+                p.setPen(Qt.GlobalColor.black)
                 p.drawText(
                     rect,
-                    Qt.AlignBottom | Qt.AlignRight,
+                    Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight,
                     # "x: %s, y:%s\nz: %s, data: %s" % (x, y, tile.zoom, tile.data.size())
                     "z: %s, data: %s" % (tile.zoom, tile.data.size()),
                 )
                 if not res:
-                    p.setPen(Qt.darkRed)
-                    p.drawText(rect, Qt.AlignCenter, "Bad tile")
+                    p.setPen(Qt.GlobalColor.darkRed)
+                    p.drawText(rect, Qt.AlignmentFlag.AlignCenter, "Bad tile")
 
-                p.setPen(Qt.black)
+                p.setPen(Qt.GlobalColor.black)
                 p.drawRect(rect)
 
         return image
