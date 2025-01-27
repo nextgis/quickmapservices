@@ -21,6 +21,7 @@ video=https://youtu.be/lw_v0GlZzcE
 video[ru]=https://youtu.be/maXTAbfssd0
 experimental=False
 deprecated=False
+supportsQt6=True
 
 changelog=
       0.19.37

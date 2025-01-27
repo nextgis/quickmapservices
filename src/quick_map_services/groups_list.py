@@ -22,6 +22,7 @@
 """
 
 import codecs
+import configparser
 import os
 import sys
 
@@ -31,14 +32,13 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QMenu
 
 from . import extra_sources
-from .compat import configparser, get_file_dir
 from .compat2qgis import message_log_levels
 from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
 from .group_info import GroupCategory, GroupInfo
 from .plugin_locale import Locale
 
-CURR_PATH = get_file_dir(__file__)
+CURR_PATH = os.path.dirname(__file__)
 
 INTERNAL_GROUP_PATHS = [
     os.path.join(CURR_PATH, extra_sources.GROUPS_DIR_NAME),

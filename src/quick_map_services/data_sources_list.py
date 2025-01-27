@@ -31,7 +31,6 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
 from . import extra_sources
-from .compat import get_file_dir
 from .compat2qgis import message_log_levels
 from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
@@ -40,7 +39,7 @@ from .data_source_serializer import DataSourceSerializer
 from .plugin_locale import Locale
 from .supported_drivers import KNOWN_DRIVERS
 
-CURR_PATH = get_file_dir(__file__)
+CURR_PATH = os.path.dirname(__file__)
 
 INTERNAL_DS_PATHS = [
     os.path.join(CURR_PATH, extra_sources.DATA_SOURCES_DIR_NAME),

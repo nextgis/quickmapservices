@@ -48,7 +48,6 @@ from qgis.PyQt.QtWidgets import (
 )
 
 from .about_dialog import AboutDialog
-from .compat import get_file_dir
 from .compat2qgis import qgisRegistryInstance
 from .custom_translator import CustomTranslator, QTranslator
 from .data_sources_list import DataSourcesList
@@ -76,7 +75,7 @@ class QuickMapServices(object):
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
-        self.plugin_dir = get_file_dir(__file__)
+        self.plugin_dir = os.path.dirname(__file__)
 
         # initialize locale
         self.translator = QTranslator()
@@ -179,9 +178,9 @@ class QuickMapServices(object):
             self.tr(
                 "Set SlippyMap scales for current project? \nThe previous settings will be overwritten!"
             ),
-            QMessageBox.Yes | QMessageBox.No,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
-        if res == QMessageBox.Yes:
+        if res == QMessageBox.StandardButton.Yes:
             # set scales
             QgsProject.instance().writeEntry(
                 "Scales", "/ScalesList", self.scales_list
@@ -358,7 +357,7 @@ class QuickMapServices(object):
 
         # add to QGIS toolbar
         toolbutton = QToolButton()
-        toolbutton.setPopupMode(QToolButton.InstantPopup)
+        toolbutton.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         toolbutton.setMenu(self.menu)
         toolbutton.setIcon(self.menu.icon())
         toolbutton.setText(self.menu.title())

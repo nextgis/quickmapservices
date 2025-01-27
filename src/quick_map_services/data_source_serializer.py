@@ -1,7 +1,8 @@
 import codecs
+import configparser
 import os
+from urllib import parse
 
-from .compat import configparser, urlparse
 from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
 from .data_source_info import DataSourceInfo
@@ -13,8 +14,8 @@ from .supported_drivers import KNOWN_DRIVERS
 def parse_wms_url_parameter(url, parameters_str, ignore_layers=False):
     wms_url = url.split("?")[0]
 
-    o = urlparse.urlparse(url)
-    parameters = dict(urlparse.parse_qsl(o.query))
+    o = parse.urlparse(url)
+    parameters = dict(parse.parse_qsl(o.query))
 
     wms_params = []
     wms_url_params = []

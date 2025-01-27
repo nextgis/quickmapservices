@@ -1,10 +1,10 @@
 import datetime
+import os
 from pathlib import Path
 
-from .compat import get_file_dir
 from .plugin_locale import Locale
 
-plugin_dir = get_file_dir(__file__)
+plugin_dir = os.path.dirname(__file__)
 
 
 class News(object):

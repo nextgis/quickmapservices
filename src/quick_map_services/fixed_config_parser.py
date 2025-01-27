@@ -1,14 +1,14 @@
-from .compat import configparser
+from configparser import RawConfigParser
 
 DEFAULTSECT = "DEFAULT"
 
 
-class FixedConfigParser(configparser.RawConfigParser):
+class FixedConfigParser(RawConfigParser):
     """
     Unicode writer fix for ConfigParser
     """
 
-    def write(self, fp):
+    def write(self, fp, space_around_delimiters: bool = True):
         """Write an .ini-format representation of the configuration state."""
         if self._defaults:
             fp.write("[%s]\n" % DEFAULTSECT)
