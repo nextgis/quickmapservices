@@ -2,11 +2,18 @@ import ast
 import random
 from urllib import parse
 
-from qgis.core import QgsMessageLog, QgsProject, QgsRasterLayer, QgsVectorLayer
+from qgis.core import (
+    Qgis,
+    QgsMessageLog,
+    QgsProject,
+    QgsRasterLayer,
+    QgsVectorLayer,
+)
 from qgis.gui import QgsMessageBar
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.utils import iface
 
+from .compat import QGIS_3_38
 from .compat2qgis import (
     QGisMessageBarLevel,
     QGisMessageLogLevel,
@@ -171,8 +178,14 @@ def add_layer_to_map(ds):
             )
         else:
             # Set attribs
-            layer.setAttribution(ds.copyright_text)
-            layer.setAttributionUrl(ds.copyright_link)
+            if Qgis.versionInt() >= QGIS_3_38:
+                server_properties = layer.serverProperties()
+                server_properties.setAttribution(ds.copyright_text)
+                server_properties.setAttributionUrl(ds.copyright_link)
+            else:
+                layer.setAttribution(ds.copyright_text)
+                layer.setAttributionUrl(ds.copyright_link)
+
             # Insert layer
             toc_root = QgsProject.instance().layerTreeRoot()
 

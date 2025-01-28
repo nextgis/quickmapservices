@@ -1,5 +1,7 @@
 from qgis.PyQt.QtCore import QT_VERSION_STR
 
+QGIS_3_38 = 33800
+
 qt_major_version = int(QT_VERSION_STR.split(".")[0])
 
 if qt_major_version < 6:
