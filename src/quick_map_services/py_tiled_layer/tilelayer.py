@@ -328,13 +328,13 @@ class TileLayer(QgsPluginLayer):
         painter.save()
 
         # set pen and font
-        painter.setPen(Qt.black)
+        painter.setPen(Qt.GlobalColor.black)
         font = QFont(painter.font())
         font.setPointSize(10)
         painter.setFont(font)
 
         if self.layerDef.serviceUrl[0] == ":":
-            painter.setBrush(QBrush(Qt.NoBrush))
+            painter.setBrush(QBrush(Qt.BrushStyle.NoBrush))
             self.drawDebugInfo(renderContext, zoom, ulx, uly, lrx, lry)
         else:
             # create Tiles class object and throw url into it
@@ -404,10 +404,12 @@ class TileLayer(QgsPluginLayer):
             oldOpacity = painter.opacity()
             painter.setOpacity(0.01 * (100 - self.transparency))
             oldSmoothRenderHint = painter.testRenderHint(
-                QPainter.SmoothPixmapTransform
+                QPainter.RenderHint.SmoothPixmapTransform
             )
             if self.smoothRender:
-                painter.setRenderHint(QPainter.SmoothPixmapTransform)
+                painter.setRenderHint(
+                    QPainter.RenderHint.SmoothPixmapTransform
+                )
 
             # draw tiles
             if not renderContext.coordinateTransform():
@@ -422,7 +424,8 @@ class TileLayer(QgsPluginLayer):
             painter.setOpacity(oldOpacity)
             if self.smoothRender:
                 painter.setRenderHint(
-                    QPainter.SmoothPixmapTransform, oldSmoothRenderHint
+                    QPainter.RenderHint.SmoothPixmapTransform,
+                    oldSmoothRenderHint,
                 )
 
             # draw credit on the bottom right corner
@@ -439,7 +442,9 @@ class TileLayer(QgsPluginLayer):
                     0, 0, visibleSWidth - margin, visibleSHeight - margin
                 )
                 textRect = painter.boundingRect(
-                    rect, Qt.AlignBottom | Qt.AlignRight, self.layerDef.credit
+                    rect,
+                    Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight,
+                    self.layerDef.credit,
                 )
                 bgRect = QRect(
                     textRect.left() - paddingH,
@@ -451,7 +456,9 @@ class TileLayer(QgsPluginLayer):
                     bgRect, QColor(240, 240, 240, 150)
                 )  # 197, 234, 243, 150))
                 painter.drawText(
-                    rect, Qt.AlignBottom | Qt.AlignRight, self.layerDef.credit
+                    rect,
+                    Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight,
+                    self.layerDef.credit,
                 )
 
         # restore painter state
@@ -645,7 +652,11 @@ class TileLayer(QgsPluginLayer):
         p = renderContext.painter()
         if not self.layerDef.yOriginTop:
             y = (2**zoom - 1) - y
-        p.drawText(rect, Qt.AlignCenter, "(%d, %d)\nzoom: %d" % (x, y, zoom))
+        p.drawText(
+            rect,
+            Qt.AlignmentFlag.AlignCenter,
+            "(%d, %d)\nzoom: %d" % (x, y, zoom),
+        )
 
     def drawNumbers(
         self, renderContext, zoom, xmin, ymin, xmax, ymax, sdx, sdy
@@ -717,7 +728,9 @@ class TileLayer(QgsPluginLayer):
 
         # draw information
         textRect = painter.boundingRect(
-            QRect(QPoint(0, 0), viewport.size()), Qt.AlignLeft, "Q"
+            QRect(QPoint(0, 0), viewport.size()),
+            Qt.AlignmentFlag.AlignLeft,
+            "Q",
         )
         for i, line in enumerate(lines):
             painter.drawText(10, (i + 1) * textRect.height(), line)
@@ -743,7 +756,9 @@ class TileLayer(QgsPluginLayer):
             painter.viewport().height() - margin,
         )
         textRect = painter.boundingRect(
-            rect, Qt.AlignBottom | Qt.AlignRight, credit
+            rect,
+            Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight,
+            credit,
         )
         bgRect = QRect(
             textRect.left() - paddingH,
@@ -752,7 +767,11 @@ class TileLayer(QgsPluginLayer):
             textRect.height() + 2 * paddingV,
         )
         painter.drawRect(bgRect)
-        painter.drawText(rect, Qt.AlignBottom | Qt.AlignRight, credit)
+        painter.drawText(
+            rect,
+            Qt.AlignmentFlag.AlignBottom | Qt.AlignmentFlag.AlignRight,
+            credit,
+        )
 
     def getScaleToVisibleExtent(self, renderContext):
         mapSettings = self.iface.mapCanvas().mapSettings()

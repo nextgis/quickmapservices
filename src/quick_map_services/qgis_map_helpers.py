@@ -1,12 +1,19 @@
 import ast
 import random
+from urllib import parse
 
-from qgis.core import QgsMessageLog, QgsProject, QgsRasterLayer, QgsVectorLayer
+from qgis.core import (
+    Qgis,
+    QgsMessageLog,
+    QgsProject,
+    QgsRasterLayer,
+    QgsVectorLayer,
+)
 from qgis.gui import QgsMessageBar
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.utils import iface
 
-from .compat import urlparse
+from .compat import QGIS_3_38
 from .compat2qgis import (
     QGisMessageBarLevel,
     QGisMessageLogLevel,
@@ -123,8 +130,8 @@ def add_layer_to_map(ds):
         if ds.wfs_params is not None:
             qgis_wfs_uri_base += ds.wfs_params
 
-        o = urlparse.urlparse(qgis_wfs_uri_base)
-        request_attrs = dict(urlparse.parse_qsl(o.query))
+        o = parse.urlparse(qgis_wfs_uri_base)
+        request_attrs = dict(parse.parse_qsl(o.query))
 
         new_request_attrs = {}
         for k, v in request_attrs.items():
@@ -148,7 +155,7 @@ def add_layer_to_map(ds):
                 ["%s=%s" % (k, v) for k, v in new_request_attrs.items()]
             )
 
-            qgis_wfs_uri = urlparse.urlunparse(url_parts)
+            qgis_wfs_uri = parse.urlunparse(url_parts)
             layer = QgsVectorLayer(
                 qgis_wfs_uri, "%s - %s" % (tr(ds.alias), layer_name), "WFS"
             )
@@ -171,8 +178,14 @@ def add_layer_to_map(ds):
             )
         else:
             # Set attribs
-            layer.setAttribution(ds.copyright_text)
-            layer.setAttributionUrl(ds.copyright_link)
+            if Qgis.versionInt() >= QGIS_3_38:
+                server_properties = layer.serverProperties()
+                server_properties.setAttribution(ds.copyright_text)
+                server_properties.setAttributionUrl(ds.copyright_link)
+            else:
+                layer.setAttribution(ds.copyright_text)
+                layer.setAttributionUrl(ds.copyright_link)
+
             # Insert layer
             toc_root = QgsProject.instance().layerTreeRoot()
 

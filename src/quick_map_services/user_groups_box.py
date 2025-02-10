@@ -6,6 +6,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (
+    QAbstractItemView,
     QDialog,
     QGroupBox,
     QHeaderView,
@@ -15,7 +16,6 @@ from qgis.PyQt.QtWidgets import (
     QVBoxLayout,
 )
 
-from .compat import get_file_dir
 from .data_sources_model import DSManagerModel
 from .group_edit_dialog import GroupEditDialog
 from .groups_list import USER_GROUP_PATHS, GroupsList
@@ -24,7 +24,7 @@ FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "user_groups_box.ui")
 )
 
-plugin_dir = get_file_dir(__file__)
+plugin_dir = os.path.dirname(__file__)
 
 
 class UserGroupsBox(QGroupBox, FORM_CLASS):
@@ -56,7 +56,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
             item = QListWidgetItem(
                 QIcon(ds_group.icon), self.tr(ds_group.alias)
             )
-            item.setData(Qt.UserRole, ds_group)
+            item.setData(Qt.ItemDataRole.UserRole, ds_group)
             self.lstGroups.addItem(item)
 
     def on_sel_changed(self, curr, prev):
@@ -67,16 +67,16 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
     def on_add(self):
         edit_dialog = GroupEditDialog()
         edit_dialog.setWindowTitle(self.tr("Create group"))
-        if edit_dialog.exec() == QDialog.Accepted:
+        if edit_dialog.exec() == QDialog.DialogCode.Accepted:
             self.feel_list()
             self.ds_model.resetModel()
 
     def on_edit(self):
-        item = self.lstGroups.currentItem().data(Qt.UserRole)
+        item = self.lstGroups.currentItem().data(Qt.ItemDataRole.UserRole)
         edit_dialog = GroupEditDialog()
         edit_dialog.setWindowTitle(self.tr("Edit group"))
         edit_dialog.set_group_info(item)
-        if edit_dialog.exec() == QDialog.Accepted:
+        if edit_dialog.exec() == QDialog.DialogCode.Accepted:
             self.feel_list()
             self.ds_model.resetModel()
 
@@ -85,11 +85,13 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
             None,
             self.tr("Delete group"),
             self.tr("Delete selected group?"),
-            QMessageBox.Yes,
-            QMessageBox.No,
+            QMessageBox.StandardButton.Yes,
+            QMessageBox.StandardButton.No,
         )
-        if res == QMessageBox.Yes:
-            group_info = self.lstGroups.currentItem().data(Qt.UserRole)
+        if res == QMessageBox.StandardButton.Yes:
+            group_info = self.lstGroups.currentItem().data(
+                Qt.ItemDataRole.UserRole
+            )
             dir_path = os.path.abspath(
                 os.path.join(group_info.file_path, os.path.pardir)
             )
@@ -110,24 +112,26 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         groups_list_view.setColumnHidden(
             DSManagerModel.COLUMN_VISIBILITY, True
         )
-        groups_list_view.setSelectionMode(QTableView.NoSelection)
+        groups_list_view.setSelectionMode(
+            QAbstractItemView.SelectionMode.NoSelection
+        )
         groups_list_view.setAlternatingRowColors(True)
         groups_list_view.setShowGrid(False)
         if hasattr(groups_list_view.horizontalHeader(), "setResizeMode"):
             # Qt4
             groups_list_view.horizontalHeader().setResizeMode(
-                DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch
+                DSManagerModel.COLUMN_GROUP_DS, QHeaderView.ResizeMode.Stretch
             )
             groups_list_view.verticalHeader().setResizeMode(
-                QHeaderView.ResizeToContents
+                QHeaderView.ResizeMode.ResizeToContents
             )
         else:
             # Qt5
             groups_list_view.horizontalHeader().setSectionResizeMode(
-                DSManagerModel.COLUMN_GROUP_DS, QHeaderView.Stretch
+                DSManagerModel.COLUMN_GROUP_DS, QHeaderView.ResizeMode.Stretch
             )
             groups_list_view.verticalHeader().setSectionResizeMode(
-                QHeaderView.ResizeToContents
+                QHeaderView.ResizeMode.ResizeToContents
             )
 
         groups_list_view.verticalHeader().hide()
@@ -138,14 +142,14 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
             else None
         )
 
-        if select_group_dialog.exec() == QDialog.Accepted:
+        if select_group_dialog.exec() == QDialog.DialogCode.Accepted:
             group_info = self.ds_model.data(
-                groups_list_view.currentIndex(), Qt.UserRole
+                groups_list_view.currentIndex(), Qt.ItemDataRole.UserRole
             )
             group_info.id += "_copy"
             edit_dialog = GroupEditDialog()
             edit_dialog.setWindowTitle(self.tr("Create group from existing"))
             edit_dialog.fill_group_info(group_info)
-            if edit_dialog.exec() == QDialog.Accepted:
+            if edit_dialog.exec() == QDialog.DialogCode.Accepted:
                 self.feel_list()
                 self.ds_model.resetModel()

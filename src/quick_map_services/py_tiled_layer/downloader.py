@@ -95,15 +95,17 @@ class Downloader(QObject):
         self.replies.remove(reply)
         isFromCache = 0
         httpStatusCode = reply.attribute(
-            QNetworkRequest.HttpStatusCodeAttribute
+            QNetworkRequest.Attribute.HttpStatusCodeAttribute
         )
-        if reply.error() == QNetworkReply.NoError:
+        if reply.error() == QNetworkReply.NetworkError.NoError:
             if httpStatusCode == 301:
                 new_url = str(reply.rawHeader("Location"))
                 self.addToQueue(new_url, url)
             else:
                 self.fetchSuccesses += 1
-                if reply.attribute(QNetworkRequest.SourceIsFromCacheAttribute):
+                if reply.attribute(
+                    QNetworkRequest.Attribute.SourceIsFromCacheAttribute
+                ):
                     self.cacheHits += 1
                     isFromCache = 1
                 elif not reply.hasRawHeader("Cache-Control"):

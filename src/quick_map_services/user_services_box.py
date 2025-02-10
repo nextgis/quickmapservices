@@ -15,12 +15,11 @@ from qgis.PyQt.QtWidgets import (
     QVBoxLayout,
 )
 
-from .compat import get_file_dir
 from .data_sources_list import USER_DS_PATHS, DataSourcesList
 from .data_sources_model import DSManagerModel
 from .ds_edit_dialog import DsEditDialog
 
-plugin_dir = get_file_dir(__file__)
+plugin_dir = os.path.dirname(__file__)
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "user_services_box.ui")
@@ -54,7 +53,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         ds_list = DataSourcesList(USER_DS_PATHS)
         for ds in ds_list.data_sources.values():
             item = QListWidgetItem(ds.action.icon(), ds.action.text())
-            item.setData(Qt.UserRole, ds)
+            item.setData(Qt.ItemDataRole.UserRole, ds)
             self.lstServices.addItem(item)
 
     def on_sel_changed(self, curr, prev):
@@ -65,16 +64,16 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
     def on_add(self):
         edit_dialog = DsEditDialog()
         edit_dialog.setWindowTitle(self.tr("Create service"))
-        if edit_dialog.exec() == QDialog.Accepted:
+        if edit_dialog.exec() == QDialog.DialogCode.Accepted:
             self.feel_list()
             self.ds_model.resetModel()
 
     def on_edit(self):
-        item = self.lstServices.currentItem().data(Qt.UserRole)
+        item = self.lstServices.currentItem().data(Qt.ItemDataRole.UserRole)
         edit_dialog = DsEditDialog()
         edit_dialog.setWindowTitle(self.tr("Edit service"))
         edit_dialog.set_ds_info(item)
-        if edit_dialog.exec() == QDialog.Accepted:
+        if edit_dialog.exec() == QDialog.DialogCode.Accepted:
             self.feel_list()
             self.ds_model.resetModel()
 
@@ -83,11 +82,13 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
             None,
             self.tr("Delete service"),
             self.tr("Delete selected service?"),
-            QMessageBox.Yes,
-            QMessageBox.No,
+            QMessageBox.StandardButton.Yes,
+            QMessageBox.StandardButton.No,
         )
-        if res == QMessageBox.Yes:
-            ds_info = self.lstServices.currentItem().data(Qt.UserRole)
+        if res == QMessageBox.StandardButton.Yes:
+            ds_info = self.lstServices.currentItem().data(
+                Qt.ItemDataRole.UserRole
+            )
             dir_path = os.path.abspath(
                 os.path.join(ds_info.file_path, os.path.pardir)
             )
@@ -116,12 +117,14 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         if hasattr(list_view.header(), "setResizeMode"):
             # Qt4
             list_view.header().setResizeMode(
-                DSManagerModel.COLUMN_GROUP_DS, QHeaderView.ResizeToContents
+                DSManagerModel.COLUMN_GROUP_DS,
+                QHeaderView.ResizeMode.ResizeToContents,
             )
         else:
             # Qt5
             list_view.header().setSectionResizeMode(
-                DSManagerModel.COLUMN_GROUP_DS, QHeaderView.ResizeToContents
+                DSManagerModel.COLUMN_GROUP_DS,
+                QHeaderView.ResizeMode.ResizeToContents,
             )
 
         list_view.clicked.connect(
@@ -131,14 +134,14 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
             else None
         )
 
-        if select_data_sources_dialog.exec() == QDialog.Accepted:
+        if select_data_sources_dialog.exec() == QDialog.DialogCode.Accepted:
             data_source = self.ds_model.data(
-                list_view.currentIndex(), Qt.UserRole
+                list_view.currentIndex(), Qt.ItemDataRole.UserRole
             )
             data_source.id += "_copy"
             edit_dialog = DsEditDialog()
             edit_dialog.setWindowTitle(self.tr("Create service from existing"))
             edit_dialog.fill_ds_info(data_source)
-            if edit_dialog.exec() == QDialog.Accepted:
+            if edit_dialog.exec() == QDialog.DialogCode.Accepted:
                 self.feel_list()
                 self.ds_model.resetModel()
