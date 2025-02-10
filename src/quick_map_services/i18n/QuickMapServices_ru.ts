@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ru">
+<TS version="2.1" language="ru_RU">
 <context>
     <name>@default</name>
     <message>
-        <location filename="../qgis_map_helpers.py" line="163"/>
+        <location filename="../qgis_map_helpers.py" line="170"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation>Слой %s невозможно добавить на карту!</translation>
     </message>
     <message>
-        <location filename="../qgis_map_helpers.py" line="166"/>
+        <location filename="../qgis_map_helpers.py" line="173"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -17,52 +17,52 @@
 <context>
     <name>AboutDialog</name>
     <message>
-        <location filename="../about_dialog.py" line="75"/>
+        <location filename="../about_dialog.py" line="86"/>
         <source> by NextGIS</source>
         <translation> от NextGIS</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="214"/>
+        <location filename="../about_dialog.py" line="225"/>
         <source>REPORT_END</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="219"/>
+        <location filename="../about_dialog.py" line="230"/>
         <source>Developers</source>
         <translation>Разработчики</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="220"/>
+        <location filename="../about_dialog.py" line="231"/>
         <source>Homepage</source>
         <translation>Домашняя страница</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="221"/>
+        <location filename="../about_dialog.py" line="232"/>
         <source>Please report bugs at</source>
         <translation>Пожалуйста, сообщайте об ошибках в</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="223"/>
+        <location filename="../about_dialog.py" line="234"/>
         <source>bugtracker</source>
         <translation>багтрекер</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="224"/>
+        <location filename="../about_dialog.py" line="235"/>
         <source>Video with an overview of the plugin</source>
         <translation>Видео с обзором плагина</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="225"/>
+        <location filename="../about_dialog.py" line="236"/>
         <source>Other helpful services by NextGIS</source>
         <translation>Другие полезные сервисы от NextGIS</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="226"/>
+        <location filename="../about_dialog.py" line="237"/>
         <source>Convenient up-to-date data extracts for any place in the world</source>
         <translation>Удобная выборка актуальных данных из любой точки мира</translation>
     </message>
     <message>
-        <location filename="../about_dialog.py" line="229"/>
+        <location filename="../about_dialog.py" line="240"/>
         <source>Fully featured Web GIS service</source>
         <translation>Полнофункциональный Веб ГИС-сервис</translation>
     </message>
@@ -137,7 +137,7 @@ p, li { white-space: pre-wrap; }
         <translation>Источник</translation>
     </message>
     <message>
-        <location filename="../data_sources_model.py" line="99"/>
+        <location filename="../data_sources_model.py" line="105"/>
         <source>group not found</source>
         <translation>группа не найдена</translation>
     </message>
@@ -675,17 +675,17 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QmsSearchResultItemWidget</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="419"/>
+        <location filename="../qms_service_toolbox.py" line="423"/>
         <source>details</source>
         <translation>подробнее</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="431"/>
+        <location filename="../qms_service_toolbox.py" line="435"/>
         <source>report a problem</source>
         <translation>сообщить о проблеме</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="454"/>
+        <location filename="../qms_service_toolbox.py" line="458"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
@@ -698,17 +698,17 @@ p, li { white-space: pre-wrap; }
         <translation>Поиск геосервиса...</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="320"/>
+        <location filename="../qms_service_toolbox.py" line="322"/>
         <source>Searching...</source>
         <translation>Поиск...</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="354"/>
+        <location filename="../qms_service_toolbox.py" line="356"/>
         <source>No results!</source>
         <translation>Нет результатов!</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="299"/>
+        <location filename="../qms_service_toolbox.py" line="301"/>
         <source>Last used:</source>
         <translation>Недавно использованы:</translation>
     </message>
@@ -723,14 +723,14 @@ p, li { white-space: pre-wrap; }
         <translation>Введите часть имени сервиса</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="329"/>
+        <location filename="../qms_service_toolbox.py" line="331"/>
         <source>No results.</source>
         <translation>Ничего не найдено.</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="329"/>
+        <location filename="../qms_service_toolbox.py" line="331"/>
         <source>You can add a service to become searchable. Start &lt;a href=&apos;{}&apos;&gt;here&lt;/a&gt;.</source>
-        <translation>Вы можете &lt;a href='{}'&gt;добавить сервис&lt;/a&gt; самостоятельно, и он станет доступен через поиск.</translation>
+        <translation>Вы можете &lt;a href=&apos;{}&apos;&gt;добавить сервис&lt;/a&gt; самостоятельно, и он станет доступен через поиск.</translation>
     </message>
     <message>
         <location filename="../qms_service_toolbox.ui" line="85"/>
@@ -743,7 +743,7 @@ p, li { white-space: pre-wrap; }
         <translation>Все</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="365"/>
+        <location filename="../qms_service_toolbox.py" line="367"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -753,7 +753,7 @@ p, li { white-space: pre-wrap; }
         <translation>Рабочие</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="260"/>
+        <location filename="../qms_service_toolbox.py" line="262"/>
         <source>Need at least 3 symbols to start searching...</source>
         <translation>Для поиска нужно минимум 3 символа...</translation>
     </message>
@@ -761,68 +761,69 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="../quick_map_services.py" line="176"/>
+        <location filename="../quick_map_services.py" line="175"/>
         <source>QuickMapServices</source>
         <translation>QuickMapServices</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="269"/>
+        <location filename="../quick_map_services.py" line="268"/>
         <source>Set proper scale</source>
         <translation>Ближайший масштаб</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="286"/>
+        <location filename="../quick_map_services.py" line="285"/>
         <source>Set SlippyMap scales</source>
         <translation>Установить масштабы SlippyMap</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="297"/>
+        <location filename="../quick_map_services.py" line="296"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="309"/>
+        <location filename="../quick_map_services.py" line="308"/>
         <source>About QMS</source>
         <translation>О QMS</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="111"/>
+        <location filename="../quick_map_services.py" line="110"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="106"/>
+        <location filename="../quick_map_services.py" line="105"/>
         <source>Extra dirs for %s can&apos;t be created: %s %s</source>
         <translation>Невозможно создать дополнительные директории для  %s: %s %s</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="398"/>
+        <location filename="../quick_map_services.py" line="397"/>
         <source>Search QMS</source>
         <translation>Поиск в QMS</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="253"/>
+        <location filename="../quick_map_services.py" line="252"/>
         <source>Add to Search</source>
         <translation>Добавить в Поиск</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="176"/>
+        <location filename="../quick_map_services.py" line="175"/>
         <source>Set SlippyMap scales for current project? 
 The previous settings will be overwritten!</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить масштабы мозаичной карты для текущего проекта?
+Предыдущие настройки будут перезаписаны!</translation>
     </message>
 </context>
 <context>
     <name>SearchThread</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="569"/>
+        <location filename="../qms_service_toolbox.py" line="575"/>
         <source>Network error!
 {0}</source>
         <translation>Сетевая ошибка!
 {0}</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="575"/>
+        <location filename="../qms_service_toolbox.py" line="581"/>
         <source>Error of processing!
 {0}: {1}</source>
         <translation>Ошибка обработки!
@@ -832,22 +833,22 @@ The previous settings will be overwritten!</source>
 <context>
     <name>SettingsDialog</name>
     <message>
-        <location filename="../settings_dialog.py" line="147"/>
+        <location filename="../settings_dialog.py" line="146"/>
         <source>Last version of contrib pack was downloaded!</source>
         <translation>Последняя версия пакета с источниками данных была успешно загружена!</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="72"/>
+        <location filename="../settings_dialog.py" line="71"/>
         <source>Show all</source>
         <translation>Показать все</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="77"/>
+        <location filename="../settings_dialog.py" line="76"/>
         <source>Hide all</source>
         <translation>Скрыть все</translation>
     </message>
     <message>
-        <location filename="../settings_dialog.py" line="157"/>
+        <location filename="../settings_dialog.py" line="156"/>
         <source>Error on getting contrib pack: %s</source>
         <translation>Ошибка при получении источников данных: %s</translation>
     </message>
@@ -870,7 +871,7 @@ The previous settings will be overwritten!</source>
         <translation>Время ожидания скачивания - {}</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="825"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="844"/>
         <source> {} files failed.</source>
         <translation> {} файла(ов) не скачано.</translation>
     </message>
@@ -880,47 +881,47 @@ The previous settings will be overwritten!</source>
         <translation>Не удалось загрузить все {0} файла(ов). - {1}</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="496"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="503"/>
         <source>Reprojection requires python-gdal</source>
         <translation>Перепроецирование требует наличие python-gdal</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="821"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="840"/>
         <source>{0} of {1} files downloaded.</source>
         <translation>{0} из {1} файлов скачано.</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="910"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="929"/>
         <source>Title</source>
         <translation>Заголовок</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="911"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="930"/>
         <source>Credit</source>
         <translation>Авторство</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="912"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="931"/>
         <source>URL</source>
         <translation>URL</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="913"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="932"/>
         <source>yOrigin</source>
         <translation>yOrigin</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="927"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="946"/>
         <source>Not set</source>
         <translation>Не установлено</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="928"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="947"/>
         <source>Zoom range</source>
         <translation>Диапазон масштабирования</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="935"/>
+        <location filename="../py_tiled_layer/tilelayer.py" line="954"/>
         <source>Layer Extent</source>
         <translation>Границы слоя</translation>
     </message>
@@ -958,7 +959,7 @@ The previous settings will be overwritten!</source>
         <translation>...</translation>
     </message>
     <message>
-        <location filename="../user_groups_box.py" line="103"/>
+        <location filename="../user_groups_box.py" line="105"/>
         <source>Choose source group</source>
         <translation>Выберите группу</translation>
     </message>
@@ -1016,12 +1017,12 @@ The previous settings will be overwritten!</source>
         <translation>Удалить сервис</translation>
     </message>
     <message>
-        <location filename="../user_services_box.py" line="82"/>
+        <location filename="../user_services_box.py" line="81"/>
         <source>Delete selected service?</source>
         <translation>Удалить выбранный сервис?</translation>
     </message>
     <message>
-        <location filename="../user_services_box.py" line="103"/>
+        <location filename="../user_services_box.py" line="104"/>
         <source>Choose source service</source>
         <translation>Выбрать сервис</translation>
     </message>
