@@ -577,6 +577,11 @@ class SearchThread(QThread):
             )
             # error_text = 'net'
             self.error_occurred.emit(error_text)
+        except ConnectionError:
+            error_text = (self.tr("Network error: {0}")).format(
+                str(sys.exc_info()[1])
+            )
+            self.error_occurred.emit(error_text)
         except Exception:
             error_text = (self.tr("Error of processing!\n{0}: {1}")).format(
                 str(sys.exc_info()[0].__name__), str(sys.exc_info()[1])
