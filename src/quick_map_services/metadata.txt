@@ -1,4 +1,4 @@
-j[general]
+[general]
 name=QuickMapServices
 qgisMinimumVersion=3.22
 qgisMaximumVersion=3.99
