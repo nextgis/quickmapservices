@@ -7,6 +7,8 @@ import platform
 import re
 import shutil
 import subprocess
+import sys
+import tempfile
 import zipfile
 from configparser import ConfigParser
 from pathlib import Path
@@ -504,7 +506,7 @@ class QgisPluginBuilder:
     def __profile_path(self, qgis: str, profile: Optional[str]) -> Path:
         system = platform.system()
 
-        if qgis == "Vanilla":
+        if qgis in ("Vanilla", "VanillaFlatpak"):
             qgis_profiles = Path("QGIS/QGIS3/profiles")
         elif qgis == "NextGIS":
             qgis_profiles = Path("NextGIS/ngqgis/profiles")
@@ -512,9 +514,15 @@ class QgisPluginBuilder:
             raise RuntimeError(f"Unknown QGIS: {qgis}")
 
         if system == "Linux":
-            profiles_path = (
-                Path("~/.local/share/").expanduser() / qgis_profiles
-            )
+            if qgis in ("Vanilla", "NextGIS"):
+                profiles_path = (
+                    Path("~/.local/share/").expanduser() / qgis_profiles
+                )
+            else:
+                profiles_path = (
+                    Path("~/.var/app/org.qgis.qgis/data/").expanduser()
+                    / qgis_profiles
+                )
 
         elif system == "Windows":
             appdata = os.getenv("APPDATA")
@@ -600,6 +608,7 @@ class QgisPluginBuilder:
             (self.current_directory / ".vscode").mkdir(exist_ok=True)
             self.__create_vscode_launch(qgis, profile)
             self.__create_vscode_tasks()
+            self.__create_dotenv()
             return
 
         raise NotImplementedError
@@ -678,7 +687,7 @@ class QgisPluginBuilder:
                 "id": "qgis",
                 "description": "QGIS build",
                 "type": "pickString",
-                "options": ["Vanilla", "NextGIS"],
+                "options": ["Vanilla", "NextGIS", "VanillaFlatpak"],
             }
         ]
         for new_input in new_inputs:
@@ -783,11 +792,147 @@ class QgisPluginBuilder:
 
         tasks_file.write_text(json.dumps(tasks_conten, indent=4))
 
+    def __create_dotenv(self) -> None:
+        if platform.system() == "Windows":
+            self.__create_dotenv_for_windows()
+        else:
+            self.__create_dotenv_for_unix()
+
     def __read_json(self, json_path: Path) -> str:
         text = json_path.read_text()
         text = re.sub(r",(\s*)(\]|\})", r"\1\2", text, flags=re.MULTILINE)
         text = re.sub(r"^(\s*)\/\/.*\n", r"", text, flags=re.MULTILINE)
         return text
+
+    def __create_dotenv_for_windows(self) -> None:
+        # Capture updated state
+        bat_file = self.__create_env_bat_file()
+        if bat_file is None:
+            self.__write_dotenv(self.__create_dotenv_dict({}, {}))
+            return
+
+        # Capture current state
+        result = subprocess.run(
+            ["cmd.exe", "/c", "set"],
+            capture_output=True,
+            text=True,
+            shell=True,
+            check=True,
+        )
+        current_env = self.__extract_env_vars_from_set_output(result.stdout)
+
+        result = subprocess.run(
+            f'cmd.exe /c "{bat_file} & set"',
+            capture_output=True,
+            text=True,
+            shell=True,
+            check=True,
+        )
+        updated_env = self.__extract_env_vars_from_set_output(result.stdout)
+
+        bat_file.unlink()
+
+        dotenv = self.__create_dotenv_dict(current_env, updated_env)
+        self.__write_dotenv(dotenv)
+
+    def __create_dotenv_for_unix(self) -> None:
+        self.__write_dotenv(self.__create_dotenv_dict({}, {}))
+
+    def __extract_env_vars_from_set_output(
+        self, output: str
+    ) -> Dict[str, str]:
+        """Returns the current environment variables as a dictionary."""
+        env_variables = {}
+        for line in output.splitlines():
+            if "=" not in line:
+                continue
+            key, value = line.split("=", 1)
+            env_variables[key] = value
+
+        return env_variables
+
+    def __create_env_bat_file(self) -> Optional[Path]:
+        bin_path = Path(sys.executable).parent
+        osgeo_bat = bin_path / "python-qgis.bat"
+        nextgis_bat = bin_path.parent / "run_ng_env.bat"
+
+        source_bat_file = None
+        for bat_path in (osgeo_bat, nextgis_bat):
+            if not bat_path.exists():
+                continue
+            source_bat_file = bat_path
+            break
+
+        if source_bat_file is None:
+            return None
+
+        temp_bat_file = tempfile.mktemp(prefix="qgis_env", suffix=".bat")
+        source_dir = str(source_bat_file.parent)
+        source_bat = source_bat_file.read_text()
+
+        with open(temp_bat_file, "w") as file:
+            for line in source_bat.split("\n"):
+                if line.lstrip().startswith(("start", "python", "@echo on")):
+                    continue
+                line = line.replace("%~dp0", source_dir)
+                file.write(f"{line}\n")
+
+        return Path(temp_bat_file)
+
+    def __create_dotenv_dict(
+        self, current_env: Dict[str, str], updated_env: Dict[str, str]
+    ) -> Dict[str, str]:
+        def is_permanent_key(key: str) -> bool:
+            key = key.upper()
+            return key.startswith(
+                (
+                    "O4W_",
+                    "OSGEO4W_",
+                    "QGIS_",
+                    "QT_",
+                    "GDAL_",
+                    "VSI_",
+                    "PDAL_",
+                    "PROJ_",
+                    "GS_",
+                    "SSL_",
+                    "OPENSSL_",
+                    "PYTHON",
+                )
+            ) or key in ("PATH",)
+
+        dotenv = {
+            key: updated_env[key]
+            for key in updated_env
+            if is_permanent_key(key)
+            or updated_env.get(key) != current_env.get(key)
+        }
+
+        pythonhome_key = "PYTHONPATH"
+        for key in dotenv.keys():
+            if key.upper() != pythonhome_key:
+                continue
+            pythonhome_key = key
+
+        pythonhome_values = (
+            dotenv[pythonhome_key].split(os.pathsep)
+            if pythonhome_key in dotenv
+            else []
+        )
+
+        if (self.current_directory / "src").exists():
+            pythonhome_values.insert(0, str(self.current_directory / "src"))
+        pythonhome_values.insert(0, str(self.current_directory))
+
+        dotenv[pythonhome_key] = os.pathsep.join(pythonhome_values)
+
+        return dotenv
+
+    def __write_dotenv(self, env_variables: Dict[str, str]) -> None:
+        dotenv_path = self.current_directory / ".env"
+        with dotenv_path.open("w") as dotenv_file:
+            for key, value in env_variables.items():
+                dotenv_file.write(f"{key}={value}\n")
 
 
 def create_parser():
@@ -833,7 +978,7 @@ def create_parser():
     parser_install.add_argument(
         "--qgis",
         default="Vanilla",
-        choices=["Vanilla", "NextGIS"],
+        choices=["Vanilla", "NextGIS", "VanillaFlatpak"],
         help="QGIS build",
     )
     parser_install.add_argument(
@@ -853,7 +998,7 @@ def create_parser():
     parser_uninstall.add_argument(
         "--qgis",
         default="Vanilla",
-        choices=["Vanilla", "NextGIS"],
+        choices=["Vanilla", "NextGIS", "VanillaFlatpak"],
         help="QGIS build",
     )
     parser_uninstall.add_argument(
@@ -871,7 +1016,7 @@ def create_parser():
         "config", help="Config repo for development"
     )
     parser_config.add_argument(
-        "ide",
+        "IDE",
         default="vscode",
         choices=["vscode"],
         help="IDE",
@@ -879,7 +1024,7 @@ def create_parser():
     parser_config.add_argument(
         "--qgis",
         default="Vanilla",
-        choices=["Vanilla", "NextGIS"],
+        choices=["Vanilla", "NextGIS", "VanillaFlatpak"],
         help="QGIS build",
     )
     parser_config.add_argument(
@@ -913,7 +1058,7 @@ def main() -> None:
         elif args.command == "update_ts":
             builder.update_ts()
         elif args.command == "config":
-            builder.config(args.ide, args.qgis, args.profile)
+            builder.config(args.IDE, args.qgis, args.profile)
 
     except KeyboardInterrupt:
         print("\nInterrupt signal received")
