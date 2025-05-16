@@ -1,0 +1,57 @@
+name: Bug report
+description: Create a bug report to help us improve the QuickMapServices plugin.
+labels:
+  - 'bug'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out an issue, this template is meant for any issues related to the QuickMapServices plugin.
+        If you require help with the NextGIS software, we ask that you join [our Discord](https://discord.gg/V3G9snXGy5)
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: "A clear and concise description of what the bug is."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce the issue
+      description: |
+        Steps to reproduce the behavior. If possible, include a link to the service. Screenshots or screen recordings are highly appreciated (you can drag & drop them into the text box).
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. Wait for the moon phase
+        5. See error
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Paste any relevant logs here (e.g. from the Log Messages panel in QGIS)
+      render: Text
+      # Avoid rendering as Markdown here.
+  - type: textarea
+    id: about-info
+    attributes:
+      label: Versions
+      description: |
+        In the QGIS Help menu -> About, click in the table, Ctrl+A and then Ctrl+C. Finally paste here.
+        Do not make a screenshot.
+    validations:
+      required: true
+  - type: checkboxes
+    id: plugin-version
+    attributes:
+      label: Supported plugin version
+      options:
+        - label: I'm running a supported QuickMapServices  version according to [the versions page](https://plugins.qgis.org/plugins/quick_map_services/#plugin-versions).
+  - type: textarea
+    id: anything-else
+    attributes:
+      label: Anything else?
+      description: Let us know if you have anything else to share.

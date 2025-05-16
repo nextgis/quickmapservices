@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: A service is not working
+    # There must be a link to make this option valid for GitHub
+    url: https://qms.nextgis.com/?utm_source=qgis_plugin&utm_medium=issues&utm_campaign=constant&utm_term=quick_map_services
+    about: |
+      Use the feedback form on the website.
+      Each map service is maintained by its own author (aka submitter). The form notifies the service author that it’s not working. Please include any details about symptoms or possible fixes.
+  - name: Commercial support
+    url: https://nextgis.com/contact/?utm_source=qgis_plugin&utm_medium=issues_commercial&utm_campaign=constant&utm_term=quick_map_services
+    about: We provide custom development and support for this software. Contact us to discuss options!

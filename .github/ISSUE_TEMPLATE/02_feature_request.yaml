@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest a feature idea for QuickMapServices plugin.
+labels:
+  - 'feature request'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time to fill out an issue, this template is meant for any feature suggestions related to the QuickMapServices plugin.
+        If you require help with the NextGIS software, we ask that you join [our Discord](https://discord.gg/V3G9snXGy5)
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Feature description
+      description: |
+        A clear and concise explanation of your feature idea. For example: QuickMapServices would be even better if [...]
+    validations:
+      required: true
+  - type: textarea
+    id: anything-else
+    attributes:
+      label: Anything else?
+      description: |
+        # description: Let us know if you have anything else to share.
+        Add any other context or screenshots about the feature request here.
