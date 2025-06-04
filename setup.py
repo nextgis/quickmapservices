@@ -508,7 +508,7 @@ class QgisPluginBuilder:
 
         if qgis in ("Vanilla", "VanillaFlatpak"):
             qgis_profiles = Path("QGIS/QGIS3/profiles")
-        elif qgis == "NextGIS":
+        elif qgis in ("NextGIS", "NextGISFlatpak"):
             qgis_profiles = Path("NextGIS/ngqgis/profiles")
         else:
             raise RuntimeError(f"Unknown QGIS: {qgis}")
@@ -518,9 +518,14 @@ class QgisPluginBuilder:
                 profiles_path = (
                     Path("~/.local/share/").expanduser() / qgis_profiles
                 )
-            else:
+            elif qgis == "VanillaFlatpak":
                 profiles_path = (
                     Path("~/.var/app/org.qgis.qgis/data/").expanduser()
+                    / qgis_profiles
+                )
+            elif qgis == "NextGISFlatpak":
+                profiles_path = (
+                    Path("~/.var/app/com.nextgis.ngqgis/data/").expanduser()
                     / qgis_profiles
                 )
 
@@ -631,7 +636,7 @@ class QgisPluginBuilder:
                 need_fill = False
             except Exception:
                 print(
-                    f"An error occured while reading {launch_file}. This file"
+                    f"An error occurred while reading {launch_file}. This file"
                     " will be overwrited"
                 )
                 pass
@@ -687,7 +692,12 @@ class QgisPluginBuilder:
                 "id": "qgis",
                 "description": "QGIS build",
                 "type": "pickString",
-                "options": ["Vanilla", "NextGIS", "VanillaFlatpak"],
+                "options": [
+                    "Vanilla",
+                    "NextGIS",
+                    "VanillaFlatpak",
+                    "NextGISFlatpak",
+                ],
             }
         ]
         for new_input in new_inputs:
@@ -978,7 +988,7 @@ def create_parser():
     parser_install.add_argument(
         "--qgis",
         default="Vanilla",
-        choices=["Vanilla", "NextGIS", "VanillaFlatpak"],
+        choices=["Vanilla", "NextGIS", "VanillaFlatpak", "NextGISFlatpak"],
         help="QGIS build",
     )
     parser_install.add_argument(
@@ -998,7 +1008,7 @@ def create_parser():
     parser_uninstall.add_argument(
         "--qgis",
         default="Vanilla",
-        choices=["Vanilla", "NextGIS", "VanillaFlatpak"],
+        choices=["Vanilla", "NextGIS", "VanillaFlatpak", "NextGISFlatpak"],
         help="QGIS build",
     )
     parser_uninstall.add_argument(
@@ -1024,7 +1034,7 @@ def create_parser():
     parser_config.add_argument(
         "--qgis",
         default="Vanilla",
-        choices=["Vanilla", "NextGIS", "VanillaFlatpak"],
+        choices=["Vanilla", "NextGIS", "VanillaFlatpak", "NextGISFlatpak"],
         help="QGIS build",
     )
     parser_config.add_argument(
