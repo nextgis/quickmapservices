@@ -45,7 +45,24 @@ class QgisPluginBuilder:
         compile_ui: Optional[bool] = None,
         compile_qrc: Optional[bool] = None,
         compile_ts: Optional[bool] = None,
+        update_git_submodules: bool = False,
     ) -> None:
+        """
+        Prepare and build the plugin, optionally updating git submodules.
+
+        :param compile_ui: Compile UI forms if True.
+        :type compile_ui: Optional[bool]
+        :param compile_qrc: Compile resource files if True.
+        :type compile_qrc: Optional[bool]
+        :param compile_ts: Compile translation files if True.
+        :type compile_ts: Optional[bool]
+        :param update_git_submodules: Update missing git submodules if True.
+        :type update_git_submodules: bool
+        """
+        # If an update to git submodules is requested
+        if update_git_submodules:
+            self.update_git_submodules()
+
         if all(
             setting is None
             for setting in (compile_ui, compile_qrc, compile_ts)
@@ -53,13 +70,74 @@ class QgisPluginBuilder:
             compile_ui = True
             compile_qrc = True
             compile_ts = True
-
+        
         if compile_ui:
             self.compile_ui()
         if compile_qrc:
             self.compile_qrc()
         if compile_ts:
             self.compile_ts()
+
+    def update_git_submodules(self) -> None:
+        """
+        Update missing git submodules by reading .gitmodules and
+        initializing submodules that are not present.
+
+        :raises RuntimeError: If git is not available or update fails.
+        """
+        # Construct path to .gitmodules file
+        gitmodules_path = self.current_directory / ".gitmodules"
+        if not gitmodules_path.exists():
+            return
+
+        # Parse .gitmodules to get all submodule paths
+        submodule_paths = self._parse_gitmodules(gitmodules_path)
+        # Identify missing submodules
+        missing_submodules = [
+            path
+            for path in submodule_paths
+            if not (self.current_directory / path / ".git").exists()
+        ]
+        if not missing_submodules:
+            return 
+        
+        for submodule in missing_submodules:
+            print(f":: Initializing missing submodule: {submodule}")
+            try:
+                subprocess.check_call(
+                    [
+                        "git",
+                        "submodule",
+                        "update",
+                        "--init",
+                        "--",
+                        str(submodule),
+                    ],
+                    cwd=str(self.current_directory),
+                )
+            except Exception as exc:
+                raise RuntimeError(
+                    f"Failed to update submodule {submodule}: {exc}"
+                )
+
+    def _parse_gitmodules(self, gitmodules_path: Path) -> List[str]:
+        """
+        Parse .gitmodules file and return a list of submodule paths.
+
+        :param gitmodules_path: Path to .gitmodules file.
+        :type gitmodules_path: Path
+        :return: List of submodule paths.
+        :rtype: List[str]
+        """
+        paths = []
+        pattern = re.compile(r'^\s*path\s*=\s*(.+)$')
+
+        # Extract 'path =' entries from .gitmodules
+        for line in gitmodules_path.read_text(encoding="utf-8").splitlines():
+            match = pattern.match(line)
+            if match:
+                paths.append(match.group(1).strip())
+        return paths
 
     def compile_ui(self) -> None:
         if len(self.ui_settings) == 0 or not self.ui_settings.get(
@@ -977,6 +1055,13 @@ def create_parser():
         action="store_true",
         help="Compile only resources",
     )
+    parser_bootstrap.add_argument(
+        "--git",
+        dest="update_git_submodules",
+        action="store_true",
+        default=False,
+        help="Update missing git submodules",
+    )
 
     # build command
     subparsers.add_parser("build", help="Build the plugin")
@@ -1056,6 +1141,7 @@ def main() -> None:
                 compile_ui=args.compile_ui,
                 compile_qrc=args.compile_qrc,
                 compile_ts=args.compile_ts,
+                update_git_submodules=getattr(args, "update_git_submodules", False),
             )
         elif args.command == "build":
             builder.build()
