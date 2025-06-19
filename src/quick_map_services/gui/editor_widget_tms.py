@@ -64,7 +64,7 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
             self.rbPostgisCrsId.setChecked(True)
             return
         if self.ds_info.tms_custom_proj:
-            self.txtCustomProj.setText(self.ds_info.tms_custom_proj)
+            self.spnCustomProj.setText(self.ds_info.tms_custom_proj)
             self.rbCustomProj.setChecked(True)
             return
         # not setted. set default
@@ -93,11 +93,19 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
             except:
                 pass
             return
-        if self.txtCustomProj.isChecked():
-            ds_info.tms_custom_proj = self.txtCustomProj.text()
+        if self.rbCustomProj.isChecked():
+            ds_info.tms_custom_proj = self.spnCustomProj.text()
             return
 
     def validate(self, ds_info):
+        """
+        Validates the TMS editor widget fields.
+
+        :param ds_info: DataSourceInfo object to validate
+        :type ds_info: DataSourceInfo
+        :returns: True if all fields are valid, False otherwise
+        :rtype: bool
+        """
         if not ds_info.tms_url:
             QMessageBox.critical(
                 self,
@@ -113,6 +121,8 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
                 self.tr("Please, enter correct value for TMS url"),
             )
             return False
+
+        # Validate CRS
 
         if self.rbCrsId.isChecked():
             try:
@@ -133,6 +143,15 @@ class EditorWidgetTms(QWidget, FORM_CLASS):
                     self,
                     self.tr("Error on save data source"),
                     self.tr("Please, enter correct PostGIS CRC ID"),
+                )
+                return False
+
+        if self.rbCustomProj.isChecked():
+            if not self.spnCustomProj.text().strip():
+                QMessageBox.critical(
+                    self,
+                    self.tr("Error on save data source"),
+                    self.tr("Please, enter custom projection"),
                 )
                 return False
 
