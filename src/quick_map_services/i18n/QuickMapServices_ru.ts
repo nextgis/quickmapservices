@@ -200,27 +200,27 @@ p, li { white-space: pre-wrap; }
         <translation>Поместить авторство в нижнем правом углу</translation>
     </message>
     <message>
-        <location filename="../group_edit_dialog.ui" line="14"/>
+        <location filename="../ds_edit_dialog.ui" line="14"/>
         <source>Dialog</source>
         <translation>Диалог</translation>
     </message>
     <message>
-        <location filename="../group_edit_dialog.ui" line="24"/>
+        <location filename="../ds_edit_dialog.ui" line="24"/>
         <source>General</source>
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="../group_edit_dialog.ui" line="33"/>
+        <location filename="../ds_edit_dialog.ui" line="30"/>
         <source>ID</source>
         <translation>ID</translation>
     </message>
     <message>
-        <location filename="../group_edit_dialog.ui" line="43"/>
+        <location filename="../ds_edit_dialog.ui" line="40"/>
         <source>Alias</source>
         <translation>Алиас</translation>
     </message>
     <message>
-        <location filename="../group_edit_dialog.ui" line="77"/>
+        <location filename="../ds_edit_dialog.ui" line="88"/>
         <source>Icon</source>
         <translation>Иконка</translation>
     </message>
@@ -255,7 +255,7 @@ p, li { white-space: pre-wrap; }
         <translation>Условия использования</translation>
     </message>
     <message>
-        <location filename="../group_edit_dialog.ui" line="93"/>
+        <location filename="../ds_edit_dialog.ui" line="98"/>
         <source>Choose</source>
         <translation>Выбрать</translation>
     </message>
@@ -372,32 +372,32 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>EditorWidgetTms</name>
     <message>
-        <location filename="../gui/editor_widget_tms.py" line="150"/>
+        <location filename="../gui/editor_widget_tms.py" line="151"/>
         <source>Error on save data source</source>
         <translation>Ошибка при сохранении источника данных</translation>
     </message>
     <message>
-        <location filename="../gui/editor_widget_tms.py" line="120"/>
+        <location filename="../gui/editor_widget_tms.py" line="110"/>
         <source>Please, enter TMS url</source>
         <translation>Пожалуйста введите URL TMS</translation>
     </message>
     <message>
-        <location filename="../gui/editor_widget_tms.py" line="139"/>
+        <location filename="../gui/editor_widget_tms.py" line="131"/>
         <source>Please, enter correct CRC ID</source>
         <translation>Пожалуйста введите корректное значение CRC ID</translation>
     </message>
     <message>
-        <location filename="../gui/editor_widget_tms.py" line="150"/>
+        <location filename="../gui/editor_widget_tms.py" line="142"/>
         <source>Please, enter correct PostGIS CRC ID</source>
         <translation>Пожалуйста введите корректное значение PostGIS CRC ID</translation>
     </message>
     <message>
-        <location filename="../gui/editor_widget_tms.py" line="128"/>
+        <location filename="../gui/editor_widget_tms.py" line="118"/>
         <source>Please, enter correct value for TMS url</source>
         <translation>Пожалуйста введите корректное значение URL для TMS</translation>
     </message>
     <message>
-        <location filename="../gui/editor_widget_tms.py" line="112"/>
+        <location filename="../gui/editor_widget_tms.py" line="151"/>
         <source>Please, enter custom projection</source>
         <translation>Пожалуйста введите собственную проекцию</translation>
     </message>
@@ -454,7 +454,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../gui/editor_widget_wms.ui" line="14"/>
+        <location filename="../gui/editor_widget_geojson.ui" line="14"/>
         <source>Form</source>
         <translation>Форма</translation>
     </message>
@@ -464,7 +464,7 @@ p, li { white-space: pre-wrap; }
         <translation>Файл GDAL</translation>
     </message>
     <message>
-        <location filename="../gui/editor_widget_wms.ui" line="23"/>
+        <location filename="../gui/editor_widget_geojson.ui" line="23"/>
         <source>URL</source>
         <translation>URL</translation>
     </message>
