@@ -4,12 +4,12 @@
 <context>
     <name>@default</name>
     <message>
-        <location filename="../qgis_map_helpers.py" line="170"/>
+        <location filename="../qgis_map_helpers.py" line="144"/>
         <source>Layer %s can&apos;t be added to the map!</source>
         <translation>Слой %s невозможно добавить на карту!</translation>
     </message>
     <message>
-        <location filename="../qgis_map_helpers.py" line="173"/>
+        <location filename="../qgis_map_helpers.py" line="147"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
@@ -150,77 +150,27 @@ p, li { white-space: pre-wrap; }
         <translation>Лицензия</translation>
     </message>
     <message>
-        <location filename="../py_tiled_layer/propertiesdialog_base.ui" line="207"/>
-        <source>Properties</source>
-        <translation>Свойства</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/propertiesdialog_base.ui" line="38"/>
-        <source>Style</source>
-        <translation>Стиль</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/propertiesdialog_base.ui" line="52"/>
-        <source>Transparency</source>
-        <translation>Прозрачность</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/propertiesdialog_base.ui" line="80"/>
-        <source>Brightness</source>
-        <translation>Яркость</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/propertiesdialog_base.ui" line="87"/>
-        <source>Blending mode</source>
-        <translation>Режим наложения</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/propertiesdialog_base.ui" line="99"/>
-        <source>(Default: SourceOver)</source>
-        <translation>(По умолчанию: SourceOver)</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/propertiesdialog_base.ui" line="138"/>
-        <source>Contrast</source>
-        <translation>Контраст</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/propertiesdialog_base.ui" line="183"/>
-        <source>Grayscale</source>
-        <translation>Оттенки серого</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/propertiesdialog_base.ui" line="190"/>
-        <source>Smoothing</source>
-        <translation>Сглаживание</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/propertiesdialog_base.ui" line="197"/>
-        <source>Place the credit on the bottom right corner</source>
-        <translation>Поместить авторство в нижнем правом углу</translation>
-    </message>
-    <message>
-        <location filename="../ds_edit_dialog.ui" line="14"/>
+        <location filename="../group_edit_dialog.ui" line="14"/>
         <source>Dialog</source>
         <translation>Диалог</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="24"/>
+        <location filename="../group_edit_dialog.ui" line="24"/>
         <source>General</source>
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="30"/>
+        <location filename="../group_edit_dialog.ui" line="33"/>
         <source>ID</source>
         <translation>ID</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="40"/>
+        <location filename="../group_edit_dialog.ui" line="43"/>
         <source>Alias</source>
         <translation>Алиас</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="88"/>
+        <location filename="../group_edit_dialog.ui" line="77"/>
         <source>Icon</source>
         <translation>Иконка</translation>
     </message>
@@ -255,7 +205,7 @@ p, li { white-space: pre-wrap; }
         <translation>Условия использования</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="98"/>
+        <location filename="../group_edit_dialog.ui" line="93"/>
         <source>Choose</source>
         <translation>Выбрать</translation>
     </message>
@@ -454,7 +404,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../gui/editor_widget_geojson.ui" line="14"/>
+        <location filename="../gui/editor_widget_wms.ui" line="14"/>
         <source>Form</source>
         <translation>Форма</translation>
     </message>
@@ -464,7 +414,7 @@ p, li { white-space: pre-wrap; }
         <translation>Файл GDAL</translation>
     </message>
     <message>
-        <location filename="../gui/editor_widget_geojson.ui" line="23"/>
+        <location filename="../gui/editor_widget_wms.ui" line="23"/>
         <source>URL</source>
         <translation>URL</translation>
     </message>
@@ -670,14 +620,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>PropertiesDialog</name>
-    <message>
-        <location filename="../py_tiled_layer/propertiesdialog.py" line="43"/>
-        <source>Layer Properties</source>
-        <translation>Свойства слоя</translation>
-    </message>
-</context>
-<context>
     <name>QmsSearchResultItemWidget</name>
     <message>
         <location filename="../qms_service_toolbox.py" line="423"/>
@@ -766,37 +708,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="../quick_map_services.py" line="175"/>
+        <location filename="../quick_map_services.py" line="170"/>
         <source>QuickMapServices</source>
         <translation>QuickMapServices</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="268"/>
+        <location filename="../quick_map_services.py" line="261"/>
         <source>Set proper scale</source>
         <translation>Ближайший масштаб</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="285"/>
+        <location filename="../quick_map_services.py" line="278"/>
         <source>Set SlippyMap scales</source>
         <translation>Установить масштабы SlippyMap</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="296"/>
+        <location filename="../quick_map_services.py" line="289"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="308"/>
+        <location filename="../quick_map_services.py" line="301"/>
         <source>About QMS</source>
         <translation>О QMS</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="110"/>
+        <location filename="../quick_map_services.py" line="109"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="105"/>
+        <location filename="../quick_map_services.py" line="104"/>
         <source>Extra dirs for %s can&apos;t be created: %s %s</source>
         <translation>Невозможно создать дополнительные директории для  %s: %s %s</translation>
     </message>
@@ -806,7 +748,7 @@ p, li { white-space: pre-wrap; }
         <translation>Поиск в NextGIS QMS</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="252"/>
+        <location filename="../quick_map_services.py" line="245"/>
         <source>Add to Search</source>
         <translation>Добавить в Поиск</translation>
     </message>
@@ -861,84 +803,6 @@ The previous settings will be overwritten!</source>
         <location filename="../settings_dialog.py" line="156"/>
         <source>Error on getting contrib pack: %s</source>
         <translation>Ошибка при получении источников данных: %s</translation>
-    </message>
-</context>
-<context>
-    <name>TileLayer</name>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="241"/>
-        <source>Current zoom level ({0}) is smaller than zmin ({1}): {2}</source>
-        <translation>Текущий уровень масштабирования ({0}) меньше чем zmin ({1}): {2}</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="309"/>
-        <source>Tile count is over limit ({0}, max={1})</source>
-        <translation>Количество тайлов превысило лимит ({0}, max={1})</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="384"/>
-        <source>Download Timeout - {}</source>
-        <translation>Время ожидания скачивания - {}</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="844"/>
-        <source> {} files failed.</source>
-        <translation> {} файла(ов) не скачано.</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="392"/>
-        <source>Failed to download all {0} files. - {1}</source>
-        <translation>Не удалось загрузить все {0} файла(ов). - {1}</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="503"/>
-        <source>Reprojection requires python-gdal</source>
-        <translation>Перепроецирование требует наличие python-gdal</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="840"/>
-        <source>{0} of {1} files downloaded.</source>
-        <translation>{0} из {1} файлов скачано.</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="929"/>
-        <source>Title</source>
-        <translation>Заголовок</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="930"/>
-        <source>Credit</source>
-        <translation>Авторство</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="931"/>
-        <source>URL</source>
-        <translation>URL</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="932"/>
-        <source>yOrigin</source>
-        <translation>yOrigin</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="946"/>
-        <source>Not set</source>
-        <translation>Не установлено</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="947"/>
-        <source>Zoom range</source>
-        <translation>Диапазон масштабирования</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="954"/>
-        <source>Layer Extent</source>
-        <translation>Границы слоя</translation>
-    </message>
-    <message>
-        <location filename="../py_tiled_layer/tilelayer.py" line="375"/>
-        <source>{0} files downloaded. {1} cache hits.</source>
-        <translation>{0} файлов скачано. {1} попаданий кэша.</translation>
     </message>
 </context>
 <context>
