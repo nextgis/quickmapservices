@@ -4,6 +4,7 @@ from urllib import parse
 
 from qgis.core import (
     Qgis,
+    QgsCoordinateReferenceSystem,
     QgsMessageLog,
     QgsProject,
     QgsRasterLayer,
@@ -21,8 +22,6 @@ from .compat2qgis import (
     message_log_levels,
 )
 from .plugin_settings import PluginSettings
-from .py_tiled_layer.tilelayer import TileLayer
-from .py_tiled_layer.tiles import TileDefaultSettings, TileServiceInfo
 from .qgis_proj_helper import ProjectionHelper
 from .qgis_settings import QGISSettings
 from .supported_drivers import KNOWN_DRIVERS
@@ -56,8 +55,8 @@ def add_layer_to_map(ds):
                 service_url = service_url.replace("{y}", "{-y}")
 
             qgis_tms_uri = "type=xyz&zmin={0}&zmax={1}&url={2}".format(
-                ds.tms_zmin or TileDefaultSettings.ZMIN,
-                ds.tms_zmax or TileDefaultSettings.ZMAX,
+                ds.tms_zmin if ds.tms_zmin is not None else 0,
+                ds.tms_zmax if ds.tms_zmax is not None else 18,
                 service_url,
             )
 
@@ -70,31 +69,6 @@ def add_layer_to_map(ds):
                 ds.tms_postgis_crs_id,
                 ds.tms_custom_proj,
             )
-            layers4add.append(layer)
-        else:
-            service_info = TileServiceInfo(
-                tr(ds.alias), ds.copyright_text, tms_url
-            )
-            service_info.zmin = ds.tms_zmin or service_info.zmin
-            service_info.zmax = ds.tms_zmax or service_info.zmax
-            if ds.tms_y_origin_top is not None:
-                service_info.yOriginTop = ds.tms_y_origin_top
-            service_info.epsg_crs_id = ds.tms_epsg_crs_id
-            service_info.postgis_crs_id = ds.tms_postgis_crs_id
-            service_info.custom_proj = ds.tms_custom_proj
-
-            if (
-                ds.tms_tile_ranges is not None
-            ):  # needs try block & checks that keys are integers etc..
-                service_info.tile_ranges = ast.literal_eval(ds.tms_tile_ranges)
-            if ds.tms_tsize1 is not None:
-                service_info.tsize1 = ds.tms_tsize1
-            if ds.tms_origin_x is not None:
-                service_info.originX = ds.tms_origin_x
-            if ds.tms_origin_y is not None:
-                service_info.originY = ds.tms_origin_y
-
-            layer = TileLayer(service_info, False)
             layers4add.append(layer)
     if ds.type.lower() == KNOWN_DRIVERS.GDAL.lower():
         layer = QgsRasterLayer(ds.gdal_source_file, tr(ds.alias))
@@ -216,15 +190,12 @@ def add_layer_to_map(ds):
             if (
                 PluginSettings.enable_otf_3857()
                 and ds.type.lower() == KNOWN_DRIVERS.TMS.lower()
-                and ds.tms_epsg_crs_id == TileLayer.CRS_ID_3857
+                and ds.tms_epsg_crs_id == 3857
             ):
-                if hasattr(iface.mapCanvas(), "setCrsTransformEnabled"):
-                    # Need for QGIS2. In QGIS3 CRS transformation is always enabled
-                    iface.mapCanvas().setCrsTransformEnabled(True)
-                iface.mapCanvas().setDestinationCrs(TileLayer.CRS_3857)
+                iface.mapCanvas().setDestinationCrs(QgsCoordinateReferenceSystem.fromEpsgId(3857))
 
                 if (
                     QGISSettings.get_new_project_crs_behavior()
                     == QGISSettings.NEW_PROJECT_USE_PRESET_CRS
                 ):
-                    QgsProject.instance().setCrs(TileLayer.CRS_3857)
+                    QgsProject.instance().setCrs(QgsCoordinateReferenceSystem.fromEpsgId(3857))

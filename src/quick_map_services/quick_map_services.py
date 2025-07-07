@@ -55,7 +55,6 @@ from .extra_sources import ExtraSources
 from .groups_list import GroupsList
 from .plugin_locale import Locale
 from .plugin_settings import PluginSettings
-from .py_tiled_layer.tilelayer import TileLayer, TileLayerType
 from .qgis_map_helpers import add_layer_to_map
 from .qms_service_toolbox import QmsServiceToolbox
 from .settings_dialog import SettingsDialog
@@ -124,10 +123,6 @@ class QuickMapServices(object):
     def initGui(self):
         # import pydevd
         # pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
-
-        # Register plugin layer type
-        self.tileLayerType = TileLayerType(self)
-        qgisRegistryInstance.addPluginLayerType(self.tileLayerType)
 
         # Create menu
         icon_path = self.plugin_dir + "/icons/mActionAddLayer.svg"
@@ -209,8 +204,6 @@ class QuickMapServices(object):
         self.ds_list = None
         self.groups_list = None
         self.service_layers = None
-        # # Unregister plugin layer type
-        qgisRegistryInstance.removePluginLayerType(TileLayer.LAYER_TYPE)
 
     qms_create_service_action = None
     set_nearest_scale_act = None
