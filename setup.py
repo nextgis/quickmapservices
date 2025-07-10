@@ -45,10 +45,10 @@ class QgisPluginBuilder:
         compile_ui: Optional[bool] = None,
         compile_qrc: Optional[bool] = None,
         compile_ts: Optional[bool] = None,
-        update_git_submodules: bool = False,
+        update_git_submodules: Optional[bool] = None,
     ) -> None:
         """
-        Prepare and build the plugin, optionally updating git submodules.
+        Prepare the plugin environment and compile necessary components.
 
         :param compile_ui: Compile UI forms if True.
         :type compile_ui: Optional[bool]
@@ -57,20 +57,21 @@ class QgisPluginBuilder:
         :param compile_ts: Compile translation files if True.
         :type compile_ts: Optional[bool]
         :param update_git_submodules: Update missing git submodules if True.
-        :type update_git_submodules: bool
+        :type update_git_submodules: Optional[bool]
         """
-        # If an update to git submodules is requested
-        if update_git_submodules:
-            self.update_git_submodules()
 
+        # Enable full setup mode if no explicit flags are provided
         if all(
             setting is None
-            for setting in (compile_ui, compile_qrc, compile_ts)
+            for setting in (compile_ui, compile_qrc, compile_ts, update_git_submodules)
         ):
+            update_git_submodules = True
             compile_ui = True
             compile_qrc = True
             compile_ts = True
         
+        if update_git_submodules:
+            self.update_git_submodules()
         if compile_ui:
             self.compile_ui()
         if compile_qrc:
@@ -1141,7 +1142,7 @@ def main() -> None:
                 compile_ui=args.compile_ui,
                 compile_qrc=args.compile_qrc,
                 compile_ts=args.compile_ts,
-                update_git_submodules=getattr(args, "update_git_submodules", False),
+                update_git_submodules=args.update_git_submodules,
             )
         elif args.command == "build":
             builder.build()
