@@ -27,15 +27,14 @@ import shutil
 import tempfile
 from zipfile import ZipFile
 
-from qgis.core import QgsNetworkAccessManager
+from qgis.core import QgsApplication, QgsNetworkAccessManager
 from qgis.PyQt.QtCore import QEventLoop, QFile, QUrl
 from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest
 
 from .compat import OpenModeFlag
-from .compat2qgis import getQGisUserDatabaseFilePath
 from .plugin_settings import PluginSettings
 
-LOCAL_SETTINGS_PATH = os.path.dirname(getQGisUserDatabaseFilePath())
+LOCAL_SETTINGS_PATH = os.path.dirname(QgsApplication.qgisUserDatabaseFilePath())
 PLUGIN_SETTINGS_PATH = os.path.join(
     LOCAL_SETTINGS_PATH, PluginSettings.product_name()
 )

@@ -4,10 +4,9 @@ from os import path
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtGui import QIcon, QPixmap
-from qgis.PyQt.QtWidgets import QDialog, QMessageBox
+from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from . import extra_sources
-from .compat2qgis import getOpenFileName
 from .data_source_info import DataSourceInfo
 from .data_source_serializer import DataSourceSerializer
 from .data_sources_list import DataSourcesList
@@ -112,7 +111,7 @@ class DsEditDialog(QDialog, FORM_CLASS):
         self.feel_specific_fields()
 
     def choose_icon(self):
-        icon_path = getOpenFileName(
+        icon_path = QFileDialog.getOpenFileName(
             self,
             self.tr("Select icon for data source"),
             PluginSettings.get_default_user_icon_path(),

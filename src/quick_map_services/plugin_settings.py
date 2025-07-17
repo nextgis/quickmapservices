@@ -25,8 +25,6 @@ import ast
 
 from qgis.PyQt.QtCore import QByteArray, QDir, QSettings, Qt
 
-from .compat2qgis import QGis
-
 
 class PluginSettings(object):
     _company_name = "NextGIS"
@@ -152,20 +150,3 @@ class PluginSettings(object):
         settings.beginGroup("last_used_services")
         for geoservice in services:
             geoservice.saveSelf(settings)
-
-    @classmethod
-    def use_native_tms(cls):
-        if QGis.QGIS_VERSION_INT >= 30000:
-            return True
-        elif QGis.QGIS_VERSION_INT >= 21808:
-            return cls.get_settings().value(
-                "tile_layer/use_native_tms", True, bool
-            )
-        else:
-            return False
-
-    @classmethod
-    def set_use_native_tms(cls, bool_val):
-        return cls.get_settings().setValue(
-            "tile_layer/use_native_tms", bool_val
-        )

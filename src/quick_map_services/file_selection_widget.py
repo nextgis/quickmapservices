@@ -39,8 +39,6 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
-from .compat2qgis import getOpenFileName
-
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
@@ -79,7 +77,7 @@ class FileSelectionWidget(QWidget):
                 self.leText.setText(folder)
                 PluginSettings.set_last_icon_path(os.path.dirname(folder))
         else:
-            filename = getOpenFileName(self, self.dialog_title, path, self.ext)
+            filename = QFileDialog.getOpenFileName(self, self.dialog_title, path, self.ext)
             if filename:
                 self.leText.setText(filename)
                 PluginSettings.set_last_icon_path(os.path.dirname(filename))
@@ -97,7 +95,7 @@ class FileSelectionWidget(QWidget):
         self.ext = ext
 
     def set_dialog_title(self, title):
-        self.dialog_titledialog_title = title
+        self.dialog_title = title
 
     def setupUi(self, Form):
         Form.setObjectName(_fromUtf8("Form"))
