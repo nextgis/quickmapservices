@@ -21,12 +21,7 @@
  ***************************************************************************/
 """
 
-from .compat2qgis import QGis
-
-if QGis.QGIS_VERSION_INT >= 30000:
-    from qgis.PyQt.QtCore import QObject as QParentClass
-else:
-    from qgis.PyQt.QtCore import pyqtWrapperType as QParentClass
+from qgis.PyQt.QtCore import QObject as QParentClass
 
 
 def singleton(class_):

@@ -48,7 +48,6 @@ from qgis.PyQt.QtWidgets import (
 )
 
 from .about_dialog import AboutDialog
-from .compat2qgis import qgisRegistryInstance
 from .custom_translator import CustomTranslator, QTranslator
 from .data_sources_list import DataSourcesList
 from .extra_sources import ExtraSources

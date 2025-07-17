@@ -26,13 +26,12 @@ import configparser
 import os
 import sys
 
-from qgis.core import QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QMenu
 
 from . import extra_sources
-from .compat2qgis import message_log_levels
 from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
 from .group_info import GroupCategory, GroupInfo
@@ -123,10 +122,10 @@ class GroupsList(object):
             )
         except Exception as e:
             error_message = (
-                self.tr("Group INI file can't be parsed: ") + e.message
+                self.tr("Group INI file can't be parsed: ") + str(e)
             )
             QgsMessageLog.logMessage(
-                error_message, level=message_log_levels["Critical"]
+                error_message, level=Qgis.Critical
             )
 
     def get_group_menu(self, group_id):

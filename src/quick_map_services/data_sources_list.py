@@ -25,13 +25,12 @@ import codecs
 import os
 import sys
 
-from qgis.core import QgsMessageLog
+from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
 from . import extra_sources
-from .compat2qgis import message_log_levels
 from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
 from .data_source_info import DataSourceCategory, DataSourceInfo
@@ -96,10 +95,10 @@ class DataSourcesList(object):
 
                     except Exception as e:
                         error_message = (
-                            "INI file can't be parsed: " + e.message
+                            "INI file can't be parsed: " + str(e)
                         )
                         QgsMessageLog.logMessage(
-                            error_message, level=message_log_levels["Critical"]
+                            error_message, level=Qgis.Critical
                         )
 
     # noinspection PyMethodMayBeStatic
