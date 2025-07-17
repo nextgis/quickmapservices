@@ -1,7 +1,7 @@
+from qgis.core import Qgis, QgsCoordinateReferenceSystem
 from qgis.gui import QgsMessageBar
 from qgis.utils import iface
 
-from .compat2qgis import QGisMessageBarLevel, QgsCoordinateReferenceSystem
 from .plugin_settings import PluginSettings
 
 
@@ -18,8 +18,8 @@ class ProjectionHelper:
         try:
             crs = None
             if epsg_crs_id is not None:
-                crs = QgsCoordinateReferenceSystem(
-                    epsg_crs_id, QgsCoordinateReferenceSystem.EpsgCrsId
+                crs = QgsCoordinateReferenceSystem.fromEpsgId(
+                    epsg_crs_id,
                 )
             if postgis_crs_id is not None:
                 crs = QgsCoordinateReferenceSystem(
@@ -32,7 +32,7 @@ class ProjectionHelper:
                 # try to search in db
                 searched = custom_crs.findMatchingProj()
                 if searched:
-                    crs = QgsCoordinateReferenceSystem(
+                    crs = QgsCoordinateReferenceSystem.fromCrsId(
                         searched, QgsCoordinateReferenceSystem.InternalCrsId
                     )
                 else:
@@ -53,11 +53,11 @@ class ProjectionHelper:
                 layer.setCrs(crs)
         except:
             msg = "Custom crs can't be set for layer {0}!".format(layer.name())
-            cls.show_bar_message(msg, QGisMessageBarLevel.Warning, 4)
+            cls.show_bar_message(msg, Qgis.Warning, 4)
 
     @classmethod
     def show_bar_message(
-        cls, text, level=QGisMessageBarLevel.Info, duration=0, title=None
+        cls, text, level=Qgis.Info, duration=0, title=None
     ):
         if PluginSettings.show_messages_in_bar():
             if title is None:
