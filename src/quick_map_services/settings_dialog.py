@@ -24,17 +24,12 @@
 import os
 import sys
 
-from qgis.core import QgsApplication
+from qgis.core import Qgis, QgsApplication
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 
-from .compat2qgis import (
-    QGis,
-    imageActionHideAllLayers,
-    imageActionShowAllLayers,
-)
 from .data_sources_model import DSManagerModel
 from .extra_sources import ExtraSources
 from .plugin_settings import PluginSettings
@@ -69,12 +64,12 @@ class SettingsDialog(QDialog, FORM_CLASS):
             )  # !!! need to check
 
         showAllAction = self.toolBarForDSTreeView.addAction(
-            QIcon(imageActionShowAllLayers), self.tr("Show all")
+            QIcon(":/images/themes/default/mActionShowAllLayers.svg"), self.tr("Show all")
         )
         showAllAction.triggered.connect(self.dsManagerViewModel.checkAll)
 
         hideAllAction = self.toolBarForDSTreeView.addAction(
-            QIcon(imageActionHideAllLayers), self.tr("Hide all")
+            QIcon(":images/themes/default/mActionHideAllLayers.svg"), self.tr("Hide all")
         )
         hideAllAction.triggered.connect(self.dsManagerViewModel.uncheckAll)
         self.dsManagerViewModel.sort(DSManagerModel.COLUMN_GROUP_DS)
@@ -96,18 +91,12 @@ class SettingsDialog(QDialog, FORM_CLASS):
         self.spnNetworkTimeout.setValue(
             QGISSettings.get_default_network_timeout()
         )
-        if QGis.QGIS_VERSION_INT >= 30000:
-            self.useNativeRenderer2188AndHigherLabel.setVisible(False)
-            self.chkUseNativeRenderer.setChecked(True)
-            self.chkUseNativeRenderer.setEnabled(False)
-            self.chkUseNativeRenderer.setVisible(False)
-        elif QGis.QGIS_VERSION_INT >= 21808:
-            self.chkUseNativeRenderer.setChecked(
-                PluginSettings.use_native_tms()
-            )
-        else:
-            self.chkUseNativeRenderer.setChecked(False)
-            self.chkUseNativeRenderer.setEnabled(False)
+        
+        # Native renderer options (hidden for now)
+        self.useNativeRenderer2188AndHigherLabel.setVisible(False)
+        self.chkUseNativeRenderer.setChecked(True)
+        self.chkUseNativeRenderer.setEnabled(False)
+        self.chkUseNativeRenderer.setVisible(False)
 
         # contrib pack
 
@@ -125,10 +114,6 @@ class SettingsDialog(QDialog, FORM_CLASS):
         QGISSettings.set_default_network_timeout(
             self.spnNetworkTimeout.value()
         )
-        if QGis.QGIS_VERSION_INT >= 21808:
-            PluginSettings.set_use_native_tms(
-                self.chkUseNativeRenderer.isChecked()
-            )
         # contrib pack
 
         # ds visibility

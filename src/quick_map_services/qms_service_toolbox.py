@@ -5,7 +5,14 @@ from os import path
 from pathlib import Path
 from urllib.error import URLError
 
-from qgis.core import QgsGeometry, QgsMessageLog, QgsSettings
+from qgis.core import (
+    Qgis,
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsGeometry,
+    QgsMessageLog,
+    QgsSettings,
+)
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import (
     QByteArray,
@@ -33,12 +40,6 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
-from .compat2qgis import (
-    QGisMessageLogLevel,
-    QgsCoordinateReferenceSystem,
-    QgsCoordinateTransform,
-    getCanvasDestinationCrs,
-)
 from .data_source_serializer import DataSourceSerializer
 from .plugin_settings import PluginSettings
 from .qgis_map_helpers import add_layer_to_map
@@ -50,7 +51,7 @@ from .rb_result_renderer import RubberBandResultRenderer
 from .singleton import singleton
 
 
-def plPrint(msg, level=QGisMessageLogLevel.Info):
+def plPrint(msg, level=Qgis.Info):
     QgsMessageLog.logMessage(msg, "QMS", level)
 
 
@@ -266,7 +267,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         else:
             # extent filter
             extent = self.iface.mapCanvas().extent()
-            map_crs = getCanvasDestinationCrs(self.iface)
+            map_crs = self.iface.mapCanvas().mapSettings().destinationCrs()
             if map_crs.postgisSrid() != 4326:
                 crsDest = QgsCoordinateReferenceSystem.fromEpsgId(
                     4326

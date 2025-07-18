@@ -19,7 +19,6 @@ ui-files = [
     "src/quick_map_services/gui/*.ui",
     "src/quick_map_services/scales.xml",
     "src/quick_map_services/*.ui",
-    "src/quick_map_services/py_tiled_layer/*.ui",
 ]
 compile = false
 
