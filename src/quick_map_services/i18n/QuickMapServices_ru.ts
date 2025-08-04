@@ -200,27 +200,27 @@ p, li { white-space: pre-wrap; }
         <translation>Поместить авторство в нижнем правом углу</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="14"/>
+        <location filename="../group_edit_dialog.ui" line="14"/>
         <source>Dialog</source>
         <translation>Диалог</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="24"/>
+        <location filename="../group_edit_dialog.ui" line="24"/>
         <source>General</source>
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="30"/>
+        <location filename="../group_edit_dialog.ui" line="33"/>
         <source>ID</source>
         <translation>ID</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="40"/>
+        <location filename="../group_edit_dialog.ui" line="43"/>
         <source>Alias</source>
         <translation>Алиас</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="88"/>
+        <location filename="../group_edit_dialog.ui" line="77"/>
         <source>Icon</source>
         <translation>Иконка</translation>
     </message>
@@ -255,7 +255,7 @@ p, li { white-space: pre-wrap; }
         <translation>Условия использования</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="98"/>
+        <location filename="../group_edit_dialog.ui" line="93"/>
         <source>Choose</source>
         <translation>Выбрать</translation>
     </message>
@@ -454,7 +454,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../gui/editor_widget_geojson.ui" line="14"/>
+        <location filename="../gui/editor_widget_wms.ui" line="14"/>
         <source>Form</source>
         <translation>Форма</translation>
     </message>
@@ -464,7 +464,7 @@ p, li { white-space: pre-wrap; }
         <translation>Файл GDAL</translation>
     </message>
     <message>
-        <location filename="../gui/editor_widget_geojson.ui" line="23"/>
+        <location filename="../gui/editor_widget_wms.ui" line="23"/>
         <source>URL</source>
         <translation>URL</translation>
     </message>
@@ -690,9 +690,24 @@ p, li { white-space: pre-wrap; }
         <translation>сообщить о проблеме</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="458"/>
+        <location filename="../qms_service_toolbox.py" line="462"/>
         <source>Add</source>
         <translation>Добавить</translation>
+    </message>
+    <message>
+        <location filename="../qms_service_toolbox.py" line="458"/>
+        <source>Available with issues</source>
+        <translation>Есть проблемы</translation>
+    </message>
+    <message>
+        <location filename="../qms_service_toolbox.py" line="452"/>
+        <source>Works</source>
+        <translation>Работает</translation>
+    </message>
+    <message>
+        <location filename="../qms_service_toolbox.py" line="455"/>
+        <source>Failed</source>
+        <translation>Не работает</translation>
     </message>
 </context>
 <context>
@@ -821,21 +836,21 @@ The previous settings will be overwritten!</source>
 <context>
     <name>SearchThread</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="575"/>
+        <location filename="../qms_service_toolbox.py" line="579"/>
         <source>Network error!
 {0}</source>
         <translation>Сетевая ошибка!
 {0}</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="586"/>
+        <location filename="../qms_service_toolbox.py" line="590"/>
         <source>Error of processing!
 {0}: {1}</source>
         <translation>Ошибка обработки!
 {0}: {1}</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="581"/>
+        <location filename="../qms_service_toolbox.py" line="585"/>
         <source>Network error: {0}</source>
         <translation>Сетевая ошибка</translation>
     </message>
