@@ -35,6 +35,7 @@ from qgis.PyQt.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QListWidgetItem,
+    QMessageBox,
     QSizePolicy,
     QToolButton,
     QWidget,
@@ -468,14 +469,41 @@ class QmsSearchResultItemWidget(QWidget):
         self.image_ba = image_ba
 
     def addToMap(self):
+        """
+        Try to add the selected geoservice to the map. If the service does not
+        exist anymore, show a warning and remove it from the recent list.
+
+        :raises: Shows a warning dialog if the service is not found.
+        """
         try:
             QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             client = Client()
             client.set_proxy(*QGISSettings.get_qgis_proxy())
-            geoservice_info = client.get_geoservice_info(self.geoservice)
+            try:
+                geoservice_info = client.get_geoservice_info(self.geoservice)
+            except Exception as error:
+                # Show a warning if the service is not found
+                QMessageBox.warning(
+                    self,
+                    self.tr("Service not found"),
+                    self.tr(
+                        "The service does not exist anymore."
+                        "It will be removed from the recent list."
+                    ),
+                )
+                # Remove the service from the recent list
+                cached_services = CachedServices()
+                cached_services.geoservices = [
+                    gs for gs in cached_services.geoservices
+                    if gs.id != self.geoservice.get("id")
+                ]
+                PluginSettings.set_last_used_services(
+                    cached_services.geoservices
+                )
+                return    
             ds = DataSourceSerializer.read_from_json(geoservice_info)
             add_layer_to_map(ds)
-
+            
             CachedServices().add_service(self.geoservice, self.image_ba)
         except Exception as ex:
             plPrint(str(ex))

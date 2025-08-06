@@ -636,6 +636,16 @@ p, li { white-space: pre-wrap; }
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
+    <message>
+        <location filename="../qms_service_toolbox.py" line="485"/>
+        <source>Service not found</source>
+        <translation>Сервис не найден</translation>
+    </message>
+    <message>
+        <location filename="../qms_service_toolbox.py" line="485"/>
+        <source>The service does not exist anymore. It will be removed from the recent list.</source>
+        <translation>Сервис больше не существует. Он будет удалён из списка недавно использованных.</translation>
+    </message>
 </context>
 <context>
     <name>QmsServiceToolbox</name>
