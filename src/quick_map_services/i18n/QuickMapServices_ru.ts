@@ -200,27 +200,27 @@ p, li { white-space: pre-wrap; }
         <translation>Поместить авторство в нижнем правом углу</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="14"/>
+        <location filename="../group_edit_dialog.ui" line="14"/>
         <source>Dialog</source>
         <translation>Диалог</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="24"/>
+        <location filename="../group_edit_dialog.ui" line="24"/>
         <source>General</source>
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="30"/>
+        <location filename="../group_edit_dialog.ui" line="33"/>
         <source>ID</source>
         <translation>ID</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="40"/>
+        <location filename="../group_edit_dialog.ui" line="43"/>
         <source>Alias</source>
         <translation>Алиас</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="88"/>
+        <location filename="../group_edit_dialog.ui" line="77"/>
         <source>Icon</source>
         <translation>Иконка</translation>
     </message>
@@ -255,7 +255,7 @@ p, li { white-space: pre-wrap; }
         <translation>Условия использования</translation>
     </message>
     <message>
-        <location filename="../ds_edit_dialog.ui" line="98"/>
+        <location filename="../group_edit_dialog.ui" line="93"/>
         <source>Choose</source>
         <translation>Выбрать</translation>
     </message>
@@ -454,7 +454,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>Form</name>
     <message>
-        <location filename="../gui/editor_widget_geojson.ui" line="14"/>
+        <location filename="../gui/editor_widget_wms.ui" line="14"/>
         <source>Form</source>
         <translation>Форма</translation>
     </message>
@@ -464,7 +464,7 @@ p, li { white-space: pre-wrap; }
         <translation>Файл GDAL</translation>
     </message>
     <message>
-        <location filename="../gui/editor_widget_geojson.ui" line="23"/>
+        <location filename="../gui/editor_widget_wms.ui" line="23"/>
         <source>URL</source>
         <translation>URL</translation>
     </message>
@@ -680,40 +680,50 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QmsSearchResultItemWidget</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="423"/>
+        <location filename="../qms_service_toolbox.py" line="424"/>
         <source>details</source>
         <translation>подробнее</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="435"/>
+        <location filename="../qms_service_toolbox.py" line="436"/>
         <source>report a problem</source>
         <translation>сообщить о проблеме</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="458"/>
+        <location filename="../qms_service_toolbox.py" line="459"/>
         <source>Add</source>
         <translation>Добавить</translation>
+    </message>
+    <message>
+        <location filename="../qms_service_toolbox.py" line="485"/>
+        <source>Service not found</source>
+        <translation>Сервис не найден</translation>
+    </message>
+    <message>
+        <location filename="../qms_service_toolbox.py" line="485"/>
+        <source>The service does not exist anymore. It will be removed from the recent list.</source>
+        <translation>Сервис больше не существует. Он будет удалён из списка недавно использованных.</translation>
     </message>
 </context>
 <context>
     <name>QmsServiceToolbox</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="138"/>
+        <location filename="../qms_service_toolbox.py" line="139"/>
         <source>Search string...</source>
         <translation>Поиск геосервиса...</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="322"/>
+        <location filename="../qms_service_toolbox.py" line="323"/>
         <source>Searching...</source>
         <translation>Поиск...</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="356"/>
+        <location filename="../qms_service_toolbox.py" line="357"/>
         <source>No results!</source>
         <translation>Нет результатов!</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="301"/>
+        <location filename="../qms_service_toolbox.py" line="302"/>
         <source>Last used:</source>
         <translation>Недавно использованы:</translation>
     </message>
@@ -728,12 +738,12 @@ p, li { white-space: pre-wrap; }
         <translation>Введите часть имени сервиса</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="331"/>
+        <location filename="../qms_service_toolbox.py" line="332"/>
         <source>No results.</source>
         <translation>Ничего не найдено.</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="331"/>
+        <location filename="../qms_service_toolbox.py" line="332"/>
         <source>You can add a service to become searchable. Start &lt;a href=&apos;{}&apos;&gt;here&lt;/a&gt;.</source>
         <translation>Вы можете &lt;a href='{}'&gt;добавить сервис&lt;/a&gt; самостоятельно, и он станет доступен через поиск.</translation>
     </message>
@@ -743,22 +753,22 @@ p, li { white-space: pre-wrap; }
         <translation>Фильтр по охвату</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="131"/>
+        <location filename="../qms_service_toolbox.py" line="132"/>
         <source>All</source>
         <translation>Все</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="367"/>
+        <location filename="../qms_service_toolbox.py" line="368"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="132"/>
+        <location filename="../qms_service_toolbox.py" line="133"/>
         <source>Valid</source>
         <translation>Рабочие</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="262"/>
+        <location filename="../qms_service_toolbox.py" line="263"/>
         <source>Need at least 3 symbols to start searching...</source>
         <translation>Для поиска нужно минимум 3 символа...</translation>
     </message>
@@ -821,21 +831,21 @@ The previous settings will be overwritten!</source>
 <context>
     <name>SearchThread</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="575"/>
+        <location filename="../qms_service_toolbox.py" line="603"/>
         <source>Network error!
 {0}</source>
         <translation>Сетевая ошибка!
 {0}</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="586"/>
+        <location filename="../qms_service_toolbox.py" line="614"/>
         <source>Error of processing!
 {0}: {1}</source>
         <translation>Ошибка обработки!
 {0}: {1}</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="581"/>
+        <location filename="../qms_service_toolbox.py" line="609"/>
         <source>Network error: {0}</source>
         <translation>Сетевая ошибка</translation>
     </message>
