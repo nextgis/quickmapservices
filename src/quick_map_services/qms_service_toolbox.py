@@ -234,6 +234,17 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.search_threads.stop()
         self.search_threads.wait()
         self.search_threads = None
+ 
+    def refresh_last_used_services(self):
+        """
+        Refresh the list of last used geoservices.
+
+        This method clears the current search result list and adds the
+        last used geoservices again. It is intended to be called after
+        a geoservice is removed from the recent list.
+        """
+        self.lstSearchResult.clear()
+        self.add_last_used_services()
 
     def start_search(self):
         search_text = None
@@ -307,7 +318,8 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
         for attributes, image_qByteArray in services:
             custom_widget = QmsSearchResultItemWidget(
-                attributes, image_qByteArray
+                attributes, image_qByteArray,
+                refresh_signal=self.refresh_last_used_services
             )
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(custom_widget.sizeHint())
@@ -346,7 +358,8 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
     def show_result(self, geoservice, image_ba):
         if geoservice:
             custom_widget = QmsSearchResultItemWidget(
-                geoservice, image_ba, extent_renderer=self.extent_renderer
+                geoservice, image_ba, extent_renderer=self.extent_renderer,
+                refresh_signal=self.refresh_last_used_services
             )
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(custom_widget.sizeHint())
@@ -379,11 +392,12 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
 class QmsSearchResultItemWidget(QWidget):
     def __init__(
-        self, geoservice, image_ba, parent=None, extent_renderer=None
+        self, geoservice, image_ba, parent=None, extent_renderer=None, refresh_signal=None
     ):
         QWidget.__init__(self, parent)
 
         self.extent_renderer = extent_renderer
+        self.refresh_signal = refresh_signal
 
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(5, 10, 5, 10)
@@ -488,7 +502,7 @@ class QmsSearchResultItemWidget(QWidget):
                     self.tr("Service not found"),
                     self.tr(
                         "The service does not exist anymore."
-                        "It will be removed from the recent list."
+                        " It will be removed from the recent list."
                     ),
                 )
                 # Remove the service from the recent list
@@ -500,7 +514,11 @@ class QmsSearchResultItemWidget(QWidget):
                 PluginSettings.set_last_used_services(
                     cached_services.geoservices
                 )
-                return    
+                # Refresh the list of last used services
+                if self.refresh_signal:
+                    self.refresh_signal()
+                return
+          
             ds = DataSourceSerializer.read_from_json(geoservice_info)
             add_layer_to_map(ds)
             
