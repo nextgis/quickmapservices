@@ -22,6 +22,7 @@ from qgis.PyQt.QtCore import (
     QThread,
     QTimer,
     pyqtSignal,
+    pyqtSlot,
 )
 from qgis.PyQt.QtGui import (
     QCursor,
@@ -121,6 +122,8 @@ FORM_CLASS, _ = uic.loadUiType(
 
 
 class QmsServiceToolbox(QDockWidget, FORM_CLASS):
+    refresh_recent_services = pyqtSignal()
+
     def __init__(self, iface):
         QDockWidget.__init__(self, iface.mainWindow())
         self.setupUi(self)
@@ -234,7 +237,8 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.search_threads.stop()
         self.search_threads.wait()
         self.search_threads = None
- 
+
+    @pyqtSlot()
     def refresh_last_used_services(self):
         """
         Refresh the list of last used geoservices.
@@ -318,9 +322,11 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
         for attributes, image_qByteArray in services:
             custom_widget = QmsSearchResultItemWidget(
-                attributes, image_qByteArray,
-                refresh_signal=self.refresh_last_used_services
+                attributes, image_qByteArray
             )
+            custom_widget.refresh_recent_services.connect(
+                self.refresh_last_used_services
+                )
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(custom_widget.sizeHint())
             self.lstSearchResult.addItem(new_item)
@@ -391,6 +397,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
 
 class QmsSearchResultItemWidget(QWidget):
+    refresh_recent_services = pyqtSignal()
     def __init__(
         self, geoservice, image_ba, parent=None, extent_renderer=None, refresh_signal=None
     ):
@@ -515,13 +522,12 @@ class QmsSearchResultItemWidget(QWidget):
                     cached_services.geoservices
                 )
                 # Refresh the list of last used services
-                if self.refresh_signal:
-                    self.refresh_signal()
+                self.refresh_recent_services.emit()
                 return
-          
+
             ds = DataSourceSerializer.read_from_json(geoservice_info)
             add_layer_to_map(ds)
-            
+
             CachedServices().add_service(self.geoservice, self.image_ba)
         except Exception as ex:
             plPrint(str(ex))
