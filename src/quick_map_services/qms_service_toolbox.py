@@ -122,8 +122,6 @@ FORM_CLASS, _ = uic.loadUiType(
 
 
 class QmsServiceToolbox(QDockWidget, FORM_CLASS):
-    refresh_recent_services = pyqtSignal()
-
     def __init__(self, iface):
         QDockWidget.__init__(self, iface.mainWindow())
         self.setupUi(self)
@@ -364,8 +362,7 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
     def show_result(self, geoservice, image_ba):
         if geoservice:
             custom_widget = QmsSearchResultItemWidget(
-                geoservice, image_ba, extent_renderer=self.extent_renderer,
-                refresh_signal=self.refresh_last_used_services
+                geoservice, image_ba, extent_renderer=self.extent_renderer
             )
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(custom_widget.sizeHint())
@@ -398,13 +395,13 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
 class QmsSearchResultItemWidget(QWidget):
     refresh_recent_services = pyqtSignal()
+
     def __init__(
-        self, geoservice, image_ba, parent=None, extent_renderer=None, refresh_signal=None
+        self, geoservice, image_ba, parent=None, extent_renderer=None
     ):
         QWidget.__init__(self, parent)
 
         self.extent_renderer = extent_renderer
-        self.refresh_signal = refresh_signal
 
         self.layout = QHBoxLayout(self)
         self.layout.setContentsMargins(5, 10, 5, 10)
@@ -524,7 +521,6 @@ class QmsSearchResultItemWidget(QWidget):
                 # Refresh the list of last used services
                 self.refresh_recent_services.emit()
                 return
-
             ds = DataSourceSerializer.read_from_json(geoservice_info)
             add_layer_to_map(ds)
 
