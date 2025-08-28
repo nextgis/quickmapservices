@@ -1,12 +1,12 @@
 [general]
 name=QuickMapServices
 qgisMinimumVersion=3.22
-qgisMaximumVersion=3.99
+qgisMaximumVersion=4.99
 description=Easy to add basemaps and geoservices
 description[ru]=Легко добавляйте базовые карты и геосервисы
 about=Easy to use list of services and search for finding datasets and basemaps. Please contribute new services via https://qms.nextgis.com. Developed by NextGIS. Any feedback is welcome at https://nextgis.com/contact
 about[ru]=Простой в использовании список сервисов и поиск наборов данных и базовых карт. Пожалуйста, предлагайте новые сервисы через https://qms.nextgis.com. Разработан компанией NextGIS. Любые отзывы приветствуются на https://nextgis.com/contact.
-version=0.21.2
+version=0.21.3
 author=NextGIS
 email=info@nextgis.com
 
@@ -24,6 +24,9 @@ deprecated=False
 supportsQt6=True
 
 changelog=
+      0.21.3
+        * Added validation for custom projection field in TMS editor
+        * Increased maximum supported QGIS version to 4.99
       0.21.2
         * Fixed "report a problem" link
       0.21.1
