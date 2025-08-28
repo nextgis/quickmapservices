@@ -19,17 +19,16 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsRectangle
+from qgis.core import (
+    QgsCoordinateReferenceSystem,
+    QgsCoordinateTransform,
+    QgsProject,
+    QgsRectangle,
+    QgsWkbTypes,
+)
 from qgis.gui import QgsRubberBand
 from qgis.PyQt.QtGui import QColor
 from qgis.utils import iface
-
-from .compat2qgis import (
-    QGisGeometryType,
-    QgsCoordinateReferenceSystem,
-    QgsCoordinateTransform,
-    getCanvasDestinationCrs,
-)
 
 
 class RubberBandResultRenderer:
@@ -38,15 +37,17 @@ class RubberBandResultRenderer:
 
         self.srs_wgs84 = QgsCoordinateReferenceSystem.fromEpsgId(4326)
         self.transform_decorator = QgsCoordinateTransform(
-            self.srs_wgs84, self.srs_wgs84
+            self.srs_wgs84, 
+            self.srs_wgs84,
+            QgsProject.instance()
         )
 
-        self.rb = QgsRubberBand(self.iface.mapCanvas(), QGisGeometryType.Point)
+        self.rb = QgsRubberBand(self.iface.mapCanvas(), QgsWkbTypes.PointGeometry)
         self.rb.setColor(QColor("magenta"))
         self.rb.setIconSize(12)
 
         self.features_rb = QgsRubberBand(
-            self.iface.mapCanvas(), QGisGeometryType.Point
+            self.iface.mapCanvas(), QgsWkbTypes.PointGeometry
         )
         magenta_transp = QColor("#3388ff")
         magenta_transp.setAlpha(120)
@@ -64,16 +65,14 @@ class RubberBandResultRenderer:
             self.center_to_point(point)
 
     def clear(self):
-        self.rb.reset(QGisGeometryType.Point)
+        self.rb.reset(QgsWkbTypes.PointGeometry)
 
     def need_transform(self):
-        return getCanvasDestinationCrs(self.iface).postgisSrid() != 4326
+        return self.iface.mapCanvas().mapSettings().destinationCrs().postgisSrid() != 4326
 
     def transform_point(self, point):
-        # dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
-        # self.transformation.setDestCRSID(dest_srs_id)
         self.transform_decorator.setDestinationCrs(
-            getCanvasDestinationCrs(self.iface)
+            self.iface.mapCanvas().mapSettings().destinationCrs()
         )
         try:
             return self.transform_decorator.transform(point)
@@ -82,10 +81,8 @@ class RubberBandResultRenderer:
             return
 
     def transform_bbox(self, bbox):
-        # dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
-        # self.transformation.setDestCRSID(dest_srs_id)
         self.transform_decorator.setDestinationCrs(
-            getCanvasDestinationCrs(self.iface)
+            self.iface.mapCanvas().mapSettings().destinationCrs()
         )
         try:
             return self.transform_decorator.transformBoundingBox(bbox)
@@ -94,10 +91,8 @@ class RubberBandResultRenderer:
             return
 
     def transform_geom(self, geom):
-        # dest_srs_id = getCanvasDestinationCrs(self.iface).srsid()
-        # self.transformation.setDestCRSID(dest_srs_id)
         self.transform_decorator.setDestinationCrs(
-            getCanvasDestinationCrs(self.iface)
+            self.iface.mapCanvas().mapSettings().destinationCrs()
         )
         try:
             geom.transform(self.transform_decorator)
@@ -125,4 +120,4 @@ class RubberBandResultRenderer:
         self.features_rb.setToGeometry(geom, None)
 
     def clear_feature(self):
-        self.features_rb.reset(QGisGeometryType.Point)
+        self.features_rb.reset(QgsWkbTypes.PointGeometry)
