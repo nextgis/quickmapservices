@@ -15,6 +15,7 @@ from qgis.PyQt.QtCore import (
     QThread,
     QTimer,
     pyqtSignal,
+    pyqtSlot,
 )
 from qgis.PyQt.QtGui import (
     QCursor,
@@ -28,6 +29,7 @@ from qgis.PyQt.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QListWidgetItem,
+    QMessageBox,
     QSizePolicy,
     QToolButton,
     QWidget,
@@ -233,6 +235,18 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.search_threads.wait()
         self.search_threads = None
 
+    @pyqtSlot()
+    def refresh_last_used_services(self):
+        """
+        Refresh the list of last used geoservices.
+
+        This method clears the current search result list and adds the
+        last used geoservices again. It is intended to be called after
+        a geoservice is removed from the recent list.
+        """
+        self.lstSearchResult.clear()
+        self.add_last_used_services()
+
     def start_search(self):
         search_text = None
         geom_filter = None
@@ -307,6 +321,9 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             custom_widget = QmsSearchResultItemWidget(
                 attributes, image_qByteArray
             )
+            custom_widget.refresh_recent_services.connect(
+                self.refresh_last_used_services
+                )
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(custom_widget.sizeHint())
             self.lstSearchResult.addItem(new_item)
@@ -376,6 +393,8 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
 
 class QmsSearchResultItemWidget(QWidget):
+    refresh_recent_services = pyqtSignal()
+
     def __init__(
         self, geoservice, image_ba, parent=None, extent_renderer=None
     ):
@@ -467,11 +486,40 @@ class QmsSearchResultItemWidget(QWidget):
         self.image_ba = image_ba
 
     def addToMap(self):
+        """
+        Try to add the selected geoservice to the map. If the service does not
+        exist anymore, show a warning and remove it from the recent list.
+
+        :raises: Shows a warning dialog if the service is not found.
+        """
         try:
             QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             client = Client()
             client.set_proxy(*QGISSettings.get_qgis_proxy())
-            geoservice_info = client.get_geoservice_info(self.geoservice)
+            try:
+                geoservice_info = client.get_geoservice_info(self.geoservice)
+            except Exception as error:
+                # Show a warning if the service is not found
+                QMessageBox.warning(
+                    self,
+                    self.tr("Service not found"),
+                    self.tr(
+                        "The service does not exist anymore."
+                        " It will be removed from the recent list."
+                    ),
+                )
+                # Remove the service from the recent list
+                cached_services = CachedServices()
+                cached_services.geoservices = [
+                    gs for gs in cached_services.geoservices
+                    if gs.id != self.geoservice.get("id")
+                ]
+                PluginSettings.set_last_used_services(
+                    cached_services.geoservices
+                )
+                # Refresh the list of last used services
+                self.refresh_recent_services.emit()
+                return
             ds = DataSourceSerializer.read_from_json(geoservice_info)
             add_layer_to_map(ds)
 
