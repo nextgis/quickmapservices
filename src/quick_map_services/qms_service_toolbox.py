@@ -445,13 +445,17 @@ class QmsSearchResultItemWidget(QWidget):
         self.status_label.setTextFormat(Qt.TextFormat.RichText)
         self.status_label.setText("\u2022")
 
+        # Determine service status and update visual indicator and tooltip
         status = geoservice.get("cumulative_status", "")
         if status == "works":
             self.status_label.setStyleSheet("color: green; font-size: 30px")
+            self.status_label.setToolTip(self.tr("Works"))
         if status == "failed":
             self.status_label.setStyleSheet("color: red; font-size: 30px")
+            self.status_label.setToolTip(self.tr("Failed"))
         if status == "problematic":
             self.status_label.setStyleSheet("color: yellow; font-size: 30px")
+            self.status_label.setToolTip(self.tr("Available with issues"))
         self.layout.addWidget(self.status_label)
 
         self.addButton = QToolButton()
