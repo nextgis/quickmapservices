@@ -719,8 +719,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../qms_service_toolbox.ui" line="14"/>
-        <source>Search QMS</source>
-        <translation>Поиск в QMS</translation>
+        <source>Search NextGIS QMS</source>
+        <translation>Поиск в NextGIS QMS</translation>
     </message>
     <message>
         <location filename="../qms_service_toolbox.ui" line="44"/>
@@ -802,8 +802,8 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../quick_map_services.py" line="397"/>
-        <source>Search QMS</source>
-        <translation>Поиск в QMS</translation>
+        <source>Search NextGIS QMS</source>
+        <translation>Поиск в NextGIS QMS</translation>
     </message>
     <message>
         <location filename="../quick_map_services.py" line="252"/>
@@ -812,7 +812,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="../quick_map_services.py" line="175"/>
-        <source>Set SlippyMap scales for current project? 
+        <source>Set SlippyMap scales for current project?
 The previous settings will be overwritten!</source>
         <translation>Установить масштабы мозаичной карты для текущего проекта?
 Предыдущие настройки будут перезаписаны!</translation>

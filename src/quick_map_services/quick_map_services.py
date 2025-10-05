@@ -176,7 +176,7 @@ class QuickMapServices(object):
             self.iface.mainWindow(),
             self.tr("QuickMapServices"),
             self.tr(
-                "Set SlippyMap scales for current project? \nThe previous settings will be overwritten!"
+                "Set SlippyMap scales for current project?\nThe previous settings will be overwritten!"
             ),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
         )
@@ -394,7 +394,7 @@ class QuickMapServices(object):
         icon_settings_path = self.plugin_dir + "/icons/mActionSearch.svg"
         self.qms_search_action = self.server_toolbox.toggleViewAction()
         self.qms_search_action.setIcon(QIcon(icon_settings_path))
-        self.qms_search_action.setText(self.tr("Search QMS"))
+        self.qms_search_action.setText(self.tr("Search NextGIS QMS"))
 
     def remove_server_panel(self):
         mw = self.iface.mainWindow()
