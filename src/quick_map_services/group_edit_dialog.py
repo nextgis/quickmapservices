@@ -79,7 +79,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         via `set_icon()`. If no icon is selected, the method exits silently.
         """
         print(PluginSettings.get_default_user_icon_path())
-        
+
         # Open a file dialog to choose an icon
         icon_path, _ = QFileDialog.getOpenFileName(
             self,
@@ -93,7 +93,7 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         print(icon_path)
 
         # If a file was selected, update the default path and apply the icon
-        if icon_path != "":
+        if icon_path:
             PluginSettings.set_default_user_icon_path(icon_path)
             self.set_icon(icon_path)
 

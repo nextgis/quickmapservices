@@ -111,13 +111,13 @@ class DsEditDialog(QDialog, FORM_CLASS):
         self.feel_specific_fields()
 
     def choose_icon(self):
-        icon_path = QFileDialog.getOpenFileName(
+        icon_path, _ = QFileDialog.getOpenFileName(
             self,
             self.tr("Select icon for data source"),
             PluginSettings.get_default_user_icon_path(),
             self.tr("Icons (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)"),
         )
-        if icon_path != "":
+        if icon_path:
             PluginSettings.set_default_user_icon_path(icon_path)
             self.set_icon(icon_path)
 

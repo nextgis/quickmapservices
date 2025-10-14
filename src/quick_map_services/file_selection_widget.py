@@ -77,7 +77,9 @@ class FileSelectionWidget(QWidget):
                 self.leText.setText(folder)
                 PluginSettings.set_last_icon_path(os.path.dirname(folder))
         else:
-            filename = QFileDialog.getOpenFileName(self, self.dialog_title, path, self.ext)
+            filename, _ = QFileDialog.getOpenFileName(
+                self, self.dialog_title, path, self.ext
+            )
             if filename:
                 self.leText.setText(filename)
                 PluginSettings.set_last_icon_path(os.path.dirname(filename))
