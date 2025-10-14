@@ -64,12 +64,14 @@ class SettingsDialog(QDialog, FORM_CLASS):
             )  # !!! need to check
 
         showAllAction = self.toolBarForDSTreeView.addAction(
-            QIcon(":/images/themes/default/mActionShowAllLayers.svg"), self.tr("Show all")
+            QIcon(":/images/themes/default/mActionShowAllLayers.svg"),
+            self.tr("Show all"),
         )
         showAllAction.triggered.connect(self.dsManagerViewModel.checkAll)
 
         hideAllAction = self.toolBarForDSTreeView.addAction(
-            QIcon(":images/themes/default/mActionHideAllLayers.svg"), self.tr("Hide all")
+            QIcon(":images/themes/default/mActionHideAllLayers.svg"),
+            self.tr("Hide all"),
         )
         hideAllAction.triggered.connect(self.dsManagerViewModel.uncheckAll)
         self.dsManagerViewModel.sort(DSManagerModel.COLUMN_GROUP_DS)
@@ -91,7 +93,7 @@ class SettingsDialog(QDialog, FORM_CLASS):
         self.spnNetworkTimeout.setValue(
             QGISSettings.get_default_network_timeout()
         )
-        
+
         # Native renderer options (hidden for now)
         self.useNativeRenderer2188AndHigherLabel.setVisible(False)
         self.chkUseNativeRenderer.setChecked(True)

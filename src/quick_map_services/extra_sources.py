@@ -34,7 +34,9 @@ from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest
 from .compat import OpenModeFlag
 from .plugin_settings import PluginSettings
 
-LOCAL_SETTINGS_PATH = os.path.dirname(QgsApplication.qgisUserDatabaseFilePath())
+LOCAL_SETTINGS_PATH = os.path.dirname(
+    QgsApplication.qgisUserDatabaseFilePath()
+)
 PLUGIN_SETTINGS_PATH = os.path.join(
     LOCAL_SETTINGS_PATH, PluginSettings.product_name()
 )
