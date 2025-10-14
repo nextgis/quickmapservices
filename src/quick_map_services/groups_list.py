@@ -120,13 +120,11 @@ class GroupsList(object):
                 group_menu,
                 category,
             )
-        except Exception as e:
-            error_message = (
-                self.tr("Group INI file can't be parsed: ") + str(e)
+        except Exception as error:
+            error_message = self.tr("Group INI file can't be parsed: ") + str(
+                error
             )
-            QgsMessageLog.logMessage(
-                error_message, level=Qgis.Critical
-            )
+            QgsMessageLog.logMessage(error_message, level=Qgis.Critical)
 
     def get_group_menu(self, group_id):
         if group_id in self.groups:

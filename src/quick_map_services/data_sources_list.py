@@ -94,9 +94,7 @@ class DataSourcesList(object):
                         self.data_sources[ds.id] = ds
 
                     except Exception as e:
-                        error_message = (
-                            "INI file can't be parsed: " + str(e)
-                        )
+                        error_message = "INI file can't be parsed: " + str(e)
                         QgsMessageLog.logMessage(
                             error_message, level=Qgis.Critical
                         )

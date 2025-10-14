@@ -63,13 +63,18 @@ class QgisPluginBuilder:
         # Enable full setup mode if no explicit flags are provided
         if all(
             setting is None
-            for setting in (compile_ui, compile_qrc, compile_ts, update_git_submodules)
+            for setting in (
+                compile_ui,
+                compile_qrc,
+                compile_ts,
+                update_git_submodules,
+            )
         ):
             update_git_submodules = True
             compile_ui = True
             compile_qrc = True
             compile_ts = True
-        
+
         if update_git_submodules:
             self.update_git_submodules()
         if compile_ui:
@@ -100,8 +105,8 @@ class QgisPluginBuilder:
             if not (self.current_directory / path / ".git").exists()
         ]
         if not missing_submodules:
-            return 
-        
+            return
+
         for submodule in missing_submodules:
             print(f":: Initializing missing submodule: {submodule}")
             try:
@@ -131,7 +136,7 @@ class QgisPluginBuilder:
         :rtype: List[str]
         """
         paths = []
-        pattern = re.compile(r'^\s*path\s*=\s*(.+)$')
+        pattern = re.compile(r"^\s*path\s*=\s*(.+)$")
 
         # Extract 'path =' entries from .gitmodules
         for line in gitmodules_path.read_text(encoding="utf-8").splitlines():
