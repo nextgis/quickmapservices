@@ -53,10 +53,7 @@ def add_layer_to_map(ds):
             tms_url = ds.tms_url
 
         service_url = tms_url.replace("=", "%3D").replace("&", "%26")
-        if (
-            ds.tms_y_origin_top is not None
-            and ds.tms_y_origin_top == False
-        ):
+        if ds.tms_y_origin_top is not None and ds.tms_y_origin_top == False:
             service_url = service_url.replace("{y}", "{-y}")
 
         # Construct TMS URI for QGIS
@@ -82,7 +79,7 @@ def add_layer_to_map(ds):
     if ds.type.lower() == KNOWN_DRIVERS.GDAL.lower():
         layer = QgsRasterLayer(ds.gdal_source_file, tr(ds.alias))
         layers4add.append(layer)
-    
+
     # === WMS LAYERS ===
     if ds.type.lower() == KNOWN_DRIVERS.WMS.lower():
         qgis_wms_uri = ""
@@ -109,7 +106,7 @@ def add_layer_to_map(ds):
             qgis_wms_uri, tr(ds.alias), KNOWN_DRIVERS.WMS.lower()
         )
         layers4add.append(layer)
-    
+
     # === WFS LAYERS ===
     if ds.type.lower() == KNOWN_DRIVERS.WFS.lower():
         qgis_wfs_uri_base = ds.wfs_url
@@ -162,9 +159,7 @@ def add_layer_to_map(ds):
             iface.messageBar().pushMessage(
                 tr("Error"), error_message, level=Qgis.Critical
             )
-            QgsMessageLog.logMessage(
-                error_message, level=Qgis.Critical
-            )
+            QgsMessageLog.logMessage(error_message, level=Qgis.Critical)
         else:
             # Set attribs
             if Qgis.versionInt() >= QGIS_3_38:
@@ -207,10 +202,11 @@ def add_layer_to_map(ds):
                 and ds.type.lower() == KNOWN_DRIVERS.TMS.lower()
                 and ds.tms_epsg_crs_id == 3857
             ):
-                iface.mapCanvas().setDestinationCrs(QgsCoordinateReferenceSystem.fromEpsgId(3857))
+                crs_3857 = QgsCoordinateReferenceSystem.fromEpsgId(3857)
+                iface.mapCanvas().setDestinationCrs(crs_3857)
 
                 if (
                     QGISSettings.get_new_project_crs_behavior()
                     == QGISSettings.NEW_PROJECT_USE_PRESET_CRS
                 ):
-                    QgsProject.instance().setCrs(QgsCoordinateReferenceSystem.fromEpsgId(3857))
+                    QgsProject.instance().setCrs(crs_3857)
