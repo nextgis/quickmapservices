@@ -12,6 +12,7 @@ from qgis.core import (
     QgsCoordinateTransform,
     QgsGeometry,
     QgsMessageLog,
+    QgsProject,
     QgsSettings,
 )
 from qgis.PyQt import uic
@@ -267,7 +268,14 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.lstSearchResult.clear()
         self.add_last_used_services()
 
-    def start_search(self):
+    @pyqtSlot()
+    def start_search(self) -> None:
+        """
+        Start a QuickMapServices search process based on user input or current map extent.
+
+        :return: None
+        :rtype: None
+        """
         search_text = None
         geom_filter = None
         min_search_text_len = 3
@@ -302,10 +310,12 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             extent = self.iface.mapCanvas().extent()
             map_crs = self.iface.mapCanvas().mapSettings().destinationCrs()
             if map_crs.postgisSrid() != 4326:
-                crsDest = QgsCoordinateReferenceSystem.fromEpsgId(
+                dest_crs = QgsCoordinateReferenceSystem.fromEpsgId(
                     4326
                 )  # WGS 84
-                xform = QgsCoordinateTransform(map_crs, crsDest)
+                xform = QgsCoordinateTransform(
+                    map_crs, dest_crs, QgsProject.instance()
+                )
                 extent = xform.transform(extent)
             geom_filter = extent.asWktPolygon()
 
