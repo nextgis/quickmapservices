@@ -484,13 +484,37 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
 
 
 class QmsSearchResultItemWidget(QWidget):
+    """
+    A custom QWidget representing a single search result item
+    in the QuickMapServices (QMS) plugin.
+    """
+
     service_not_found = pyqtSignal(int)
     service_unavailable = pyqtSignal(str)
 
     def __init__(
-        self, geoservice, image_ba, parent=None, extent_renderer=None
-    ):
-        QWidget.__init__(self, parent)
+        self,
+        geoservice: Dict[str, Any],
+        image_ba: QByteArray,
+        parent: Optional[QWidget] = None,
+        extent_renderer: Optional["RubberBandResultRenderer"] = None,
+    ) -> None:
+        """
+        Initialize the QMS search result item widget.
+
+        :param geoservice: Dictionary containing metadata about the geospatial service.
+        :type geoservice: Dict[str, Any]
+        :param image_ba: Binary data used as the service icon image.
+        :type image_ba: QByteArray
+        :param parent: Parent widget of this UI element.
+        :type parent: Optional[QWidget]
+        :param extent_renderer: Optional renderer used to visualize the service extent.
+        :type extent_renderer: Optional[RubberBandResultRenderer]
+
+        :return: None
+        :rtype: None
+        """
+        super().__init__(parent)
 
         self.extent_renderer = extent_renderer
 
@@ -551,19 +575,6 @@ class QmsSearchResultItemWidget(QWidget):
         )
         self.service_desc_layout.addWidget(self.service_report, 1, 2)
         self.service_desc_layout.setColumnStretch(2, 1)
-
-        self.status_label = QLabel(self)
-        self.status_label.setTextFormat(Qt.TextFormat.RichText)
-        self.status_label.setText("\u2022")
-
-        status = geoservice.get("cumulative_status", "")
-        if status == "works":
-            self.status_label.setStyleSheet("color: green; font-size: 30px")
-        if status == "failed":
-            self.status_label.setStyleSheet("color: red; font-size: 30px")
-        if status == "problematic":
-            self.status_label.setStyleSheet("color: yellow; font-size: 30px")
-        self.layout.addWidget(self.status_label)
 
         self.addButton = QToolButton()
         self.addButton.setText(self.tr("Add"))
