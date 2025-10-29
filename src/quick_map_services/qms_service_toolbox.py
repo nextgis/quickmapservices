@@ -3,6 +3,7 @@ import sys
 from datetime import datetime, timezone
 from os import path
 from pathlib import Path
+from typing import Any, Dict, Optional
 from urllib.error import URLError
 
 from qgis.core import (
@@ -22,12 +23,14 @@ from qgis.PyQt.QtCore import (
     QThread,
     QTimer,
     pyqtSignal,
+    pyqtSlot,
 )
 from qgis.PyQt.QtGui import (
     QCursor,
     QImage,
     QPixmap,
 )
+from qgis.PyQt.QtNetwork import QNetworkReply
 from qgis.PyQt.QtWidgets import (
     QApplication,
     QDockWidget,
@@ -35,6 +38,7 @@ from qgis.PyQt.QtWidgets import (
     QHBoxLayout,
     QLabel,
     QListWidgetItem,
+    QMessageBox,
     QSizePolicy,
     QToolButton,
     QWidget,
@@ -105,6 +109,23 @@ class CachedServices:
             geoservices4store.append(gs)
 
         self.geoservices = geoservices4store[0:5]
+        PluginSettings.set_last_used_services(self.geoservices)
+
+    def remove_service(self, service_id: int) -> None:
+        """
+        Remove a cached geoservice by its ID.
+
+        :param service_id: Unique identifier of the geoservice to remove.
+        :type service_id: int
+
+        :return: None
+        :rtype: None
+        """
+        self.geoservices = [
+            geoservice
+            for geoservice in self.geoservices
+            if geoservice.id != service_id
+        ]
         PluginSettings.set_last_used_services(self.geoservices)
 
     def get_cached_services(self):
@@ -234,6 +255,18 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.search_threads.wait()
         self.search_threads = None
 
+    @pyqtSlot()
+    def refresh_last_used_services(self):
+        """
+        Refresh the list of last used geoservices.
+
+        This method clears the current search result list and adds the
+        last used geoservices again. It is intended to be called after
+        a geoservice is removed from the recent list.
+        """
+        self.lstSearchResult.clear()
+        self.add_last_used_services()
+
     def start_search(self):
         search_text = None
         geom_filter = None
@@ -294,7 +327,13 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.search_threads = searcher
         searcher.start()
 
-    def add_last_used_services(self):
+    def add_last_used_services(self) -> None:
+        """
+        Populate the search result list with recently used geoservices.
+
+        :return: None
+        :rtype: None
+        """
         services = CachedServices().get_cached_services()
         if len(services) == 0:
             return
@@ -307,6 +346,12 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         for attributes, image_qByteArray in services:
             custom_widget = QmsSearchResultItemWidget(
                 attributes, image_qByteArray
+            )
+            custom_widget.service_not_found.connect(
+                self._handle_remove_not_found_cached_service
+            )
+            custom_widget.service_unavailable.connect(
+                self._handle_service_unavailable
             )
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(custom_widget.sizeHint())
@@ -342,10 +387,31 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             self.lstSearchResult.addItem(new_item)
             self.lstSearchResult.setItemWidget(new_item, new_widget)
 
-    def show_result(self, geoservice, image_ba):
+    def show_result(
+        self, geoservice: Optional[Dict[str, Any]], image_ba: QByteArray
+    ) -> None:
+        """
+        Display a search result item in the result list.
+
+        :param geoservice: The geoservice attributes dictionary, or None if no result.
+        :type geoservice: Optional[Dict[str, Any]]
+        :param image_ba: The image data for the service icon.
+        :type image_ba: QByteArray
+
+        :return: None
+        :rtype: None
+        """
         if geoservice:
             custom_widget = QmsSearchResultItemWidget(
                 geoservice, image_ba, extent_renderer=self.extent_renderer
+            )
+            custom_widget.service_not_found.connect(
+                lambda _: self._handle_service_unavailable(
+                    self.tr("The requested service could not be found.")
+                )
+            )
+            custom_widget.service_unavailable.connect(
+                self._handle_service_unavailable
             )
             new_item = QListWidgetItem(self.lstSearchResult)
             new_item.setSizeHint(custom_widget.sizeHint())
@@ -375,8 +441,52 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         self.lstSearchResult.addItem(new_item)
         self.lstSearchResult.setItemWidget(new_item, new_widget)
 
+    @pyqtSlot(int)
+    def _handle_remove_not_found_cached_service(self, service_id: int) -> None:
+        """
+        Handle the event when a cached service is not found.
+
+        :param service_id: The ID of the service that was not found.
+        :type service_id: int
+        :return: None
+        :rtype: None
+        """
+        QMessageBox.warning(
+            self,
+            self.tr("Service not found"),
+            self.tr(
+                "The service no longer exists and has been removed from the recent list."
+            ),
+        )
+
+        CachedServices().remove_service(service_id)
+        self.refresh_last_used_services()
+
+    @pyqtSlot(str)
+    def _handle_service_unavailable(self, message: str) -> None:
+        """
+        Handle the event when a service is temporarily unavailable.
+
+        :param message: The error message describing why the service is unavailable.
+        :type message: str
+        :return: None
+        :rtype: None
+        """
+        msg = self.tr(
+            "The service is currently unavailable due to network or server issues. "
+            "Please try again later.\nError: {error_msg}"
+        ).format(error_msg=message)
+        QMessageBox.warning(
+            self,
+            self.tr("Service is unavailable"),
+            msg,
+        )
+
 
 class QmsSearchResultItemWidget(QWidget):
+    service_not_found = pyqtSignal(int)
+    service_unavailable = pyqtSignal(str)
+
     def __init__(
         self, geoservice, image_ba, parent=None, extent_renderer=None
     ):
@@ -467,12 +577,38 @@ class QmsSearchResultItemWidget(QWidget):
         self.geoservice = geoservice
         self.image_ba = image_ba
 
-    def addToMap(self):
+    @pyqtSlot()
+    def addToMap(self) -> None:
+        """
+        Try to add the selected geoservice to the map.
+        """
         try:
             QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             client = Client()
             client.set_proxy(*QGISSettings.get_qgis_proxy())
-            geoservice_info = client.get_geoservice_info(self.geoservice)
+            try:
+                geoservice_info = client.get_geoservice_info(self.geoservice)
+            except ConnectionError as error:
+                QApplication.restoreOverrideCursor()
+                error_code, message = error.args
+
+                if error_code in (
+                    QNetworkReply.NetworkError.ContentNotFoundError,
+                    QNetworkReply.NetworkError.ContentGoneError,
+                ):
+                    self.service_not_found.emit(self.geoservice.get("id"))
+                    return
+
+                self.service_unavailable.emit(message)
+                return
+
+            except ValueError:
+                QApplication.restoreOverrideCursor()
+                self.service_unavailable.emit(
+                    self.tr("Failed to read service data")
+                )
+                return
+
             ds = DataSourceSerializer.read_from_json(geoservice_info)
             add_layer_to_map(ds)
 
