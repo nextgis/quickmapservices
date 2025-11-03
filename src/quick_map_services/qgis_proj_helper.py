@@ -3,7 +3,7 @@ from typing import Optional
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMapLayer
 from qgis.utils import iface
 
-from .plugin_settings import PluginSettings
+from quick_map_services.core.settings import QmsSettings
 
 
 class ProjectionHelper:
@@ -60,8 +60,30 @@ class ProjectionHelper:
             cls.show_bar_message(msg, Qgis.Warning, 4)
 
     @classmethod
-    def show_bar_message(cls, text, level=Qgis.Info, duration=0, title=None):
-        if PluginSettings.show_messages_in_bar():
+    def show_bar_message(
+        cls,
+        text: str,
+        level: Qgis.MessageLevel = Qgis.Info,
+        duration: int = 0,
+        title: Optional[str] = None,
+    ) -> None:
+        """
+        Display a message in the QGIS message bar
+        if this feature is enabled in the plugin settings.
+
+        :param text: The message text to display.
+        :type text: str
+        :param level: Message level (e.g., Info, Warning, Critical).
+        :type level: Qgis.MessageLevel
+        :param duration: Duration of the message display in seconds (0 = persistent).
+        :type duration: int
+        :param title: Optional title to show in the message bar.
+        :type title: Optional[str]
+        :return: None
+        :rtype: None
+        """
+        settings = QmsSettings()
+        if settings.show_messages_in_bar:
             if title is None:
-                title = PluginSettings.product_name()
+                title = QmsSettings.PRODUCT
             iface.messageBar().pushMessage(title, text, level, duration)

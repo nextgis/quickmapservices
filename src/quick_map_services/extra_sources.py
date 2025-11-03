@@ -31,15 +31,14 @@ from qgis.core import QgsApplication, QgsNetworkAccessManager
 from qgis.PyQt.QtCore import QEventLoop, QFile, QUrl
 from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest
 
+from quick_map_services.core.settings import QmsSettings
+
 from .compat import OpenModeFlag
-from .plugin_settings import PluginSettings
 
 LOCAL_SETTINGS_PATH = os.path.dirname(
     QgsApplication.qgisUserDatabaseFilePath()
 )
-PLUGIN_SETTINGS_PATH = os.path.join(
-    LOCAL_SETTINGS_PATH, PluginSettings.product_name()
-)
+PLUGIN_SETTINGS_PATH = os.path.join(LOCAL_SETTINGS_PATH, QmsSettings.PRODUCT)
 
 CONTRIBUTE_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, "Contribute")
 USER_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, "User")

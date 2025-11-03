@@ -4,14 +4,16 @@ import shutil
 from os import path
 
 from qgis.PyQt import uic
+from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtGui import QPixmap
 from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox
+
+from quick_map_services.core.settings import QmsSettings
 
 from . import extra_sources
 from .fixed_config_parser import FixedConfigParser
 from .groups_list import GroupsList
 from .gui.line_edit_color_validator import LineEditColorValidator
-from .plugin_settings import PluginSettings
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "group_edit_dialog.ui")
@@ -71,30 +73,24 @@ class GroupEditDialog(QDialog, FORM_CLASS):
         # self.txtIcon.set_path(self.group_info.icon)
         self.set_icon(self.group_info.icon)
 
-    def choose_icon(self):
+    @pyqtSlot()
+    def choose_icon(self) -> None:
         """
         Opens a file dialog to select an icon for the group and sets it.
-
-        The selected icon path is stored using PluginSettings and applied
-        via `set_icon()`. If no icon is selected, the method exits silently.
         """
-        print(PluginSettings.get_default_user_icon_path())
+        settings = QmsSettings()
 
-        # Open a file dialog to choose an icon
         icon_path, _ = QFileDialog.getOpenFileName(
             self,
             self.tr("Select icon for group"),
-            PluginSettings.get_default_user_icon_path(),
+            settings.default_user_icon_path,
             self.tr(
                 "All icon files (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)"
             ),
         )
 
-        print(icon_path)
-
-        # If a file was selected, update the default path and apply the icon
         if icon_path:
-            PluginSettings.set_default_user_icon_path(icon_path)
+            settings.default_user_icon_path = icon_path
             self.set_icon(icon_path)
 
     def set_icon(self, icon_path):

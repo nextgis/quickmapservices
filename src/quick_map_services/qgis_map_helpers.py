@@ -1,4 +1,3 @@
-import ast
 import random
 from urllib import parse
 
@@ -10,14 +9,13 @@ from qgis.core import (
     QgsRasterLayer,
     QgsVectorLayer,
 )
-from qgis.gui import QgsMessageBar
-from qgis.PyQt.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QSettings
 from qgis.utils import iface
 
+from quick_map_services.core.settings import QmsSettings
+
 from .compat import QGIS_3_38
-from .plugin_settings import PluginSettings
 from .qgis_proj_helper import ProjectionHelper
-from .qgis_settings import QGISSettings
 from .supported_drivers import KNOWN_DRIVERS
 
 service_layers = []
@@ -35,10 +33,9 @@ def add_layer_to_map(ds):
 
     Supports TMS, WMS, WFS, GDAL, and GeoJSON formats. Sets attribution,
     projection, and correct insertion position in the layer tree.
-    Shows a message if the layer is invalid.
 
     :param ds: Datasource description with all needed properties
-    :type ds: Datasource
+    :type ds: "DataSourceInfo"
     """
     layers4add = []
 
@@ -197,16 +194,18 @@ def add_layer_to_map(ds):
             # Save link
             service_layers.append(layer)
             # Set OTF CRS Transform for map
+            settings = QmsSettings()
             if (
-                PluginSettings.enable_otf_3857()
+                settings.enable_otf_3857
                 and ds.type.lower() == KNOWN_DRIVERS.TMS.lower()
                 and ds.tms_epsg_crs_id == 3857
             ):
                 crs_3857 = QgsCoordinateReferenceSystem.fromEpsgId(3857)
                 iface.mapCanvas().setDestinationCrs(crs_3857)
 
-                if (
-                    QGISSettings.get_new_project_crs_behavior()
-                    == QGISSettings.NEW_PROJECT_USE_PRESET_CRS
-                ):
+                qgis_settings = QSettings()
+                new_project_crs_behavior = qgis_settings.value(
+                    "/app/projections/newProjectCrsBehavior", "", type=str
+                )
+                if new_project_crs_behavior == "UsePresetCrs":
                     QgsProject.instance().setCrs(crs_3857)
