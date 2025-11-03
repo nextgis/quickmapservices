@@ -606,7 +606,6 @@ class QmsSearchResultItemWidget(QWidget):
         try:
             QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
             client = Client()
-            client.set_proxy(*QGISSettings.get_qgis_proxy())
             try:
                 geoservice_info = client.get_geoservice_info(self.geoservice)
             except ConnectionError as error:
@@ -664,19 +663,29 @@ class SearchThread(QThread):
 
     def __init__(
         self,
-        search_text,
-        mutex,
-        parent=None,
-        geom_filter=None,
-        status_filter=None,
-    ):
-        QThread.__init__(self, parent)
+        search_text: Optional[str],
+        mutex: QMutex,
+        parent: Optional[QThread] = None,
+        geom_filter: Optional[str] = None,
+        status_filter: Optional[str] = None,
+    ) -> None:
+        """
+        Initialize a thread for performing asynchronous geoservice searches.
+
+        :param search_text: Text string used to search for geoservices.
+        :param mutex: QMutex object to synchronize access to shared resources.
+        :param parent: Optional parent QThread object.
+        :param geom_filter: Optional WKT polygon string to filter search by map extent.
+        :param status_filter: Optional status filter to limit search results.
+
+        :return: None
+        """
+        super().__init__(parent)
         self.search_text = search_text
         self.geom_filter = geom_filter
         self.status_filter = status_filter
 
         self.searcher = Client()
-        self.searcher.set_proxy(*QGISSettings.get_qgis_proxy())
         self.mutex = mutex
 
         self.img_cach = {}

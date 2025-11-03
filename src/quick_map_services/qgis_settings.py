@@ -21,7 +21,6 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsNetworkAccessManager
 from qgis.PyQt.QtCore import QSettings
 
 
@@ -81,35 +80,6 @@ class QGISSettings(object):
         return QGISSettings.get_settings().setValue(
             "/qgis/networkAndProxy/networkTimeout", int_value
         )
-
-    @classmethod
-    def get_qgis_proxy(cls):
-        s = cls.get_settings()
-        proxy_enabled = s.value("proxy/proxyEnabled", "", type=str)
-        proxy_type = s.value("proxy/proxyType", "", type=str)
-        proxy_host = s.value("proxy/proxyHost", "", type=str)
-        proxy_port = s.value("proxy/proxyPort", "", type=str)
-        proxy_user = s.value("proxy/proxyUser", "", type=str)
-        proxy_password = s.value("proxy/proxyPassword", "", type=str)
-
-        if proxy_enabled == "true":
-            if proxy_type == "DefaultProxy":
-                qgsNetMan = QgsNetworkAccessManager.instance()
-                proxy = qgsNetMan.proxy().applicationProxy()
-                proxy_host = proxy.hostName()
-                proxy_port = str(proxy.port())
-                proxy_user = proxy.user()
-                proxy_password = proxy.password()
-
-            if proxy_type in [
-                "DefaultProxy",
-                "Socks5Proxy",
-                "HttpProxy",
-                "HttpCachingProxy",
-            ]:
-                return (proxy_host, proxy_port, proxy_user, proxy_password)
-
-        return ("", "", "", "")
 
     @classmethod
     def get_new_project_crs_behavior(cls, def_value=""):
