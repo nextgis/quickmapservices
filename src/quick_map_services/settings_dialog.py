@@ -22,18 +22,17 @@
 """
 
 import os
-import sys
 
-from qgis.core import Qgis, QgsApplication
+from qgis.core import QgsApplication
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import *
 from qgis.PyQt.QtGui import *
 from qgis.PyQt.QtWidgets import *
 
+from quick_map_services.core.settings import QmsSettings
+
 from .data_sources_model import DSManagerModel
 from .extra_sources import ExtraSources
-from .plugin_settings import PluginSettings
-from .qgis_settings import QGISSettings
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "settings_dialog_base.ui"),
@@ -80,42 +79,21 @@ class SettingsDialog(QDialog, FORM_CLASS):
         self.accepted.connect(self.save_settings)
 
     def fill_pages(self):
-        # common
-        self.chkEnableOTF3857.setChecked(PluginSettings.enable_otf_3857())
-        self.chkShowMessagesInBar.setChecked(
-            PluginSettings.show_messages_in_bar()
-        )
-        # tiled layers
-        self.spnConnCount.setValue(
-            PluginSettings.default_tile_layer_conn_count()
-        )
-        self.spnCacheExp.setValue(QGISSettings.get_default_tile_expiry())
-        self.spnNetworkTimeout.setValue(
-            QGISSettings.get_default_network_timeout()
-        )
+        settings = QmsSettings()
 
-        # Native renderer options (hidden for now)
-        self.useNativeRenderer2188AndHigherLabel.setVisible(False)
-        self.chkUseNativeRenderer.setChecked(True)
-        self.chkUseNativeRenderer.setEnabled(False)
-        self.chkUseNativeRenderer.setVisible(False)
+        # common
+        self.chkEnableOTF3857.setChecked(settings.enable_otf_3857)
+        self.chkShowMessagesInBar.setChecked(settings.show_messages_in_bar)
 
         # contrib pack
 
     def save_settings(self):
+        settings = QmsSettings()
+
         # common
-        PluginSettings.set_enable_otf_3857(self.chkEnableOTF3857.isChecked())
-        PluginSettings.set_show_messages_in_bar(
-            self.chkShowMessagesInBar.isChecked()
-        )
-        # tiled layers
-        PluginSettings.set_default_tile_layer_conn_count(
-            self.spnConnCount.value()
-        )
-        QGISSettings.set_default_tile_expiry(self.spnCacheExp.value())
-        QGISSettings.set_default_network_timeout(
-            self.spnNetworkTimeout.value()
-        )
+        settings.enable_otf_3857 = self.chkEnableOTF3857.isChecked()
+        settings.show_messages_in_bar = self.chkShowMessagesInBar.isChecked()
+
         # contrib pack
 
         # ds visibility
@@ -126,23 +104,18 @@ class SettingsDialog(QDialog, FORM_CLASS):
 
     def get_contrib(self):
         QgsApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
-
         try:
             ExtraSources().load_contrib_pack()
             QgsApplication.restoreOverrideCursor()
             info_message = self.tr(
                 "Last version of contrib pack was downloaded!"
             )
-            QMessageBox.information(
-                self, PluginSettings.product_name(), info_message
-            )
+            QMessageBox.information(self, QmsSettings.PRODUCT, info_message)
 
             self.dsManagerViewModel.resetModel()
-        except Exception as e:
+        except Exception as error:
             QgsApplication.restoreOverrideCursor()
             error_message = self.tr("Error on getting contrib pack: %s") % str(
-                e
+                error
             )
-            QMessageBox.critical(
-                self, PluginSettings.product_name(), error_message
-            )
+            QMessageBox.critical(self, QmsSettings.PRODUCT, error_message)

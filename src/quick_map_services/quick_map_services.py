@@ -29,11 +29,9 @@ import xml.etree.ElementTree as ET
 # import resources_rc
 # Import the code for the dialog
 from qgis.core import QgsProject
-from qgis.gui import QgsMessageBar
+from qgis.gui import QgisInterface, QgsMessageBar
 from qgis.PyQt.QtCore import (
     QCoreApplication,
-    QSettings,
-    Qt,
     QTranslator,
     QUrl,
     qVersion,
@@ -41,11 +39,12 @@ from qgis.PyQt.QtCore import (
 from qgis.PyQt.QtGui import QDesktopServices, QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
-    QDialog,
     QMenu,
     QMessageBox,
     QToolButton,
 )
+
+from quick_map_services.core.settings import QmsSettings
 
 from .about_dialog import AboutDialog
 from .custom_translator import CustomTranslator, QTranslator
@@ -53,7 +52,6 @@ from .data_sources_list import DataSourcesList
 from .extra_sources import ExtraSources
 from .groups_list import GroupsList
 from .plugin_locale import Locale
-from .plugin_settings import PluginSettings
 from .qgis_map_helpers import add_layer_to_map
 from .qms_service_toolbox import QmsServiceToolbox
 from .settings_dialog import SettingsDialog
@@ -62,13 +60,13 @@ from .settings_dialog import SettingsDialog
 class QuickMapServices(object):
     """QGIS Plugin Implementation."""
 
-    def __init__(self, iface):
+    def __init__(self, iface: QgisInterface) -> None:
         """Constructor.
 
         :param iface: An interface instance that will be passed to this class
             which provides the hook by which you can manipulate the QGIS
             application at run time.
-        :type iface: QgsInterface
+        :type iface: QgisInterface
         """
         # Save reference to the QGIS interface
         self.iface = iface
@@ -101,7 +99,7 @@ class QuickMapServices(object):
             error_message = self.tr(
                 "Extra dirs for %s can't be created: %s %s"
             ) % (
-                PluginSettings.product_name(),
+                QmsSettings.PRODUCT,
                 sys.exc_info()[0],
                 sys.exc_info()[1],
             )
@@ -210,17 +208,23 @@ class QuickMapServices(object):
     settings_act = None
     info_act = None
 
-    def build_menu_tree(self):
-        # Main Menu
+    def build_menu_tree(self) -> None:
+        """
+        Build the QuickMapServices main plugin menu in QGIS.
+
+        :return: None
+        """
         self.menu.clear()
 
         self.groups_list = GroupsList()
         self.ds_list = DataSourcesList()
 
+        settings = QmsSettings()
+
         data_sources = self.ds_list.data_sources.values()
         data_sources = sorted(data_sources, key=lambda x: x.alias or x.id)
 
-        ds_hide_list = PluginSettings.get_hide_ds_id_list()
+        ds_hide_list = settings.hide_ds_id_list
 
         for ds in data_sources:
             if ds.id in ds_hide_list:
@@ -368,19 +372,20 @@ class QuickMapServices(object):
         self.build_menu_tree()
         # self.append_menu_buttons()
 
-    def init_server_panel(self):
+    def init_server_panel(self) -> None:
+        """
+        Initialize the QMS Server panel (dock widget) in QGIS.
+        """
+        settings = QmsSettings()
+
         self.server_toolbox = QmsServiceToolbox(self.iface)
         self.iface.addDockWidget(
-            PluginSettings.server_dock_area(), self.server_toolbox
+            settings.server_dock_area, self.server_toolbox
         )
         self.server_toolbox.setWindowIcon(
             QIcon(self.plugin_dir + "/icons/mActionSearch.svg")
         )
-        self.server_toolbox.setVisible(PluginSettings.server_dock_visibility())
-        # self.server_toolbox.setFloating(PluginSettings.dock_floating())
-        # self.server_toolbox.resize(PluginSettings.dock_size())
-        # self.server_toolbox.move(PluginSettings.dock_pos())
-        # self.server_toolbox.setWindowIcon(QIcon(path.join(_current_path, 'edit-find-project.png')))
+        self.server_toolbox.setVisible(settings.server_dock_visibility)
 
         # QMS search action
         icon_settings_path = self.plugin_dir + "/icons/mActionSearch.svg"
@@ -388,18 +393,16 @@ class QuickMapServices(object):
         self.qms_search_action.setIcon(QIcon(icon_settings_path))
         self.qms_search_action.setText(self.tr("Search NextGIS QMS"))
 
-    def remove_server_panel(self):
+    def remove_server_panel(self) -> None:
+        """
+        Remove the QMS Server panel (dock widget) from QGIS.
+        """
         mw = self.iface.mainWindow()
-        PluginSettings.set_server_dock_area(
-            mw.dockWidgetArea(self.server_toolbox)
-        )
-        PluginSettings.set_server_dock_visibility(
-            self.server_toolbox.isVisible()
-        )
-        # PluginSettings.set_dock_floating(self.__quick_tlb.isFloating())
-        # PluginSettings.set_dock_pos(self.__quick_tlb.pos())
-        # PluginSettings.set_dock_size(self.__quick_tlb.size())
-        # PluginSettings.set_dock_geocoder_name(self.__quick_tlb.get_active_geocoder_name())
+
+        settings = QmsSettings()
+        settings.server_dock_area = mw.dockWidgetArea(self.server_toolbox)
+        settings.server_dock_visibility = self.server_toolbox.isVisible()
+
         self.iface.removeDockWidget(self.server_toolbox)
         del self.server_toolbox
 

@@ -45,10 +45,10 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
+from quick_map_services.core.settings import QmsSettings
+
 from .data_source_serializer import DataSourceSerializer
-from .plugin_settings import PluginSettings
 from .qgis_map_helpers import add_layer_to_map
-from .qgis_settings import QGISSettings
 from .qms_external_api_python.api.api_abstract import QmsNews
 from .qms_external_api_python.client import Client
 from .qms_news import News
@@ -65,27 +65,70 @@ STATUS_FILTER_ONLY_WORKS = "works"
 
 
 class Geoservice:
-    def __init__(self, attributes, image_qByteArray):
-        self.attributes = attributes
-        self.image_qByteArray = image_qByteArray
+    """
+    Represents QMS geospatial service entry.
+    """
 
-    def isValid(self):
+    def __init__(
+        self, attributes: Dict[str, Any], image_ba: QByteArray
+    ) -> None:
+        """
+        Initialize a Geoservice instance.
+
+        :param attributes: Dictionary containing the geoservice metadata.
+        :type attributes: Dict[str, Any]
+        :param image_ba: Binary image data associated with the service.
+        :type image_ba: QByteArray
+
+        :return: None
+        :rtype: None
+        """
+        self.attributes = attributes
+        self.image_ba = image_ba
+
+    def is_valid(self) -> bool:
+        """
+        Check if the geoservice is valid.
+
+        :return: True if valid, otherwise False.
+        :rtype: bool
+        """
         return self.attributes.get("id") is not None
 
     @property
-    def id(self):
-        return self.attributes.get("id")
+    def id(self) -> int:
+        """
+        :return: The unique identifier of the geoservice.
+        :rtype: int
+        """
+        return self.attributes.get("id")  # type: ignore
 
-    def saveSelf(self, qSettings):
-        qSettings.setValue(f"{self.id}/json", str(self.attributes))
-        qSettings.setValue(f"{self.id}/image", self.image_qByteArray)
+    def save_self(self, settings: QgsSettings) -> None:
+        """
+        Save this geoservice data into the provided settings group.
 
-    def loadSelf(self, id, qSettings):
-        service_json = qSettings.value(f"{self.id}/json", None)
+        :param settings: The settings group to store data into.
+        :type settings: QgsSettings
+        :return: None
+        :rtype: None
+        """
+        settings.setValue(f"{self.id}/json", str(self.attributes))
+        settings.setValue(f"{self.id}/image", self.image_ba)
+
+    def load_self(self, _id: int, settings: QgsSettings) -> None:
+        """
+        Load this geoservice's data from the provided settings group.
+
+        :param id: Identifier of the geoservice.
+        :type id: int
+        :param settings: The settings group to read data from.
+        :type settings: QgsSettings
+        :return: None
+        :rtype: None
+        """
+        service_json = settings.value(f"{self.id}/json", None)
         self.attributes = ast.literal_eval(service_json)
-        self.image_qByteArray = settings.value(
-            f"{self.id}/image", type=QByteArray
-        )
+        self.image_ba = settings.value(f"{self.id}/image", type=QByteArray)
 
 
 @singleton
@@ -94,13 +137,27 @@ class CachedServices:
         self.geoservices = []
         self.load_last_used_services()
 
-    def load_last_used_services(self):
-        for geoservice, image_ba in PluginSettings.get_last_used_services():
+    def load_last_used_services(self) -> None:
+        """Load last used services from settings."""
+        settings = QmsSettings()
+        for geoservice, image_ba in settings.last_used_services:
             geoservice = Geoservice(geoservice, image_ba)
-            if geoservice.isValid:
+            if geoservice.is_valid:
                 self.geoservices.append(geoservice)
 
-    def add_service(self, geoservice, image_ba):
+    def add_service(
+        self, geoservice: Dict[str, Any], image_ba: QByteArray
+    ) -> None:
+        """Add a service to the cache and persist it.
+
+        :param geoservice: Dictionary containing metadata about the geospatial service.
+        :type geoservice: Dict[str, Any]
+        :param image_ba: Binary data used as the service icon image.
+        :type image_ba: QByteArray
+
+        :return: None
+        :rtype: None
+        """
         new_gs = Geoservice(geoservice, image_ba)
         geoservices4store = [new_gs]
 
@@ -110,7 +167,9 @@ class CachedServices:
             geoservices4store.append(gs)
 
         self.geoservices = geoservices4store[0:5]
-        PluginSettings.set_last_used_services(self.geoservices)
+
+        settings = QmsSettings()
+        settings.last_used_services = self.geoservices
 
     def remove_service(self, service_id: int) -> None:
         """
@@ -127,11 +186,13 @@ class CachedServices:
             for geoservice in self.geoservices
             if geoservice.id != service_id
         ]
-        PluginSettings.set_last_used_services(self.geoservices)
+
+        settings = QmsSettings()
+        settings.last_used_services = self.geoservices
 
     def get_cached_services(self):
         return [
-            (geoservice.attributes, geoservice.image_qByteArray)
+            (geoservice.attributes, geoservice.image_ba)
             for geoservice in self.geoservices
         ]
 

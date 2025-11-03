@@ -3,8 +3,11 @@ import shutil
 from os import path
 
 from qgis.PyQt import uic
+from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtGui import QIcon, QPixmap
 from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox
+
+from quick_map_services.core.settings import QmsSettings
 
 from . import extra_sources
 from .data_source_info import DataSourceInfo
@@ -18,7 +21,6 @@ from .gui.editor_widget_tms import EditorWidgetTms
 from .gui.editor_widget_wfs import EditorWidgetWfs
 from .gui.editor_widget_wms import EditorWidgetWms
 from .gui.line_edit_color_validator import LineEditColorValidator
-from .plugin_settings import PluginSettings
 from .supported_drivers import KNOWN_DRIVERS
 
 FORM_CLASS, _ = uic.loadUiType(
@@ -110,15 +112,24 @@ class DsEditDialog(QDialog, FORM_CLASS):
         self.feel_common_fields()
         self.feel_specific_fields()
 
-    def choose_icon(self):
+    @pyqtSlot()
+    def choose_icon(self) -> None:
+        """
+        Open a file dialog to select a custom icon for the data source.
+
+        :return: None
+        :rtype: None
+        """
+        settings = QmsSettings()
+
         icon_path, _ = QFileDialog.getOpenFileName(
             self,
             self.tr("Select icon for data source"),
-            PluginSettings.get_default_user_icon_path(),
+            settings.default_user_icon_path,
             self.tr("Icons (*.ico *.jpg *.jpeg *.png *.svg);;All files (*.*)"),
         )
         if icon_path:
-            PluginSettings.set_default_user_icon_path(icon_path)
+            settings.default_user_icon_path = icon_path
             self.set_icon(icon_path)
 
     def set_icon(self, icon_path):

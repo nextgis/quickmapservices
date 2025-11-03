@@ -17,7 +17,7 @@
 ***************************************************************************
 """
 
-from .plugin_settings import PluginSettings
+from quick_map_services.core.settings import QmsSettings
 
 __author__ = "Victor Olaya"
 __date__ = "August 2012"
@@ -30,7 +30,7 @@ __revision__ = "$Format:%H$"
 import os
 
 from qgis.PyQt import QtCore
-from qgis.PyQt.QtCore import QSettings
+from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import (
     QFileDialog,
     QHBoxLayout,
@@ -58,16 +58,26 @@ class FileSelectionWidget(QWidget):
 
         self.btnSelect.clicked.connect(self.show_selection_dialog)
 
-    def show_selection_dialog(self):
-        # Find the file dialog's working directory
-        settings = QSettings()
+    @pyqtSlot()
+    def show_selection_dialog(self) -> None:
+        """
+        Display a file or folder selection dialog
+        and update the stored last used path.
+
+        Updates the stored path after a successful selection.
+
+        :return: None
+        :rtype: None
+        """
+        settings = QmsSettings()
+
         text = self.leText.text()
         if os.path.isdir(text):
             path = text
         elif os.path.isdir(os.path.dirname(text)):
             path = os.path.dirname(text)
         else:
-            path = PluginSettings.last_icon_path()
+            path = settings.last_icon_path
 
         if self.is_folder:
             folder = QFileDialog.getExistingDirectory(
@@ -75,14 +85,14 @@ class FileSelectionWidget(QWidget):
             )
             if folder:
                 self.leText.setText(folder)
-                PluginSettings.set_last_icon_path(os.path.dirname(folder))
+                settings.last_icon_path = os.path.dirname(folder)
         else:
             filename, _ = QFileDialog.getOpenFileName(
                 self, self.dialog_title, path, self.ext
             )
             if filename:
                 self.leText.setText(filename)
-                PluginSettings.set_last_icon_path(os.path.dirname(filename))
+                settings.last_icon_path = os.path.dirname(filename)
 
     def get_path(self):
         s = self.leText.text()

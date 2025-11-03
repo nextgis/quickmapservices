@@ -26,9 +26,10 @@ from qgis.PyQt.QtCore import QAbstractItemModel, QModelIndex, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QTreeWidgetItem
 
+from quick_map_services.core.settings import QmsSettings
+
 from .data_sources_list import DataSourcesList
 from .groups_list import GroupsList
-from .plugin_settings import PluginSettings
 from .singleton import QSingleton
 
 
@@ -71,7 +72,13 @@ class DSManagerModel(QAbstractItemModel):
                 groupItem.removeChild(dsItem)
             self.rootItem.removeChild(groupItem)
 
-    def __setupModelData(self):
+    def __setupModelData(self) -> None:
+        """
+        Populate the tree model with available data sources and groups.
+
+        :return: None
+        :rtype: None
+        """
         dsList = DataSourcesList().data_sources.values()
         groupInfoList = GroupsList().groups
         groupsItems = []
@@ -128,8 +135,9 @@ class DSManagerModel(QAbstractItemModel):
                 self.COLUMN_SOURCE, Qt.ItemDataRole.DisplayRole, ds.category
             )
 
+            settings = QmsSettings()
             ds_check_state = Qt.CheckState.Checked
-            if ds.id in PluginSettings.get_hide_ds_id_list():
+            if ds.id in settings.hide_ds_id_list:
                 ds_check_state = Qt.CheckState.Unchecked
             ds_item.setCheckState(self.COLUMN_VISIBILITY, ds_check_state)
 
@@ -323,22 +331,31 @@ class DSManagerModel(QAbstractItemModel):
                 Qt.ItemDataRole.CheckStateRole,
             )
 
-    def saveSettings(self):
-        hideDSidList = []
-        for groupIndex in range(0, self.rootItem.childCount()):
-            groupItem = self.rootItem.child(groupIndex)
-            for dsIndex in range(0, groupItem.childCount()):
-                dsItem = groupItem.child(dsIndex)
+    def saveSettings(self) -> None:
+        """
+        Save the current visibility states of data sources into plugin settings.
+
+
+        :return: None
+        :rtype: None
+        """
+        settings = QmsSettings()
+
+        hide_ds_id_list = []
+        for group_index in range(0, self.rootItem.childCount()):
+            group_item = self.rootItem.child(group_index)
+            for dsIndex in range(0, group_item.childCount()):
+                ds_item = group_item.child(dsIndex)
                 if (
-                    dsItem.checkState(self.COLUMN_VISIBILITY)
+                    ds_item.checkState(self.COLUMN_VISIBILITY)
                     == Qt.CheckState.Unchecked
                 ):
-                    hideDSidList.append(
-                        dsItem.data(
+                    hide_ds_id_list.append(
+                        ds_item.data(
                             self.COLUMN_GROUP_DS, Qt.ItemDataRole.UserRole
                         ).id
                     )
-        PluginSettings.set_hide_ds_id_list(hideDSidList)
+        settings.hide_ds_id_list = hide_ds_id_list
 
     def isGroup(self, index):
         childItem = index.internalPointer()
