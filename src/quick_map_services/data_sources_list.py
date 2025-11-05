@@ -63,7 +63,7 @@ ROOT_MAPPING = {
 }
 
 
-class DataSourcesList(object):
+class DataSourcesList:
     def __init__(self, ds_paths=ALL_DS_PATHS):
         self.data_sources = {}
         self.ds_paths = ds_paths

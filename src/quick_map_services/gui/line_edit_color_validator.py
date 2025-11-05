@@ -1,7 +1,7 @@
 import re
 
 
-class LineEditColorValidator(object):
+class LineEditColorValidator:
     def __init__(
         self, line_edit, re_mask, error_color="#f6989d", error_tooltip=""
     ):

@@ -29,7 +29,7 @@ except ImportError:
     import gdal
 
 
-class GdalUtils(object):
+class GdalUtils:
     @classmethod
     def get_supported_drivers(cls):
         formats_list = []

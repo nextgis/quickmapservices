@@ -51,7 +51,7 @@ def parse_wms_url_parameter(url, parameters_str, ignore_layers=False):
     return (wms_url, wms_params, wms_url_params)
 
 
-class DataSourceSerializer(object):
+class DataSourceSerializer:
     @classmethod
     def read_from_ini(cls, ini_file_path):
         translator = CustomTranslator()

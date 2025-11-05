@@ -50,7 +50,7 @@ GROUPS_DIR_NAME = "groups"
 CONTRIBUTE_ZIP_DIRECT_URL = "https://github.com/nextgis/quickmapservices_contrib/archive/refs/tags/v1.22.zip"
 
 
-class ExtraSources(object):
+class ExtraSources:
     __replies = []
 
     @classmethod

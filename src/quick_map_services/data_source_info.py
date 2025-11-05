@@ -25,7 +25,7 @@ import itertools
 import re
 
 
-class DataSourceCategory(object):
+class DataSourceCategory:
     BASE = "base"
     CONTRIB = "contributed"
     USER = "user"
@@ -33,7 +33,7 @@ class DataSourceCategory(object):
     all = [BASE, CONTRIB, USER]
 
 
-class DataSourceInfo(object):
+class DataSourceInfo:
     def __init__(self):
         self.id = None
         self.type = None

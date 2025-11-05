@@ -7,7 +7,7 @@ from .plugin_locale import Locale
 plugin_dir = os.path.dirname(__file__)
 
 
-class News(object):
+class News:
     """docstring for News"""
 
     def __init__(
