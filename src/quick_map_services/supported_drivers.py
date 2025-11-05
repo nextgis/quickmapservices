@@ -22,7 +22,7 @@
 """
 
 
-class KNOWN_DRIVERS(object):
+class KNOWN_DRIVERS:
     WMS = "WMS"
     TMS = "TMS"
     GDAL = "GDAL"

@@ -24,7 +24,7 @@
 from qgis.PyQt.QtCore import QLocale, QSettings
 
 
-class Locale(object):
+class Locale:
     @classmethod
     def get_locale(cls):
         locale = ""
