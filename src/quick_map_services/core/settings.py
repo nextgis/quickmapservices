@@ -12,7 +12,9 @@ class QmsSettings:
     COMPANY_NAME = "NextGIS"
     PRODUCT = "QuickMapServices"
 
-    KEY_HIDE_DS_ID_LIST = f"{COMPANY_NAME}/{PRODUCT}/hideDsIdList"
+    KEY_HIDDEN_DATASOURCE_ID_LIST = (
+        f"{COMPANY_NAME}/{PRODUCT}/hiddenDatasourceIdList"
+    )
     KEY_DEFAULT_USER_ICON_PATH = (
         f"{COMPANY_NAME}/{PRODUCT}/ui/defaultUserIconPath"
     )
@@ -20,10 +22,7 @@ class QmsSettings:
     KEY_ENABLE_OTF_3857 = f"{COMPANY_NAME}/{PRODUCT}/enableOtf3857"
     KEY_SHOW_MESSAGES_IN_BAR = f"{COMPANY_NAME}/{PRODUCT}/showMessagesInBar"
     KEY_LAST_USED_SERVICES = f"{COMPANY_NAME}/{PRODUCT}/lastUsedServices"
-    KEY_SERVER_DOCK_AREA = f"{COMPANY_NAME}/{PRODUCT}/ui/serverDockArea"
-    KEY_SERVER_DOCK_VISIBILITY = (
-        f"{COMPANY_NAME}/{PRODUCT}/ui/serverDockVisibility"
-    )
+    KEY_ENDPOINT_URL = f"{COMPANY_NAME}/{PRODUCT}/endpointUrl"
 
     __is_updated: ClassVar[bool] = False
     __settings: QgsSettings
@@ -69,49 +68,19 @@ class QmsSettings:
         self.__settings.setValue(self.KEY_LAST_ICON_PATH, value)
 
     @property
-    def server_dock_area(self) -> Qt.DockWidgetArea:
-        default_area = Qt.DockWidgetArea.RightDockWidgetArea
-        if hasattr(default_area, "value"):
-            default_area = default_area.value
-
-        value = self.__settings.value(
-            self.KEY_SERVER_DOCK_AREA,
-            defaultValue=default_area,
-            type=int,
-        )
-        return Qt.DockWidgetArea(value)
-
-    @server_dock_area.setter
-    def server_dock_area(self, area: Qt.DockWidgetArea) -> None:
-        area_value = area.value if hasattr(area, "value") else area
-        self.__settings.setValue(self.KEY_SERVER_DOCK_AREA, area_value)
-
-    @property
-    def server_dock_visibility(self) -> bool:
-        return self.__settings.value(
-            self.KEY_SERVER_DOCK_VISIBILITY,
-            defaultValue=True,
-            type=bool,
-        )
-
-    @server_dock_visibility.setter
-    def server_dock_visibility(self, value: bool) -> None:
-        self.__settings.setValue(self.KEY_SERVER_DOCK_VISIBILITY, value)
-
-    @property
-    def hide_ds_id_list(self) -> List[str]:
+    def hidden_datasource_id_list(self) -> List[str]:
         """List of hidden datasource IDs."""
         result = self.__settings.value(
-            self.KEY_HIDE_DS_ID_LIST,
+            self.KEY_HIDDEN_DATASOURCE_ID_LIST,
             defaultValue="",
             type=str,
         )
         return [source for source in result.split(";") if source]
 
-    @hide_ds_id_list.setter
-    def hide_ds_id_list(self, values: List[str]) -> None:
+    @hidden_datasource_id_list.setter
+    def hidden_datasource_id_list(self, values: List[str]) -> None:
         self.__settings.setValue(
-            self.KEY_HIDE_DS_ID_LIST,
+            self.KEY_HIDDEN_DATASOURCE_ID_LIST,
             ";".join(values),
         )
 
@@ -170,6 +139,23 @@ class QmsSettings:
         """
         self.__settings.setValue(self.KEY_DEFAULT_USER_ICON_PATH, value)
 
+    @property
+    def default_endpoint_url(self) -> str:
+        return "https://qms.nextgis.com"
+
+    @property
+    def endpoint_url(self) -> str:
+        return self.__settings.value(
+            self.KEY_ENDPOINT_URL,
+            defaultValue=self.default_endpoint_url,
+            type=str,
+        )
+
+    @endpoint_url.setter
+    def endpoint_url(self, value: str) -> None:
+        normalized_endpoint = value.strip().rstrip("/")
+        self.__settings.setValue(self.KEY_ENDPOINT_URL, normalized_endpoint)
+
     @classmethod
     def __update_settings(cls) -> None:
         """Perform one-time migration from old QSettings storage."""
@@ -187,13 +173,11 @@ class QmsSettings:
             return
 
         settings_key_map = {
-            "hide_ds_id_list_str": cls.KEY_HIDE_DS_ID_LIST,
+            "hide_ds_id_list_str": cls.KEY_HIDDEN_DATASOURCE_ID_LIST,
             "ui/default_user_icon_path": cls.KEY_DEFAULT_USER_ICON_PATH,
             "last_icon_path": cls.KEY_LAST_ICON_PATH,
             "enable_otf_3857": cls.KEY_ENABLE_OTF_3857,
             "show_messages_in_bar": cls.KEY_SHOW_MESSAGES_IN_BAR,
-            "ui/dockWidgetArea": cls.KEY_SERVER_DOCK_AREA,
-            "ui/dockWidgetIsVisible": cls.KEY_SERVER_DOCK_VISIBILITY,
         }
 
         for old_key, new_key in settings_key_map.items():
@@ -204,7 +188,9 @@ class QmsSettings:
 
         cls.__migrate_last_used_services(old_settings, qgs_settings)
 
-        # remove deprecated tile layer settings
+        # remove deprecated settings
+        old_settings.remove("ui/dockWidgetArea")
+        old_settings.remove("ui/dockWidgetIsVisible")
         old_settings.remove("tile_layer/default_connection_count")
         old_settings.remove("tile_layer/use_native_tms")
 

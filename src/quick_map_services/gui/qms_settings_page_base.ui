@@ -17,7 +17,7 @@
    <item>
     <widget class="QTabWidget" name="tabUserServices">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabCommon">
       <attribute name="title">
@@ -57,24 +57,16 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tab_user_groups_and_services">
       <attribute name="title">
        <string>Add\Edit\Remove</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="UserGroupsBox" name="groupBox">
-         <property name="title">
-          <string>My groups</string>
-         </property>
-        </widget>
+        <widget class="QWidget" name="widget" native="true"/>
        </item>
        <item>
-        <widget class="UserServicesBox" name="groupBox_2">
-         <property name="title">
-          <string>My services</string>
-         </property>
-        </widget>
+        <widget class="QWidget" name="widget_2" native="true"/>
        </item>
       </layout>
      </widget>
@@ -82,22 +74,23 @@
       <attribute name="title">
        <string>Visibility</string>
       </attribute>
-      <layout class="QVBoxLayout" name="vLayoutTabServicesVisibility">
-       <property name="spacing">
-        <number>0</number>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <property name="rightMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QToolBar" name="toolBarForDSTreeView">
+         <property name="layoutDirection">
+          <enum>Qt::RightToLeft</enum>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>16</width>
+           <height>16</height>
+          </size>
+         </property>
+         <property name="toolButtonStyle">
+          <enum>Qt::ToolButtonFollowStyle</enum>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QTreeView" name="treeViewForDS">
          <property name="alternatingRowColors">
@@ -118,22 +111,6 @@
          <attribute name="headerStretchLastSection">
           <bool>false</bool>
          </attribute>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolBar" name="toolBarForDSTreeView">
-         <property name="layoutDirection">
-          <enum>Qt::RightToLeft</enum>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>16</width>
-           <height>16</height>
-          </size>
-         </property>
-         <property name="toolButtonStyle">
-          <enum>Qt::ToolButtonFollowStyle</enum>
-         </property>
         </widget>
        </item>
       </layout>
@@ -294,65 +271,8 @@
      </widget>
     </widget>
    </item>
-   <item>
-    <widget class="QDialogButtonBox" name="button_box">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>UserGroupsBox</class>
-   <extends>QGroupBox</extends>
-   <header>quick_map_services.user_groups_box</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>UserServicesBox</class>
-   <extends>QGroupBox</extends>
-   <header>quick_map_services.user_services_box</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>button_box</sender>
-   <signal>accepted()</signal>
-   <receiver>MapServicesDialogBase</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button_box</sender>
-   <signal>rejected()</signal>
-   <receiver>MapServicesDialogBase</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

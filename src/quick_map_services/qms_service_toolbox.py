@@ -46,18 +46,17 @@ from qgis.PyQt.QtWidgets import (
 )
 
 from quick_map_services.core.settings import QmsSettings
-
-from .data_source_serializer import DataSourceSerializer
-from .qgis_map_helpers import add_layer_to_map
-from .qms_external_api_python.api.api_abstract import QmsNews
-from .qms_external_api_python.client import Client
-from .qms_news import News
-from .rb_result_renderer import RubberBandResultRenderer
-from .singleton import singleton
+from quick_map_services.data_source_serializer import DataSourceSerializer
+from quick_map_services.qgis_map_helpers import add_layer_to_map
+from quick_map_services.qms_external_api_python.api.api_base import QmsNews
+from quick_map_services.qms_external_api_python.client import Client
+from quick_map_services.qms_news import News
+from quick_map_services.rb_result_renderer import RubberBandResultRenderer
+from quick_map_services.singleton import singleton
 
 
 def plPrint(msg, level=Qgis.Info):
-    QgsMessageLog.logMessage(msg, "QMS", level)
+    QgsMessageLog.logMessage(msg, QmsSettings.PRODUCT, level)
 
 
 STATUS_FILTER_ALL = "all"

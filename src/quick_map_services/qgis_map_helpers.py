@@ -35,7 +35,7 @@ def add_layer_to_map(ds):
     projection, and correct insertion position in the layer tree.
 
     :param ds: Datasource description with all needed properties
-    :type ds: "DataSourceInfo"
+    :type ds: DataSourceInfo
     """
     layers4add = []
 
@@ -156,7 +156,9 @@ def add_layer_to_map(ds):
             iface.messageBar().pushMessage(
                 tr("Error"), error_message, level=Qgis.Critical
             )
-            QgsMessageLog.logMessage(error_message, level=Qgis.Critical)
+            QgsMessageLog.logMessage(
+                error_message, QmsSettings.PRODUCT, level=Qgis.Critical
+            )
         else:
             # Set attribs
             if Qgis.versionInt() >= QGIS_3_38:

@@ -21,22 +21,18 @@
  ***************************************************************************/
 """
 
-import codecs
 import os
-import sys
 
 from qgis.core import Qgis, QgsMessageLog
-from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
+from quick_map_services.core.settings import QmsSettings
+
 from . import extra_sources
-from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
-from .data_source_info import DataSourceCategory, DataSourceInfo
+from .data_source_info import DataSourceCategory
 from .data_source_serializer import DataSourceSerializer
-from .plugin_locale import Locale
-from .supported_drivers import KNOWN_DRIVERS
 
 CURR_PATH = os.path.dirname(__file__)
 
@@ -69,7 +65,14 @@ class DataSourcesList:
         self.ds_paths = ds_paths
         self._fill_data_sources_list()
 
-    def _fill_data_sources_list(self):
+    def _fill_data_sources_list(self) -> None:
+        """
+        Populate the internal dictionary of available data sources by scanning
+        all configured data source directories.
+
+        :return: None
+        :rtype: None
+        """
         self.data_sources = {}
         for ds_path in self.ds_paths:
             for root, dirs, files in os.walk(ds_path):
@@ -93,10 +96,14 @@ class DataSourcesList:
                         # append to array
                         self.data_sources[ds.id] = ds
 
-                    except Exception as e:
-                        error_message = "INI file can't be parsed: " + str(e)
+                    except Exception as error:
+                        error_message = "INI file can't be parsed: " + str(
+                            error
+                        )
                         QgsMessageLog.logMessage(
-                            error_message, level=Qgis.Critical
+                            error_message,
+                            QmsSettings.PRODUCT,
+                            level=Qgis.Critical,
                         )
 
     # noinspection PyMethodMayBeStatic
