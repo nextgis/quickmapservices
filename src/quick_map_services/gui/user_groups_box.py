@@ -1,7 +1,8 @@
-import os
 import shutil
-import sys
+from pathlib import Path
+from typing import Optional
 
+from qgis.core import QgsApplication
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
@@ -14,22 +15,30 @@ from qgis.PyQt.QtWidgets import (
     QMessageBox,
     QTableView,
     QVBoxLayout,
+    QWidget,
 )
 
-from .data_sources_model import DSManagerModel
-from .group_edit_dialog import GroupEditDialog
-from .groups_list import USER_GROUP_PATHS, GroupsList
+from quick_map_services.data_sources_model import DSManagerModel
+from quick_map_services.group_edit_dialog import GroupEditDialog
+from quick_map_services.groups_list import USER_GROUP_PATHS, GroupsList
 
 FORM_CLASS, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), "user_groups_box.ui")
+    str(Path(__file__).parent / "user_groups_box.ui")
 )
-
-plugin_dir = os.path.dirname(__file__)
 
 
 class UserGroupsBox(QGroupBox, FORM_CLASS):
-    def __init__(self, parent=None):
-        """Constructor."""
+    """
+    Widget for managing user-defined service groups in QuickMapServices.
+    """
+
+    def __init__(self, parent: Optional[QWidget] = None) -> None:
+        """
+        Initialize the user groups management box.
+
+        :param parent: Optional parent widget.
+        :type parent: Optional[QWidget]
+        """
         super(UserGroupsBox, self).__init__(parent)
         self.setupUi(self)
 
@@ -42,10 +51,14 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         self.btnDelete.clicked.connect(self.on_delete)
         self.btnCopy.clicked.connect(self.on_copy)
 
-        self.btnAdd.setIcon(QIcon(plugin_dir + "/icons/plus.svg"))
-        self.btnEdit.setIcon(QIcon(plugin_dir + "/icons/compose.svg"))
-        self.btnDelete.setIcon(QIcon(plugin_dir + "/icons/trash.svg"))
-        self.btnCopy.setIcon(QIcon(plugin_dir + "/icons/copy.svg"))
+        self.btnAdd.setIcon(QgsApplication.getThemeIcon("symbologyAdd.svg"))
+        self.btnEdit.setIcon(QgsApplication.getThemeIcon("symbologyEdit.svg"))
+        self.btnDelete.setIcon(
+            QgsApplication.getThemeIcon("symbologyRemove.svg")
+        )
+        self.btnCopy.setIcon(
+            QgsApplication.getThemeIcon("mActionEditCopy.svg")
+        )
 
         self.ds_model = DSManagerModel()
 
@@ -80,7 +93,10 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
             self.feel_list()
             self.ds_model.resetModel()
 
-    def on_delete(self):
+    def on_delete(self) -> None:
+        """
+        Delete the currently selected user group after confirmation.
+        """
         res = QMessageBox.question(
             None,
             self.tr("Delete group"),
@@ -92,9 +108,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
             group_info = self.lstGroups.currentItem().data(
                 Qt.ItemDataRole.UserRole
             )
-            dir_path = os.path.abspath(
-                os.path.join(group_info.file_path, os.path.pardir)
-            )
+            dir_path = str(Path(group_info.file_path).parent)
             shutil.rmtree(dir_path, True)
             self.feel_list()
             self.ds_model.resetModel()

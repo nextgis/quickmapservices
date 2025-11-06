@@ -137,7 +137,7 @@ class DSManagerModel(QAbstractItemModel):
 
             settings = QmsSettings()
             ds_check_state = Qt.CheckState.Checked
-            if ds.id in settings.hide_ds_id_list:
+            if ds.id in settings.hidden_datasource_id_list:
                 ds_check_state = Qt.CheckState.Unchecked
             ds_item.setCheckState(self.COLUMN_VISIBILITY, ds_check_state)
 
@@ -341,7 +341,7 @@ class DSManagerModel(QAbstractItemModel):
         """
         settings = QmsSettings()
 
-        hide_ds_id_list = []
+        hidden_datasource_id_list = []
         for group_index in range(0, self.rootItem.childCount()):
             group_item = self.rootItem.child(group_index)
             for dsIndex in range(0, group_item.childCount()):
@@ -350,12 +350,12 @@ class DSManagerModel(QAbstractItemModel):
                     ds_item.checkState(self.COLUMN_VISIBILITY)
                     == Qt.CheckState.Unchecked
                 ):
-                    hide_ds_id_list.append(
+                    hidden_datasource_id_list.append(
                         ds_item.data(
                             self.COLUMN_GROUP_DS, Qt.ItemDataRole.UserRole
                         ).id
                     )
-        settings.hide_ds_id_list = hide_ds_id_list
+        settings.hidden_datasource_id_list = hidden_datasource_id_list
 
     def isGroup(self, index):
         childItem = index.internalPointer()

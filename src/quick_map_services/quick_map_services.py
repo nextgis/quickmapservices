@@ -30,12 +30,7 @@ import xml.etree.ElementTree as ET
 # Import the code for the dialog
 from qgis.core import QgsProject
 from qgis.gui import QgisInterface, QgsMessageBar
-from qgis.PyQt.QtCore import (
-    QCoreApplication,
-    QTranslator,
-    QUrl,
-    qVersion,
-)
+from qgis.PyQt.QtCore import QCoreApplication, Qt, QTranslator, QUrl, qVersion
 from qgis.PyQt.QtGui import QDesktopServices, QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
@@ -45,6 +40,7 @@ from qgis.PyQt.QtWidgets import (
 )
 
 from quick_map_services.core.settings import QmsSettings
+from quick_map_services.gui.qms_settings_page import QmsSettingsPageFactory
 
 from .about_dialog import AboutDialog
 from .custom_translator import CustomTranslator, QTranslator
@@ -54,10 +50,9 @@ from .groups_list import GroupsList
 from .plugin_locale import Locale
 from .qgis_map_helpers import add_layer_to_map
 from .qms_service_toolbox import QmsServiceToolbox
-from .settings_dialog import SettingsDialog
 
 
-class QuickMapServices(object):
+class QuickMapServices:
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface: QgisInterface) -> None:
@@ -117,10 +112,10 @@ class QuickMapServices(object):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return self.custom_translator.translate("QuickMapServices", message)
 
-    def initGui(self):
-        # import pydevd
-        # pydevd.settrace('localhost', port=9921, stdoutToServer=True, stderrToServer=True, suspend=False)
-
+    def initGui(self) -> None:
+        """
+        Initialize the QuickMapServices plugin GUI.
+        """
         # Create menu
         icon_path = self.plugin_dir + "/icons/mActionAddLayer.svg"
         self.menu = QMenu(self.tr("QuickMapServices"))
@@ -131,6 +126,11 @@ class QuickMapServices(object):
 
         # add to QGIS menu/toolbars
         self.append_menu_buttons()
+
+        self.__qms_settings_page_factory = QmsSettingsPageFactory()
+        self.iface.registerOptionsWidgetFactory(
+            self.__qms_settings_page_factory
+        )
 
     def _load_scales_list(self):
         scales_filename = os.path.join(self.plugin_dir, "scales.xml")
@@ -189,7 +189,10 @@ class QuickMapServices(object):
         ds = action.data()
         add_layer_to_map(ds)
 
-    def unload(self):
+    def unload(self) -> None:
+        """
+        Unload the QuickMapServices plugin interface.
+        """
         # remove menu/panels
         self.remove_menu_buttons()
         self.remove_server_panel()
@@ -201,6 +204,13 @@ class QuickMapServices(object):
         self.ds_list = None
         self.groups_list = None
         self.service_layers = None
+
+        if self.__qms_settings_page_factory is not None:
+            self.iface.unregisterOptionsWidgetFactory(
+                self.__qms_settings_page_factory
+            )
+            self.__qms_settings_page_factory.deleteLater()
+            self.__qms_settings_page_factory = None
 
     qms_create_service_action = None
     set_nearest_scale_act = None
@@ -224,7 +234,7 @@ class QuickMapServices(object):
         data_sources = self.ds_list.data_sources.values()
         data_sources = sorted(data_sources, key=lambda x: x.alias or x.id)
 
-        ds_hide_list = settings.hide_ds_id_list
+        ds_hide_list = settings.hidden_datasource_id_list
 
         for ds in data_sources:
             if ds.id in ds_hide_list:
@@ -364,28 +374,26 @@ class QuickMapServices(object):
         self.tb_action = self.iface.webToolBar().addWidget(toolbutton)
         self.iface.webToolBar().addAction(self.qms_search_action)
 
-    def show_settings_dialog(self):
-        settings_dlg = SettingsDialog()
-        settings_dlg.exec()
-        # apply settings
-        # self.remove_menu_buttons()
+    def show_settings_dialog(self) -> None:
+        """
+        Opens the plugin settings page in the QGIS Options dialog
+        """
+        self.iface.showOptionsDialog(
+            self.iface.mainWindow(), QmsSettings.PRODUCT
+        )
         self.build_menu_tree()
-        # self.append_menu_buttons()
 
     def init_server_panel(self) -> None:
         """
         Initialize the QMS Server panel (dock widget) in QGIS.
         """
-        settings = QmsSettings()
-
         self.server_toolbox = QmsServiceToolbox(self.iface)
         self.iface.addDockWidget(
-            settings.server_dock_area, self.server_toolbox
+            Qt.DockWidgetArea.RightDockWidgetArea, self.server_toolbox
         )
         self.server_toolbox.setWindowIcon(
             QIcon(self.plugin_dir + "/icons/mActionSearch.svg")
         )
-        self.server_toolbox.setVisible(settings.server_dock_visibility)
 
         # QMS search action
         icon_settings_path = self.plugin_dir + "/icons/mActionSearch.svg"
@@ -397,14 +405,14 @@ class QuickMapServices(object):
         """
         Remove the QMS Server panel (dock widget) from QGIS.
         """
-        mw = self.iface.mainWindow()
-
-        settings = QmsSettings()
-        settings.server_dock_area = mw.dockWidgetArea(self.server_toolbox)
-        settings.server_dock_visibility = self.server_toolbox.isVisible()
-
         self.iface.removeDockWidget(self.server_toolbox)
         del self.server_toolbox
 
-    def openURL(self):
-        QDesktopServices.openUrl(QUrl("https://qms.nextgis.com/create"))
+    def openURL(self) -> None:
+        """
+        Open the QMS create page in the default web browser.
+
+        :return: None
+        """
+        settings = QmsSettings()
+        QDesktopServices.openUrl(QUrl(f"{settings.endpoint_url}/create"))

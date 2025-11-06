@@ -24,12 +24,12 @@
 import codecs
 import configparser
 import os
-import sys
 
 from qgis.core import Qgis, QgsMessageLog
-from qgis.PyQt.QtCore import QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QMenu
+
+from quick_map_services.core.settings import QmsSettings
 
 from . import extra_sources
 from .config_reader_helper import ConfigReaderHelper
@@ -82,7 +82,26 @@ class GroupsList:
                 for ini_file in [f for f in files if f.endswith(".ini")]:
                     self._read_ini_file(root, ini_file, category)
 
-    def _read_ini_file(self, root, ini_file_path, category):
+    def _read_ini_file(
+        self, root: str, ini_file_path: str, category: str
+    ) -> None:
+        """
+        Parse a group definition `.ini` file and register it in the internal group list.
+
+        This method reads the provided `.ini` configuration file, extracts general and
+        UI-related metadata such as group ID, alias, and icon path, and creates a
+        corresponding `GroupInfo` object representing the group.
+
+        :param root: The root directory path where the `.ini` file is located.
+        :type root: str
+        :param ini_file_path: The name of the `.ini` file to be parsed.
+        :type ini_file_path: str
+        :param category: The category of the group (e.g., BASE, CONTRIB, USER).
+        :type category: str
+
+        :return: None
+        :rtype: None
+        """
         try:
             ini_full_path = os.path.join(root, ini_file_path)
             parser = configparser.ConfigParser()
@@ -124,7 +143,9 @@ class GroupsList:
             error_message = self.tr("Group INI file can't be parsed: ") + str(
                 error
             )
-            QgsMessageLog.logMessage(error_message, level=Qgis.Critical)
+            QgsMessageLog.logMessage(
+                error_message, QmsSettings.PRODUCT, level=Qgis.Critical
+            )
 
     def get_group_menu(self, group_id):
         if group_id in self.groups:
