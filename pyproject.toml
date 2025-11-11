@@ -24,7 +24,6 @@ compile = false
 
 [tool.qgspb.translations]
 ts-files = ["src/quick_map_services/i18n/*.ts"]
-exclude-files = ["src/quick_map_services/qms_external_api_python/*"]
 no-obsolete = true
 
 
