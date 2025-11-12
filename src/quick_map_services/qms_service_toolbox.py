@@ -257,12 +257,12 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
         )
 
         utm = utm_template.format(campaign="constant")
-        bf24_utm = utm_template.format(campaign="black-friday24")
+        bf25_utm = utm_template.format(campaign="black-friday25")
 
         qms_black_friday_news = QmsNews(
             {
-                "ru": f'<a href="https://data.nextgis.com/?{bf24_utm}">Свежие геоданные</a> для проекта. <b>Экономия 50%!</b>',
-                "en": f'<a href="https://data.nextgis.com/?{bf24_utm}">Fresh geodata</a> for your project <b>(50% off!)</b>',
+                "ru": f'<a href="https://data.nextgis.com/?{bf25_utm}">Свежие геоданные</a> для проекта. <b>Экономия 50%!</b>',
+                "en": f'<a href="https://data.nextgis.com/?{bf25_utm}">Fresh geodata</a> for your project <b>(50% off!)</b>',
             }
         )
         qms_news = QmsNews(
@@ -275,10 +275,10 @@ class QmsServiceToolbox(QDockWidget, FORM_CLASS):
             return
 
         black_friday_start = datetime(
-            year=2024, month=11, day=26, hour=21, minute=1, tzinfo=timezone.utc
+            year=2025, month=12, day=1, hour=6, minute=1, tzinfo=timezone.utc
         )
         black_friday_finish = datetime(
-            year=2024, month=12, day=3, hour=5, minute=59, tzinfo=timezone.utc
+            year=2025, month=12, day=6, hour=5, minute=59, tzinfo=timezone.utc
         )
         black_friday_news = News(
             qms_black_friday_news,
