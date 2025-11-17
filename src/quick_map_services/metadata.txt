@@ -6,7 +6,7 @@ description=Easy to add basemaps and geoservices
 description[ru]=Легко добавляйте базовые карты и геосервисы
 about=Easy to use list of services and search for finding datasets and basemaps. Please contribute new services via https://qms.nextgis.com. Developed by NextGIS. Any feedback is welcome at https://nextgis.com/contact
 about[ru]=Простой в использовании список сервисов и поиск наборов данных и базовых карт. Пожалуйста, предлагайте новые сервисы через https://qms.nextgis.com. Разработан компанией NextGIS. Любые отзывы приветствуются на https://nextgis.com/contact.
-version=0.21.4
+version=1.0.0
 author=NextGIS
 email=info@nextgis.com
 
@@ -24,6 +24,16 @@ deprecated=False
 supportsQt6=True
 
 changelog=
+      1.0.0
+        * Moved plugin settings interface to QGIS Options dialog
+        * Centralized plugin settings and migrated to QGIS settings storage
+        * Added an option to configure the QMS endpoint URL (for developers)
+        * Fixed the ability to add removed services still stored in the recently used list
+        * Fixed outdated QGIS API
+        * Removed service status indicators
+        * Removed broken NASA SEDAC data
+        * Removed the submodule
+        * Removed legacy QGIS 2 code from the codebase
       0.21.4
         * Updated panel title
       0.21.3
