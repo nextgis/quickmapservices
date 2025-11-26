@@ -30,7 +30,7 @@ import xml.etree.ElementTree as ET
 # Import the code for the dialog
 from qgis.core import QgsProject
 from qgis.gui import QgisInterface, QgsMessageBar
-from qgis.PyQt.QtCore import QCoreApplication, Qt, QTranslator, QUrl, qVersion
+from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.PyQt.QtGui import QDesktopServices, QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
@@ -41,9 +41,12 @@ from qgis.PyQt.QtWidgets import (
 
 from quick_map_services.core.settings import QmsSettings
 from quick_map_services.gui.qms_settings_page import QmsSettingsPageFactory
+from quick_map_services.quick_map_services_interface import (
+    QuickMapServicesInterface,
+)
 
 from .about_dialog import AboutDialog
-from .custom_translator import CustomTranslator, QTranslator
+from .custom_translator import CustomTranslator
 from .data_sources_list import DataSourcesList
 from .extra_sources import ExtraSources
 from .groups_list import GroupsList
@@ -52,7 +55,7 @@ from .qgis_map_helpers import add_layer_to_map
 from .qms_service_toolbox import QmsServiceToolbox
 
 
-class QuickMapServices:
+class QuickMapServices(QuickMapServicesInterface):
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface: QgisInterface) -> None:
@@ -67,20 +70,6 @@ class QuickMapServices:
         self.iface = iface
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
-
-        # initialize locale
-        self.translator = QTranslator()
-
-        self.locale = Locale.get_locale()
-        locale_path = os.path.join(
-            self.plugin_dir,
-            "i18n",
-            "QuickMapServices_{}.qm".format(self.locale),
-        )
-        if os.path.exists(locale_path):
-            r = self.translator.load(locale_path)
-            if qVersion() > "4.3.3":
-                QCoreApplication.installTranslator(self.translator)
 
         self.custom_translator = CustomTranslator()
 
@@ -112,10 +101,15 @@ class QuickMapServices:
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return self.custom_translator.translate("QuickMapServices", message)
 
-    def initGui(self) -> None:
+    def _load(self) -> None:
         """
         Initialize the QuickMapServices plugin GUI.
         """
+        locale = Locale.get_locale()
+        self._add_translator(
+            self.path / "i18n" / f"{QmsSettings.PRODUCT}_{locale}.qm",
+        )
+
         # Create menu
         icon_path = self.plugin_dir + "/icons/mActionAddLayer.svg"
         self.menu = QMenu(self.tr("QuickMapServices"))
@@ -189,7 +183,7 @@ class QuickMapServices:
         ds = action.data()
         add_layer_to_map(ds)
 
-    def unload(self) -> None:
+    def _unload(self) -> None:
         """
         Unload the QuickMapServices plugin interface.
         """
