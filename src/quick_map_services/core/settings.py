@@ -23,6 +23,7 @@ class QmsSettings:
     KEY_SHOW_MESSAGES_IN_BAR = f"{COMPANY_NAME}/{PRODUCT}/showMessagesInBar"
     KEY_LAST_USED_SERVICES = f"{COMPANY_NAME}/{PRODUCT}/lastUsedServices"
     KEY_ENDPOINT_URL = f"{COMPANY_NAME}/{PRODUCT}/endpointUrl"
+    KEY_DID_LAST_LAUNCH_FAIL = f"{COMPANY_NAME}/{PRODUCT}/didLastLaunchFail"
 
     __is_updated: ClassVar[bool] = False
     __settings: QgsSettings
@@ -155,6 +156,23 @@ class QmsSettings:
     def endpoint_url(self, value: str) -> None:
         normalized_endpoint = value.strip().rstrip("/")
         self.__settings.setValue(self.KEY_ENDPOINT_URL, normalized_endpoint)
+
+    @property
+    def did_last_launch_fail(self) -> bool:
+        """Checks whether the last plugin launch failed.
+
+        :return: True if the last launch failed, False otherwise.
+        :rtype: bool
+        """
+        return self.__settings.value(
+            self.KEY_DID_LAST_LAUNCH_FAIL,
+            defaultValue=False,
+            type=bool,
+        )
+
+    @did_last_launch_fail.setter
+    def did_last_launch_fail(self, value: bool) -> None:
+        self.__settings.setValue(self.KEY_DID_LAST_LAUNCH_FAIL, value)
 
     @classmethod
     def __update_settings(cls) -> None:
