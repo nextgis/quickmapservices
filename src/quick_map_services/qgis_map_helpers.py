@@ -12,9 +12,10 @@ from qgis.core import (
 from qgis.PyQt.QtCore import QSettings
 from qgis.utils import iface
 
+from quick_map_services.core.compat import QGIS_3_38
+from quick_map_services.core.constants import PLUGIN_NAME
 from quick_map_services.core.settings import QmsSettings
 
-from .compat import QGIS_3_38
 from .qgis_proj_helper import ProjectionHelper
 from .supported_drivers import KNOWN_DRIVERS
 
@@ -157,7 +158,7 @@ def add_layer_to_map(ds):
                 tr("Error"), error_message, level=Qgis.Critical
             )
             QgsMessageLog.logMessage(
-                error_message, QmsSettings.PRODUCT, level=Qgis.Critical
+                error_message, PLUGIN_NAME, level=Qgis.Critical
             )
         else:
             # Set attribs

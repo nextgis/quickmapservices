@@ -3,11 +3,12 @@ import configparser
 import os
 from urllib import parse
 
+from quick_map_services.core import utils
+
 from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
 from .data_source_info import DataSourceInfo
 from .fixed_config_parser import FixedConfigParser
-from .plugin_locale import Locale
 from .supported_drivers import KNOWN_DRIVERS
 
 
@@ -55,7 +56,6 @@ class DataSourceSerializer:
     @classmethod
     def read_from_ini(cls, ini_file_path):
         translator = CustomTranslator()
-        locale = Locale.get_locale()
 
         dir_path = os.path.abspath(os.path.join(ini_file_path, os.path.pardir))
 
@@ -195,7 +195,7 @@ class DataSourceSerializer:
             # try read translations
             posible_trans = parser.items("ui")
             for key, val in posible_trans:
-                if isinstance(key, str) and key == "alias[%s]" % locale:
+                if isinstance(key, str) and key == f"alias[{utils.locale()}]":
                     translator.append(ds.alias, val)
                     break
 

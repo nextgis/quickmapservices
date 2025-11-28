@@ -1,12 +1,19 @@
 import configparser
 from abc import abstractmethod
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from qgis import utils
 from qgis.core import QgsApplication
 from qgis.PyQt.QtCore import QObject, QTranslator
 
+from quick_map_services.core.constants import PACKAGE_NAME
 from quick_map_services.shared.qobject_metaclass import QObjectMetaClass
+
+if TYPE_CHECKING:
+    from quick_map_services.notifier.notifier_interface import (
+        NotifierInterface,
+    )
 
 
 class QuickMapServicesInterface(QObject, metaclass=QObjectMetaClass):
@@ -26,7 +33,7 @@ class QuickMapServicesInterface(QObject, metaclass=QObjectMetaClass):
         :rtype: QuickMapServicesInterface
         :raises AssertionError: If the plugin has not been created yet.
         """
-        plugin = utils.plugins.get("quick_map_services")
+        plugin = utils.plugins.get(PACKAGE_NAME)
         assert plugin is not None, "Using a plugin before it was created"
         return plugin
 
@@ -37,7 +44,7 @@ class QuickMapServicesInterface(QObject, metaclass=QObjectMetaClass):
         :returns: Parsed metadata as a ConfigParser object.
         :rtype: configparser.ConfigParser
         """
-        metadata = utils.plugins_metadata_parser.get("quick_map_services")
+        metadata = utils.plugins_metadata_parser.get(PACKAGE_NAME)
         assert metadata is not None, "Using a plugin before it was created"
         return metadata
 
@@ -58,6 +65,16 @@ class QuickMapServicesInterface(QObject, metaclass=QObjectMetaClass):
         :rtype: Path
         """
         return Path(__file__).parent
+
+    @property
+    @abstractmethod
+    def notifier(self) -> "NotifierInterface":
+        """Return the notifier for displaying messages to the user.
+
+        :returns: Notifier interface instance.
+        :rtype: NotifierInterface
+        """
+        ...
 
     def initGui(self) -> None:
         """Initialize the GUI components and load necessary resources."""
