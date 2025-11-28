@@ -29,7 +29,7 @@ from qgis.gui import QgsRubberBand
 from qgis.PyQt.QtGui import QColor
 from qgis.utils import iface
 
-from quick_map_services.compat import GeometryType
+from quick_map_services.core.compat import GeometryType
 
 
 class RubberBandResultRenderer:

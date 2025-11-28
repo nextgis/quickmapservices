@@ -2,7 +2,7 @@ import datetime
 import os
 from pathlib import Path
 
-from .plugin_locale import Locale
+from quick_map_services.core import utils
 
 plugin_dir = os.path.dirname(__file__)
 
@@ -15,7 +15,7 @@ class News:
     ) -> None:
         super(News, self).__init__()
 
-        html = qms_news.get_text(Locale.get_locale())
+        html = qms_news.get_text(utils.locale())
 
         icon_path = Path(plugin_dir) / "icons" / icon
 

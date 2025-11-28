@@ -29,13 +29,13 @@ from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QMenu
 
-from quick_map_services.core.settings import QmsSettings
+from quick_map_services.core import utils
+from quick_map_services.core.constants import PLUGIN_NAME
 
 from . import extra_sources
 from .config_reader_helper import ConfigReaderHelper
 from .custom_translator import CustomTranslator
 from .group_info import GroupCategory, GroupInfo
-from .plugin_locale import Locale
 
 CURR_PATH = os.path.dirname(__file__)
 
@@ -64,7 +64,6 @@ ROOT_MAPPING = {
 
 class GroupsList:
     def __init__(self, group_paths=ALL_GROUP_PATHS):
-        self.locale = Locale.get_locale()
         self.translator = CustomTranslator()
         self.paths = group_paths
         self.groups = {}
@@ -123,7 +122,7 @@ class GroupsList:
                 posible_trans = parser.items("ui")
 
             for key, val in posible_trans:
-                if isinstance(key, str) and key == "alias[%s]" % self.locale:
+                if isinstance(key, str) and key == f"alias[{utils.locale()}]":
                     self.translator.append(group_alias, val)
                     break
             # create menu
@@ -144,7 +143,7 @@ class GroupsList:
                 error
             )
             QgsMessageLog.logMessage(
-                error_message, QmsSettings.PRODUCT, level=Qgis.Critical
+                error_message, PLUGIN_NAME, level=Qgis.Critical
             )
 
     def get_group_menu(self, group_id):

@@ -24,8 +24,7 @@
 
 from typing import TYPE_CHECKING
 
-from qgis.core import Qgis, QgsApplication, QgsRuntimeProfiler
-from qgis.PyQt.QtCore import QTimer
+from qgis.core import QgsRuntimeProfiler
 
 from quick_map_services.core.exceptions import QmsReloadAfterUpdateWarning
 from quick_map_services.core.settings import QmsSettings
@@ -37,7 +36,7 @@ if TYPE_CHECKING:
     from qgis.gui import QgisInterface
 
 
-def classFactory(iface: "QgisInterface") -> QuickMapServicesInterface:
+def classFactory(_iface: "QgisInterface") -> QuickMapServicesInterface:
     """Create and return an instance of the QuickMapServices plugin.
 
     :param _iface: QGIS interface instance passed by QGIS at plugin load.
@@ -48,39 +47,37 @@ def classFactory(iface: "QgisInterface") -> QuickMapServicesInterface:
     settings = QmsSettings()
 
     try:
-        with QgsRuntimeProfiler.profile("Import QuickMapServices"):
+        with QgsRuntimeProfiler.profile("Import plugin"):
             from quick_map_services.quick_map_services import QuickMapServices
 
-        plugin = QuickMapServices(iface)
+        plugin = QuickMapServices()
         settings.did_last_launch_fail = False
 
     except Exception as error:
+        import copy
+
+        from qgis.PyQt.QtCore import QTimer
+
         from quick_map_services.quick_map_services_plugin_stub import (
             QuickMapServicesPluginStub,
         )
 
+        error_copy = copy.deepcopy(error)
+        exception = error_copy
+
         if not settings.did_last_launch_fail:
-            error_to_show = QmsReloadAfterUpdateWarning()
-        else:
-            error_to_show = error
+            # Sometimes after an update that changes the plugin structure,
+            # the plugin may fail to load. Restarting QGIS helps.
+            exception = QmsReloadAfterUpdateWarning()
+            exception.__cause__ = error_copy
 
         settings.did_last_launch_fail = True
 
-        def show_error():
-            message = (
-                error_to_show.user_message
-                if isinstance(error_to_show, QmsReloadAfterUpdateWarning)
-                else QgsApplication.translate(
-                    "classFactory",
-                    "QuickMapServices failed to load: {}",
-                ).format(error_to_show)
-            )
-            bar = iface.messageBar()
-            widget = bar.createMessage("QuickMapServices", message)
-            bar.pushWidget(widget, Qgis.MessageLevel.Warning)
+        plugin = QuickMapServicesPluginStub()
 
-        QTimer.singleShot(0, show_error)
+        def display_exception() -> None:
+            plugin.notifier.display_exception(exception)
 
-        return QuickMapServicesPluginStub()
+        QTimer.singleShot(0, display_exception)
 
     return plugin

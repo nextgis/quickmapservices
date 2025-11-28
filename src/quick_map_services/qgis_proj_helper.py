@@ -3,6 +3,7 @@ from typing import Optional
 from qgis.core import Qgis, QgsCoordinateReferenceSystem, QgsMapLayer
 from qgis.utils import iface
 
+from quick_map_services.core.constants import PLUGIN_NAME
 from quick_map_services.core.settings import QmsSettings
 
 
@@ -85,5 +86,5 @@ class ProjectionHelper:
         settings = QmsSettings()
         if settings.show_messages_in_bar:
             if title is None:
-                title = QmsSettings.PRODUCT
+                title = PLUGIN_NAME
             iface.messageBar().pushMessage(title, text, level, duration)

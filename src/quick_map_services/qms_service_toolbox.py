@@ -45,6 +45,7 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
+from quick_map_services.core.constants import PLUGIN_NAME
 from quick_map_services.core.settings import QmsSettings
 from quick_map_services.data_source_serializer import DataSourceSerializer
 from quick_map_services.qgis_map_helpers import add_layer_to_map
@@ -56,7 +57,7 @@ from quick_map_services.singleton import singleton
 
 
 def plPrint(msg, level=Qgis.Info):
-    QgsMessageLog.logMessage(msg, QmsSettings.PRODUCT, level)
+    QgsMessageLog.logMessage(msg, PLUGIN_NAME, level)
 
 
 STATUS_FILTER_ALL = "all"

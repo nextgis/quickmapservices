@@ -27,7 +27,7 @@ from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
-from quick_map_services.core.settings import QmsSettings
+from quick_map_services.core.constants import PLUGIN_NAME
 
 from . import extra_sources
 from .custom_translator import CustomTranslator
@@ -102,7 +102,7 @@ class DataSourcesList:
                         )
                         QgsMessageLog.logMessage(
                             error_message,
-                            QmsSettings.PRODUCT,
+                            PLUGIN_NAME,
                             level=Qgis.Critical,
                         )
 

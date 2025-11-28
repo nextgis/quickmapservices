@@ -3,27 +3,30 @@ import platform
 from typing import Any, ClassVar, Dict, List, Tuple
 
 from qgis.core import QgsSettings
-from qgis.PyQt.QtCore import QByteArray, QDir, QSettings, Qt
+from qgis.PyQt.QtCore import QByteArray, QDir, QSettings
+
+from quick_map_services.core.constants import COMPANY_NAME, PLUGIN_NAME
 
 
 class QmsSettings:
     """Centralized settings handler for the QuickMapServices (QMS) plugin."""
 
-    COMPANY_NAME = "NextGIS"
-    PRODUCT = "QuickMapServices"
-
     KEY_HIDDEN_DATASOURCE_ID_LIST = (
-        f"{COMPANY_NAME}/{PRODUCT}/hiddenDatasourceIdList"
+        f"{COMPANY_NAME}/{PLUGIN_NAME}/hiddenDatasourceIdList"
     )
     KEY_DEFAULT_USER_ICON_PATH = (
-        f"{COMPANY_NAME}/{PRODUCT}/ui/defaultUserIconPath"
+        f"{COMPANY_NAME}/{PLUGIN_NAME}/ui/defaultUserIconPath"
     )
-    KEY_LAST_ICON_PATH = f"{COMPANY_NAME}/{PRODUCT}/lastIconPath"
-    KEY_ENABLE_OTF_3857 = f"{COMPANY_NAME}/{PRODUCT}/enableOtf3857"
-    KEY_SHOW_MESSAGES_IN_BAR = f"{COMPANY_NAME}/{PRODUCT}/showMessagesInBar"
-    KEY_LAST_USED_SERVICES = f"{COMPANY_NAME}/{PRODUCT}/lastUsedServices"
-    KEY_ENDPOINT_URL = f"{COMPANY_NAME}/{PRODUCT}/endpointUrl"
-    KEY_DID_LAST_LAUNCH_FAIL = f"{COMPANY_NAME}/{PRODUCT}/didLastLaunchFail"
+    KEY_LAST_ICON_PATH = f"{COMPANY_NAME}/{PLUGIN_NAME}/lastIconPath"
+    KEY_ENABLE_OTF_3857 = f"{COMPANY_NAME}/{PLUGIN_NAME}/enableOtf3857"
+    KEY_SHOW_MESSAGES_IN_BAR = (
+        f"{COMPANY_NAME}/{PLUGIN_NAME}/showMessagesInBar"
+    )
+    KEY_LAST_USED_SERVICES = f"{COMPANY_NAME}/{PLUGIN_NAME}/lastUsedServices"
+    KEY_ENDPOINT_URL = f"{COMPANY_NAME}/{PLUGIN_NAME}/endpointUrl"
+    KEY_DID_LAST_LAUNCH_FAIL = (
+        f"{COMPANY_NAME}/{PLUGIN_NAME}/didLastLaunchFail"
+    )
 
     __is_updated: ClassVar[bool] = False
     __settings: QgsSettings
@@ -186,7 +189,7 @@ class QmsSettings:
     @classmethod
     def __migrate_from_qsettings(cls, qgs_settings: QgsSettings) -> None:
         """Migrate from QSettings to QgsSettings"""
-        old_settings = QSettings(cls.COMPANY_NAME, cls.PRODUCT)
+        old_settings = QSettings(COMPANY_NAME, PLUGIN_NAME)
         if platform.system() != "Darwin" and len(old_settings.allKeys()) == 0:
             return
 

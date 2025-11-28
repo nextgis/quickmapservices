@@ -17,6 +17,7 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
+from quick_map_services.core.constants import COMPANY_NAME, PLUGIN_NAME
 from quick_map_services.core.settings import QmsSettings
 from quick_map_services.data_sources_model import DSManagerModel
 from quick_map_services.extra_sources import ExtraSources
@@ -75,15 +76,13 @@ class QmsSettingsPage(QgsOptionsPageWidget):
             )
         except Exception as error:
             QgsMessageLog.logMessage(
-                str(error), QmsSettings.PRODUCT, level=Qgis.Critical
+                str(error), PLUGIN_NAME, level=Qgis.Critical
             )
             raise RuntimeError from error
 
         if widget is None:
             message = self.tr("An error occured in settings UI")
-            QgsMessageLog.logMessage(
-                message, QmsSettings.PRODUCT, level=Qgis.Critical
-            )
+            QgsMessageLog.logMessage(message, PLUGIN_NAME, level=Qgis.Critical)
             raise RuntimeError
 
         self.__widget = widget
@@ -147,7 +146,7 @@ class QmsSettingsPage(QgsOptionsPageWidget):
             info_message = self.tr(
                 "The latest version of contributed pack was successfully downloaded!"
             )
-            QMessageBox.information(self, QmsSettings.PRODUCT, info_message)
+            QMessageBox.information(self, PLUGIN_NAME, info_message)
 
             self.__ds_model.resetModel()
 
@@ -157,9 +156,7 @@ class QmsSettingsPage(QgsOptionsPageWidget):
             error_message = self.tr(
                 "Failed to load contributed pack:\n{}"
             ).format(str(error))
-            QMessageBox.critical(
-                self, self.tr("QuickMapServices"), error_message
-            )
+            QMessageBox.critical(self, PLUGIN_NAME, error_message)
 
         finally:
             QgsApplication.restoreOverrideCursor()
@@ -203,7 +200,7 @@ class QmsSettingsPageFactory(QgsOptionsWidgetFactory):
     def __init__(self) -> None:
         """Initialize the settings page factory."""
         super().__init__()
-        self.setTitle(QmsSettings.PRODUCT)
+        self.setTitle(PLUGIN_NAME)
 
         icon_path = str(Path(__file__).parents[1] / "icons" / "qms_logo.svg")
         self.setIcon(QIcon(icon_path))
@@ -214,7 +211,7 @@ class QmsSettingsPageFactory(QgsOptionsWidgetFactory):
         :returns: List of path elements.
         :rtype: List[str]
         """
-        return ["NextGIS"]
+        return [COMPANY_NAME]
 
     def createWidget(
         self, parent: Optional[QWidget] = None

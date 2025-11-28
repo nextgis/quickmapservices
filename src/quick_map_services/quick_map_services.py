@@ -24,13 +24,14 @@
 import os.path
 import sys
 import xml.etree.ElementTree as ET
+from typing import TYPE_CHECKING, Optional
 
 # Initialize Qt resources from file resources.py
 # import resources_rc
 # Import the code for the dialog
 from qgis.core import QgsProject
 from qgis.gui import QgisInterface, QgsMessageBar
-from qgis.PyQt.QtCore import Qt, QUrl
+from qgis.PyQt.QtCore import QObject, Qt, QUrl
 from qgis.PyQt.QtGui import QDesktopServices, QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
@@ -38,9 +39,13 @@ from qgis.PyQt.QtWidgets import (
     QMessageBox,
     QToolButton,
 )
+from qgis.utils import iface
 
+from quick_map_services.core import utils
+from quick_map_services.core.constants import PACKAGE_NAME, PLUGIN_NAME
 from quick_map_services.core.settings import QmsSettings
 from quick_map_services.gui.qms_settings_page import QmsSettingsPageFactory
+from quick_map_services.notifier.message_bar_notifier import MessageBarNotifier
 from quick_map_services.quick_map_services_interface import (
     QuickMapServicesInterface,
 )
@@ -50,22 +55,30 @@ from .custom_translator import CustomTranslator
 from .data_sources_list import DataSourcesList
 from .extra_sources import ExtraSources
 from .groups_list import GroupsList
-from .plugin_locale import Locale
 from .qgis_map_helpers import add_layer_to_map
 from .qms_service_toolbox import QmsServiceToolbox
+
+if TYPE_CHECKING:
+    from quick_map_services.notifier.notifier_interface import (
+        NotifierInterface,
+    )
+
+assert isinstance(iface, QgisInterface)
 
 
 class QuickMapServices(QuickMapServicesInterface):
     """QGIS Plugin Implementation."""
 
-    def __init__(self, iface: QgisInterface) -> None:
-        """Constructor.
+    __notifier: Optional[MessageBarNotifier]
 
-        :param iface: An interface instance that will be passed to this class
-            which provides the hook by which you can manipulate the QGIS
-            application at run time.
-        :type iface: QgisInterface
+    def __init__(self, parent: Optional[QObject] = None) -> None:
+        """Initialize the plugin instance.
+
+        :param parent: Optional parent QObject.
+        :type parent: Optional[QObject]
         """
+        super().__init__(parent)
+
         # Save reference to the QGIS interface
         self.iface = iface
         # initialize plugin directory
@@ -74,7 +87,7 @@ class QuickMapServices(QuickMapServicesInterface):
         self.custom_translator = CustomTranslator()
 
         # Create the dialog (after translation) and keep reference
-        self.info_dlg = AboutDialog(os.path.basename(self.plugin_dir))
+        self.info_dlg = AboutDialog(PACKAGE_NAME)
 
         # Check Contrib and User dirs
         try:
@@ -83,7 +96,7 @@ class QuickMapServices(QuickMapServicesInterface):
             error_message = self.tr(
                 "Extra dirs for %s can't be created: %s %s"
             ) % (
-                QmsSettings.PRODUCT,
+                PLUGIN_NAME,
                 sys.exc_info()[0],
                 sys.exc_info()[1],
             )
@@ -96,6 +109,19 @@ class QuickMapServices(QuickMapServicesInterface):
         self.service_layers = []  # TODO: id and smart remove
         self._scales_list = None
 
+        self.__notifier = None
+
+    @property
+    def notifier(self) -> "NotifierInterface":
+        """Return the notifier for displaying messages to the user.
+
+        :returns: Notifier interface instance.
+        :rtype: NotifierInterface
+        :raises AssertionError: If notifier is not initialized.
+        """
+        assert self.__notifier is not None, "Notifier is not initialized"
+        return self.__notifier
+
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
@@ -105,10 +131,10 @@ class QuickMapServices(QuickMapServicesInterface):
         """
         Initialize the QuickMapServices plugin GUI.
         """
-        locale = Locale.get_locale()
         self._add_translator(
-            self.path / "i18n" / f"{QmsSettings.PRODUCT}_{locale}.qm",
+            self.path / "i18n" / f"{PLUGIN_NAME}_{utils.locale()}.qm",
         )
+        self.__notifier = MessageBarNotifier(self)
 
         # Create menu
         icon_path = self.plugin_dir + "/icons/mActionAddLayer.svg"
@@ -205,6 +231,10 @@ class QuickMapServices(QuickMapServicesInterface):
             )
             self.__qms_settings_page_factory.deleteLater()
             self.__qms_settings_page_factory = None
+
+        if self.__notifier is not None:
+            self.__notifier.deleteLater()
+            self.__notifier = None
 
     qms_create_service_action = None
     set_nearest_scale_act = None
@@ -372,9 +402,7 @@ class QuickMapServices(QuickMapServicesInterface):
         """
         Opens the plugin settings page in the QGIS Options dialog
         """
-        self.iface.showOptionsDialog(
-            self.iface.mainWindow(), QmsSettings.PRODUCT
-        )
+        self.iface.showOptionsDialog(self.iface.mainWindow(), PLUGIN_NAME)
         self.build_menu_tree()
 
     def init_server_panel(self) -> None:
