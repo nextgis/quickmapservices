@@ -19,13 +19,13 @@ class QmsSettings:
     )
     KEY_LAST_ICON_PATH = f"{COMPANY_NAME}/{PLUGIN_NAME}/lastIconPath"
     KEY_ENABLE_OTF_3857 = f"{COMPANY_NAME}/{PLUGIN_NAME}/enableOtf3857"
-    KEY_SHOW_MESSAGES_IN_BAR = (
-        f"{COMPANY_NAME}/{PLUGIN_NAME}/showMessagesInBar"
+    KEY_IS_DEBUG_LOGS_ENABLED = (
+        f"{COMPANY_NAME}/{PLUGIN_NAME}/other/debugLogsEnabled"
     )
     KEY_LAST_USED_SERVICES = f"{COMPANY_NAME}/{PLUGIN_NAME}/lastUsedServices"
     KEY_ENDPOINT_URL = f"{COMPANY_NAME}/{PLUGIN_NAME}/endpointUrl"
     KEY_DID_LAST_LAUNCH_FAIL = (
-        f"{COMPANY_NAME}/{PLUGIN_NAME}/didLastLaunchFail"
+        f"{COMPANY_NAME}/{PLUGIN_NAME}/other/didLastLaunchFail"
     )
 
     __is_updated: ClassVar[bool] = False
@@ -36,16 +36,21 @@ class QmsSettings:
         self.__update_settings()
 
     @property
-    def show_messages_in_bar(self) -> bool:
+    def is_debug_logs_enabled(self) -> bool:
+        """Check if debug logs are enabled.
+
+        :return: True if debug logs are enabled, False otherwise.
+        :rtype: bool
+        """
         return self.__settings.value(
-            self.KEY_SHOW_MESSAGES_IN_BAR,
-            defaultValue=True,
+            self.KEY_IS_DEBUG_LOGS_ENABLED,
+            defaultValue=False,
             type=bool,
         )
 
-    @show_messages_in_bar.setter
-    def show_messages_in_bar(self, value: bool) -> None:
-        self.__settings.setValue(self.KEY_SHOW_MESSAGES_IN_BAR, value)
+    @is_debug_logs_enabled.setter
+    def is_debug_logs_enabled(self, value: bool) -> None:
+        self.__settings.setValue(self.KEY_IS_DEBUG_LOGS_ENABLED, value)
 
     @property
     def enable_otf_3857(self) -> bool:
@@ -182,8 +187,11 @@ class QmsSettings:
         """Perform one-time migration from old QSettings storage."""
         if cls.__is_updated:
             return
+
         qgs_settings = QgsSettings()
         cls.__migrate_from_qsettings(qgs_settings)
+        cls.__rename_settings(qgs_settings)
+
         cls.__is_updated = True
 
     @classmethod
@@ -198,7 +206,7 @@ class QmsSettings:
             "ui/default_user_icon_path": cls.KEY_DEFAULT_USER_ICON_PATH,
             "last_icon_path": cls.KEY_LAST_ICON_PATH,
             "enable_otf_3857": cls.KEY_ENABLE_OTF_3857,
-            "show_messages_in_bar": cls.KEY_SHOW_MESSAGES_IN_BAR,
+            "show_messages_in_bar": cls.KEY_IS_DEBUG_LOGS_ENABLED,
         }
 
         for old_key, new_key in settings_key_map.items():
@@ -248,3 +256,24 @@ class QmsSettings:
         qgs_settings.endGroup()
         old_settings.endGroup()
         old_settings.remove("last_used_services")
+
+    @classmethod
+    def __rename_settings(cls, qgs_settings: QgsSettings) -> None:
+        """
+        Rename deprecated settings keys to their updated equivalents.
+
+        :param qgs_settings: Reference to the current QgsSettings instance u
+        :type qgs_settings: QgsSettings
+
+        :return: None
+        :rtype: None
+        """
+        old_debug_logs_key = f"{COMPANY_NAME}/{PLUGIN_NAME}/showMessagesInBar"
+        debug_logs_enabled = qgs_settings.value(old_debug_logs_key)
+
+        if debug_logs_enabled is not None:
+            qgs_settings.setValue(
+                cls.KEY_IS_DEBUG_LOGS_ENABLED,
+                debug_logs_enabled,
+            )
+            qgs_settings.remove(old_debug_logs_key)

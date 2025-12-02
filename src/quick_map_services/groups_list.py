@@ -25,12 +25,11 @@ import codecs
 import configparser
 import os
 
-from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QMenu
 
 from quick_map_services.core import utils
-from quick_map_services.core.constants import PLUGIN_NAME
+from quick_map_services.core.logging import logger
 
 from . import extra_sources
 from .config_reader_helper import ConfigReaderHelper
@@ -101,50 +100,51 @@ class GroupsList:
         :return: None
         :rtype: None
         """
+        ini_full_path = os.path.join(root, ini_file_path)
+
         try:
-            ini_full_path = os.path.join(root, ini_file_path)
             parser = configparser.ConfigParser()
             with codecs.open(ini_full_path, "r", "utf-8") as ini_file:
                 if hasattr(parser, "read_file"):
                     parser.read_file(ini_file)
                 else:
                     parser.readfp(ini_file)
-                # read config
-                group_id = parser.get("general", "id")
-                group_alias = parser.get("ui", "alias")
-                icon_file = ConfigReaderHelper.try_read_config(
-                    parser, "ui", "icon"
-                )
-                group_icon_path = (
-                    os.path.join(root, icon_file) if icon_file else None
-                )
-                # try read translations
-                posible_trans = parser.items("ui")
 
+            # Extract group metadata
+            group_id = parser.get("general", "id")
+            group_alias = parser.get("ui", "alias")
+            icon_file = ConfigReaderHelper.try_read_config(
+                parser, "ui", "icon"
+            )
+            group_icon_path = (
+                os.path.join(root, icon_file) if icon_file else None
+            )
+
+            # Read possible translations
+            posible_trans = parser.items("ui")
             for key, val in posible_trans:
-                if isinstance(key, str) and key == f"alias[{utils.locale()}]":
+                if key == f"alias[{utils.locale()}]":
                     self.translator.append(group_alias, val)
                     break
-            # create menu
-            group_menu = QMenu(self.tr(group_alias))
-            group_menu.setIcon(QIcon(group_icon_path))
-            # append to all groups
-            # set contrib&user
-            self.groups[group_id] = GroupInfo(
-                group_id,
-                group_alias,
-                group_icon_path,
-                ini_full_path,
-                group_menu,
-                category,
+
+        except Exception:
+            logger.exception(
+                f"Failed to parse group INI file: {ini_full_path}"
             )
-        except Exception as error:
-            error_message = self.tr("Group INI file can't be parsed: ") + str(
-                error
-            )
-            QgsMessageLog.logMessage(
-                error_message, PLUGIN_NAME, level=Qgis.Critical
-            )
+            return
+
+        # Create QMenu and GroupInfo
+        group_menu = QMenu(self.tr(group_alias))
+        group_menu.setIcon(QIcon(group_icon_path))
+
+        self.groups[group_id] = GroupInfo(
+            group_id,
+            group_alias,
+            group_icon_path,
+            ini_full_path,
+            group_menu,
+            category,
+        )
 
     def get_group_menu(self, group_id):
         if group_id in self.groups:

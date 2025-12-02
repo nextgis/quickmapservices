@@ -7,11 +7,9 @@ from typing import Any, Dict, Optional
 from urllib.error import URLError
 
 from qgis.core import (
-    Qgis,
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsGeometry,
-    QgsMessageLog,
     QgsProject,
     QgsSettings,
 )
@@ -45,20 +43,18 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
-from quick_map_services.core.constants import PLUGIN_NAME
+from quick_map_services.core.logging import logger
 from quick_map_services.core.settings import QmsSettings
 from quick_map_services.data_source_serializer import DataSourceSerializer
 from quick_map_services.qgis_map_helpers import add_layer_to_map
 from quick_map_services.qms_external_api_python.api.api_base import QmsNews
 from quick_map_services.qms_external_api_python.client import Client
 from quick_map_services.qms_news import News
+from quick_map_services.quick_map_services_interface import (
+    QuickMapServicesInterface,
+)
 from quick_map_services.rb_result_renderer import RubberBandResultRenderer
 from quick_map_services.singleton import singleton
-
-
-def plPrint(msg, level=Qgis.Info):
-    QgsMessageLog.logMessage(msg, PLUGIN_NAME, level)
-
 
 STATUS_FILTER_ALL = "all"
 STATUS_FILTER_ONLY_WORKS = "works"
@@ -694,9 +690,13 @@ class QmsSearchResultItemWidget(QWidget):
             add_layer_to_map(ds)
 
             CachedServices().add_service(self.geoservice, self.image_ba)
-        except Exception as ex:
-            plPrint(str(ex))
-            pass
+        except Exception as error:
+            logger.exception(
+                "An error occured while adding geoservice to the map"
+            )
+            QuickMapServicesInterface.instance().notifier.display_exception(
+                error
+            )
         finally:
             QApplication.restoreOverrideCursor()
 

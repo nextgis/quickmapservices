@@ -17,7 +17,9 @@ def locale() -> str:
         locale_full_name = QLocale.system().name()
     else:
         locale_full_name = QgsSettings().value("locale/userLocale", "")
-    return locale_full_name[0:2].lower()
+    locale = locale_full_name[0:2].lower()
+
+    return locale if locale.lower() != "c" else "en"
 
 
 def utm_tags(utm_medium: str, *, utm_campaign: str = "constant") -> str:

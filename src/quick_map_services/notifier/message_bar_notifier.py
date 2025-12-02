@@ -10,6 +10,7 @@ from qgis.utils import iface
 
 from quick_map_services.core.constants import PLUGIN_NAME
 from quick_map_services.core.exceptions import QmsError, QmsWarning
+from quick_map_services.core.logging import logger
 from quick_map_services.core.utils import utm_tags
 from quick_map_services.notifier.notifier_interface import NotifierInterface
 from quick_map_services.quick_map_services_interface import (
@@ -83,6 +84,8 @@ class MessageBarNotifier(NotifierInterface):
         message_id = str(uuid.uuid4())
         item.setProperty("QmsMessageId", message_id)
 
+        logger.log(level, message)
+
         return message_id
 
     def display_exception(self, error: Exception) -> str:
@@ -116,6 +119,11 @@ class MessageBarNotifier(NotifierInterface):
         item = message_bar.pushWidget(widget, level)
         item.setObjectName("QmsMessageBarItem")
         item.setProperty("QmsMessageId", error.error_id)
+
+        if level == Qgis.MessageLevel.Critical:
+            logger.exception(error.log_message, exc_info=error)
+        else:
+            logger.warning(error.user_message)
 
         return error.error_id
 
