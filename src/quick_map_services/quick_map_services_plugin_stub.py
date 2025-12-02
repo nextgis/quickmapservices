@@ -1,11 +1,15 @@
+import sys
 from typing import TYPE_CHECKING, Optional
 
+from osgeo import gdal
+from qgis.core import Qgis
 from qgis.gui import QgisInterface
-from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtCore import QT_VERSION_STR, QObject, QSysInfo
 from qgis.utils import iface
 
 from quick_map_services.core import utils
 from quick_map_services.core.constants import PLUGIN_NAME
+from quick_map_services.core.logging import logger
 from quick_map_services.notifier.message_bar_notifier import MessageBarNotifier
 from quick_map_services.quick_map_services_interface import (
     QuickMapServicesInterface,
@@ -25,6 +29,23 @@ class QuickMapServicesPluginStub(QuickMapServicesInterface):
     def __init__(self, parent: Optional[QObject] = None) -> None:
         """Initialize the plugin stub."""
         super().__init__(parent)
+        metadata_file = self.path / "metadata.txt"
+
+        logger.debug("<b>✓ Plugin stub created</b>")
+        logger.debug(f"<b>ⓘ OS:</b> {QSysInfo().prettyProductName()}")
+        logger.debug(f"<b>ⓘ Qt version:</b> {QT_VERSION_STR}")
+        logger.debug(f"<b>ⓘ QGIS version:</b> {Qgis.version()}")
+        logger.debug(f"<b>ⓘ Python version:</b> {sys.version}")
+        logger.debug(f"<b>ⓘ GDAL version:</b> {gdal.__version__}")
+        logger.debug(f"<b>ⓘ Plugin version:</b> {self.version}")
+        logger.debug(
+            f"<b>ⓘ Plugin path:</b> {self.path}"
+            + (
+                f" -> {metadata_file.resolve().parent}"
+                if metadata_file.is_symlink()
+                else ""
+            )
+        )
 
         self.__notifier = None
 

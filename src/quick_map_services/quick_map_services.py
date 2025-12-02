@@ -26,12 +26,10 @@ import sys
 import xml.etree.ElementTree as ET
 from typing import TYPE_CHECKING, Optional
 
-# Initialize Qt resources from file resources.py
-# import resources_rc
-# Import the code for the dialog
-from qgis.core import QgsProject
+from osgeo import gdal
+from qgis.core import Qgis, QgsProject
 from qgis.gui import QgisInterface, QgsMessageBar
-from qgis.PyQt.QtCore import QObject, Qt, QUrl
+from qgis.PyQt.QtCore import QT_VERSION_STR, QObject, QSysInfo, Qt, QUrl
 from qgis.PyQt.QtGui import QDesktopServices, QIcon
 from qgis.PyQt.QtWidgets import (
     QAction,
@@ -43,6 +41,7 @@ from qgis.utils import iface
 
 from quick_map_services.core import utils
 from quick_map_services.core.constants import PACKAGE_NAME, PLUGIN_NAME
+from quick_map_services.core.logging import logger
 from quick_map_services.core.settings import QmsSettings
 from quick_map_services.gui.qms_settings_page import QmsSettingsPageFactory
 from quick_map_services.notifier.message_bar_notifier import MessageBarNotifier
@@ -78,6 +77,23 @@ class QuickMapServices(QuickMapServicesInterface):
         :type parent: Optional[QObject]
         """
         super().__init__(parent)
+        metadata_file = self.path / "metadata.txt"
+
+        logger.debug("<b>✓ Plugin created</b>")
+        logger.debug(f"<b>ⓘ OS:</b> {QSysInfo().prettyProductName()}")
+        logger.debug(f"<b>ⓘ Qt version:</b> {QT_VERSION_STR}")
+        logger.debug(f"<b>ⓘ QGIS version:</b> {Qgis.version()}")
+        logger.debug(f"<b>ⓘ Python version:</b> {sys.version}")
+        logger.debug(f"<b>ⓘ GDAL version:</b> {gdal.__version__}")
+        logger.debug(f"<b>ⓘ Plugin version:</b> {self.version}")
+        logger.debug(
+            f"<b>ⓘ Plugin path:</b> {self.path}"
+            + (
+                f" -> {metadata_file.resolve().parent}"
+                if metadata_file.is_symlink()
+                else ""
+            )
+        )
 
         # Save reference to the QGIS interface
         self.iface = iface
@@ -92,16 +108,19 @@ class QuickMapServices(QuickMapServicesInterface):
         # Check Contrib and User dirs
         try:
             ExtraSources.check_extra_dirs()
-        except:
-            error_message = self.tr(
-                "Extra dirs for %s can't be created: %s %s"
-            ) % (
-                PLUGIN_NAME,
-                sys.exc_info()[0],
-                sys.exc_info()[1],
+        except Exception:
+            logger.exception(
+                "Failed to create extra directories for QuickMapServices"
             )
+
+            error_message = self.tr(
+                "Extra directories for {} could not be created."
+            ).format(PLUGIN_NAME)
+
             self.iface.messageBar().pushMessage(
-                self.tr("Error"), error_message, level=QgsMessageBar.CRITICAL
+                self.tr("Error"),
+                error_message,
+                level=QgsMessageBar.CRITICAL,
             )
 
         # Declare instance attributes

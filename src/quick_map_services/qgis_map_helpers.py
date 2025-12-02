@@ -1,10 +1,11 @@
 import random
+from typing import Optional
 from urllib import parse
 
 from qgis.core import (
     Qgis,
     QgsCoordinateReferenceSystem,
-    QgsMessageLog,
+    QgsMapLayer,
     QgsProject,
     QgsRasterLayer,
     QgsVectorLayer,
@@ -13,19 +14,14 @@ from qgis.PyQt.QtCore import QSettings
 from qgis.utils import iface
 
 from quick_map_services.core.compat import QGIS_3_38
-from quick_map_services.core.constants import PLUGIN_NAME
+from quick_map_services.core.logging import logger
 from quick_map_services.core.settings import QmsSettings
-
-from .qgis_proj_helper import ProjectionHelper
-from .supported_drivers import KNOWN_DRIVERS
+from quick_map_services.quick_map_services_interface import (
+    QuickMapServicesInterface,
+)
+from quick_map_services.supported_drivers import KNOWN_DRIVERS
 
 service_layers = []
-
-
-def tr(message):
-    # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-    # return QCoreApplication.translate('QuickMapServices', message)
-    return message
 
 
 def add_layer_to_map(ds):
@@ -63,9 +59,9 @@ def add_layer_to_map(ds):
 
         # Create and configure TMS raster layer
         layer = QgsRasterLayer(
-            qgis_tms_uri, tr(ds.alias), KNOWN_DRIVERS.WMS.lower()
+            qgis_tms_uri, ds.alias, KNOWN_DRIVERS.WMS.lower()
         )
-        ProjectionHelper.set_tile_layer_proj(
+        set_tile_layer_proj(
             layer,
             ds.tms_epsg_crs_id,
             ds.tms_postgis_crs_id,
@@ -75,7 +71,7 @@ def add_layer_to_map(ds):
 
     # === GDAL LAYERS ===
     if ds.type.lower() == KNOWN_DRIVERS.GDAL.lower():
-        layer = QgsRasterLayer(ds.gdal_source_file, tr(ds.alias))
+        layer = QgsRasterLayer(ds.gdal_source_file, ds.alias)
         layers4add.append(layer)
 
     # === WMS LAYERS ===
@@ -101,7 +97,7 @@ def add_layer_to_map(ds):
         )
 
         layer = QgsRasterLayer(
-            qgis_wms_uri, tr(ds.alias), KNOWN_DRIVERS.WMS.lower()
+            qgis_wms_uri, ds.alias, KNOWN_DRIVERS.WMS.lower()
         )
         layers4add.append(layer)
 
@@ -139,26 +135,22 @@ def add_layer_to_map(ds):
 
             qgis_wfs_uri = parse.urlunparse(url_parts)
             layer = QgsVectorLayer(
-                qgis_wfs_uri, "%s - %s" % (tr(ds.alias), layer_name), "WFS"
+                qgis_wfs_uri, "%s - %s" % (ds.alias, layer_name), "WFS"
             )
             layers4add.append(layer)
 
     # === GEOJSON LAYERS ===
     if ds.type.lower() == KNOWN_DRIVERS.GEOJSON.lower():
-        layer = QgsVectorLayer(ds.geojson_url, tr(ds.alias), "ogr")
+        layer = QgsVectorLayer(ds.geojson_url, ds.alias, "ogr")
         layers4add.append(layer)
 
     # === ADD LAYERS TO PROJECT ===
     for layer in layers4add:
         if not layer.isValid():
-            error_message = (
-                tr("Layer %s can't be added to the map!") % ds.alias
-            )
-            iface.messageBar().pushMessage(
-                tr("Error"), error_message, level=Qgis.Critical
-            )
-            QgsMessageLog.logMessage(
-                error_message, PLUGIN_NAME, level=Qgis.Critical
+            error_message = f"Layer '{ds.alias}' can't be added to the map!"
+            QuickMapServicesInterface.instance().notifier.display_message(
+                error_message,
+                level=Qgis.MessageLevel.Critical,
             )
         else:
             # Set attribs
@@ -212,3 +204,60 @@ def add_layer_to_map(ds):
                 )
                 if new_project_crs_behavior == "UsePresetCrs":
                     QgsProject.instance().setCrs(crs_3857)
+
+
+def set_tile_layer_proj(
+    layer: QgsMapLayer,
+    epsg_crs_id: Optional[int] = None,
+    postgis_crs_id: Optional[int] = None,
+    custom_proj: Optional[str] = None,
+) -> None:
+    """
+    Set CRS for a tile layer based on provided
+    EPSG, PostGIS, or custom PROJ string.
+
+    :param layer: QGIS layer object to configure.
+    :type layer: QgsMapLayer
+    :param epsg_crs_id: EPSG CRS ID (if available).
+    :type epsg_crs_id: Optional[int]
+    :param postgis_crs_id: PostGIS CRS ID (if available).
+    :type postgis_crs_id: Optional[int]
+    :param custom_proj: Custom PROJ string (if defined).
+    :type custom_proj: Optional[str]
+    """
+    crs_3857 = QgsCoordinateReferenceSystem.fromEpsgId(3857)
+    layer.setCrs(crs_3857)
+
+    try:
+        crs = None
+        if epsg_crs_id is not None:
+            crs = QgsCoordinateReferenceSystem.fromEpsgId(epsg_crs_id)
+
+        elif postgis_crs_id is not None:
+            crs = QgsCoordinateReferenceSystem(
+                postgis_crs_id, QgsCoordinateReferenceSystem.PostgisCrsId
+            )
+
+        elif custom_proj is not None:
+            custom_crs = QgsCoordinateReferenceSystem()
+            custom_crs.createFromProj(custom_proj)
+
+            if custom_crs.isValid() and custom_crs.srsid() == 0:
+                custom_crs.saveAsUserCRS("quickmapservices " + layer.name())
+
+            crs = custom_crs
+
+        if crs and crs.isValid():
+            layer.setCrs(crs)
+            logger.info(
+                f"CRS set for layer '{layer.name()}': "
+                f"{crs.authid() or 'custom'}"
+            )
+        elif crs and not crs.isValid():
+            QuickMapServicesInterface.instance().notifier.display_message(
+                f"Layer '{layer.name()}' CRS is invalid or could not be applied.",
+                level=Qgis.MessageLevel.Warning,
+            )
+    except Exception as error:
+        logger.exception("An error occured while setting layer CRS")
+        QuickMapServicesInterface.instance().notifier.display_exception(error)

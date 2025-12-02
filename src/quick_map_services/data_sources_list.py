@@ -23,11 +23,10 @@
 
 import os
 
-from qgis.core import Qgis, QgsMessageLog
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
-from quick_map_services.core.constants import PLUGIN_NAME
+from quick_map_services.core.logging import logger
 
 from . import extra_sources
 from .custom_translator import CustomTranslator
@@ -75,36 +74,30 @@ class DataSourcesList:
         """
         self.data_sources = {}
         for ds_path in self.ds_paths:
-            for root, dirs, files in os.walk(ds_path):
-                for ini_file in [f for f in files if f.endswith(".ini")]:
+            for root, _dirs, files in os.walk(ds_path):
+                ini_files = [file for file in files if file.endswith(".ini")]
+
+                for ini_file in ini_files:
+                    ini_full_path = os.path.join(root, ini_file)
+
                     try:
-                        ini_full_path = os.path.join(root, ini_file)
                         ds = DataSourceSerializer.read_from_ini(ini_full_path)
-
-                        # set contrib&user
-                        if ds_path in ROOT_MAPPING.keys():
-                            ds.category = ROOT_MAPPING[ds_path]
-                        else:
-                            ds.category = DataSourceCategory.USER
-
-                        # action
-                        ds.action = QAction(
-                            QIcon(ds.icon_path), self.tr(ds.alias), None
+                    except Exception:
+                        logger.exception(
+                            f"Failed to parse INI file: {ini_full_path}"
                         )
-                        ds.action.setData(ds)
+                        continue
 
-                        # append to array
-                        self.data_sources[ds.id] = ds
+                    ds.category = ROOT_MAPPING.get(
+                        ds_path, DataSourceCategory.USER
+                    )
 
-                    except Exception as error:
-                        error_message = "INI file can't be parsed: " + str(
-                            error
-                        )
-                        QgsMessageLog.logMessage(
-                            error_message,
-                            PLUGIN_NAME,
-                            level=Qgis.Critical,
-                        )
+                    ds.action = QAction(
+                        QIcon(ds.icon_path), self.tr(ds.alias), None
+                    )
+                    ds.action.setData(ds)
+
+                    self.data_sources[ds.id] = ds
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):

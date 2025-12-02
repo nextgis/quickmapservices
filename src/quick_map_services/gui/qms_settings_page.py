@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Optional
 
-from qgis.core import Qgis, QgsApplication, QgsMessageLog
+from qgis.core import QgsApplication
 from qgis.gui import (
     QgsOptionsPageWidget,
     QgsOptionsWidgetFactory,
@@ -18,6 +18,8 @@ from qgis.PyQt.QtWidgets import (
 )
 
 from quick_map_services.core.constants import COMPANY_NAME, PLUGIN_NAME
+from quick_map_services.core.exceptions import QmsUiLoadError
+from quick_map_services.core.logging import logger, update_logging_level
 from quick_map_services.core.settings import QmsSettings
 from quick_map_services.data_sources_model import DSManagerModel
 from quick_map_services.extra_sources import ExtraSources
@@ -58,9 +60,7 @@ class QmsSettingsPage(QgsOptionsPageWidget):
         settings = QmsSettings()
 
         settings.enable_otf_3857 = self.__widget.chkEnableOTF3857.isChecked()
-        settings.show_messages_in_bar = (
-            self.__widget.chkShowMessagesInBar.isChecked()
-        )
+        self.__save_other(settings)
 
         self.__ds_model.saveSettings()
 
@@ -75,15 +75,10 @@ class QmsSettingsPage(QgsOptionsPageWidget):
                 str(Path(__file__).parent / "qms_settings_page_base.ui")
             )
         except Exception as error:
-            QgsMessageLog.logMessage(
-                str(error), PLUGIN_NAME, level=Qgis.Critical
-            )
-            raise RuntimeError from error
+            raise QmsUiLoadError from error
 
         if widget is None:
-            message = self.tr("An error occured in settings UI")
-            QgsMessageLog.logMessage(message, PLUGIN_NAME, level=Qgis.Critical)
-            raise RuntimeError
+            raise QmsUiLoadError
 
         self.__widget = widget
         self.__widget.setParent(self)
@@ -131,9 +126,18 @@ class QmsSettingsPage(QgsOptionsPageWidget):
         settings = QmsSettings()
 
         self.__widget.chkEnableOTF3857.setChecked(settings.enable_otf_3857)
-        self.__widget.chkShowMessagesInBar.setChecked(
-            settings.show_messages_in_bar
+        self.__widget.debug_logs_checkbox.setChecked(
+            settings.is_debug_logs_enabled
         )
+
+    def __save_other(self, settings: QmsSettings) -> None:
+        old_debug_enabled = settings.is_debug_logs_enabled
+        new_debug_enabled = self.__widget.debug_logs_checkbox.isChecked()
+        settings.is_debug_logs_enabled = new_debug_enabled
+        if old_debug_enabled != new_debug_enabled:
+            debug_state = "enabled" if new_debug_enabled else "disabled"
+            update_logging_level()
+            logger.warning(f"Debug messages were {debug_state}")
 
     @pyqtSlot()
     def _on_get_contrib_pack(self) -> None:
@@ -228,4 +232,5 @@ class QmsSettingsPageFactory(QgsOptionsWidgetFactory):
         try:
             return QmsSettingsPage(parent)
         except Exception:
+            logger.exception("An error occurred while loading settings page")
             return QmsSettingsErrorPage(parent)

@@ -8,6 +8,7 @@ from qgis.core import QgsApplication
 from qgis.PyQt.QtCore import QObject, QTranslator
 
 from quick_map_services.core.constants import PACKAGE_NAME
+from quick_map_services.core.logging import logger, unload_logger
 from quick_map_services.shared.qobject_metaclass import QObjectMetaClass
 
 if TYPE_CHECKING:
@@ -80,13 +81,20 @@ class QuickMapServicesInterface(QObject, metaclass=QObjectMetaClass):
         """Initialize the GUI components and load necessary resources."""
         self.__translators = list()
 
-        self._load()
+        try:
+            self._load()
+        except Exception:
+            logger.exception("An error occurred while plugin loading")
 
     def unload(self) -> None:
         """Unload the plugin and perform cleanup operations."""
-        self._unload()
+        try:
+            self._unload()
+        except Exception:
+            logger.exception("An error occurred while plugin unloading")
 
         self.__unload_translations()
+        unload_logger()
 
     @abstractmethod
     def _load(self) -> None:
@@ -113,10 +121,12 @@ class QuickMapServicesInterface(QObject, metaclass=QObjectMetaClass):
         translator = QTranslator()
         is_loaded = translator.load(str(translator_path))
         if not is_loaded:
+            logger.debug(f"Translator {translator_path} wasn't loaded")
             return
 
         is_installed = QgsApplication.installTranslator(translator)
         if not is_installed:
+            logger.error(f"Translator {translator_path} wasn't installed")
             return
 
         # Should be kept in memory
