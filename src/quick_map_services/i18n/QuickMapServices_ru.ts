@@ -2,19 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
-    <name>@default</name>
-    <message>
-        <location filename="../qgis_map_helpers.py" line="153"/>
-        <source>Layer %s can&apos;t be added to the map!</source>
-        <translation>Слой %s невозможно добавить на карту!</translation>
-    </message>
-    <message>
-        <location filename="../qgis_map_helpers.py" line="156"/>
-        <source>Error</source>
-        <translation>Ошибка</translation>
-    </message>
-</context>
-<context>
     <name>AboutDialog</name>
     <message>
         <location filename="../about_dialog.py" line="86"/>
@@ -389,6 +376,24 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>Exceptions</name>
+    <message>
+        <location filename="../core/exceptions.py" line="36"/>
+        <source>An error occurred while running the plugin</source>
+        <translation>При работе плагина возникла ошибка</translation>
+    </message>
+    <message>
+        <location filename="../core/exceptions.py" line="222"/>
+        <source>The plugin has been successfully updated. To continue working, please restart QGIS.</source>
+        <translation>Плагин был успешно обновлён. Чтобы продолжить работу, пожалуйста, перезапустите QGIS.</translation>
+    </message>
+    <message>
+        <location filename="../core/exceptions.py" line="260"/>
+        <source>Failed to load the user interface.</source>
+        <translation>Не удалось загрузить пользовательский интерфейс.</translation>
+    </message>
+</context>
+<context>
     <name>FileSelectionWidget</name>
     <message>
         <location filename="../file_selection_widget.py" line="56"/>
@@ -513,14 +518,6 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>GroupsList</name>
-    <message>
-        <location filename="../groups_list.py" line="143"/>
-        <source>Group INI file can&apos;t be parsed: </source>
-        <translation>INI файл группы не может быть разобран: </translation>
-    </message>
-</context>
-<context>
     <name>MapServicesDialogBase</name>
     <message>
         <location filename="../gui/qms_settings_page_base.ui" line="14"/>
@@ -528,27 +525,17 @@ p, li { white-space: pre-wrap; }
         <translation>Настройки QuickMapServices</translation>
     </message>
     <message>
-        <location filename="../gui/qms_settings_page_base.ui" line="33"/>
-        <source>Enable EPSG:3857 (OTF) on adding TMS:</source>
-        <translation>Вкл. перепроецирование при доб. тайлового слоя:</translation>
-    </message>
-    <message>
-        <location filename="../gui/qms_settings_page_base.ui" line="47"/>
-        <source>Show info/error in message bar:</source>
-        <translation>Показывать инфо/ошибки в панели сообщений:</translation>
-    </message>
-    <message>
-        <location filename="../gui/qms_settings_page_base.ui" line="266"/>
+        <location filename="../gui/qms_settings_page_base.ui" line="280"/>
         <source>Get contributed pack</source>
         <translation>Получить дополнительные источники данных</translation>
     </message>
     <message>
-        <location filename="../gui/qms_settings_page_base.ui" line="227"/>
+        <location filename="../gui/qms_settings_page_base.ui" line="241"/>
         <source>Attention!</source>
         <translation>Внимание!</translation>
     </message>
     <message>
-        <location filename="../gui/qms_settings_page_base.ui" line="237"/>
+        <location filename="../gui/qms_settings_page_base.ui" line="251"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Contributed services definitions are provided &apos;as is&apos; and are not validated by plugin authors. These are proof-of-concept and for testing only. Visit &lt;a href=&quot;https://qms.nextgis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://qms.nextgis.com&lt;/span&gt;&lt;/a&gt; to add new services. Use at your own risk!&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Эти сервисы предоставляются &quot;как есть&quot;, только для целей тестирования. Используйте на свой страх и риск. Добавить новые сервисы можно по ссылке: &lt;a href=&quot;https://qms.nextgis.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;https://qms.nextgis.com&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -558,40 +545,73 @@ p, li { white-space: pre-wrap; }
         <translation>Общие</translation>
     </message>
     <message>
-        <location filename="../gui/qms_settings_page_base.ui" line="62"/>
+        <location filename="../gui/qms_settings_page_base.ui" line="76"/>
         <source>Add\Edit\Remove</source>
         <translation>Добавить\Редактировать\Удалить</translation>
     </message>
     <message>
-        <location filename="../gui/qms_settings_page_base.ui" line="75"/>
+        <location filename="../gui/qms_settings_page_base.ui" line="89"/>
         <source>Visibility</source>
         <translation>Видимость</translation>
     </message>
     <message>
-        <location filename="../gui/qms_settings_page_base.ui" line="123"/>
+        <location filename="../gui/qms_settings_page_base.ui" line="137"/>
         <source>More services</source>
         <translation>Загрузить сервисы</translation>
+    </message>
+    <message>
+        <location filename="../gui/qms_settings_page_base.ui" line="39"/>
+        <source>Enable EPSG:3857 (OTF) on adding TMS</source>
+        <translation>Включить перепроецирование в EPSG:3857 при добавлении TMS</translation>
+    </message>
+    <message>
+        <location filename="../gui/qms_settings_page_base.ui" line="49"/>
+        <source>Enable plugin debug messages</source>
+        <translation>Включить отладочные сообщения плагина</translation>
+    </message>
+</context>
+<context>
+    <name>MessageBarNotifier</name>
+    <message>
+        <location filename="../notifier/message_bar_notifier.py" line="166"/>
+        <source>Try again</source>
+        <translation>Повторить</translation>
+    </message>
+    <message>
+        <location filename="../notifier/message_bar_notifier.py" line="176"/>
+        <source>Details</source>
+        <translation>Подробнее</translation>
+    </message>
+    <message>
+        <location filename="../notifier/message_bar_notifier.py" line="180"/>
+        <source>Open logs</source>
+        <translation>Открыть логи</translation>
+    </message>
+    <message>
+        <location filename="../notifier/message_bar_notifier.py" line="185"/>
+        <source>Let us know</source>
+        <translation>Сообщить об ошибке</translation>
     </message>
 </context>
 <context>
     <name>QmsSearchResultItemWidget</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="628"/>
+        <location filename="../qms_service_toolbox.py" line="625"/>
         <source>details</source>
         <translation>подробнее</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="640"/>
+        <location filename="../qms_service_toolbox.py" line="637"/>
         <source>report a problem</source>
         <translation>сообщить о проблеме</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="650"/>
+        <location filename="../qms_service_toolbox.py" line="647"/>
         <source>Add</source>
         <translation>Добавить</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="687"/>
+        <location filename="../qms_service_toolbox.py" line="684"/>
         <source>Failed to read service data</source>
         <translation>Не удалось прочитать данные сервиса</translation>
     </message>
@@ -599,22 +619,22 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>QmsServiceToolbox</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="221"/>
+        <location filename="../qms_service_toolbox.py" line="218"/>
         <source>Search string...</source>
         <translation>Поиск геосервиса...</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="438"/>
+        <location filename="../qms_service_toolbox.py" line="435"/>
         <source>Searching...</source>
         <translation>Поиск...</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="493"/>
+        <location filename="../qms_service_toolbox.py" line="490"/>
         <source>No results!</source>
         <translation>Нет результатов!</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="411"/>
+        <location filename="../qms_service_toolbox.py" line="408"/>
         <source>Last used:</source>
         <translation>Недавно использованы:</translation>
     </message>
@@ -629,12 +649,12 @@ p, li { white-space: pre-wrap; }
         <translation>Введите часть имени сервиса</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="447"/>
+        <location filename="../qms_service_toolbox.py" line="444"/>
         <source>No results.</source>
         <translation>Ничего не найдено.</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="447"/>
+        <location filename="../qms_service_toolbox.py" line="444"/>
         <source>You can add a service to become searchable. Start &lt;a href=&apos;{}&apos;&gt;here&lt;/a&gt;.</source>
         <translation>Вы можете &lt;a href=&apos;{}&apos;&gt;добавить сервис&lt;/a&gt; самостоятельно, и он станет доступен через поиск.</translation>
     </message>
@@ -644,49 +664,49 @@ p, li { white-space: pre-wrap; }
         <translation>Фильтр по охвату</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="214"/>
+        <location filename="../qms_service_toolbox.py" line="211"/>
         <source>All</source>
         <translation>Все</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="504"/>
+        <location filename="../qms_service_toolbox.py" line="501"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="215"/>
+        <location filename="../qms_service_toolbox.py" line="212"/>
         <source>Valid</source>
         <translation>Рабочие</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="364"/>
+        <location filename="../qms_service_toolbox.py" line="361"/>
         <source>Need at least 3 symbols to start searching...</source>
         <translation>Для поиска нужно минимум 3 символа...</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="478"/>
+        <location filename="../qms_service_toolbox.py" line="475"/>
         <source>The requested service could not be found.</source>
         <translation>Запрошенный сервис не найден.</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="524"/>
+        <location filename="../qms_service_toolbox.py" line="521"/>
         <source>Service not found</source>
         <translation>Сервис не найден</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="524"/>
+        <location filename="../qms_service_toolbox.py" line="521"/>
         <source>The service no longer exists and has been removed from the recent list.</source>
         <translation>Сервис больше не существует и был удалён из списка недавно использованных.</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="545"/>
+        <location filename="../qms_service_toolbox.py" line="542"/>
         <source>The service is currently unavailable due to network or server issues. Please try again later.
 Error: {error_msg}</source>
         <translation>Сервис временно недоступен из-за проблем с сетью или сервером. Пожалуйста, попробуйте позже.
 Ошибка: {error_msg}</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="549"/>
+        <location filename="../qms_service_toolbox.py" line="546"/>
         <source>Service is unavailable</source>
         <translation>Сервис недоступен</translation>
     </message>
@@ -694,7 +714,7 @@ Error: {error_msg}</source>
 <context>
     <name>QmsSettingsErrorPage</name>
     <message>
-        <location filename="../gui/qms_settings_page.py" line="182"/>
+        <location filename="../gui/qms_settings_page.py" line="183"/>
         <source>An error occurred while loading settings page</source>
         <translation>Произошла ошибка при загрузке страницы настроек</translation>
     </message>
@@ -702,111 +722,101 @@ Error: {error_msg}</source>
 <context>
     <name>QmsSettingsPage</name>
     <message>
-        <location filename="../gui/qms_settings_page.py" line="83"/>
-        <source>An error occured in settings UI</source>
-        <translation>Произошла ошибка в интерфейсе настроек</translation>
-    </message>
-    <message>
-        <location filename="../gui/qms_settings_page.py" line="114"/>
+        <location filename="../gui/qms_settings_page.py" line="108"/>
         <source>Show all</source>
         <translation>Показать все</translation>
     </message>
     <message>
-        <location filename="../gui/qms_settings_page.py" line="120"/>
+        <location filename="../gui/qms_settings_page.py" line="114"/>
         <source>Hide all</source>
         <translation>Скрыть все</translation>
     </message>
     <message>
-        <location filename="../gui/qms_settings_page.py" line="147"/>
+        <location filename="../gui/qms_settings_page.py" line="150"/>
         <source>The latest version of contributed pack was successfully downloaded!</source>
         <translation>Последняя версия пакета с источниками данных была успешно загружена!</translation>
     </message>
     <message>
-        <location filename="../gui/qms_settings_page.py" line="157"/>
+        <location filename="../gui/qms_settings_page.py" line="160"/>
         <source>Failed to load contributed pack:
 {}</source>
         <translation>Не удалось загрузить пакет с источниками данных:
 {}</translation>
     </message>
-    <message>
-        <location filename="../gui/qms_settings_page.py" line="160"/>
-        <source>QuickMapServices</source>
-        <translation>QuickMapServices</translation>
-    </message>
 </context>
 <context>
     <name>QuickMapServices</name>
     <message>
-        <location filename="../quick_map_services.py" line="167"/>
+        <location filename="../quick_map_services.py" line="206"/>
         <source>QuickMapServices</source>
         <translation>QuickMapServices</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="274"/>
+        <location filename="../quick_map_services.py" line="317"/>
         <source>Set proper scale</source>
         <translation>Ближайший масштаб</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="291"/>
+        <location filename="../quick_map_services.py" line="334"/>
         <source>Set SlippyMap scales</source>
         <translation>Установить масштабы SlippyMap</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="302"/>
+        <location filename="../quick_map_services.py" line="345"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="314"/>
+        <location filename="../quick_map_services.py" line="357"/>
         <source>About QMS</source>
         <translation>О QMS</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="101"/>
+        <location filename="../quick_map_services.py" line="120"/>
         <source>Error</source>
         <translation>Ошибка</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="96"/>
-        <source>Extra dirs for %s can&apos;t be created: %s %s</source>
-        <translation>Невозможно создать дополнительные директории для  %s: %s %s</translation>
-    </message>
-    <message>
-        <location filename="../quick_map_services.py" line="402"/>
+        <location filename="../quick_map_services.py" line="443"/>
         <source>Search NextGIS QMS</source>
         <translation>Поиск в NextGIS QMS</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="258"/>
+        <location filename="../quick_map_services.py" line="301"/>
         <source>Add to Search</source>
         <translation>Добавить в Поиск</translation>
     </message>
     <message>
-        <location filename="../quick_map_services.py" line="167"/>
+        <location filename="../quick_map_services.py" line="206"/>
         <source>Set SlippyMap scales for current project?
 The previous settings will be overwritten!</source>
         <translation>Установить масштабы мозаичной карты для текущего проекта?
 Предыдущие настройки будут перезаписаны!</translation>
     </message>
+    <message>
+        <location filename="../quick_map_services.py" line="116"/>
+        <source>Extra directories for {} could not be created.</source>
+        <translation>Не удалось создать дополнительные каталоги для {}.</translation>
+    </message>
 </context>
 <context>
     <name>SearchThread</name>
     <message>
-        <location filename="../qms_service_toolbox.py" line="802"/>
+        <location filename="../qms_service_toolbox.py" line="803"/>
         <source>Network error!
 {0}</source>
         <translation>Сетевая ошибка!
 {0}</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="813"/>
+        <location filename="../qms_service_toolbox.py" line="814"/>
         <source>Error of processing!
 {0}: {1}</source>
         <translation>Ошибка обработки!
 {0}: {1}</translation>
     </message>
     <message>
-        <location filename="../qms_service_toolbox.py" line="808"/>
+        <location filename="../qms_service_toolbox.py" line="809"/>
         <source>Network error: {0}</source>
         <translation>Сетевая ошибка</translation>
     </message>
