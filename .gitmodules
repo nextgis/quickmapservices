@@ -1,0 +1,3 @@
+[submodule "src/quick_map_services/data_sources/quickmapservices_contrib"]
+	path = src/quick_map_services/quickmapservices_contrib
+	url = https://github.com/nextgis/quickmapservices_contrib.git
