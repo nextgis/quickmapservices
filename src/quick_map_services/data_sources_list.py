@@ -22,44 +22,36 @@
 """
 
 import os
+from pathlib import Path
+from typing import List
 
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 
 from quick_map_services.core.logging import logger
-
-from . import extra_sources
-from .custom_translator import CustomTranslator
-from .data_source_info import DataSourceCategory
-from .data_source_serializer import DataSourceSerializer
-
-CURR_PATH = os.path.dirname(__file__)
-
-INTERNAL_DS_PATHS = [
-    os.path.join(CURR_PATH, extra_sources.DATA_SOURCES_DIR_NAME),
-]
-CONTRIBUTE_DS_PATHS = [
-    os.path.join(
-        extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME
-    ),
-]
-USER_DS_PATHS = [
-    os.path.join(
-        extra_sources.USER_DIR_PATH, extra_sources.DATA_SOURCES_DIR_NAME
-    ),
-]
-
-ALL_DS_PATHS = INTERNAL_DS_PATHS + CONTRIBUTE_DS_PATHS + USER_DS_PATHS
-
-ROOT_MAPPING = {
-    INTERNAL_DS_PATHS[0]: DataSourceCategory.BASE,
-    CONTRIBUTE_DS_PATHS[0]: DataSourceCategory.CONTRIB,
-    USER_DS_PATHS[0]: DataSourceCategory.USER,
-}
+from quick_map_services.custom_translator import CustomTranslator
+from quick_map_services.data_source_info import DataSourceCategory
+from quick_map_services.data_source_serializer import DataSourceSerializer
+from quick_map_services.paths_constants import (
+    ALL_DS_PATHS,
+    BASE_DATA_SOURCES_PATH,
+)
 
 
 class DataSourcesList:
-    def __init__(self, ds_paths=ALL_DS_PATHS):
+    """
+    Manage a collection of data sources loaded from configuration files.
+
+    This class scans specified directories for ``.ini`` files describing
+    data sources, parses them into :class:`DataSource` objects.
+    """
+
+    def __init__(self, ds_paths: List[Path] = ALL_DS_PATHS) -> None:
+        """
+        Initialize the DataSourcesList and load available data sources.
+
+        :param ds_paths: List of directories to scan for data sources.
+        """
         self.data_sources = {}
         self.ds_paths = ds_paths
         self._fill_data_sources_list()
@@ -74,6 +66,11 @@ class DataSourcesList:
         """
         self.data_sources = {}
         for ds_path in self.ds_paths:
+            if ds_path == BASE_DATA_SOURCES_PATH:
+                category = DataSourceCategory.BASE
+            else:
+                category = DataSourceCategory.USER
+
             for root, _dirs, files in os.walk(ds_path):
                 ini_files = [file for file in files if file.endswith(".ini")]
 
@@ -88,9 +85,7 @@ class DataSourcesList:
                         )
                         continue
 
-                    ds.category = ROOT_MAPPING.get(
-                        ds_path, DataSourceCategory.USER
-                    )
+                    ds.category = category
 
                     ds.action = QAction(
                         QIcon(ds.icon_path), self.tr(ds.alias), None

@@ -9,11 +9,12 @@ from qgis.PyQt.QtGui import QPixmap
 from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from quick_map_services.core.settings import QmsSettings
-
-from . import extra_sources
-from .fixed_config_parser import FixedConfigParser
-from .groups_list import GroupsList
-from .gui.line_edit_color_validator import LineEditColorValidator
+from quick_map_services.fixed_config_parser import FixedConfigParser
+from quick_map_services.groups_list import GroupsList
+from quick_map_services.gui.line_edit_color_validator import (
+    LineEditColorValidator,
+)
+from quick_map_services.paths_constants import GROUPS_DIR_NAME, USER_DIR_PATH
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "group_edit_dialog.ui")
@@ -211,8 +212,8 @@ class GroupEditDialog(QDialog, FORM_CLASS):
 
         # set paths
         dir_path = path.join(
-            extra_sources.USER_DIR_PATH,
-            extra_sources.GROUPS_DIR_NAME,
+            USER_DIR_PATH,
+            GROUPS_DIR_NAME,
             group_id,
         )
 

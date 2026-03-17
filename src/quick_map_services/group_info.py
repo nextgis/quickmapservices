@@ -24,10 +24,9 @@
 
 class GroupCategory:
     BASE = "base"
-    CONTRIB = "contributed"
     USER = "user"
 
-    all = [BASE, CONTRIB, USER]
+    all = [BASE, USER]
 
 
 class GroupInfo:

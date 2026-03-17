@@ -26,25 +26,18 @@ import shutil
 import tempfile
 from zipfile import ZipFile
 
-from qgis.core import QgsApplication, QgsNetworkAccessManager
+from qgis.core import QgsNetworkAccessManager
 from qgis.PyQt.QtCore import QEventLoop, QFile, QUrl
 from qgis.PyQt.QtNetwork import QNetworkReply, QNetworkRequest
 
 from quick_map_services.core.compat import OpenModeFlag
-from quick_map_services.core.constants import PLUGIN_NAME
-
-LOCAL_SETTINGS_PATH = os.path.dirname(
-    QgsApplication.qgisUserDatabaseFilePath()
+from quick_map_services.paths_constants import (
+    DATA_SOURCES_DIR_NAME,
+    GROUPS_DIR_NAME,
+    PLUGIN_SETTINGS_PATH,
+    USER_DIR_PATH,
 )
-PLUGIN_SETTINGS_PATH = os.path.join(LOCAL_SETTINGS_PATH, PLUGIN_NAME)
 
-CONTRIBUTE_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, "Contribute")
-USER_DIR_PATH = os.path.join(PLUGIN_SETTINGS_PATH, "User")
-
-DATA_SOURCES_DIR_NAME = "data_sources"
-GROUPS_DIR_NAME = "groups"
-
-# CONTRIBUTE_REPO_URL = 'https://api.github.com/repos/nextgis/quickmapservices_contrib'
 CONTRIBUTE_ZIP_DIRECT_URL = "https://github.com/nextgis/quickmapservices_contrib/archive/refs/tags/v1.23.zip"
 
 
@@ -55,12 +48,10 @@ class ExtraSources:
     def check_extra_dirs(cls):
         if not os.path.exists(PLUGIN_SETTINGS_PATH):
             os.mkdir(PLUGIN_SETTINGS_PATH)
-        if not os.path.exists(CONTRIBUTE_DIR_PATH):
-            os.mkdir(CONTRIBUTE_DIR_PATH)
         if not os.path.exists(USER_DIR_PATH):
             os.mkdir(USER_DIR_PATH)
 
-        for base_folder in (CONTRIBUTE_DIR_PATH, USER_DIR_PATH):
+        for base_folder in (USER_DIR_PATH,):
             ds_folder = os.path.join(base_folder, DATA_SOURCES_DIR_NAME)
             if not os.path.exists(ds_folder):
                 os.mkdir(ds_folder)
@@ -91,10 +82,6 @@ class ExtraSources:
         # first dir - our content
         src_dir_name = os.listdir(tmp_extract_dir)[0]
         src_dir = os.path.join(tmp_extract_dir, src_dir_name)
-
-        # clear dst dir and copy
-        shutil.rmtree(CONTRIBUTE_DIR_PATH, ignore_errors=True)
-        shutil.copytree(src_dir, CONTRIBUTE_DIR_PATH)
 
         # remove tmp dir
         shutil.rmtree(tmp_dir, ignore_errors=True)

@@ -8,20 +8,24 @@ from qgis.PyQt.QtGui import QIcon, QPixmap
 from qgis.PyQt.QtWidgets import QDialog, QFileDialog, QMessageBox
 
 from quick_map_services.core.settings import QmsSettings
-
-from . import extra_sources
-from .data_source_info import DataSourceInfo
-from .data_source_serializer import DataSourceSerializer
-from .data_sources_list import DataSourcesList
-from .group_info import GroupInfo
-from .groups_list import GroupsList
-from .gui.editor_widget_gdal import EditorWidgetGdal
-from .gui.editor_widget_geojson import EditorWidgetGeoJson
-from .gui.editor_widget_tms import EditorWidgetTms
-from .gui.editor_widget_wfs import EditorWidgetWfs
-from .gui.editor_widget_wms import EditorWidgetWms
-from .gui.line_edit_color_validator import LineEditColorValidator
-from .supported_drivers import KNOWN_DRIVERS
+from quick_map_services.data_source_info import DataSourceInfo
+from quick_map_services.data_source_serializer import DataSourceSerializer
+from quick_map_services.data_sources_list import DataSourcesList
+from quick_map_services.group_info import GroupInfo
+from quick_map_services.groups_list import GroupsList
+from quick_map_services.gui.editor_widget_gdal import EditorWidgetGdal
+from quick_map_services.gui.editor_widget_geojson import EditorWidgetGeoJson
+from quick_map_services.gui.editor_widget_tms import EditorWidgetTms
+from quick_map_services.gui.editor_widget_wfs import EditorWidgetWfs
+from quick_map_services.gui.editor_widget_wms import EditorWidgetWms
+from quick_map_services.gui.line_edit_color_validator import (
+    LineEditColorValidator,
+)
+from quick_map_services.paths_constants import (
+    DATA_SOURCES_DIR_NAME,
+    USER_DIR_PATH,
+)
+from quick_map_services.supported_drivers import KNOWN_DRIVERS
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), "ds_edit_dialog.ui")
@@ -229,8 +233,8 @@ class DsEditDialog(QDialog, FORM_CLASS):
 
         # set paths
         dir_path = path.join(
-            extra_sources.USER_DIR_PATH,
-            extra_sources.DATA_SOURCES_DIR_NAME,
+            USER_DIR_PATH,
+            DATA_SOURCES_DIR_NAME,
             ds_info.id,
         )
 

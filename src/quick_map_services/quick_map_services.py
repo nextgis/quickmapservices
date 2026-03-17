@@ -39,23 +39,22 @@ from qgis.PyQt.QtWidgets import (
 )
 from qgis.utils import iface
 
+from quick_map_services.about_dialog import AboutDialog
 from quick_map_services.core import utils
 from quick_map_services.core.constants import PACKAGE_NAME, PLUGIN_NAME
 from quick_map_services.core.logging import logger
 from quick_map_services.core.settings import QmsSettings
+from quick_map_services.custom_translator import CustomTranslator
+from quick_map_services.data_sources_list import DataSourcesList
+from quick_map_services.extra_sources import ExtraSources
+from quick_map_services.groups_list import GroupsList
 from quick_map_services.gui.qms_settings_page import QmsSettingsPageFactory
 from quick_map_services.notifier.message_bar_notifier import MessageBarNotifier
+from quick_map_services.qgis_map_helpers import add_layer_to_map
+from quick_map_services.qms_service_toolbox import QmsServiceToolbox
 from quick_map_services.quick_map_services_interface import (
     QuickMapServicesInterface,
 )
-
-from .about_dialog import AboutDialog
-from .custom_translator import CustomTranslator
-from .data_sources_list import DataSourcesList
-from .extra_sources import ExtraSources
-from .groups_list import GroupsList
-from .qgis_map_helpers import add_layer_to_map
-from .qms_service_toolbox import QmsServiceToolbox
 
 if TYPE_CHECKING:
     from quick_map_services.notifier.notifier_interface import (
@@ -68,7 +67,7 @@ assert isinstance(iface, QgisInterface)
 class QuickMapServices(QuickMapServicesInterface):
     """QGIS Plugin Implementation."""
 
-    __notifier: Optional[MessageBarNotifier]
+    _notifier: Optional[MessageBarNotifier]
 
     def __init__(self, parent: Optional[QObject] = None) -> None:
         """Initialize the plugin instance.
@@ -120,7 +119,7 @@ class QuickMapServices(QuickMapServicesInterface):
             self.iface.messageBar().pushMessage(
                 self.tr("Error"),
                 error_message,
-                level=QgsMessageBar.CRITICAL,
+                level=Qgis.MessageLevel.Critical,
             )
 
         # Declare instance attributes
@@ -128,7 +127,7 @@ class QuickMapServices(QuickMapServicesInterface):
         self.service_layers = []  # TODO: id and smart remove
         self._scales_list = None
 
-        self.__notifier = None
+        self._notifier = None
 
     @property
     def notifier(self) -> "NotifierInterface":
@@ -138,8 +137,8 @@ class QuickMapServices(QuickMapServicesInterface):
         :rtype: NotifierInterface
         :raises AssertionError: If notifier is not initialized.
         """
-        assert self.__notifier is not None, "Notifier is not initialized"
-        return self.__notifier
+        assert self._notifier is not None, "Notifier is not initialized"
+        return self._notifier
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -153,7 +152,7 @@ class QuickMapServices(QuickMapServicesInterface):
         self._add_translator(
             self.path / "i18n" / f"{PLUGIN_NAME}_{utils.locale()}.qm",
         )
-        self.__notifier = MessageBarNotifier(self)
+        self._notifier = MessageBarNotifier(self)
 
         # Create menu
         icon_path = self.plugin_dir + "/icons/mActionAddLayer.svg"
@@ -166,9 +165,9 @@ class QuickMapServices(QuickMapServicesInterface):
         # add to QGIS menu/toolbars
         self.append_menu_buttons()
 
-        self.__qms_settings_page_factory = QmsSettingsPageFactory()
+        self._qms_settings_page_factory = QmsSettingsPageFactory()
         self.iface.registerOptionsWidgetFactory(
-            self.__qms_settings_page_factory
+            self._qms_settings_page_factory
         )
 
     def _load_scales_list(self):
@@ -244,16 +243,16 @@ class QuickMapServices(QuickMapServicesInterface):
         self.groups_list = None
         self.service_layers = None
 
-        if self.__qms_settings_page_factory is not None:
+        if self._qms_settings_page_factory is not None:
             self.iface.unregisterOptionsWidgetFactory(
-                self.__qms_settings_page_factory
+                self._qms_settings_page_factory
             )
-            self.__qms_settings_page_factory.deleteLater()
-            self.__qms_settings_page_factory = None
+            self._qms_settings_page_factory.deleteLater()
+            self._qms_settings_page_factory = None
 
-        if self.__notifier is not None:
-            self.__notifier.deleteLater()
-            self.__notifier = None
+        if self._notifier is not None:
+            self._notifier.deleteLater()
+            self._notifier = None
 
     qms_create_service_action = None
     set_nearest_scale_act = None
@@ -363,15 +362,15 @@ class QuickMapServices(QuickMapServicesInterface):
             self.info_act.triggered.connect(self.info_dlg.show)
         self.menu.addAction(self.info_act)
 
-        self.__help_action = QAction(
+        self._help_action = QAction(
             QIcon(self.plugin_dir + "/icons/qms_logo.svg"),
             "QuickMapServices",
         )
-        self.__help_action.triggered.connect(self.info_dlg.show)
+        self._help_action.triggered.connect(self.info_dlg.show)
 
         plugin_help_menu = self.iface.pluginHelpMenu()
         assert plugin_help_menu is not None
-        plugin_help_menu.addAction(self.__help_action)
+        plugin_help_menu.addAction(self._help_action)
 
     def remove_menu_buttons(self):
         """

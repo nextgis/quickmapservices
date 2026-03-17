@@ -16,9 +16,10 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
-from quick_map_services.data_sources_list import USER_DS_PATHS, DataSourcesList
+from quick_map_services.data_sources_list import DataSourcesList
 from quick_map_services.data_sources_model import DSManagerModel
 from quick_map_services.ds_edit_dialog import DsEditDialog
+from quick_map_services.paths_constants import USER_DATA_SOURCES_PATH
 
 FORM_CLASS, _ = uic.loadUiType(
     str(Path(__file__).parent / "user_services_box.ui")
@@ -40,7 +41,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         super(UserServicesBox, self).__init__(parent)
         self.setupUi(self)
 
-        self.feel_list()
+        self.fill_list()
 
         self.lstServices.currentItemChanged.connect(self.on_sel_changed)
         self.lstServices.itemDoubleClicked.connect(self.on_edit)
@@ -60,36 +61,61 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
 
         self.ds_model = DSManagerModel()
 
-    def feel_list(self):
+    def fill_list(self) -> None:
+        """
+        Populate the list widget with user-defined services.
+
+        :returns: None
+        """
         self.lstServices.clear()
-        ds_list = DataSourcesList(USER_DS_PATHS)
+        ds_list = DataSourcesList([USER_DATA_SOURCES_PATH])
         for ds in ds_list.data_sources.values():
             item = QListWidgetItem(ds.action.icon(), ds.action.text())
             item.setData(Qt.ItemDataRole.UserRole, ds)
             self.lstServices.addItem(item)
 
-    def on_sel_changed(self, curr, prev):
+    def on_sel_changed(
+        self, curr: Optional[QListWidgetItem], prev: Optional[QListWidgetItem]
+    ) -> None:
+        """
+        Handle change of selected service in the list.
+
+        :param curr: Currently selected item.
+        :param prev: Previously selected item.
+
+        :returns: None
+        """
         has_sel = curr is not None
         self.btnEdit.setEnabled(has_sel)
         self.btnDelete.setEnabled(has_sel)
 
-    def on_add(self):
+    def on_add(self) -> None:
+        """
+        Open dialog to create a new service.
+
+        :returns: None
+        """
         edit_dialog = DsEditDialog()
         edit_dialog.setWindowTitle(self.tr("Create service"))
         if edit_dialog.exec() == QDialog.DialogCode.Accepted:
-            self.feel_list()
+            self.fill_list()
             self.ds_model.resetModel()
 
-    def on_edit(self):
+    def on_edit(self) -> None:
+        """
+        Open dialog to edit the selected service.
+
+        :returns: None
+        """
         item = self.lstServices.currentItem().data(Qt.ItemDataRole.UserRole)
         edit_dialog = DsEditDialog()
         edit_dialog.setWindowTitle(self.tr("Edit service"))
         edit_dialog.set_ds_info(item)
         if edit_dialog.exec() == QDialog.DialogCode.Accepted:
-            self.feel_list()
+            self.fill_list()
             self.ds_model.resetModel()
 
-    def on_delete(self):
+    def on_delete(self) -> None:
         """
         Delete the currently selected user service after confirmation.
         """
@@ -106,10 +132,15 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
             )
             dir_path = str(Path(ds_info.file_path).parent)
             shutil.rmtree(dir_path, True)
-            self.feel_list()
+            self.fill_list()
             self.ds_model.resetModel()
 
-    def on_copy(self):
+    def on_copy(self) -> None:
+        """
+        Create a new service based on an existing one.
+
+        :returns: None
+        """
         self.ds_model.sort(DSManagerModel.COLUMN_GROUP_DS)
 
         select_data_sources_dialog = QDialog(self)
@@ -127,18 +158,10 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         list_view.setColumnHidden(DSManagerModel.COLUMN_VISIBILITY, True)
         list_view.setAlternatingRowColors(True)
 
-        if hasattr(list_view.header(), "setResizeMode"):
-            # Qt4
-            list_view.header().setResizeMode(
-                DSManagerModel.COLUMN_GROUP_DS,
-                QHeaderView.ResizeMode.ResizeToContents,
-            )
-        else:
-            # Qt5
-            list_view.header().setSectionResizeMode(
-                DSManagerModel.COLUMN_GROUP_DS,
-                QHeaderView.ResizeMode.ResizeToContents,
-            )
+        list_view.header().setSectionResizeMode(
+            DSManagerModel.COLUMN_GROUP_DS,
+            QHeaderView.ResizeMode.ResizeToContents,
+        )
 
         list_view.clicked.connect(
             lambda index: select_data_sources_dialog.accept()
@@ -156,5 +179,5 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
             edit_dialog.setWindowTitle(self.tr("Create service from existing"))
             edit_dialog.fill_ds_info(data_source)
             if edit_dialog.exec() == QDialog.DialogCode.Accepted:
-                self.feel_list()
+                self.fill_list()
                 self.ds_model.resetModel()

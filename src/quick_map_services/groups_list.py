@@ -24,59 +24,58 @@
 import codecs
 import configparser
 import os
+from pathlib import Path
+from typing import List
 
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QMenu
 
+from quick_map_services.config_reader_helper import ConfigReaderHelper
 from quick_map_services.core import utils
 from quick_map_services.core.logging import logger
-
-from . import extra_sources
-from .config_reader_helper import ConfigReaderHelper
-from .custom_translator import CustomTranslator
-from .group_info import GroupCategory, GroupInfo
-
-CURR_PATH = os.path.dirname(__file__)
-
-INTERNAL_GROUP_PATHS = [
-    os.path.join(CURR_PATH, extra_sources.GROUPS_DIR_NAME),
-]
-CONTRIBUTE_GROUP_PATHS = [
-    os.path.join(
-        extra_sources.CONTRIBUTE_DIR_PATH, extra_sources.GROUPS_DIR_NAME
-    ),
-]
-USER_GROUP_PATHS = [
-    os.path.join(extra_sources.USER_DIR_PATH, extra_sources.GROUPS_DIR_NAME),
-]
-
-ALL_GROUP_PATHS = (
-    INTERNAL_GROUP_PATHS + CONTRIBUTE_GROUP_PATHS + USER_GROUP_PATHS
+from quick_map_services.custom_translator import CustomTranslator
+from quick_map_services.group_info import GroupCategory, GroupInfo
+from quick_map_services.paths_constants import (
+    ALL_GROUP_PATHS,
+    BASE_GROUPS_PATH,
 )
-
-ROOT_MAPPING = {
-    INTERNAL_GROUP_PATHS[0]: GroupCategory.BASE,
-    CONTRIBUTE_GROUP_PATHS[0]: GroupCategory.CONTRIB,
-    USER_GROUP_PATHS[0]: GroupCategory.USER,
-}
 
 
 class GroupsList:
-    def __init__(self, group_paths=ALL_GROUP_PATHS):
+    """
+    Manage a collection of groups loaded from configuration files.
+
+    This class scans specified directories for ``.ini`` files describing
+    groups, parses their metadata, and stores them as :class:`GroupInfo`
+    objects.
+    """
+
+    def __init__(self, group_paths: List[Path] = ALL_GROUP_PATHS) -> None:
+        """
+        Initialize the GroupsList instance and load group definitions.
+
+        :param group_paths: List of directory paths to search for group
+            definition files.
+        """
         self.translator = CustomTranslator()
         self.paths = group_paths
         self.groups = {}
         self._fill_groups_list()
 
-    def _fill_groups_list(self):
+    def _fill_groups_list(self) -> None:
+        """
+        Populate the internal groups dictionary from configuration files.
+
+        :returns: None
+        """
         self.groups = {}
         for gr_path in self.paths:
-            if gr_path in ROOT_MAPPING.keys():
-                category = ROOT_MAPPING[gr_path]
+            if gr_path == BASE_GROUPS_PATH:
+                category = GroupCategory.BASE
             else:
                 category = GroupCategory.USER
 
-            for root, dirs, files in os.walk(gr_path):
+            for root, _dirs, files in os.walk(gr_path):
                 for ini_file in [f for f in files if f.endswith(".ini")]:
                     self._read_ini_file(root, ini_file, category)
 
@@ -94,7 +93,7 @@ class GroupsList:
         :type root: str
         :param ini_file_path: The name of the `.ini` file to be parsed.
         :type ini_file_path: str
-        :param category: The category of the group (e.g., BASE, CONTRIB, USER).
+        :param category: The category of the group (e.g., BASE, USER).
         :type category: str
 
         :return: None
@@ -146,7 +145,14 @@ class GroupsList:
             category,
         )
 
-    def get_group_menu(self, group_id):
+    def get_group_menu(self, group_id: str) -> QMenu:
+        """
+        Retrieve or create a QMenu for the specified group.
+
+        :param group_id: Unique identifier of the group.
+
+        :returns: QMenu instance associated with the group.
+        """
         if group_id in self.groups:
             return self.groups[group_id].menu
         else:
