@@ -1,7 +1,15 @@
+import shutil
+
 from qgis.core import QgsSettings
 from qgis.PyQt.QtCore import QLocale
 
 from quick_map_services.core.constants import PACKAGE_NAME
+from quick_map_services.paths_constants import (
+    DATA_SOURCES_DIR_NAME,
+    GROUPS_DIR_NAME,
+    PLUGIN_SETTINGS_PATH,
+    USER_DIR_PATH,
+)
 
 
 def locale() -> str:
@@ -37,3 +45,30 @@ def utm_tags(utm_medium: str, *, utm_campaign: str = "constant") -> str:
         f"&utm_campaign={utm_campaign}&utm_term={PACKAGE_NAME}"
         f"&utm_content={locale()}"
     )
+
+
+def ensure_user_dirs() -> None:
+    """
+    Ensure that required user directories exist.
+
+    :return: None
+    """
+    PLUGIN_SETTINGS_PATH.mkdir(parents=True, exist_ok=True)
+    USER_DIR_PATH.mkdir(parents=True, exist_ok=True)
+
+    (USER_DIR_PATH / DATA_SOURCES_DIR_NAME).mkdir(exist_ok=True)
+    (USER_DIR_PATH / GROUPS_DIR_NAME).mkdir(exist_ok=True)
+
+
+def cleanup_obsolete_dirs() -> None:
+    """
+    Remove obsolete directories from plugin storage.
+
+    :return: None
+    """
+    contrib_path = PLUGIN_SETTINGS_PATH / "Contribute"
+
+    if not contrib_path.exists():
+        return
+
+    shutil.rmtree(contrib_path)

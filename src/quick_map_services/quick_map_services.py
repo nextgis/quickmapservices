@@ -106,20 +106,17 @@ class QuickMapServices(QuickMapServicesInterface):
 
         # Check Contrib and User dirs
         try:
-            ExtraSources.check_extra_dirs()
-        except Exception:
+            utils.ensure_user_dirs()
+        except Exception as exc:
             logger.exception(
-                "Failed to create extra directories for QuickMapServices"
+                f"Failed to create extra directories in plugin storage: {exc}"
             )
 
-            error_message = self.tr(
-                "Extra directories for {} could not be created."
-            ).format(PLUGIN_NAME)
-
-            self.iface.messageBar().pushMessage(
-                self.tr("Error"),
-                error_message,
-                level=Qgis.MessageLevel.Critical,
+        try:
+            utils.cleanup_obsolete_dirs()
+        except Exception as exc:
+            logger.exception(
+                f"Failed to cleanup obsolete directories from plugin storage: {exc}"
             )
 
         # Declare instance attributes
