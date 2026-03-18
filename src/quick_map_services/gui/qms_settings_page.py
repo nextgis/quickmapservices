@@ -1,18 +1,16 @@
 from pathlib import Path
 from typing import List, Optional
 
-from qgis.core import QgsApplication
 from qgis.gui import (
     QgsOptionsPageWidget,
     QgsOptionsWidgetFactory,
 )
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt, pyqtSlot
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (
     QHeaderView,
     QLabel,
-    QMessageBox,
     QVBoxLayout,
     QWidget,
 )
@@ -22,7 +20,6 @@ from quick_map_services.core.exceptions import QmsUiLoadError
 from quick_map_services.core.logging import logger, update_logging_level
 from quick_map_services.core.settings import QmsSettings
 from quick_map_services.data_sources_model import DSManagerModel
-from quick_map_services.extra_sources import ExtraSources
 from quick_map_services.gui.user_groups_box import UserGroupsBox
 from quick_map_services.gui.user_services_box import UserServicesBox
 
@@ -35,7 +32,7 @@ class QmsSettingsPage(QgsOptionsPageWidget):
     QMS settings, data source model, and extra services actions.
     """
 
-    __ds_model: DSManagerModel
+    _ds_model: DSManagerModel
 
     def __init__(self, parent: Optional[QWidget] = None) -> None:
         """Initialize the settings page widget.
@@ -45,10 +42,10 @@ class QmsSettingsPage(QgsOptionsPageWidget):
         """
         super().__init__(parent)
 
-        self.__ds_model = DSManagerModel()
+        self._ds_model = DSManagerModel()
 
-        self.__load_ui()
-        self.__load_settings()
+        self._load_ui()
+        self._load_settings()
 
     def apply(self) -> None:
         """
@@ -59,15 +56,15 @@ class QmsSettingsPage(QgsOptionsPageWidget):
         """
         settings = QmsSettings()
 
-        settings.enable_otf_3857 = self.__widget.chkEnableOTF3857.isChecked()
-        self.__save_other(settings)
+        settings.enable_otf_3857 = self._widget.chkEnableOTF3857.isChecked()
+        self._save_other(settings)
 
-        self.__ds_model.saveSettings()
+        self._ds_model.saveSettings()
 
     def cancel(self) -> None:
         """Cancel changes made in the settings page."""
 
-    def __load_ui(self) -> None:
+    def _load_ui(self) -> None:
         """Load .ui file and prepare layout."""
         widget: Optional[QWidget] = None
         try:
@@ -80,90 +77,60 @@ class QmsSettingsPage(QgsOptionsPageWidget):
         if widget is None:
             raise QmsUiLoadError
 
-        self.__widget = widget
-        self.__widget.setParent(self)
+        self._widget = widget
+        self._widget.setParent(self)
 
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
-        layout.addWidget(self.__widget)
+        layout.addWidget(self._widget)
 
-        layout = self.__widget.tab_user_groups_and_services.layout()
+        layout = self._widget.tab_user_groups_and_services.layout()
         layout.addWidget(
-            UserGroupsBox(self.__widget.tab_user_groups_and_services)
+            UserGroupsBox(self._widget.tab_user_groups_and_services)
         )
         layout.addWidget(
-            UserServicesBox(self.__widget.tab_user_groups_and_services)
+            UserServicesBox(self._widget.tab_user_groups_and_services)
         )
 
-        self.__widget.treeViewForDS.setModel(self.__ds_model)
-        self.__widget.treeViewForDS.sortByColumn(
-            self.__ds_model.COLUMN_GROUP_DS, Qt.SortOrder.AscendingOrder
+        self._widget.treeViewForDS.setModel(self._ds_model)
+        self._widget.treeViewForDS.sortByColumn(
+            self._ds_model.COLUMN_GROUP_DS, Qt.SortOrder.AscendingOrder
         )
 
-        self.__widget.treeViewForDS.header().setSectionResizeMode(
-            self.__ds_model.COLUMN_GROUP_DS, QHeaderView.ResizeMode.Stretch
+        self._widget.treeViewForDS.header().setSectionResizeMode(
+            self._ds_model.COLUMN_GROUP_DS, QHeaderView.ResizeMode.Stretch
         )
 
-        check_all_action = self.__widget.toolBarForDSTreeView.addAction(
+        check_all_action = self._widget.toolBarForDSTreeView.addAction(
             QIcon(":/images/themes/default/mActionShowAllLayers.svg"),
             self.tr("Show all"),
         )
-        check_all_action.triggered.connect(self.__ds_model.checkAll)
+        check_all_action.triggered.connect(self._ds_model.checkAll)
 
-        uncheck_all_action = self.__widget.toolBarForDSTreeView.addAction(
+        uncheck_all_action = self._widget.toolBarForDSTreeView.addAction(
             QIcon(":/images/themes/default/mActionHideAllLayers.svg"),
             self.tr("Hide all"),
         )
-        uncheck_all_action.triggered.connect(self.__ds_model.uncheckAll)
+        uncheck_all_action.triggered.connect(self._ds_model.uncheckAll)
 
-        self.__widget.btnGetContribPack.clicked.connect(
-            self._on_get_contrib_pack
-        )
-
-    def __load_settings(self) -> None:
+    def _load_settings(self) -> None:
         """Initialize widget state and signal connections."""
         settings = QmsSettings()
 
-        self.__widget.chkEnableOTF3857.setChecked(settings.enable_otf_3857)
-        self.__widget.debug_logs_checkbox.setChecked(
+        self._widget.chkEnableOTF3857.setChecked(settings.enable_otf_3857)
+        self._widget.debug_logs_checkbox.setChecked(
             settings.is_debug_logs_enabled
         )
 
-    def __save_other(self, settings: QmsSettings) -> None:
+    def _save_other(self, settings: QmsSettings) -> None:
         old_debug_enabled = settings.is_debug_logs_enabled
-        new_debug_enabled = self.__widget.debug_logs_checkbox.isChecked()
+        new_debug_enabled = self._widget.debug_logs_checkbox.isChecked()
         settings.is_debug_logs_enabled = new_debug_enabled
         if old_debug_enabled != new_debug_enabled:
             debug_state = "enabled" if new_debug_enabled else "disabled"
             update_logging_level()
             logger.warning(f"Debug messages were {debug_state}")
-
-    @pyqtSlot()
-    def _on_get_contrib_pack(self) -> None:
-        """Get contributed pack."""
-        QgsApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
-        try:
-            ExtraSources().load_contrib_pack()
-            QgsApplication.restoreOverrideCursor()
-
-            info_message = self.tr(
-                "The latest version of contributed pack was successfully downloaded!"
-            )
-            QMessageBox.information(self, PLUGIN_NAME, info_message)
-
-            self.__ds_model.resetModel()
-
-        except Exception as error:
-            QgsApplication.restoreOverrideCursor()
-
-            error_message = self.tr(
-                "Failed to load contributed pack:\n{}"
-            ).format(str(error))
-            QMessageBox.critical(self, PLUGIN_NAME, error_message)
-
-        finally:
-            QgsApplication.restoreOverrideCursor()
 
 
 class QmsSettingsErrorPage(QgsOptionsPageWidget):

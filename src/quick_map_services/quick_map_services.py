@@ -46,7 +46,6 @@ from quick_map_services.core.logging import logger
 from quick_map_services.core.settings import QmsSettings
 from quick_map_services.custom_translator import CustomTranslator
 from quick_map_services.data_sources_list import DataSourcesList
-from quick_map_services.extra_sources import ExtraSources
 from quick_map_services.groups_list import GroupsList
 from quick_map_services.gui.qms_settings_page import QmsSettingsPageFactory
 from quick_map_services.notifier.message_bar_notifier import MessageBarNotifier
@@ -104,7 +103,6 @@ class QuickMapServices(QuickMapServicesInterface):
         # Create the dialog (after translation) and keep reference
         self.info_dlg = AboutDialog(PACKAGE_NAME)
 
-        # Check Contrib and User dirs
         try:
             utils.ensure_user_dirs()
         except Exception as exc:
