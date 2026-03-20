@@ -6,10 +6,16 @@ license = { file = "LICENSE" }
 
 
 [tool.qgspb.package-data]
-"quick_map_services.data_sources" = [
-    "osm_mapnik/*",
+"quick_map_services.quickmapservices_contrib.data_sources" = [
+    "**/*.png",
+    "**/*.ini",
+    "**/*.svg",
 ]
-"quick_map_services.groups" = ["nasa/*", "osm/*"]
+"quick_map_services.quickmapservices_contrib.groups" = [
+    "**/*.ini",
+    "**/*.png",
+    "**/*.svg",
+]
 "quick_map_services.icons" = ["*.svg", "*.png"]
 
 [tool.qgspb.forms]
