@@ -165,6 +165,10 @@ class QuickMapServices(QuickMapServicesInterface):
             self._qms_settings_page_factory
         )
 
+        QuickMapServicesInterface.instance().settings_changed.connect(
+            self.build_menu_tree
+        )
+
     def _load_scales_list(self):
         scales_filename = os.path.join(self.plugin_dir, "scales.xml")
         scales_list = []

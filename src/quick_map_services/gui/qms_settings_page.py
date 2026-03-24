@@ -22,6 +22,9 @@ from quick_map_services.core.settings import QmsSettings
 from quick_map_services.data_sources_model import DSManagerModel
 from quick_map_services.gui.user_groups_box import UserGroupsBox
 from quick_map_services.gui.user_services_box import UserServicesBox
+from quick_map_services.quick_map_services_interface import (
+    QuickMapServicesInterface,
+)
 
 
 class QmsSettingsPage(QgsOptionsPageWidget):
@@ -60,6 +63,9 @@ class QmsSettingsPage(QgsOptionsPageWidget):
         self._save_other(settings)
 
         self._ds_model.saveSettings()
+
+        plugin = QuickMapServicesInterface.instance()
+        plugin.settings_changed.emit()
 
     def cancel(self) -> None:
         """Cancel changes made in the settings page."""

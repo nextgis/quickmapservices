@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from qgis import utils
 from qgis.core import QgsApplication
-from qgis.PyQt.QtCore import QObject, QTranslator
+from qgis.PyQt.QtCore import QObject, QTranslator, pyqtSignal
 
 from quick_map_services.core.constants import PACKAGE_NAME
 from quick_map_services.core.logging import logger, unload_logger
@@ -25,6 +25,8 @@ class QuickMapServicesInterface(QObject, metaclass=QObjectMetaClass):
     abstract properties and methods that must be implemented by concrete
     subclasses.
     """
+
+    settings_changed = pyqtSignal()
 
     @classmethod
     def instance(cls) -> "QuickMapServicesInterface":
