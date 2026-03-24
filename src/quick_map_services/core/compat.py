@@ -7,7 +7,7 @@ from qgis.core import (
     QgsMapLayerType,
     QgsWkbTypes,
 )
-from qgis.PyQt.QtCore import QT_VERSION_STR, QMetaType, QVariant
+from qgis.PyQt.QtCore import QMetaType, QVariant
 
 QGIS_3_30 = 33000
 QGIS_3_32 = 33200
@@ -18,16 +18,6 @@ QGIS_3_40 = 34000
 QGIS_3_42 = 34200
 QGIS_3_42_2 = 34202
 
-QT_MAJOR_VERSION = int(QT_VERSION_STR.split(".")[0])
-
-if QT_MAJOR_VERSION < 6:
-    from qgis.PyQt.QtCore import QIODevice
-
-    OpenModeFlag = QIODevice.OpenModeFlag.WriteOnly
-else:
-    from qgis.PyQt.QtCore import QIODeviceBase
-
-    OpenModeFlag = QIODeviceBase.OpenModeFlag.WriteOnly
 
 if Qgis.versionInt() >= QGIS_3_30 or TYPE_CHECKING:
     WkbType = Qgis.WkbType  # type: ignore
