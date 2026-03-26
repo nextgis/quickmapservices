@@ -24,11 +24,11 @@
 import os.path
 import sys
 import xml.etree.ElementTree as ET
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 
 from osgeo import gdal
 from qgis.core import Qgis, QgsProject
-from qgis.gui import QgisInterface, QgsMessageBar
+from qgis.gui import QgisInterface
 from qgis.PyQt.QtCore import QT_VERSION_STR, QObject, QSysInfo, Qt, QUrl
 from qgis.PyQt.QtGui import QDesktopServices, QIcon
 from qgis.PyQt.QtWidgets import (
@@ -45,6 +45,7 @@ from quick_map_services.core.constants import PACKAGE_NAME, PLUGIN_NAME
 from quick_map_services.core.logging import logger
 from quick_map_services.core.settings import QmsSettings
 from quick_map_services.custom_translator import CustomTranslator
+from quick_map_services.data_source_info import DataSourceInfo
 from quick_map_services.data_sources_list import DataSourcesList
 from quick_map_services.groups_list import GroupsList
 from quick_map_services.gui.qms_settings_page import QmsSettingsPageFactory
@@ -270,106 +271,20 @@ class QuickMapServices(QuickMapServicesInterface):
         self.groups_list = GroupsList()
         self.ds_list = DataSourcesList()
 
-        settings = QmsSettings()
+        all_groups = utils.collect_groups(self.ds_list.data_sources.values())
 
-        data_sources = self.ds_list.data_sources.values()
-        data_sources = sorted(data_sources, key=lambda x: x.alias or x.id)
-
-        ds_hide_list = settings.hidden_datasource_id_list
-
-        for ds in data_sources:
-            if ds.id in ds_hide_list:
-                continue
-            ds.action.triggered.connect(self.insert_layer)
-            gr_menu = self.groups_list.get_group_menu(ds.group)
-            gr_menu.addAction(ds.action)
-            if gr_menu not in self.menu.children():
-                self.menu.addMenu(gr_menu)
-
-        # QMS web service
-        self.menu.addSeparator()
-
-        self.service_actions.append(self.qms_search_action)
-        self.menu.addAction(self.qms_search_action)
-
-        if not self.qms_create_service_action:
-            icon_create_service_path = (
-                self.plugin_dir + "/icons/mActionCreate.svg"
-            )
-            self.qms_create_service_action = QAction(
-                self.tr("Add to Search"), self.iface.mainWindow()
-            )
-            self.qms_create_service_action.setIcon(
-                QIcon(icon_create_service_path)
-            )
-            self.qms_create_service_action.triggered.connect(self.openURL)
-        self.menu.addAction(self.qms_create_service_action)
-
-        # Scales, Settings and About actions
-        self.menu.addSeparator()
-
-        if not self.set_nearest_scale_act:
-            icon_set_nearest_scale_path = (
-                self.plugin_dir + "/icons/mActionSettings.svg"
-            )  # TODO change icon
-            self.set_nearest_scale_act = QAction(
-                QIcon(icon_set_nearest_scale_path),
-                self.tr("Set proper scale"),
-                self.iface.mainWindow(),
-            )
-            self.set_nearest_scale_act.triggered.connect(
-                self.set_nearest_scale
-            )
-            self.service_actions.append(self.set_nearest_scale_act)
-        self.menu.addAction(
-            self.set_nearest_scale_act
-        )  # TODO: uncomment after fix
-
-        if not self.scales_act:
-            icon_scales_path = (
-                self.plugin_dir + "/icons/mActionSettings.svg"
-            )  # TODO change icon
-            self.scales_act = QAction(
-                QIcon(icon_scales_path),
-                self.tr("Set SlippyMap scales"),
-                self.iface.mainWindow(),
-            )
-            self.scales_act.triggered.connect(self.set_tms_scales)
-            self.service_actions.append(self.scales_act)
-        # self.menu.addAction(scales_act)  # TODO: uncomment after fix
-
-        if not self.settings_act:
-            icon_settings_path = self.plugin_dir + "/icons/mActionSettings.svg"
-            self.settings_act = QAction(
-                QIcon(icon_settings_path),
-                self.tr("Settings"),
-                self.iface.mainWindow(),
-            )
-            self.service_actions.append(self.settings_act)
-            self.settings_act.triggered.connect(self.show_settings_dialog)
-
-        self.menu.addAction(self.settings_act)
-
-        if not self.info_act:
-            icon_about_path = self.plugin_dir + "/icons/mActionAbout.svg"
-            self.info_act = QAction(
-                QIcon(icon_about_path),
-                self.tr("About QMS"),
-                self.iface.mainWindow(),
-            )
-            self.service_actions.append(self.info_act)
-            self.info_act.triggered.connect(self.info_dlg.show)
-        self.menu.addAction(self.info_act)
-
-        self._help_action = QAction(
-            QIcon(self.plugin_dir + "/icons/qms_logo.svg"),
-            "QuickMapServices",
+        groups = utils.filter_hidden_data_sources(
+            all_groups,
+            QmsSettings().hidden_datasource_id_list,
         )
-        self._help_action.triggered.connect(self.info_dlg.show)
 
-        plugin_help_menu = self.iface.pluginHelpMenu()
-        assert plugin_help_menu is not None
-        plugin_help_menu.addAction(self._help_action)
+        sorted_group_ids = utils.sort_group_ids(
+            groups.keys(),
+        )
+
+        self._populate_groups_menu(groups, sorted_group_ids)
+        self._add_qms_section()
+        self._add_plugin_actions()
 
     def remove_menu_buttons(self):
         """
@@ -455,3 +370,118 @@ class QuickMapServices(QuickMapServicesInterface):
         """
         settings = QmsSettings()
         QDesktopServices.openUrl(QUrl(f"{settings.endpoint_url}/create"))
+
+    def _populate_groups_menu(
+        self,
+        groups: Dict[str, List[DataSourceInfo]],
+        sorted_group_ids: List[str],
+    ) -> None:
+        """
+        Populate menu with grouped data sources.
+
+        :param groups: Grouped data sources.
+        :param sorted_group_ids: Ordered group ids.
+
+        :return: None
+        """
+        for group_id in sorted_group_ids:
+            group_menu: QMenu = self.groups_list.get_group_menu(group_id)
+            group_menu.clear()
+
+            for data_source in utils.sort_data_sources(groups[group_id]):
+                action = data_source.action
+                if action is None:
+                    continue
+
+                action.triggered.connect(self.insert_layer)
+                group_menu.addAction(action)
+
+            self.menu.addMenu(group_menu)
+
+    def _add_qms_section(self) -> None:
+        """
+        Add QMS service section to menu.
+
+        :return: None
+        """
+        self.menu.addSeparator()
+
+        self.service_actions.append(self.qms_search_action)
+        self.menu.addAction(self.qms_search_action)
+
+        if not self.qms_create_service_action:
+            icon_path = f"{self.plugin_dir}/icons/mActionCreate.svg"
+            self.qms_create_service_action = QAction(
+                self.tr("Add to Search"),
+                self.iface.mainWindow(),
+            )
+            self.qms_create_service_action.setIcon(QIcon(icon_path))
+            self.qms_create_service_action.triggered.connect(self.openURL)
+
+        self.menu.addAction(self.qms_create_service_action)
+
+    def _add_plugin_actions(self) -> None:
+        """
+        Add plugin-related actions to the menu.
+
+        :return: None
+        """
+        self.menu.addSeparator()
+
+        if not self.set_nearest_scale_act:
+            icon_path = f"{self.plugin_dir}/icons/mActionSettings.svg"
+            self.set_nearest_scale_act = QAction(
+                QIcon(icon_path),
+                self.tr("Set proper scale"),
+                self.iface.mainWindow(),
+            )
+            self.set_nearest_scale_act.triggered.connect(
+                self.set_nearest_scale
+            )
+            self.service_actions.append(self.set_nearest_scale_act)
+
+        self.menu.addAction(self.set_nearest_scale_act)
+
+        if not self.scales_act:
+            icon_path = f"{self.plugin_dir}/icons/mActionSettings.svg"
+            self.scales_act = QAction(
+                QIcon(icon_path),
+                self.tr("Set SlippyMap scales"),
+                self.iface.mainWindow(),
+            )
+            self.scales_act.triggered.connect(self.set_tms_scales)
+            self.service_actions.append(self.scales_act)
+
+        if not self.settings_act:
+            icon_path = f"{self.plugin_dir}/icons/mActionSettings.svg"
+            self.settings_act = QAction(
+                QIcon(icon_path),
+                self.tr("Settings"),
+                self.iface.mainWindow(),
+            )
+            self.settings_act.triggered.connect(self.show_settings_dialog)
+            self.service_actions.append(self.settings_act)
+
+        self.menu.addAction(self.settings_act)
+
+        if not self.info_act:
+            icon_path = f"{self.plugin_dir}/icons/mActionAbout.svg"
+            self.info_act = QAction(
+                QIcon(icon_path),
+                self.tr("About QMS"),
+                self.iface.mainWindow(),
+            )
+            self.info_act.triggered.connect(self.info_dlg.show)
+            self.service_actions.append(self.info_act)
+
+        self.menu.addAction(self.info_act)
+
+        self._help_action = QAction(
+            QIcon(f"{self.plugin_dir}/icons/qms_logo.svg"),
+            "QuickMapServices",
+        )
+        self._help_action.triggered.connect(self.info_dlg.show)
+
+        plugin_help_menu = self.iface.pluginHelpMenu()
+        assert plugin_help_menu is not None
+        plugin_help_menu.addAction(self._help_action)

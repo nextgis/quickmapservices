@@ -1,9 +1,12 @@
 import shutil
+from typing import Dict, Iterable, List, Tuple
 
 from qgis.core import QgsSettings
 from qgis.PyQt.QtCore import QLocale
 
 from quick_map_services.core.constants import PACKAGE_NAME
+from quick_map_services.data_source_info import DataSourceInfo
+from quick_map_services.group_info import GroupInfo
 from quick_map_services.paths_constants import (
     DATA_SOURCES_DIR_NAME,
     GROUPS_DIR_NAME,
@@ -72,3 +75,83 @@ def cleanup_obsolete_dirs() -> None:
         return
 
     shutil.rmtree(contrib_path)
+
+
+def collect_groups(
+    data_sources: Iterable[DataSourceInfo],
+) -> Dict[str, List[DataSourceInfo]]:
+    """
+    Group data sources by group id.
+
+    :param data_sources: Iterable of data sources.
+
+    :return: Mapping of group_id to list of data sources.
+    """
+    groups: Dict[str, List[DataSourceInfo]] = {}
+
+    for data_source in data_sources:
+        groups.setdefault(data_source.group, []).append(data_source)
+
+    return groups
+
+
+def sort_group_ids(
+    group_ids: Iterable[str],
+) -> List[str]:
+    """
+    Sort group identifiers with priority.
+
+    :param group_ids: Iterable of group ids.
+
+    :return: Sorted group ids.
+    """
+
+    def sort_key(group_id: str) -> Tuple[int, str]:
+        if group_id == "OpenStreetMap":
+            return (0, "")
+        return (1, group_id.lower())
+
+    return sorted(list(group_ids), key=sort_key)
+
+
+def sort_data_sources(
+    data_sources: Iterable[DataSourceInfo],
+) -> List[DataSourceInfo]:
+    """
+    Sort data sources by id.
+
+    :param data_sources: Iterable of data sources.
+
+    :return: Sorted list of data sources.
+    """
+    return sorted(
+        data_sources,
+        key=lambda data_source: str(data_source.id),
+    )
+
+
+def filter_hidden_data_sources(
+    groups: Dict[str, List[DataSourceInfo]],
+    hidden_data_sources_ids: List[str],
+) -> Dict[str, List[DataSourceInfo]]:
+    """
+    Remove hidden data sources from grouped structure.
+
+    :param groups: Grouped data sources.
+    :param hidden_data_sources_ids: List of hidden data source ids.
+
+    :return: Filtered groups.
+    """
+    result: Dict[str, List[DataSourceInfo]] = {}
+
+    for group_id, data_sources in groups.items():
+        visible_sources = [
+            data_source
+            for data_source in data_sources
+            if data_source.id not in hidden_data_sources_ids
+        ]
+
+        if visible_sources:
+            result[group_id] = visible_sources
+
+    return result

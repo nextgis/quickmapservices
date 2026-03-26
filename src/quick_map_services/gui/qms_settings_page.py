@@ -62,7 +62,7 @@ class QmsSettingsPage(QgsOptionsPageWidget):
         settings.enable_otf_3857 = self._widget.chkEnableOTF3857.isChecked()
         self._save_other(settings)
 
-        self._ds_model.saveSettings()
+        self._ds_model._save_settings()
 
         plugin = QuickMapServicesInterface.instance()
         plugin.settings_changed.emit()
@@ -112,13 +112,13 @@ class QmsSettingsPage(QgsOptionsPageWidget):
             QIcon(":/images/themes/default/mActionShowAllLayers.svg"),
             self.tr("Show all"),
         )
-        check_all_action.triggered.connect(self._ds_model.checkAll)
+        check_all_action.triggered.connect(self._ds_model._check_all)
 
         uncheck_all_action = self._widget.toolBarForDSTreeView.addAction(
             QIcon(":/images/themes/default/mActionHideAllLayers.svg"),
             self.tr("Hide all"),
         )
-        uncheck_all_action.triggered.connect(self._ds_model.uncheckAll)
+        uncheck_all_action.triggered.connect(self._ds_model._uncheck_all)
 
     def _load_settings(self) -> None:
         """Initialize widget state and signal connections."""

@@ -103,7 +103,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         edit_dialog.setWindowTitle(self.tr("Create group"))
         if edit_dialog.exec() == QDialog.DialogCode.Accepted:
             self.fill_list()
-            self.ds_model.resetModel()
+            self.ds_model._reset_model()
 
     def on_edit(self) -> None:
         """
@@ -117,7 +117,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         edit_dialog.set_group_info(item)
         if edit_dialog.exec() == QDialog.DialogCode.Accepted:
             self.fill_list()
-            self.ds_model.resetModel()
+            self.ds_model._reset_model()
 
     def on_delete(self) -> None:
         """
@@ -137,7 +137,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
             dir_path = str(Path(group_info.file_path).parent)
             shutil.rmtree(dir_path, True)
             self.fill_list()
-            self.ds_model.resetModel()
+            self.ds_model._reset_model()
 
     def on_copy(self) -> None:
         """
@@ -173,7 +173,7 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         groups_list_view.verticalHeader().hide()
         groups_list_view.clicked.connect(
             lambda index: select_group_dialog.accept()
-            if self.ds_model.isGroup(index)
+            if self.ds_model._is_group(index)
             and index.column() == DSManagerModel.COLUMN_GROUP_DS
             else None
         )
@@ -188,4 +188,4 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
             edit_dialog.fill_group_info(group_info)
             if edit_dialog.exec() == QDialog.DialogCode.Accepted:
                 self.fill_list()
-                self.ds_model.resetModel()
+                self.ds_model._reset_model()
