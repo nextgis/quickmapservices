@@ -65,7 +65,7 @@ class DSManagerModel(QAbstractItemModel):
         self.root_item = QTreeWidgetItem(self.column_names)
         self._setup_model_data()
 
-    def _reset_model(self) -> None:
+    def reset_model(self) -> None:
         """
         Reset model content and rebuild tree.
 
@@ -419,7 +419,7 @@ class DSManagerModel(QAbstractItemModel):
                     )
         settings.hidden_datasource_id_list = hidden_datasource_id_list
 
-    def _is_group(self, index: QModelIndex) -> bool:
+    def is_group(self, index: QModelIndex) -> bool:
         """
         Check whether the index corresponds to a group item.
 

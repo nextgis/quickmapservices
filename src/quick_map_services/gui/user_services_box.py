@@ -99,7 +99,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         edit_dialog.setWindowTitle(self.tr("Create service"))
         if edit_dialog.exec() == QDialog.DialogCode.Accepted:
             self.fill_list()
-            self.ds_model._reset_model()
+            self.ds_model.reset_model()
 
     def on_edit(self) -> None:
         """
@@ -113,7 +113,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         edit_dialog.set_ds_info(item)
         if edit_dialog.exec() == QDialog.DialogCode.Accepted:
             self.fill_list()
-            self.ds_model._reset_model()
+            self.ds_model.reset_model()
 
     def on_delete(self) -> None:
         """
@@ -133,7 +133,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
             dir_path = str(Path(ds_info.file_path).parent)
             shutil.rmtree(dir_path, True)
             self.fill_list()
-            self.ds_model._reset_model()
+            self.ds_model.reset_model()
 
     def on_copy(self) -> None:
         """
@@ -165,7 +165,7 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
 
         list_view.clicked.connect(
             lambda index: select_data_sources_dialog.accept()
-            if not self.ds_model._is_group(index)
+            if not self.ds_model.is_group(index)
             and index.column() == DSManagerModel.COLUMN_GROUP_DS
             else None
         )
@@ -180,4 +180,4 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
             edit_dialog.fill_ds_info(data_source)
             if edit_dialog.exec() == QDialog.DialogCode.Accepted:
                 self.fill_list()
-                self.ds_model._reset_model()
+                self.ds_model.reset_model()
