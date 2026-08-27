@@ -1,3 +1,19 @@
+# NextGIS QuickMapServices
+# Copyright (C) 2026  NextGIS
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or any
+# later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, see <https://www.gnu.org/licenses/>.
+
 import re
 import uuid
 from typing import TYPE_CHECKING, List, Optional
@@ -61,6 +77,7 @@ class MessageBarNotifier(NotifierInterface):
         *,
         level: Qgis.MessageLevel = Qgis.MessageLevel.Info,
         widgets: Optional[List[QWidget]] = None,
+        duration: int = 0,
         **kwargs,  # noqa: ANN003, ARG002
     ) -> str:
         """Display a message to the user via the QGIS message bar.
@@ -68,6 +85,7 @@ class MessageBarNotifier(NotifierInterface):
         :param message: The message to display.
         :param level: The message level as Qgis.MessageLevel.
         :param widgets: Custom widgets for message.
+        :param duration: Timeout in seconds; 0 requires manual dismissal.
         :return: An identifier for the displayed message.
         """
         custom_widgets = widgets if widgets else []
@@ -79,7 +97,7 @@ class MessageBarNotifier(NotifierInterface):
             custom_widget.setParent(widget)
             widget.layout().addWidget(custom_widget)
 
-        item = message_bar.pushWidget(widget, level)
+        item = message_bar.pushWidget(widget, level, duration)
         item.setObjectName("QmsMessageBarItem")
         message_id = str(uuid.uuid4())
         item.setProperty("QmsMessageId", message_id)

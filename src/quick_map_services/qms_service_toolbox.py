@@ -1,3 +1,19 @@
+# NextGIS QuickMapServices
+# Copyright (C) 2026  NextGIS
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or any
+# later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, see <https://www.gnu.org/licenses/>.
+
 import ast
 import sys
 from datetime import datetime, timezone
@@ -15,7 +31,7 @@ from qgis.core import (
     QgsProject,
     QgsSettings,
 )
-from qgis.gui import QgsDockWidget
+from qgis.gui import QgisInterface, QgsDockWidget
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import (
     QByteArray,
@@ -33,6 +49,7 @@ from qgis.PyQt.QtGui import (
     QColor,
     QCursor,
     QDesktopServices,
+    QIcon,
     QImage,
     QLinearGradient,
     QPainter,
@@ -58,8 +75,13 @@ from quick_map_services.core import utils
 from quick_map_services.core.constants import PACKAGE_NAME
 from quick_map_services.core.logging import logger
 from quick_map_services.core.settings import QmsSettings
+from quick_map_services.data_source_info import DataSourceCategory
 from quick_map_services.data_source_serializer import DataSourceSerializer
-from quick_map_services.qgis_map_helpers import add_layer_to_map
+from quick_map_services.data_sources_catalog import DataSourcesCatalog
+from quick_map_services.qgis_map_helpers import (
+    add_data_source_to_map,
+    add_layer_to_map,
+)
 from quick_map_services.qms_external_api_python.api.api_base import QmsNews
 from quick_map_services.qms_external_api_python.client import Client
 from quick_map_services.qms_news import News, NewsLayout
@@ -72,8 +94,6 @@ from quick_map_services.ui_kit.buttons.animated import ButtonVisualState
 from quick_map_services.ui_kit.buttons.shining import ShiningButton
 from quick_map_services.ui_kit.icons import material_icon
 
-STATUS_FILTER_ALL = "all"
-STATUS_FILTER_ONLY_WORKS = "works"
 SERVICE_LIST_MODE_FAVORITES = "favorites"
 SERVICE_LIST_MODE_RECENT = "recent"
 QT_WIDGET_MAX_SIZE = 16777215
@@ -164,8 +184,8 @@ def add_geoservice_to_map(
                 )
             return
 
-        ds = DataSourceSerializer.read_from_json(geoservice_info)
-        add_layer_to_map(ds)
+        data_source = DataSourceSerializer.read_from_json(geoservice_info)
+        add_layer_to_map(data_source, qms_id=geoservice["id"])
         CachedServices().add_service(geoservice, image_ba)
         if service_added_callback is not None:
             service_added_callback()
@@ -767,7 +787,13 @@ FORM_CLASS, _ = uic.loadUiType(
 
 
 class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
-    def __init__(self, iface):
+    """Dock widget for searching and selecting map services."""
+
+    def __init__(self, iface: QgisInterface) -> None:
+        """Initialize the search panel.
+
+        :param iface: QGIS application interface.
+        """
         QgsDockWidget.__init__(self, iface.mainWindow())
         self.setupUi(self)
         self.newsFrame.setVisible(False)
@@ -776,13 +802,10 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         self.search_threads = None  # []
         self.extent_renderer = RubberBandResultRenderer()
         self._service_list_mode = self._saved_service_list_mode()
+        self._data_sources_catalog = DataSourcesCatalog()
 
-        self.cmbStatusFilter.addItem(self.tr("All"), STATUS_FILTER_ALL)
-        self.cmbStatusFilter.addItem(
-            self.tr("Valid"), STATUS_FILTER_ONLY_WORKS
-        )
-        self.cmbStatusFilter.currentIndexChanged.connect(self.start_search)
         self.favorites_menu = QMenu(self)
+        self.contributed_services_menu = QMenu(self)
         self.main_menu = QMenu(self)
         self.lstSearchResult.setVerticalScrollMode(
             QAbstractItemView.ScrollMode.ScrollPerPixel
@@ -793,7 +816,7 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         if hasattr(self.txtSearch, "setPlaceholderText"):
             self.txtSearch.setPlaceholderText(self.tr("Search string..."))
 
-        self._setup_favorites_button()
+        self._setup_search_controls()
 
         self.delay_timer = QTimer(self)
         self.delay_timer.setSingleShot(True)
@@ -824,7 +847,8 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
 
         return super().eventFilter(watched, event)
 
-    def _setup_favorites_button(self) -> None:
+    def _setup_search_controls(self) -> None:
+        """Create controls displayed alongside the service search field."""
         search_layout = QHBoxLayout()
         search_layout.setContentsMargins(0, 0, 0, 0)
         search_layout.setSpacing(SEARCH_LAYOUT_SPACING)
@@ -833,7 +857,66 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         self.verticalLayout_2.removeWidget(self.txtSearch)
 
         search_layout.addWidget(self.txtSearch)
+        search_height = self.txtSearch.sizeHint().height()
+        self._setup_contributed_services_button(search_layout, search_height)
+        self._setup_favorites_button(search_layout, search_height)
+        self._setup_main_menu_button(search_layout, search_height)
 
+        self.verticalLayout_2.insertLayout(search_index, search_layout)
+        self.contributed_services_menu.aboutToShow.connect(
+            self._populate_contributed_services_menu
+        )
+        self.favorites_menu.aboutToShow.connect(self._refresh_favorites_menu)
+        self.main_menu.aboutToShow.connect(self._refresh_main_menu)
+        self._refresh_favorites_menu()
+        self._refresh_main_menu()
+
+    def _setup_contributed_services_button(
+        self,
+        search_layout: QHBoxLayout,
+        search_height: int,
+    ) -> None:
+        """Create the contributed-services menu button.
+
+        :param search_layout: Layout receiving the button.
+        :param search_height: Height shared by all search controls.
+        """
+        self.contributed_services_button = QToolButton(self)
+        self.contributed_services_button.setPopupMode(
+            QToolButton.ToolButtonPopupMode.InstantPopup
+        )
+        self.contributed_services_button.setToolTip(
+            self.tr("Browse contributed and user services")
+        )
+        self.contributed_services_button.setMenu(
+            self.contributed_services_menu
+        )
+        self.contributed_services_button.setIcon(
+            material_icon(
+                "layers",
+                color=UiPaletteHelper.muted_icon_color(self),
+                size=TOOL_BUTTON_ICON_SIZE,
+            )
+        )
+        self.contributed_services_button.setFixedSize(
+            search_height,
+            search_height,
+        )
+        self.contributed_services_button.setIconSize(
+            QSize(TOOL_BUTTON_ICON_SIZE, TOOL_BUTTON_ICON_SIZE)
+        )
+        search_layout.addWidget(self.contributed_services_button)
+
+    def _setup_favorites_button(
+        self,
+        search_layout: QHBoxLayout,
+        search_height: int,
+    ) -> None:
+        """Create the favorites and recent-services menu button.
+
+        :param search_layout: Layout receiving the button.
+        :param search_height: Height shared by all search controls.
+        """
         self.btnFavorites = QToolButton(self)
         self.btnFavorites.setPopupMode(
             QToolButton.ToolButtonPopupMode.InstantPopup
@@ -841,7 +924,6 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         self.btnFavorites.setMenu(self.favorites_menu)
         self.btnFavorites.setStyleSheet(self._tool_button_style_sheet())
 
-        search_height = self.txtSearch.sizeHint().height()
         self.btnFavorites.setFixedSize(search_height, search_height)
         self.btnFavorites.setIconSize(
             QSize(TOOL_BUTTON_ICON_SIZE, TOOL_BUTTON_ICON_SIZE)
@@ -849,6 +931,16 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         search_layout.addWidget(self.btnFavorites)
         self._update_service_list_mode_button_icon()
 
+    def _setup_main_menu_button(
+        self,
+        search_layout: QHBoxLayout,
+        search_height: int,
+    ) -> None:
+        """Create the search panel's main menu button.
+
+        :param search_layout: Layout receiving the button.
+        :param search_height: Height shared by all search controls.
+        """
         self.main_menu_button = QToolButton(self)
         self.main_menu_button.setPopupMode(
             QToolButton.ToolButtonPopupMode.InstantPopup
@@ -869,11 +961,31 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         self.main_menu_button.setStyleSheet(self._tool_button_style_sheet())
         search_layout.addWidget(self.main_menu_button)
 
-        self.verticalLayout_2.insertLayout(search_index, search_layout)
-        self.favorites_menu.aboutToShow.connect(self._refresh_favorites_menu)
-        self.main_menu.aboutToShow.connect(self._refresh_main_menu)
-        self._refresh_favorites_menu()
-        self._refresh_main_menu()
+    @pyqtSlot()
+    def _populate_contributed_services_menu(self) -> None:
+        """Build the contributed-services menu from the local catalog."""
+        self.contributed_services_menu.clear()
+        self._data_sources_catalog.reload()
+        hidden_data_source_ids = QmsSettings().hidden_datasource_id_list
+        groups = self._data_sources_catalog.grouped_services(
+            DataSourceCategory.all,
+            hidden_data_source_ids,
+        )
+        for group in groups:
+            group_menu = self.contributed_services_menu.addMenu(
+                QIcon(group.info.icon),
+                group.info.alias,
+            )
+            for data_source in group.data_sources:
+                action = group_menu.addAction(
+                    QIcon(data_source.icon_path),
+                    data_source.alias,
+                )
+                action.triggered.connect(
+                    lambda _checked, source=data_source: (
+                        add_data_source_to_map(source)
+                    )
+                )
 
     def _update_service_list_mode_button_icon(self) -> None:
         icon_name = "history"
@@ -1355,14 +1467,6 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         geom_filter = None
         min_search_text_len = 3
 
-        # status filter
-        status_filter = None
-        sel_value = self.cmbStatusFilter.itemData(
-            self.cmbStatusFilter.currentIndex()
-        )
-        if sel_value != STATUS_FILTER_ALL:
-            status_filter = sel_value
-
         if not self.btnFilterByExtent.isChecked():
             # text search
             search_text = str(self.txtSearch.text())
@@ -1403,7 +1507,6 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
             self.one_process_work,
             parent=self.iface.mainWindow(),
             geom_filter=geom_filter,
-            status_filter=status_filter,
         )
         searcher.data_downloaded.connect(self.show_result)
         searcher.error_occurred.connect(self.show_error)
@@ -2315,7 +2418,6 @@ class SearchThread(QThread):
         mutex: QMutex,
         parent: Optional[QThread] = None,
         geom_filter: Optional[str] = None,
-        status_filter: Optional[str] = None,
     ) -> None:
         """
         Initialize a thread for performing asynchronous geoservice searches.
@@ -2324,14 +2426,11 @@ class SearchThread(QThread):
         :param mutex: QMutex object to synchronize access to shared resources.
         :param parent: Optional parent QThread object.
         :param geom_filter: Optional WKT polygon string to filter search by map extent.
-        :param status_filter: Optional status filter to limit search results.
-
         :return: None
         """
         super().__init__(parent)
         self.search_text = search_text
         self.geom_filter = geom_filter
-        self.status_filter = status_filter
 
         self.searcher = Client()
         self.mutex = mutex
@@ -2351,7 +2450,6 @@ class SearchThread(QThread):
             results = self.searcher.get_geoservices(
                 search_str=self.search_text,
                 intersects_boundary=self.geom_filter,
-                cumulative_status=self.status_filter,
             )
 
             ext_results = []

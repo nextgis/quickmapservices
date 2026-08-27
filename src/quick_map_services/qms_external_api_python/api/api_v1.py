@@ -1,3 +1,19 @@
+# NextGIS QuickMapServices
+# Copyright (C) 2026  NextGIS
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or any
+# later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, see <https://www.gnu.org/licenses/>.
+
 from quick_map_services.qms_external_api_python.api.api_base import (
     ApiClient,
 )
@@ -12,7 +28,6 @@ class ApiClientV1(ApiClient):
         epsg_filter=None,
         search_str=None,
         intersects_boundary=None,
-        cumulative_status=None,
         limit=None,
         offset=None,
     ):
@@ -22,7 +37,6 @@ class ApiClientV1(ApiClient):
         :param epsg: EPSG code of geoservice CRS - any integer. Example: 4326, 3857
         :param search_str: Search name or description. Examples: 'osm', 'satellite', 'transport'
         :param intersects_boundary: Geom (WKT or EWKT format) for filter by intersects with boundary
-        :param cumulative_status: Status of service: ['works' | 'problematic' | 'failed']
         :return: List of geoservices
         """
         sub_url = "geoservices/"
@@ -35,8 +49,6 @@ class ApiClientV1(ApiClient):
             params["search"] = search_str
         if intersects_boundary:
             params["intersects_boundary"] = intersects_boundary
-        if cumulative_status:
-            params["cumulative_status"] = cumulative_status
         if limit:
             params["limit"] = limit
         if offset is not None:

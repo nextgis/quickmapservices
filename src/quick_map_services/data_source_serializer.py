@@ -1,3 +1,19 @@
+# NextGIS QuickMapServices
+# Copyright (C) 2026  NextGIS
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or any
+# later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, see <https://www.gnu.org/licenses/>.
+
 import codecs
 import configparser
 import os
@@ -6,7 +22,6 @@ from urllib import parse
 from quick_map_services.core import utils
 
 from .config_reader_helper import ConfigReaderHelper
-from .custom_translator import CustomTranslator
 from .data_source_info import DataSourceInfo
 from .fixed_config_parser import FixedConfigParser
 from .supported_drivers import KNOWN_DRIVERS
@@ -55,7 +70,12 @@ def parse_wms_url_parameter(url, parameters_str, ignore_layers=False):
 class DataSourceSerializer:
     @classmethod
     def read_from_ini(cls, ini_file_path):
-        translator = CustomTranslator()
+        """Read a data source definition from an INI file.
+
+        :param ini_file_path: Path to the data source INI file.
+
+        :returns: Parsed data source definition.
+        """
 
         dir_path = os.path.abspath(os.path.join(ini_file_path, os.path.pardir))
 
@@ -79,8 +99,14 @@ class DataSourceSerializer:
             ds.group = ConfigReaderHelper.try_read_config(
                 parser, "ui", "group", reraise=True
             )
-            ds.alias = ConfigReaderHelper.try_read_config(
+            default_alias = ConfigReaderHelper.try_read_config(
                 parser, "ui", "alias", reraise=True
+            )
+            ds.alias = ConfigReaderHelper.try_read_config(
+                parser,
+                "ui",
+                f"alias[{utils.qgis_locale()}]",
+                default=default_alias,
             )
             ds.icon = ConfigReaderHelper.try_read_config(parser, "ui", "icon")
 
@@ -208,14 +234,6 @@ class DataSourceSerializer:
                 "url",
                 reraise=(ds.type == KNOWN_DRIVERS.GEOJSON),
             )
-
-            # try read translations
-            posible_trans = parser.items("ui")
-            locale = utils.qgis_locale()
-            for key, val in posible_trans:
-                if isinstance(key, str) and key == f"alias[{locale}]":
-                    translator.append(ds.alias, val)
-                    break
 
         # internal stuff
         ds.file_path = ini_file_path

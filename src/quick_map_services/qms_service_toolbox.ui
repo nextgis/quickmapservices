@@ -92,9 +92,6 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QComboBox" name="cmbStatusFilter"/>
-         </item>
         </layout>
        </widget>
       </item>

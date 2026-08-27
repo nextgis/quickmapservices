@@ -23,15 +23,12 @@
 
 import os
 from pathlib import Path
-from typing import List
-
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QAction
+from typing import Dict, List, Optional
 
 from quick_map_services.core.logging import logger
-from quick_map_services.custom_translator import CustomTranslator
 from quick_map_services.data_source_info import DataSourceCategory
 from quick_map_services.data_source_serializer import DataSourceSerializer
+from quick_map_services.group_info import GroupInfo
 from quick_map_services.groups_list import GroupsList
 from quick_map_services.paths_constants import (
     ALL_DS_PATHS,
@@ -47,14 +44,20 @@ class DataSourcesList:
     data sources, parses them into :class:`DataSource` objects.
     """
 
-    def __init__(self, ds_paths: List[Path] = ALL_DS_PATHS) -> None:
+    def __init__(
+        self,
+        ds_paths: List[Path] = ALL_DS_PATHS,
+        group_info_map: Optional[Dict[str, GroupInfo]] = None,
+    ) -> None:
         """
         Initialize the DataSourcesList and load available data sources.
 
         :param ds_paths: List of directories to scan for data sources.
+        :param group_info_map: Group metadata used to resolve fallback icons.
         """
         self.data_sources = {}
         self.ds_paths = ds_paths
+        self.group_info_map = group_info_map
         self._fill_data_sources_list()
 
     def _fill_data_sources_list(self) -> None:
@@ -66,7 +69,9 @@ class DataSourcesList:
         :rtype: None
         """
         self.data_sources = {}
-        group_info_map = GroupsList().groups
+        group_info_map = self.group_info_map
+        if group_info_map is None:
+            group_info_map = GroupsList().groups
 
         for ds_path in self.ds_paths:
             if ds_path == BASE_DATA_SOURCES_PATH:
@@ -95,19 +100,6 @@ class DataSourcesList:
                         group_info = group_info_map.get(ds.group)
                         if group_info is not None:
                             icon_path = group_info.icon
-
-                    ds.action = QAction(
-                        QIcon(icon_path), self.tr(ds.alias), None
-                    )
-                    ds.action.setData(ds)
+                    ds.icon_path = icon_path
 
                     self.data_sources[ds.id] = ds
-
-    # noinspection PyMethodMayBeStatic
-    def tr(self, message):
-        try:
-            message = str(message)
-        except:
-            return message
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return CustomTranslator().translate("QuickMapServices", message)

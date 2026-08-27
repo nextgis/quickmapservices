@@ -36,7 +36,6 @@ class GroupInfo:
         alias=None,
         icon=None,
         file_path=None,
-        menu=None,
         category=None,
     ):
         # general
@@ -47,6 +46,5 @@ class GroupInfo:
 
         # internal
         self.file_path = file_path
-        self.menu = menu
 
         self.category = category

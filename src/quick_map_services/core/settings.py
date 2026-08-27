@@ -1,3 +1,19 @@
+# NextGIS QuickMapServices
+# Copyright (C) 2026  NextGIS
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or any
+# later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, see <https://www.gnu.org/licenses/>.
+
 import ast
 import platform
 from typing import Any, ClassVar, Dict, List, Tuple
@@ -27,6 +43,9 @@ class QmsSettings:
     KEY_ENDPOINT_URL = f"{COMPANY_NAME}/{PLUGIN_NAME}/endpointUrl"
     KEY_DID_LAST_LAUNCH_FAIL = (
         f"{COMPANY_NAME}/{PLUGIN_NAME}/other/didLastLaunchFail"
+    )
+    KEY_IS_DEVELOPER_MODE_ENABLED = (
+        f"{COMPANY_NAME}/{PLUGIN_NAME}/other/developerModeEnabled"
     )
     KEY_START_SCREEN_SERVICE_LIST_MODE = (
         f"{COMPANY_NAME}/{PLUGIN_NAME}/ui/startScreenServiceListMode"
@@ -60,6 +79,19 @@ class QmsSettings:
     @is_debug_logs_enabled.setter
     def is_debug_logs_enabled(self, value: bool) -> None:
         self.__settings.setValue(self.KEY_IS_DEBUG_LOGS_ENABLED, value)
+
+    @property
+    def is_developer_mode_enabled(self) -> bool:
+        """Check whether developer mode is enabled."""
+        return self.__settings.value(
+            self.KEY_IS_DEVELOPER_MODE_ENABLED,
+            defaultValue=False,
+            type=bool,
+        )
+
+    @is_developer_mode_enabled.setter
+    def is_developer_mode_enabled(self, value: bool) -> None:
+        self.__settings.setValue(self.KEY_IS_DEVELOPER_MODE_ENABLED, value)
 
     @property
     def enable_otf_3857(self) -> bool:

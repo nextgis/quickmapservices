@@ -84,7 +84,6 @@ class DataSourceInfo:
         # internal
         self.file_path = None
         self.icon_path = None
-        self.action = None
         self.category = None
 
     def _parse_tms_url(self, url):

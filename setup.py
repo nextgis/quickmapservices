@@ -1,4 +1,18 @@
-#!/usr/bin/env python3
+# NextGIS QuickMapServices
+# Copyright (C) 2026  NextGIS
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or any
+# later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, see <https://www.gnu.org/licenses/>.
 
 import argparse
 import json
@@ -6,13 +20,13 @@ import os
 import platform
 import re
 import shutil
-import subprocess  # nosec B404
+import subprocess
 import sys
 import tempfile
 import zipfile
 from configparser import ConfigParser
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, List, Optional
 
 try:
     import tomllib
@@ -26,6 +40,19 @@ def with_name(
     return path.with_name(f"{prefix}{path.stem}{suffix}{extension}")
 
 
+def replace_metadata_version(content: str, version: str) -> str:
+    updated_content, replacements = re.subn(
+        r"(?m)^(version\s*=\s*).*$",
+        rf"\g<1>{version}",
+        content,
+        count=1,
+    )
+    if replacements != 1:
+        raise RuntimeError("Could not find metadata version line")
+
+    return updated_content
+
+
 class QgisPluginBuilder:
     def __init__(self):
         self.current_directory = Path(__file__).parent
@@ -33,37 +60,14 @@ class QgisPluginBuilder:
 
         self.settings = tomllib.loads(pyproject_file.read_text())
         self.project_settings = self.settings.get("project", {})
-        self.qgspb_settings = self.settings.get("tool", {}).get("qgspb", {})
-        self.data_settings = self.qgspb_settings.get("package-data", {})
-        self.ui_settings = self.qgspb_settings.get("forms", {})
-        self.qrc_settings = self.qgspb_settings.get("resources", {})
-        self.ts_settings = self.qgspb_settings.get("translations", {})
-
-    def __resolve_executable(self, executable_name: str) -> str:
-        executable_path = shutil.which(executable_name)
-        if executable_path is None:
-            raise RuntimeError(
-                f'Executable "{executable_name}" was not found in PATH'
-            )
-        return executable_path
-
-    def __run_command(
-        self,
-        executable_name: str,
-        arguments: Sequence[str],
-        *,
-        cwd: Optional[Path] = None,
-        capture_output: bool = False,
-        text: bool = False,
-    ) -> subprocess.CompletedProcess:
-        executable_path = self.__resolve_executable(executable_name)
-        return subprocess.run(  # nosec B603
-            [executable_path, *arguments],
-            capture_output=capture_output,
-            check=True,
-            cwd=str(cwd) if cwd is not None else None,
-            text=text,
+        self.qgsmith_settings = self.settings.get("tool", {}).get(
+            "qgsmith", {}
         )
+        self.bandit_settings = self.settings.get("tool", {}).get("bandit", {})
+        self.data_settings = self.qgsmith_settings.get("package-data", {})
+        self.ui_settings = self.qgsmith_settings.get("forms", {})
+        self.qrc_settings = self.qgsmith_settings.get("resources", {})
+        self.ts_settings = self.qgsmith_settings.get("translations", {})
 
     def bootstrap(
         self,
@@ -71,105 +75,24 @@ class QgisPluginBuilder:
         compile_ui: Optional[bool] = None,
         compile_qrc: Optional[bool] = None,
         compile_ts: Optional[bool] = None,
-        update_git_submodules: Optional[bool] = None,
+        fix_ui: Optional[bool] = None,
     ) -> None:
-        """
-        Prepare the plugin environment and compile necessary components.
-
-        :param compile_ui: Compile UI forms if True.
-        :type compile_ui: Optional[bool]
-        :param compile_qrc: Compile resource files if True.
-        :type compile_qrc: Optional[bool]
-        :param compile_ts: Compile translation files if True.
-        :type compile_ts: Optional[bool]
-        :param update_git_submodules: Update missing git submodules if True.
-        :type update_git_submodules: Optional[bool]
-        """
-
-        # Enable full setup mode if no explicit flags are provided
         if all(
             setting is None
-            for setting in (
-                compile_ui,
-                compile_qrc,
-                compile_ts,
-                update_git_submodules,
-            )
+            for setting in (compile_ui, compile_qrc, compile_ts)
         ):
-            update_git_submodules = True
             compile_ui = True
             compile_qrc = True
             compile_ts = True
 
-        if update_git_submodules:
-            self.update_git_submodules()
         if compile_ui:
             self.compile_ui()
         if compile_qrc:
             self.compile_qrc()
         if compile_ts:
             self.compile_ts()
-
-    def update_git_submodules(self) -> None:
-        """
-        Update missing git submodules by reading .gitmodules and
-        initializing submodules that are not present.
-
-        :raises RuntimeError: If git is not available or update fails.
-        """
-        # Construct path to .gitmodules file
-        gitmodules_path = self.current_directory / ".gitmodules"
-        if not gitmodules_path.exists():
-            return
-
-        # Parse .gitmodules to get all submodule paths
-        submodule_paths = self._parse_gitmodules(gitmodules_path)
-        # Identify missing submodules
-        missing_submodules = [
-            path
-            for path in submodule_paths
-            if not (self.current_directory / path / ".git").exists()
-        ]
-        if not missing_submodules:
-            return
-
-        for submodule in missing_submodules:
-            print(f":: Initializing missing submodule: {submodule}")
-            try:
-                self.__run_command(
-                    "git",
-                    [
-                        "submodule",
-                        "update",
-                        "--init",
-                        "--",
-                        str(submodule),
-                    ],
-                    cwd=self.current_directory,
-                )
-            except Exception as exc:
-                raise RuntimeError(
-                    f"Failed to update submodule {submodule}: {exc}"
-                )
-
-    def _parse_gitmodules(self, gitmodules_path: Path) -> List[str]:
-        """
-        Parse .gitmodules file and return a list of submodule paths.
-
-        :param gitmodules_path: Path to .gitmodules file.
-        :type gitmodules_path: Path
-        :return: List of submodule paths.
-        :rtype: List[str]
-        """
-        paths = []
-        pattern = re.compile(r"^\s*path\s*=\s*(.+)$")
-
-        # Extract 'path =' entries from .gitmodules
-        for line in gitmodules_path.read_text(encoding="utf-8").splitlines():
-            match = pattern.match(line)
-            if match:
-                paths.append(match.group(1).strip())
-        return paths
+        if fix_ui:
+            self.fix_ui()
 
     def compile_ui(self) -> None:
         if len(self.ui_settings) == 0 or not self.ui_settings.get(
@@ -187,9 +110,8 @@ class QgisPluginBuilder:
         ]
         for ui_path in ui_paths:
             output_path = with_name(ui_path, prefix, suffix, ".py")
-            self.__run_command(
-                "pyuic5",
-                ["-o", str(output_path), str(ui_path)],
+            subprocess.check_output(
+                ["pyuic5", "-o", str(output_path), str(ui_path)]
             )
             self.__update_generated_file(output_path)
 
@@ -207,9 +129,8 @@ class QgisPluginBuilder:
         ]
         for qrc_path in qrc_paths:
             output_path = with_name(qrc_path, prefix, suffix, ".py")
-            self.__run_command(
-                "pyrcc5",
-                ["-o", str(output_path), str(qrc_path)],
+            subprocess.check_output(
+                ["pyrcc5", "-o", str(output_path), str(qrc_path)]
             )
             self.__update_generated_file(output_path)
 
@@ -225,7 +146,27 @@ class QgisPluginBuilder:
             for ts_path in Path(__file__).parent.rglob(ts_pattern)
         )
 
-        self.__run_command(command_args[0], command_args[1:])
+        subprocess.check_output(command_args)
+
+    def fix_ui(self) -> None:
+        ENUMS = {
+            "Qt::AlignmentFlag",
+            "Qt::Orientation",
+            "Qt::TextFormat",
+            "QSizePolicy::Policy",
+            "QDialogButtonBox::StandardButton",
+        }
+        ui_patterns = self.ui_settings.get("ui-files", [])
+        ui_paths = [
+            ui_path
+            for ui_pattern in ui_patterns
+            for ui_path in Path(__file__).parent.rglob(ui_pattern)
+        ]
+        for ui_path in ui_paths:
+            content = ui_path.read_text(encoding="utf-8")
+            for enum in ENUMS:
+                content = content.replace(enum, enum[: enum.find(("::"))])
+            ui_path.write_text(content, encoding="utf-8")
 
     def build(self) -> None:
         self.bootstrap()
@@ -258,6 +199,15 @@ class QgisPluginBuilder:
             for source_file, build_path in build_mapping.items():
                 create_directories(zip_file, build_path)
                 zip_file.write(source_file, "/".join(build_path.parts))
+
+            bandit_config = self.__create_bandit_config()
+            if bandit_config is not None:
+                bandit_path = Path(project_name) / ".bandit"
+                create_directories(zip_file, bandit_path)
+                zip_file.writestr(
+                    "/".join(bandit_path.parts),
+                    bandit_config,
+                )
 
     def install(
         self,
@@ -352,10 +302,7 @@ class QgisPluginBuilder:
             return
 
         metadata_path = plugin_path / "metadata.txt"
-        if not metadata_path.exists():
-            raise FileNotFoundError(
-                f"Missing metadata file for installed plugin: {metadata_path}"
-            )
+        assert metadata_path.exists()
 
         metadata = ConfigParser()
         with open(metadata_path, encoding="utf-8") as f:
@@ -440,7 +387,7 @@ class QgisPluginBuilder:
             for ts_path in Path(__file__).parent.rglob(ts_pattern)
         )
 
-        self.__run_command(command_args[0], command_args[1:])
+        subprocess.check_output(command_args)
 
         # TODO (ivanbarsukov): check unfinished in ts files
 
@@ -469,14 +416,37 @@ class QgisPluginBuilder:
             metadata.read_file(f)
         metadata_version = metadata.get("general", "version")
         if metadata_version != project_version:
-            raise RuntimeError(
-                "Project version does not match plugin metadata version: "
-                f"{project_version} != {metadata_version}"
+            self.__confirm_metadata_version_overwrite(
+                metadata_path,
+                metadata_version,
+                project_version,
             )
 
         build_path = Path(project_name) / metadata_path.name
 
         return {metadata_path: build_path}
+
+    def __confirm_metadata_version_overwrite(
+        self,
+        metadata_path: Path,
+        metadata_version: str,
+        project_version: str,
+    ) -> None:
+        print(
+            "metadata.txt version differs from pyproject.toml: "
+            f"{metadata_version} != {project_version}"
+        )
+        confirmation = (
+            input(":: Overwrite metadata.txt version? [y/N] ").strip().lower()
+        )
+        if confirmation != "y":
+            raise RuntimeError("metadata.txt version update was cancelled")
+
+        metadata_content = metadata_path.read_text(encoding="utf-8")
+        metadata_path.write_text(
+            replace_metadata_version(metadata_content, project_version),
+            encoding="utf-8",
+        )
 
     def __create_readme_mapping(self) -> Dict[Path, Path]:
         if "readme" not in self.project_settings:
@@ -504,8 +474,7 @@ class QgisPluginBuilder:
 
         license_setting = self.project_settings["license"]
         license_file = license_setting["file"]
-        if not isinstance(license_file, str):
-            raise RuntimeError("License file setting must be a string")
+        assert isinstance(license_file, str)
 
         project_name: str = self.project_settings["name"]
 
@@ -514,11 +483,35 @@ class QgisPluginBuilder:
 
         return {file_path: build_path}
 
+    def __create_bandit_config(self) -> Optional[str]:
+        if len(self.bandit_settings) == 0:
+            return None
+
+        bandit_options = {
+            "exclude_dirs": "exclude",
+            "tests": "tests",
+            "skips": "skips",
+        }
+        config_lines = ["[bandit]"]
+        for source_option, target_option in bandit_options.items():
+            option_value = self.bandit_settings.get(source_option)
+            if option_value is None:
+                continue
+
+            if isinstance(option_value, list):
+                serialized_value = ",".join(option_value)
+            else:
+                serialized_value = str(option_value)
+
+            config_lines.append(f"{target_option} = {serialized_value}")
+
+        return "\n".join(config_lines) + "\n"
+
     def __create_sources_mapping(self) -> Dict[Path, Path]:
         project_name: str = self.project_settings["name"]
         src_directory = Path(__file__).parent / "src"
 
-        exclude_patterns = self.qgspb_settings.get("exclude-files", [])
+        exclude_patterns = self.qgsmith_settings.get("exclude-files", [])
         exclude_paths = set(
             exclude_path.absolute()
             for exclude_pattern in exclude_patterns
@@ -620,10 +613,7 @@ class QgisPluginBuilder:
         return result
 
     def __update_generated_file(self, file_path: Path) -> None:
-        if file_path.suffix != ".py":
-            raise ValueError(
-                f"Generated file must have .py suffix: {file_path}"
-            )
+        assert file_path.suffix == ".py"
         content = file_path.read_text(encoding="utf-8")
         file_path.write_text(content.replace("from PyQt5", "from qgis.PyQt"))
 
@@ -631,8 +621,10 @@ class QgisPluginBuilder:
         system = platform.system()
 
         if qgis in ("Vanilla", "VanillaFlatpak"):
-            qgis_profiles = Path("QGIS/QGIS3/profiles")
-        elif qgis in ("NextGIS", "NextGISFlatpak"):
+            qgis_profiles = Path("QGIS/QGIS4/profiles")
+        elif qgis == "NextGIS":
+            qgis_profiles = Path("NextGIS/NGQ3/profiles")
+        elif qgis == "NextGISFlatpak":
             qgis_profiles = Path("NextGIS/ngqgis/profiles")
         else:
             raise RuntimeError(f"Unknown QGIS: {qgis}")
@@ -655,8 +647,7 @@ class QgisPluginBuilder:
 
         elif system == "Windows":
             appdata = os.getenv("APPDATA")
-            if appdata is None:
-                raise RuntimeError("APPDATA environment variable is not set")
+            assert appdata is not None
             profiles_path = Path(appdata) / qgis_profiles
 
         elif system == "Darwin":  # macOS
@@ -947,22 +938,21 @@ class QgisPluginBuilder:
             return
 
         # Capture current state
-        result = self.__run_command(
-            "cmd.exe",
-            ["/d", "/s", "/c", "set"],
+        result = subprocess.run(
+            ["cmd.exe", "/c", "set"],
             capture_output=True,
             text=True,
+            shell=True,
+            check=True,
         )
         current_env = self.__extract_env_vars_from_set_output(result.stdout)
 
-        bat_command = (
-            f"{subprocess.list2cmdline(['call', str(bat_file)])} && set"
-        )
-        result = self.__run_command(
-            "cmd.exe",
-            ["/d", "/s", "/c", bat_command],
+        result = subprocess.run(
+            f'cmd.exe /c "{bat_file} & set"',
             capture_output=True,
             text=True,
+            shell=True,
+            check=True,
         )
         updated_env = self.__extract_env_vars_from_set_output(result.stdout)
 
@@ -1002,22 +992,18 @@ class QgisPluginBuilder:
         if source_bat_file is None:
             return None
 
-        file_descriptor, temp_bat_path = tempfile.mkstemp(
-            prefix="qgis_env", suffix=".bat"
-        )
-        os.close(file_descriptor)
-        temp_bat_file = Path(temp_bat_path)
+        temp_bat_file = tempfile.mktemp(prefix="qgis_env", suffix=".bat")
         source_dir = str(source_bat_file.parent)
         source_bat = source_bat_file.read_text()
 
-        with temp_bat_file.open("w") as file:
+        with open(temp_bat_file, "w") as file:
             for line in source_bat.split("\n"):
                 if line.lstrip().startswith(("start", "python", "@echo on")):
                     continue
                 line = line.replace("%~dp0", source_dir)
                 file.write(f"{line}\n")
 
-        return temp_bat_file
+        return Path(temp_bat_file)
 
     def __create_dotenv_dict(
         self, current_env: Dict[str, str], updated_env: Dict[str, str]
@@ -1108,11 +1094,11 @@ def create_parser():
         help="Compile only resources",
     )
     parser_bootstrap.add_argument(
-        "--git",
-        dest="update_git_submodules",
+        "--fix-ui",
+        dest="fix_ui",
+        default=None,
         action="store_true",
-        default=False,
-        help="Update missing git submodules",
+        help="Fix UI files",
     )
 
     # build command
@@ -1193,7 +1179,7 @@ def main() -> None:
                 compile_ui=args.compile_ui,
                 compile_qrc=args.compile_qrc,
                 compile_ts=args.compile_ts,
-                update_git_submodules=args.update_git_submodules,
+                fix_ui=args.fix_ui,
             )
         elif args.command == "build":
             builder.build()

@@ -27,13 +27,9 @@ import os
 from pathlib import Path
 from typing import List
 
-from qgis.PyQt.QtGui import QIcon
-from qgis.PyQt.QtWidgets import QMenu
-
 from quick_map_services.config_reader_helper import ConfigReaderHelper
 from quick_map_services.core import utils
 from quick_map_services.core.logging import logger
-from quick_map_services.custom_translator import CustomTranslator
 from quick_map_services.group_info import GroupCategory, GroupInfo
 from quick_map_services.paths_constants import (
     ALL_GROUP_PATHS,
@@ -57,7 +53,6 @@ class GroupsList:
         :param group_paths: List of directory paths to search for group
             definition files.
         """
-        self.translator = CustomTranslator()
         self.paths = group_paths
         self.groups = {}
         self._fill_groups_list()
@@ -111,7 +106,13 @@ class GroupsList:
 
             # Extract group metadata
             group_id = parser.get("general", "id")
-            group_alias = parser.get("ui", "alias")
+            default_group_alias = parser.get("ui", "alias")
+            group_alias = ConfigReaderHelper.try_read_config(
+                parser,
+                "ui",
+                f"alias[{utils.qgis_locale()}]",
+                default=default_group_alias,
+            )
             icon_file = ConfigReaderHelper.try_read_config(
                 parser, "ui", "icon"
             )
@@ -119,49 +120,16 @@ class GroupsList:
                 os.path.join(root, icon_file) if icon_file else None
             )
 
-            # Read possible translations
-            posible_trans = parser.items("ui")
-            locale = utils.qgis_locale()
-            for key, val in posible_trans:
-                if key == f"alias[{locale}]":
-                    self.translator.append(group_alias, val)
-                    break
-
         except Exception:
             logger.exception(
                 f"Failed to parse group INI file: {ini_full_path}"
             )
             return
 
-        # Create QMenu and GroupInfo
-        group_menu = QMenu(self.tr(group_alias))
-        group_menu.setIcon(QIcon(group_icon_path))
-
         self.groups[group_id] = GroupInfo(
             group_id,
             group_alias,
             group_icon_path,
             ini_full_path,
-            group_menu,
             category,
         )
-
-    def get_group_menu(self, group_id: str) -> QMenu:
-        """
-        Retrieve or create a QMenu for the specified group.
-
-        :param group_id: Unique identifier of the group.
-
-        :returns: QMenu instance associated with the group.
-        """
-        if group_id in self.groups:
-            return self.groups[group_id].menu
-        else:
-            info = GroupInfo(group_id=group_id, menu=QMenu(group_id))
-            self.groups[group_id] = info
-            return info.menu
-
-    # noinspection PyMethodMayBeStatic
-    def tr(self, message):
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return self.translator.translate("QuickMapServices", message)

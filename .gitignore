@@ -224,3 +224,6 @@ resources.py
 *.db
 
 .vscode
+
+# OpenCode
+AGENTS.md

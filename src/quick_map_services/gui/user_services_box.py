@@ -1,10 +1,28 @@
+# NextGIS QuickMapServices
+# Copyright (C) 2026  NextGIS
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or any
+# later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, see <https://www.gnu.org/licenses/>.
+
 import shutil
+from copy import deepcopy
 from pathlib import Path
 from typing import Optional
 
 from qgis.core import QgsApplication
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (
     QDialog,
     QGroupBox,
@@ -16,6 +34,7 @@ from qgis.PyQt.QtWidgets import (
     QWidget,
 )
 
+from quick_map_services.data_source_info import DataSourceInfo
 from quick_map_services.data_sources_list import DataSourcesList
 from quick_map_services.data_sources_model import DSManagerModel
 from quick_map_services.ds_edit_dialog import DsEditDialog
@@ -70,7 +89,10 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         self.lstServices.clear()
         ds_list = DataSourcesList([USER_DATA_SOURCES_PATH])
         for ds in ds_list.data_sources.values():
-            item = QListWidgetItem(ds.action.icon(), ds.action.text())
+            item = QListWidgetItem(
+                QIcon(ds.icon_path),
+                ds.alias,
+            )
             item.setData(Qt.ItemDataRole.UserRole, ds)
             self.lstServices.addItem(item)
 
@@ -173,13 +195,16 @@ class UserServicesBox(QGroupBox, FORM_CLASS):
         )
 
         if select_data_sources_dialog.exec() == QDialog.DialogCode.Accepted:
-            data_source = self.ds_model.data(
-                list_view.currentIndex(), Qt.ItemDataRole.UserRole
+            data_source: DataSourceInfo = deepcopy(
+                self.ds_model.data(
+                    list_view.currentIndex(),
+                    Qt.ItemDataRole.UserRole,
+                )
             )
-            data_source.id += "_copy"
+            data_source.id = f"{data_source.id}_copy"
             edit_dialog = DsEditDialog()
             edit_dialog.setWindowTitle(self.tr("Create service from existing"))
-            edit_dialog.fill_ds_info(data_source)
+            edit_dialog.set_ds_info_for_copy(data_source)
             if edit_dialog.exec() == QDialog.DialogCode.Accepted:
                 self.fill_list()
                 self.ds_model.reset_model()

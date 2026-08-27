@@ -5,8 +5,7 @@ readme = "README.md"
 license = { file = "LICENSE" }
 
 
-[tool.qgspb.package-data]
-"quick_map_services" = [".bandit"]
+[tool.qgsmith.package-data]
 "quick_map_services.assets" = ["**/*.json"]
 "quick_map_services.quickmapservices_contrib.data_sources" = [
     "**/*.png",
@@ -20,7 +19,7 @@ license = { file = "LICENSE" }
 ]
 "quick_map_services.icons" = ["*.svg", "*.png", "material/*.svg"]
 
-[tool.qgspb.forms]
+[tool.qgsmith.forms]
 ui-files = [
     "src/quick_map_services/gui/*.ui",
     "src/quick_map_services/scales.xml",
@@ -28,7 +27,7 @@ ui-files = [
 ]
 compile = false
 
-[tool.qgspb.translations]
+[tool.qgsmith.translations]
 ts-files = ["src/quick_map_services/i18n/*.ts"]
 no-obsolete = true
 
@@ -112,3 +111,7 @@ extend-ignore-names = [
     "createWidget",
     "*Event",
 ]
+
+[tool.bandit]
+exclude_dirs = ["tests", "setup.py"]
+skips = ["B101", "B608"]

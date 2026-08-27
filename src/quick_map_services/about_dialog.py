@@ -26,13 +26,23 @@ from typing import Any, Dict, Optional, Union
 from qgis.core import QgsSettings
 from qgis.PyQt.QtCore import (
     QByteArray,
+    QEvent,
     QLocale,
+    QObject,
     QRectF,
     QSize,
     Qt,
+    QTimer,
     QUrl,
+    pyqtSignal,
 )
-from qgis.PyQt.QtGui import QDesktopServices, QIcon, QPainter, QPixmap
+from qgis.PyQt.QtGui import (
+    QDesktopServices,
+    QHideEvent,
+    QIcon,
+    QPainter,
+    QPixmap,
+)
 from qgis.PyQt.QtSvg import QSvgRenderer
 from qgis.PyQt.QtWidgets import (
     QAbstractItemView,
@@ -360,6 +370,10 @@ class AboutDialog(QDialog):
     _COMPONENT_BUTTON_ICON_SIZE = 16
     _COMPONENT_BUTTON_SIZE = 22
     _TAB_ICON_SIZE = 16
+    _DEVELOPER_MODE_CLICKS = 7
+    _DEVELOPER_MODE_CLICK_INTERVAL_MS = 1500
+
+    developer_mode_toggle_requested = pyqtSignal()
 
     def __init__(
         self,
@@ -378,6 +392,10 @@ class AboutDialog(QDialog):
         self._components_path = (
             Path(components_path) if components_path is not None else None
         )
+        self._version_click_count = 0
+        self._version_click_timer = QTimer(self)
+        self._version_click_timer.setSingleShot(True)
+        self._version_click_timer.timeout.connect(self._reset_version_clicks)
 
         module_spec = importlib.util.find_spec(self._package_name)
         if module_spec and module_spec.origin:
@@ -425,6 +443,8 @@ class AboutDialog(QDialog):
 
         self._version_label = QLabel(self._text("Version {version}"), self)
         self._version_label.setObjectName("version_label")
+        self._version_label.setCursor(Qt.CursorShape.PointingHandCursor)
+        self._version_label.installEventFilter(self)
         self._info_layout.addWidget(self._version_label)
 
         self._header_layout.addLayout(self._info_layout)
@@ -524,6 +544,33 @@ class AboutDialog(QDialog):
         self._button_box.rejected.connect(self.reject)
         self._footer_layout.addWidget(self._button_box)
         grid_layout.addLayout(self._footer_layout, 3, 0)
+
+    def eventFilter(self, watched: QObject, event: QEvent) -> bool:  # pyright: ignore[reportIncompatibleMethodOverride]
+        """Request a developer-mode toggle after repeated version clicks."""
+        if (
+            watched is self._version_label
+            and event.type() == QEvent.Type.MouseButtonRelease
+            and event.button() == Qt.MouseButton.LeftButton
+        ):
+            self._version_click_count += 1
+            if self._version_click_count == self._DEVELOPER_MODE_CLICKS:
+                self._reset_version_clicks()
+                self.developer_mode_toggle_requested.emit()
+            else:
+                self._version_click_timer.start(
+                    self._DEVELOPER_MODE_CLICK_INTERVAL_MS
+                )
+
+        return super().eventFilter(watched, event)
+
+    def hideEvent(self, event: QHideEvent) -> None:  # pyright: ignore[reportIncompatibleMethodOverride]
+        """Discard incomplete click sequences when the dialog is hidden."""
+        self._reset_version_clicks()
+        super().hideEvent(event)
+
+    def _reset_version_clicks(self) -> None:
+        self._version_click_timer.stop()
+        self._version_click_count = 0
 
     def _setup_tab_icons(self) -> None:
         icon_color = self.palette().text().color().name()

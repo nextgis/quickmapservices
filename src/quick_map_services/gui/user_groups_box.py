@@ -1,4 +1,21 @@
+# NextGIS QuickMapServices
+# Copyright (C) 2026  NextGIS
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or any
+# later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, see <https://www.gnu.org/licenses/>.
+
 import shutil
+from copy import deepcopy
 from pathlib import Path
 from typing import Optional
 
@@ -20,6 +37,7 @@ from qgis.PyQt.QtWidgets import (
 
 from quick_map_services.data_sources_model import DSManagerModel
 from quick_map_services.group_edit_dialog import GroupEditDialog
+from quick_map_services.group_info import GroupInfo
 from quick_map_services.groups_list import GroupsList
 from quick_map_services.paths_constants import USER_GROUPS_PATH
 
@@ -181,10 +199,13 @@ class UserGroupsBox(QGroupBox, FORM_CLASS):
         )
 
         if select_group_dialog.exec() == QDialog.DialogCode.Accepted:
-            group_info = self.ds_model.data(
-                groups_list_view.currentIndex(), Qt.ItemDataRole.UserRole
+            group_info: GroupInfo = deepcopy(
+                self.ds_model.data(
+                    groups_list_view.currentIndex(),
+                    Qt.ItemDataRole.UserRole,
+                )
             )
-            group_info.id += "_copy"
+            group_info.id = f"{group_info.id}_copy"
             edit_dialog = GroupEditDialog()
             edit_dialog.setWindowTitle(self.tr("Create group from existing"))
             edit_dialog.fill_group_info(group_info)
