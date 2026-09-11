@@ -1,6 +1,6 @@
 [project]
 name = "quick_map_services"
-version = "1.5.1"
+version = "1.5.2"
 readme = "README.md"
 license = { file = "LICENSE" }
 

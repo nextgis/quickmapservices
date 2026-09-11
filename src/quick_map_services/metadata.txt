@@ -72,7 +72,7 @@ about[ru]=NextGIS QuickMapServices (QMS) позволяет пользовате
     Разработано компанией NextGIS.
     Свяжитесь с нами: https://nextgis.ru/contact
     Присоединяйтесь к форуму сообщества: https://community.nextgis.com
-version=1.5.1
+version=1.5.2
 author=NextGIS
 email=info@nextgis.com
 
@@ -92,6 +92,8 @@ user_guide=https://docs.nextgis.com/docs_ngqgis/source/qms.html
 user_guide[ru]=https://docs.nextgis.ru/docs_ngqgis/source/qms.html
 
 changelog=
+      1.5.2
+        * Added logging for layer and provider validation errors
       1.5.1
         * Removed services that require an API key from the Contributed Pack
       1.5.0
