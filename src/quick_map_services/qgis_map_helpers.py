@@ -7,6 +7,7 @@ from qgis.core import (
     QgsApplication,
     QgsCoordinateReferenceSystem,
     QgsDataSourceUri,
+    QgsErrorMessage,
     QgsMapLayer,
     QgsProject,
     QgsRasterLayer,
@@ -194,6 +195,24 @@ def add_layer_to_map(ds) -> bool:
     for layer in layers4add:
         if not layer.isValid():
             error_message = f"Layer '{ds.alias}' can't be added to the map!"
+            layer_error = layer.error()
+            if not layer_error.isEmpty():
+                logger.error(
+                    "Layer '%s' validation failed: %s",
+                    ds.alias,
+                    layer_error.message(QgsErrorMessage.Format.Text),
+                )
+
+            provider = layer.dataProvider()
+            if provider is not None:
+                provider_error = provider.error()
+                if not provider_error.isEmpty():
+                    logger.error(
+                        "Provider for layer '%s' validation failed: %s",
+                        ds.alias,
+                        provider_error.message(QgsErrorMessage.Format.Text),
+                    )
+
             QuickMapServicesInterface.instance().notifier.display_message(
                 error_message,
                 level=Qgis.MessageLevel.Critical,
