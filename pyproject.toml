@@ -112,3 +112,7 @@ extend-ignore-names = [
     "createWidget",
     "*Event",
 ]
+
+[tool.bandit]
+exclude_dirs = ["tests", "setup.py"]
+skips = ["B101", "B608"]
