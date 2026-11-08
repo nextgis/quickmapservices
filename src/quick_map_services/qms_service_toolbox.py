@@ -125,6 +125,59 @@ UI_NEUTRAL_BACKGROUND_PRESSED = "rgba(127, 127, 127, 64)"
 UI_NEUTRAL_BORDER = "rgba(127, 127, 127, 104)"
 UI_NEUTRAL_BORDER_SOFT = "rgba(127, 127, 127, 72)"
 
+BLACK_FRIDAY_2026_START = datetime(
+    year=2026,
+    month=11,
+    day=9,
+    hour=6,
+    minute=0,
+    tzinfo=timezone.utc,
+)
+BLACK_FRIDAY_2026_FINISH = {
+    "ru": datetime(
+        year=2026,
+        month=11,
+        day=27,
+        hour=21,
+        minute=0,
+        tzinfo=timezone.utc,
+    ),
+    "default": datetime(
+        year=2026,
+        month=11,
+        day=28,
+        hour=6,
+        minute=0,
+        tzinfo=timezone.utc,
+    ),
+}
+BLACK_FRIDAY_2026_LANDING_PAGES = {
+    "ru": "https://nextgis.ru/extra/black-friday-2026/ru/",
+    "en": "https://nextgis.com/extra/black-friday-2026/en/",
+}
+BLACK_FRIDAY_2026_BANNER_TEXTS = {
+    "ru": ("23 – 27 ноября · <b>−50% на данные и подписки</b>",),
+    "en": ("Nov 23 – 27 · <b>50% off data and subscriptions</b>",),
+    "es": ("23–27 nov. · <b>50% de descuento en datos y suscripciones</b>",),
+    "fr": (
+        "23 - 27 novembre · <b>50% de reduction sur les données et les abonnements</b>",
+        "23–27 nov. · <b>Données et abonnements à −50 %</b>",
+    ),
+    "bg": ("23 – 27 ноември · <b>50% отстъпка за данни и абонаменти</b>",),
+    "cs": ("23. – 27. listopadu · <b>50% sleva na data a předplatné</b>",),
+    "de": ("23. – 27. Nov. · <b>50 % Rabatt auf Daten und Abonnements</b>",),
+    "it": ("23 – 27 nov. · <b>50% di sconto su dati e abbonamenti</b>",),
+    "ja": (
+        "11月23日～27日 · <b>データプランとサブスクリプションが50％オフ</b>",
+    ),
+    "zh": ("11月23日至27日 · <b>数据和订阅享五折优惠</b>",),
+    "pl": ("23–27 listopada · <b>50% zniżki na dane i subskrypcje</b>",),
+    "pt": (
+        "23 a 27 de novembro · <b>50% de desconto em dados e assinaturas</b>",
+        "23–27 nov. · <b>Dados e assinaturas −50%</b>",
+    ),
+}
+
 
 def add_geoservice_to_map(
     geoservice: Dict[str, Any],
@@ -348,6 +401,8 @@ class NewsBannerButton(ShiningButton):
         self._banner_display_html = ""
         self._banner_plain_text = ""
         self._banner_image_path = ""
+        self._compact_banner_text = ""
+        self._full_banner_width = NEWS_BANNER_MINIMUM_WIDTH
 
         super().__init__("", parent)
 
@@ -414,22 +469,50 @@ class NewsBannerButton(ShiningButton):
 
         self.clicked.connect(self._open_banner_link)
 
-    def set_banner_html(self, html: str) -> None:
+    def set_banner_html(
+        self,
+        html: str,
+        url: Optional[str] = None,
+        compact_text: Optional[str] = None,
+    ) -> None:
         parser = NewsBannerHtmlParser()
         parser.feed(html)
         parser.close()
 
-        self._banner_url = parser.url
+        self._banner_url = url or parser.url
         self._banner_display_html = parser.display_html
         self._banner_plain_text = parser.plain_text
         self._banner_image_path = parser.image_path
-        self._text_label.setText(self._banner_display_html)
         self._update_banner_icon()
+        self._text_label.setText(self._banner_display_html)
+        self._full_banner_width = self._button_width_hint()
+
+        self._compact_banner_text = ""
+        if compact_text is not None:
+            compact_parser = NewsBannerHtmlParser()
+            compact_parser.feed(compact_text)
+            compact_parser.close()
+            self._compact_banner_text = compact_parser.display_html
+            self._text_label.setText(self._compact_banner_text)
+
         self.setMinimumSize(self.minimumSizeHint())
         self.setToolTip(self._banner_plain_text)
         self.setEnabled(bool(self._banner_url))
         self.updateGeometry()
         self.update()
+
+    def resizeEvent(self, event) -> None:
+        super().resizeEvent(event)
+
+        text = self._banner_display_html
+        if (
+            self._compact_banner_text
+            and event.size().width() < self._full_banner_width
+        ):
+            text = self._compact_banner_text
+
+        if self._text_label.text() != text:
+            self._text_label.setText(text)
 
     def hasHeightForWidth(self) -> bool:
         return False
@@ -1245,6 +1328,11 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         self.newsFrame.setVisible(False)
 
         short_locale = utils.qgis_locale(adapt=False)
+        banner_locale = (
+            short_locale
+            if short_locale in BLACK_FRIDAY_2026_BANNER_TEXTS
+            else "en"
+        )
 
         def make_utm(campaign: str, locale: str = short_locale) -> str:
             return "&".join(
@@ -1258,7 +1346,6 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
             )
 
         utm = make_utm("constant")
-        bf25_utm = make_utm("black-friday25")
         nextgis15_url = f"https://data.nextgis.com/?{make_utm('nextgis15')}"
 
         qms_nextgis15_news = QmsNews(
@@ -1287,10 +1374,18 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
             }
         )
 
+        banner_texts = BLACK_FRIDAY_2026_BANNER_TEXTS.get(
+            banner_locale,
+            BLACK_FRIDAY_2026_BANNER_TEXTS["en"],
+        )
+        full_text = banner_texts[0]
+        compact_text = banner_texts[1] if len(banner_texts) > 1 else None
+        landing_locale = short_locale if short_locale == "ru" else "en"
+        landing_url = BLACK_FRIDAY_2026_LANDING_PAGES[landing_locale]
+        black_friday_url = f"{landing_url}?{make_utm('black-friday26')}"
         qms_black_friday_news = QmsNews(
             {
-                "ru": f'<a href="https://data.nextgis.com/?{bf25_utm}">Свежие геоданные</a> для проекта. <b>Экономия 50%!</b>',
-                "en": f'<a href="https://data.nextgis.com/?{bf25_utm}">Fresh geodata</a> for your project <b>(50% off!)</b>',
+                banner_locale: full_text,
             }
         )
         qms_news = QmsNews(
@@ -1302,12 +1397,6 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         if qms_black_friday_news is None and qms_news is None:
             return
 
-        black_friday_start = datetime(
-            year=2025, month=12, day=1, hour=6, minute=1, tzinfo=timezone.utc
-        )
-        black_friday_finish = datetime(
-            year=2025, month=12, day=6, hour=5, minute=59, tzinfo=timezone.utc
-        )
         nextgis15_start = datetime(
             year=2026, month=6, day=8, hour=6, minute=0, tzinfo=timezone.utc
         )
@@ -1323,16 +1412,28 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         )
         black_friday_news = News(
             qms_black_friday_news,
-            date_start=black_friday_start,
-            date_finish=black_friday_finish,
+            date_start=BLACK_FRIDAY_2026_START,
+            date_finish=BLACK_FRIDAY_2026_FINISH.get(
+                short_locale,
+                BLACK_FRIDAY_2026_FINISH["default"],
+            ),
             icon="fire.png",
         )
         ordinary_news = News(qms_news)
 
         self.newsFrame.setVisible(False)
-        for news in [nextgis15_news, black_friday_news, ordinary_news]:
+        news_candidates = (
+            (nextgis15_news, None, None),
+            (black_friday_news, black_friday_url, compact_text),
+            (ordinary_news, None, None),
+        )
+        for news, url, compact_banner_text in news_candidates:
             if news.is_time_to_show():
-                self.news_banner_button.set_banner_html(news.html)
+                self.news_banner_button.set_banner_html(
+                    news.html,
+                    url,
+                    compact_banner_text,
+                )
                 self.newsFrame.setVisible(True)
                 break
 
