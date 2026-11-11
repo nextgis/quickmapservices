@@ -154,6 +154,7 @@ BLACK_FRIDAY_2026_FINISH = {
 BLACK_FRIDAY_2026_LANDING_PAGES = {
     "ru": "https://nextgis.ru/extra/black-friday-2026/ru/",
     "en": "https://nextgis.com/extra/black-friday-2026/en/",
+    "es": "https://nextgis.es/black-friday/",
 }
 BLACK_FRIDAY_2026_BANNER_TEXTS = {
     "ru": ("23 – 27 ноября · <b>−50% на данные и подписки</b>",),
@@ -1380,7 +1381,11 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         )
         full_text = banner_texts[0]
         compact_text = banner_texts[1] if len(banner_texts) > 1 else None
-        landing_locale = short_locale if short_locale == "ru" else "en"
+        landing_locale = (
+            short_locale
+            if short_locale in BLACK_FRIDAY_2026_LANDING_PAGES
+            else "en"
+        )
         landing_url = BLACK_FRIDAY_2026_LANDING_PAGES[landing_locale]
         black_friday_url = f"{landing_url}?{make_utm('black-friday26')}"
         qms_black_friday_news = QmsNews(
