@@ -72,7 +72,7 @@ about[ru]=NextGIS QuickMapServices (QMS) позволяет пользовате
     Разработано компанией NextGIS.
     Свяжитесь с нами: https://nextgis.ru/contact
     Присоединяйтесь к форуму сообщества: https://community.nextgis.com
-version=1.5.4
+version=1.5.5
 author=NextGIS
 email=info@nextgis.com
 
@@ -92,6 +92,8 @@ user_guide=https://docs.nextgis.com/docs_ngqgis/source/qms.html
 user_guide[ru]=https://docs.nextgis.ru/docs_ngqgis/source/qms.html
 
 changelog=
+      1.5.5
+        * Updated localized banner content and links
       1.5.4
         * Improved localized banner links
       1.5.3
