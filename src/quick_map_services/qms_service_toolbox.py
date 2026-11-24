@@ -151,32 +151,66 @@ BLACK_FRIDAY_2026_FINISH = {
         tzinfo=timezone.utc,
     ),
 }
-BLACK_FRIDAY_2026_LANDING_PAGES = {
-    "ru": "https://nextgis.ru/extra/black-friday-2026/ru/",
-    "en": "https://nextgis.com/extra/black-friday-2026/en/",
-    "es": "https://nextgis.es/black-friday/",
-}
 BLACK_FRIDAY_2026_BANNER_TEXTS = {
-    "ru": ("23 – 27 ноября · <b>−50% на данные и подписки</b>",),
-    "en": ("Nov 23 – 27 · <b>50% off data and subscriptions</b>",),
-    "es": ("23–27 nov. · <b>50% de descuento en datos y suscripciones</b>",),
+    "ru": (
+        "23–27 ноября · <b>−50% на геоданные для ваших проектов</b>",
+        "23–27 ноября · <b>Геоданные −50%</b>",
+    ),
+    "en": (
+        "Nov 23–27 · <b>50% off spatial data for your projects</b>",
+        "Nov 23–27 · <b>Spatial data −50%</b>",
+    ),
+    "bg": (
+        "23–27 ноември · "
+        "<b>Пространствени данни за вашите проекти с 50% отстъпка</b>",
+        "23–27 ное. · <b>Пространствени данни −50%</b>",
+    ),
+    "cs": (
+        "23.–27. listopadu · "
+        "<b>50% sleva na prostorová data pro vaše projekty</b>",
+        "23.–27. lis. · <b>Prostorová data −50 %</b>",
+    ),
+    "de": (
+        "23.–27. Nov. · <b>50% Rabatt auf Geodaten für Ihre Projekte</b>",
+        "23.–27. Nov. · <b>Geodaten −50%</b>",
+    ),
+    "es": (
+        (
+            "23–27 nov. · <b>50% de descuento en datos espaciales "
+            "para sus proyectos</b>"
+        ),
+        "23–27 nov. · <b>Datos espaciales −50%</b>",
+    ),
     "fr": (
-        "23 - 27 novembre · <b>50% de reduction sur les données et les abonnements</b>",
-        "23–27 nov. · <b>Données et abonnements à −50 %</b>",
+        (
+            "23–27 novembre · <b>50 % de réduction sur les données "
+            "spatiales pour vos projets</b>"
+        ),
+        "23–27 nov. · <b>Données spatiales −50 %</b>",
     ),
-    "bg": ("23 – 27 ноември · <b>50% отстъпка за данни и абонаменти</b>",),
-    "cs": ("23. – 27. listopadu · <b>50% sleva na data a předplatné</b>",),
-    "de": ("23. – 27. Nov. · <b>50 % Rabatt auf Daten und Abonnements</b>",),
-    "it": ("23 – 27 nov. · <b>50% di sconto su dati e abbonamenti</b>",),
-    "ja": (
-        "11月23日～27日 · <b>データプランとサブスクリプションが50％オフ</b>",
+    "it": (
+        (
+            "23–27 nov. · <b>50% di sconto sui dati spaziali "
+            "per i tuoi progetti</b>"
+        ),
+        "23–27 nov. · <b>Dati spaziali −50%</b>",
     ),
-    "zh": ("11月23日至27日 · <b>数据和订阅享五折优惠</b>",),
-    "pl": ("23–27 listopada · <b>50% zniżki na dane i subskrypcje</b>",),
+    "ja": ("11月23日～27日 · <b>プロジェクト向け空間データが50%オフ</b>",),
+    "pl": (
+        (
+            "23–27 listopada · <b>50% zniżki na dane przestrzenne "
+            "dla Twoich projektów</b>"
+        ),
+        "23–27 lis. · <b>Dane przestrzenne −50%</b>",
+    ),
     "pt": (
-        "23 a 27 de novembro · <b>50% de desconto em dados e assinaturas</b>",
-        "23–27 nov. · <b>Dados e assinaturas −50%</b>",
+        (
+            "23 a 27 de novembro · <b>50% de desconto em dados "
+            "espaciais para seus projetos</b>"
+        ),
+        "23–27 nov. · <b>Dados espaciais −50%</b>",
     ),
+    "zh": ("11月23日至27日 · <b>您的项目空间数据享五折优惠</b>",),
 }
 
 
@@ -1381,13 +1415,9 @@ class QmsServiceToolbox(QgsDockWidget, FORM_CLASS):
         )
         full_text = banner_texts[0]
         compact_text = banner_texts[1] if len(banner_texts) > 1 else None
-        landing_locale = (
-            short_locale
-            if short_locale in BLACK_FRIDAY_2026_LANDING_PAGES
-            else "en"
+        black_friday_url = (
+            f"https://data.nextgis.com/?{make_utm('black-friday26')}"
         )
-        landing_url = BLACK_FRIDAY_2026_LANDING_PAGES[landing_locale]
-        black_friday_url = f"{landing_url}?{make_utm('black-friday26')}"
         qms_black_friday_news = QmsNews(
             {
                 banner_locale: full_text,
